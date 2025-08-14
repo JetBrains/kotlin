@@ -34,10 +34,7 @@ object WasmNullExnRefType : WasmType("nullexnref", -0x0c) // Shorthand for (ref 
 data class WasmRefNullType(val heapType: WasmHeapType) : WasmType("ref null", -0x1D)
 data class WasmRefType(val heapType: WasmHeapType) : WasmType("ref", -0x1C)
 
-@Suppress("unused")
 object WasmI31Ref : WasmType("i31ref", -0x14)
-
-@Suppress("unused")
 object WasmStructRef : WasmType("structref", -0x15)
 
 sealed class WasmHeapType {
