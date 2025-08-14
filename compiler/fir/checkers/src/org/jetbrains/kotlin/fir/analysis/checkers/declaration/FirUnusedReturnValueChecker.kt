@@ -171,9 +171,6 @@ private fun ConeKotlinType.isIgnorable(): Boolean {
 private fun FirCallableSymbol<*>.isExcluded(session: FirSession): Boolean = session.mustUseReturnValueStatusComponent.hasIgnorableLikeAnnotation(resolvedAnnotationClassIds)
 
 private fun FirCallableSymbol<*>.isSubjectToCheck(): Boolean {
-    // TODO KT-71195 : FunctionN seems to be a synthetic class, even recompiling stdlib in FULL mode
-    //  does not make it checked. Need to investigate another approach.
-    if (this.callableId?.packageName?.asString() == "kotlin") return this.origin !is FirDeclarationOrigin.Enhancement
     callableId?.ifTypealiasedJvmCollection { return it }
 
 

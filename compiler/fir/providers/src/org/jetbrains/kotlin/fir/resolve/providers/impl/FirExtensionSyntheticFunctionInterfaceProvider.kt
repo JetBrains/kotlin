@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.resolve.ReturnValueStatus
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.util.concurrent.ConcurrentHashMap
@@ -229,6 +230,7 @@ abstract class FirSyntheticFunctionInterfaceProviderBase(
                         isOperator = true
                         isSuspend = kind.isSuspendOrKSuspendFunction
                         hasStableParameterNames = false
+                        returnValueStatus = ReturnValueStatus.MustUse
                     }
                     val typeArguments = typeParameters.map {
                         ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false).toFirResolvedTypeRef()
