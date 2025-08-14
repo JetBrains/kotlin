@@ -382,12 +382,6 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
       }
 
       @Test
-      @TestMetadata("structAnonym_Packed.kt")
-      public void testStructAnonym_Packed() {
-        runTest("native/native.tests/testData/codegen/cinterop/basics/structAnonym_Packed.kt");
-      }
-
-      @Test
       @TestMetadata("structAnonym_Packed2.kt")
       public void testStructAnonym_Packed2() {
         runTest("native/native.tests/testData/codegen/cinterop/basics/structAnonym_Packed2.kt");
