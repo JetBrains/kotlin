@@ -37,6 +37,7 @@ class BodyGenerator(
     private val functionContext: WasmFunctionCodegenContext,
     private val wasmModuleMetadataCache: WasmModuleMetadataCache,
     private val wasmModuleTypeTransformer: WasmModuleTypeTransformer,
+    private val inlineUnitGetter: Boolean,
 ) : IrVisitorVoid() {
     val body: WasmExpressionBuilder = functionContext.bodyGen
 
@@ -48,10 +49,17 @@ class BodyGenerator(
     private val unitInstanceField by lazy { backendContext.findUnitInstanceField() }
 
     fun WasmExpressionBuilder.buildGetUnit() {
-        buildGetGlobal(
-            wasmFileCodegenContext.referenceGlobalField(unitInstanceField.symbol),
-            SourceLocation.NoLocation("GET_UNIT")
-        )
+        if (inlineUnitGetter) {
+            buildGetGlobal(
+                wasmFileCodegenContext.referenceGlobalField(unitInstanceField.symbol),
+                SourceLocation.NoLocation("GET_UNIT")
+            )
+        } else {
+            buildCall(
+                wasmFileCodegenContext.referenceFunction(unitGetInstance.symbol),
+                SourceLocation.NoLocation("GET_UNIT")
+            )
+        }
     }
 
     fun getStructFieldRef(field: IrField): WasmSymbol<Int> {

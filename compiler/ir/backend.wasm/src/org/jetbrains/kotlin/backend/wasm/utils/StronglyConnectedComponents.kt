@@ -23,7 +23,7 @@ class StronglyConnectedComponents<T>(val enumerateOutgoingEdges: (T) -> Sequence
         }
     }
 
-    fun findComponents(): List<MutableList<T>> {
+    fun findComponents(): MutableList<MutableList<T>> {
         visited.clear()
         val result = mutableListOf<MutableList<T>>()
         while (stack.isNotEmpty()) {
