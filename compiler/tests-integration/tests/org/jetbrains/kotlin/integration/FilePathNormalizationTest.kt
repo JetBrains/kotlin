@@ -187,6 +187,19 @@ class FilePathNormalizationTest : KotlinIntegrationTestBase() {
                 run(outDir, linkToLibJar)
             }
 
+            // The symlink is the last path segment and without extension:
+            run {
+                val linkToLibJar = createSymlink(libJar, File(tmpdir, "liblink"))
+                val outDir = tmpdir.resolve("out")
+                compileWithClasspath(
+                    source = "fun main() { println(foo()) }",
+                    fileName = "main.kt",
+                    outputFile = outDir,
+                    classpath = linkToLibJar
+                )
+                run(outDir, linkToLibJar)
+            }
+
             // The symlink is not the last path segment:
             run {
                 val linkToBaseDir = createSymlink(baseDir, File(tmpdir, "baselink"))
@@ -293,6 +306,18 @@ class FilePathNormalizationTest : KotlinIntegrationTestBase() {
             // The symlink is the last path segment:
             run {
                 val linkToLibKlib = createSymlink(libKlib, File(tmpdir, "liblink.klib"))
+                val outDir = tmpdir.resolve("out")
+                compileKlib(
+                    source = "fun main() { println(foo()) }",
+                    fileName = "main.kt",
+                    outputFile = outDir,
+                    dependency = linkToLibKlib
+                )
+            }
+
+            // The symlink is the last path segment and without extension:
+            run {
+                val linkToLibKlib = createSymlink(libKlib, File(tmpdir, "liblink"))
                 val outDir = tmpdir.resolve("out")
                 compileKlib(
                     source = "fun main() { println(foo()) }",

@@ -533,7 +533,7 @@ abstract class AbstractKlibLoaderTest {
         val otherLibrariesCanonicalPaths = libraryPaths.mapNotNull { libraryPath ->
             val canonicalLibraryPath: String = File(libraryPath).canonicalPath
 
-            if (canonicalLibraryPath == stdlib?.libraryFile?.path) {
+            if (canonicalLibraryPath == stdlib?.libraryFile?.canonicalPath) {
                 assertTrue(stdlibExpectedInPaths)
                 stdlibExpectedInPaths = false
                 return@mapNotNull null
@@ -542,7 +542,7 @@ abstract class AbstractKlibLoaderTest {
             canonicalLibraryPath
         }
 
-        assertEquals(otherLibrariesCanonicalPaths, otherLibraries.map { it.libraryFile.path })
+        assertEquals(otherLibrariesCanonicalPaths, otherLibraries.map { it.libraryFile.canonicalPath })
 
         return this
     }

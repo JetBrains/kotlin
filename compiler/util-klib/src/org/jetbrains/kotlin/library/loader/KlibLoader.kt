@@ -108,7 +108,7 @@ class KlibLoader(init: KlibLoaderSpec.() -> Unit) {
                 return@forEachLibraryPath
 
             val library = createKotlinLibrary(
-                KFile(canonicalPath),
+                KFile(validPath),
                 component = KLIB_DEFAULT_COMPONENT_NAME,
                 zipAccessor = zipFileSystemAccessor
             )

@@ -693,7 +693,11 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
                 block()
                 fail { "The test was expected to fail with the error due to unresolved KLIB \"$dependencyNameInError\". But was successful." }
             } catch (cte: CompilationToolException) {
-                assertTrue(cte.reason.contains("error: KLIB resolver: Could not find \"$normalizedDependencyNameInError\"")) {
+                // The message can use both forward and backward slashes on Windows.
+                assertTrue(
+                    cte.reason.contains("error: KLIB resolver: Could not find \"$normalizedDependencyNameInError\"") ||
+                            cte.reason.contains("error: KLIB resolver: Could not find \"$dependencyNameInError\"")
+                ) {
                     "The test was expected to fail with the error due to unresolved KLIB \"$dependencyNameInError\". " +
                             "But the actual error message is (${cte.reason.toByteArray().size} bytes, ${cte.reason.lineSequence().count()} lines):\n${cte.reason}"
                 }

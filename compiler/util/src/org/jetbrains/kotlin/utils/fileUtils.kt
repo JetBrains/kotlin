@@ -17,9 +17,6 @@
 package org.jetbrains.kotlin.utils.fileUtils
 
 import java.io.File
-import java.io.IOException
-import java.nio.file.Path
-import java.nio.file.Paths
 
 fun File.withReplacedExtensionOrNull(oldExt: String, newExt: String): File? {
     if (name.endsWith(oldExt)) {
