@@ -8,17 +8,8 @@ declare namespace JS_TESTS {
                 readonly "kotlin.collections.KtList": unique symbol;
             };
         }
-        abstract class KtList<E> extends KtSingleton<KtList.$metadata$.constructor>() {
-            private constructor();
-        }
         namespace KtList {
-            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-            namespace $metadata$ {
-                abstract class constructor {
-                    fromJsArray<E>(array: ReadonlyArray<E>): kotlin.collections.KtList<E>;
-                    private constructor();
-                }
-            }
+            function fromJsArray<E>(array: ReadonlyArray<E>): kotlin.collections.KtList<E>;
         }
         interface KtMap<K, V> {
             asJsReadonlyMapView(): ReadonlyMap<K, V>;
@@ -26,17 +17,8 @@ declare namespace JS_TESTS {
                 readonly "kotlin.collections.KtMap": unique symbol;
             };
         }
-        abstract class KtMap<K, V> extends KtSingleton<KtMap.$metadata$.constructor>() {
-            private constructor();
-        }
         namespace KtMap {
-            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-            namespace $metadata$ {
-                abstract class constructor {
-                    fromJsMap<K, V>(map: ReadonlyMap<K, V>): kotlin.collections.KtMap<K, V>;
-                    private constructor();
-                }
-            }
+            function fromJsMap<K, V>(map: ReadonlyMap<K, V>): kotlin.collections.KtMap<K, V>;
         }
         interface KtMutableList<E> extends kotlin.collections.KtList<E>/*, kotlin.collections.MutableCollection<E> */ {
             asJsArrayView(): Array<E>;
@@ -44,17 +26,8 @@ declare namespace JS_TESTS {
                 readonly "kotlin.collections.KtMutableList": unique symbol;
             } & kotlin.collections.KtList<E>["__doNotUseOrImplementIt"];
         }
-        abstract class KtMutableList<E> extends KtSingleton<KtMutableList.$metadata$.constructor>() {
-            private constructor();
-        }
         namespace KtMutableList {
-            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-            namespace $metadata$ {
-                abstract class constructor {
-                    fromJsArray<E>(array: ReadonlyArray<E>): kotlin.collections.KtMutableList<E>;
-                    private constructor();
-                }
-            }
+            function fromJsArray<E>(array: ReadonlyArray<E>): kotlin.collections.KtMutableList<E>;
         }
         interface KtSet<E> /* extends kotlin.collections.Collection<E> */ {
             asJsReadonlySetView(): ReadonlySet<E>;
@@ -62,17 +35,8 @@ declare namespace JS_TESTS {
                 readonly "kotlin.collections.KtSet": unique symbol;
             };
         }
-        abstract class KtSet<E> extends KtSingleton<KtSet.$metadata$.constructor>() {
-            private constructor();
-        }
         namespace KtSet {
-            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-            namespace $metadata$ {
-                abstract class constructor {
-                    fromJsSet<E>(set: ReadonlySet<E>): kotlin.collections.KtSet<E>;
-                    private constructor();
-                }
-            }
+            function fromJsSet<E>(set: ReadonlySet<E>): kotlin.collections.KtSet<E>;
         }
         interface KtMutableSet<E> extends kotlin.collections.KtSet<E>/*, kotlin.collections.MutableCollection<E> */ {
             asJsSetView(): Set<E>;
@@ -80,17 +44,8 @@ declare namespace JS_TESTS {
                 readonly "kotlin.collections.KtMutableSet": unique symbol;
             } & kotlin.collections.KtSet<E>["__doNotUseOrImplementIt"];
         }
-        abstract class KtMutableSet<E> extends KtSingleton<KtMutableSet.$metadata$.constructor>() {
-            private constructor();
-        }
         namespace KtMutableSet {
-            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-            namespace $metadata$ {
-                abstract class constructor {
-                    fromJsSet<E>(set: ReadonlySet<E>): kotlin.collections.KtMutableSet<E>;
-                    private constructor();
-                }
-            }
+            function fromJsSet<E>(set: ReadonlySet<E>): kotlin.collections.KtMutableSet<E>;
         }
         interface KtMutableMap<K, V> extends kotlin.collections.KtMap<K, V> {
             asJsMapView(): Map<K, V>;
@@ -98,17 +53,8 @@ declare namespace JS_TESTS {
                 readonly "kotlin.collections.KtMutableMap": unique symbol;
             } & kotlin.collections.KtMap<K, V>["__doNotUseOrImplementIt"];
         }
-        abstract class KtMutableMap<K, V> extends KtSingleton<KtMutableMap.$metadata$.constructor>() {
-            private constructor();
-        }
         namespace KtMutableMap {
-            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-            namespace $metadata$ {
-                abstract class constructor {
-                    fromJsMap<K, V>(map: ReadonlyMap<K, V>): kotlin.collections.KtMutableMap<K, V>;
-                    private constructor();
-                }
-            }
+            function fromJsMap<K, V>(map: ReadonlyMap<K, V>): kotlin.collections.KtMutableMap<K, V>;
         }
     }
     function provideList(): kotlin.collections.KtList<number>;

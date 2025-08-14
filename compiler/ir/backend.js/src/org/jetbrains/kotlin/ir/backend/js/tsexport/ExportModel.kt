@@ -109,7 +109,7 @@ data class ExportedObject(
     override val originalClassId: ClassId?,
     override val isExternal: Boolean,
     override val isCompanion: Boolean,
-    val isInsideInterface: Boolean,
+    val isTopLevel: Boolean,
 ) : ExportedClass()
 
 class ExportedParameter(

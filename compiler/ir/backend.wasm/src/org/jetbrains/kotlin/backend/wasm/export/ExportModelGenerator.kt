@@ -315,7 +315,7 @@ class ExportModelGenerator(val context: WasmBackendContext) {
                 originalClassId = declaration.classId,
                 isExternal = declaration.isEffectivelyExternal(),
                 isCompanion = declaration.isCompanion,
-                isInsideInterface = (declaration.parent as? IrClass)?.isInterface == true,
+                isTopLevel = declaration.isTopLevel
             )
         } else {
             ExportedRegularClass(

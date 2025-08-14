@@ -260,7 +260,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
         members: List<ExportedDeclaration>,
         nestedClasses: List<ExportedClass>,
     ): ExportedDeclaration {
-        val name = klass.getExportedIdentifierForClass()
+        val name = klass.getExportedIdentifier()
 
         return if (klass.kind == ClassKind.OBJECT) {
             return ExportedObject(
@@ -517,13 +517,6 @@ val strictModeReservedWords = setOf(
 )
 
 private val allReservedWords = reservedWords + strictModeReservedWords
-
-fun IrClass.getExportedIdentifierForClass(): String {
-    val parentClass = parentClassOrNull
-    return if (parentClass != null && isCompanion && parentClass.isInterface) {
-        parentClass.getExportedIdentifierForClass()
-    } else getExportedIdentifier()
-}
 
 fun IrDeclarationWithName.getExportedIdentifier(): String =
     with(getJsNameOrKotlinName()) {

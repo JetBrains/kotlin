@@ -152,9 +152,15 @@ class ExportModelToJsStatements(
             }
 
             is ExportedRegularClass -> {
-                if (declaration.isInterface) {
-                    return declaration.nestedClasses.flatMap { generateDeclarationExport(it, namespace, esModules, parentClass) }
+                // These are used when @JsStatic is used or exporting secondary constructors annotated with @JsName
+                val staticFunctions = declaration.members
+                    .filter { it is ExportedFunction && it.isStatic && !it.ir.isEs6ConstructorReplacement }
+                    .takeIf { !declaration.ir.isInner }.orEmpty()
+
+                if (declaration.isInterface && staticFunctions.isEmpty() && declaration.nestedClasses.isEmpty()) {
+                    return emptyList()
                 }
+
                 val (name, classInitialization) = declaration.getNameAndInitialization()
                 val newNameSpace = when {
                     namespace != null -> jsElementAccess(declaration.name, namespace)
@@ -166,11 +172,6 @@ class ExportModelToJsStatements(
                     esModules -> JsExport(name.makeRef(), alias = JsName(declaration.name, false))
                     else -> null
                 }
-
-                // These are only used when exporting secondary constructors annotated with @JsName
-                val staticFunctions = declaration.members
-                    .filter { it is ExportedFunction && it.isStatic && !it.ir.isEs6ConstructorReplacement }
-                    .takeIf { !declaration.ir.isInner }.orEmpty()
 
                 val enumEntries = declaration.members.filter { it is ExportedProperty && it.isStatic }
 
@@ -255,7 +256,8 @@ class ExportModelToJsStatements(
     }
 
     private fun ExportedClass.getNameAndInitialization(): Pair<JsName, JsStatement?> {
-        return when (val classRef = ir.getClassRef(staticContext)) {
+        val classRef = if (this is ExportedRegularClass && isInterface) JsObjectLiteral() else ir.getClassRef(staticContext)
+        return when (classRef) {
             is JsNameRef -> classRef.name!! to null
             else -> {
                 val stableName = JsName(sanitizeName(name), true)

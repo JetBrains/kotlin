@@ -6,21 +6,8 @@ export declare interface KtList<E> /* extends Collection<E> */ {
         readonly "kotlin.collections.KtList": unique symbol;
     };
 }
-export declare abstract class KtList<E> {
-    static readonly getInstance: () => typeof KtList.$metadata$.type;
-    private constructor();
-}
 export declare namespace KtList {
-    /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-    namespace $metadata$ {
-        abstract class constructor {
-            fromJsArray<E>(array: ReadonlyArray<E>): KtList<E>;
-            private constructor();
-        }
-        abstract class type<E> extends KtSingleton<constructor>() {
-            private constructor();
-        }
-    }
+    function fromJsArray<E>(array: ReadonlyArray<E>): KtList<E>;
 }
 export declare const value: { get(): number; };
 export declare const variable: { get(): number; set(value: number): void; };
@@ -84,18 +71,18 @@ export declare interface AnInterfaceWithCompanion {
         readonly "foo.AnInterfaceWithCompanion": unique symbol;
     };
 }
-export declare abstract class AnInterfaceWithCompanion {
-    static readonly getInstance: () => typeof AnInterfaceWithCompanion.$metadata$.type;
-    private constructor();
-}
-/** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-export declare namespace AnInterfaceWithCompanion.$metadata$ {
-    abstract class type extends KtSingleton<constructor>() {
+export declare namespace AnInterfaceWithCompanion {
+    abstract class Companion extends KtSingleton<Companion.$metadata$.constructor>() {
         private constructor();
     }
-    abstract class constructor {
-        get someValue(): string;
-        private constructor();
+    namespace Companion {
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace $metadata$ {
+            abstract class constructor {
+                get someValue(): string;
+                private constructor();
+            }
+        }
     }
 }
 export declare function box(): string;
