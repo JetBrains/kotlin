@@ -24,9 +24,11 @@ declare namespace JS_TESTS {
             get acProp(): string;
             abstract get acAbstractProp(): string;
         }
-        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-        namespace AC.$metadata$ {
-            const constructor: abstract new () => AC;
+        namespace AC {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => AC;
+            }
         }
         class OC extends foo.AC.$metadata$.constructor implements foo.I<string, boolean, number> {
             constructor(y: boolean, acAbstractProp: string);
@@ -34,34 +36,42 @@ declare namespace JS_TESTS {
             get acAbstractProp(): string;
             z(z: number): void;
         }
-        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-        namespace OC.$metadata$ {
-            const constructor: abstract new () => OC;
+        namespace OC {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => OC;
+            }
         }
         class FC extends foo.OC.$metadata$.constructor {
             constructor();
         }
-        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-        namespace FC.$metadata$ {
-            const constructor: abstract new () => FC;
+        namespace FC {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => FC;
+            }
         }
         abstract class O1 extends KtSingleton<O1.$metadata$.constructor>() {
             private constructor();
         }
-        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-        namespace O1.$metadata$ {
-            abstract class constructor extends foo.OC.$metadata$.constructor {
-                private constructor();
+        namespace O1 {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                abstract class constructor extends foo.OC.$metadata$.constructor {
+                    private constructor();
+                }
             }
         }
         abstract class O2 extends KtSingleton<O2.$metadata$.constructor>() {
             private constructor();
         }
-        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-        namespace O2.$metadata$ {
-            abstract class constructor extends foo.OC.$metadata$.constructor {
-                foo(): number;
-                private constructor();
+        namespace O2 {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                abstract class constructor extends foo.OC.$metadata$.constructor {
+                    foo(): number;
+                    private constructor();
+                }
             }
         }
         abstract class O3 extends KtSingleton<O3.$metadata$.constructor>() {
@@ -71,16 +81,20 @@ declare namespace JS_TESTS {
             class SomeNestedClass {
                 constructor();
             }
-            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-            namespace SomeNestedClass.$metadata$ {
-                const constructor: abstract new () => SomeNestedClass;
+            namespace SomeNestedClass {
+                /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+                namespace $metadata$ {
+                    const constructor: abstract new () => SomeNestedClass;
+                }
             }
         }
-        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-        namespace O3.$metadata$ {
-            abstract class constructor extends foo.OC.$metadata$.constructor {
-                foo(): number;
-                private constructor();
+        namespace O3 {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                abstract class constructor extends foo.OC.$metadata$.constructor {
+                    foo(): number;
+                    private constructor();
+                }
             }
         }
         interface I3 {
@@ -105,9 +119,11 @@ declare namespace JS_TESTS {
             abstract bay(): string;
             readonly __doNotUseOrImplementIt: foo.I3["__doNotUseOrImplementIt"];
         }
-        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-        namespace A2.$metadata$ {
-            const constructor: abstract new () => A2;
+        namespace A2 {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => A2;
+            }
         }
         class B2 extends foo.A2.$metadata$.constructor {
             constructor();
@@ -117,9 +133,11 @@ declare namespace JS_TESTS {
             get baz(): string;
             bay(): string;
         }
-        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-        namespace B2.$metadata$ {
-            const constructor: abstract new () => B2;
+        namespace B2 {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => B2;
+            }
         }
         class C2 extends foo.B2.$metadata$.constructor {
             constructor();
@@ -130,9 +148,11 @@ declare namespace JS_TESTS {
             set baz(value: string);
             bay(): string;
         }
-        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-        namespace C2.$metadata$ {
-            const constructor: abstract new () => C2;
+        namespace C2 {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => C2;
+            }
         }
         abstract class EC implements foo.I3 {
             private constructor();
@@ -159,9 +179,11 @@ declare namespace JS_TESTS {
             abstract get baz(): string;
             readonly __doNotUseOrImplementIt: foo.I3["__doNotUseOrImplementIt"];
         }
-        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-        namespace EC.$metadata$ {
-            const constructor: abstract new () => EC;
+        namespace EC {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => EC;
+            }
         }
         interface IA {
             readonly foo: any;
@@ -178,9 +200,11 @@ declare namespace JS_TESTS {
         class Third<T> extends /* foo.Second */ foo.First.$metadata$.constructor {
             constructor();
         }
-        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-        namespace Third.$metadata$ {
-            const constructor: abstract new <T>() => Third<T>;
+        namespace Third {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new <T>() => Third<T>;
+            }
         }
         class Sixth extends /* foo.Fifth<number> */ foo.Third.$metadata$.constructor<number> implements foo.IA, foo.IG<number>/*, foo.IC */ {
             constructor();
@@ -188,32 +212,40 @@ declare namespace JS_TESTS {
             get foo(): number;
             readonly __doNotUseOrImplementIt: foo.IA["__doNotUseOrImplementIt"] & foo.IG<number>["__doNotUseOrImplementIt"];
         }
-        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-        namespace Sixth.$metadata$ {
-            const constructor: abstract new () => Sixth;
+        namespace Sixth {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => Sixth;
+            }
         }
         class First {
             constructor();
         }
-        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-        namespace First.$metadata$ {
-            const constructor: abstract new () => First;
+        namespace First {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => First;
+            }
         }
         function acceptForthLike<T extends (foo.Third<string> & foo.IA)/* foo.Forth<string> */>(forth: T): void;
         function acceptMoreGenericForthLike<T extends foo.IA/* foo.IB */ & foo.IA/* foo.IC */ & foo.First/* foo.Second */>(forth: T): void;
         class MyRootException extends /* kotlin.RuntimeException */ Error {
             constructor();
         }
-        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-        namespace MyRootException.$metadata$ {
-            const constructor: abstract new () => MyRootException;
+        namespace MyRootException {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => MyRootException;
+            }
         }
         class MySpecificException extends foo.MyRootException.$metadata$.constructor {
             constructor();
         }
-        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-        namespace MySpecificException.$metadata$ {
-            const constructor: abstract new () => MySpecificException;
+        namespace MySpecificException {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => MySpecificException;
+            }
         }
     }
 }

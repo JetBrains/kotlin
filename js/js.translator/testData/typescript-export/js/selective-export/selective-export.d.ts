@@ -12,9 +12,11 @@ declare namespace JS_TESTS {
             constructor();
             get value(): number;
         }
-        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-        namespace ExportedClass.$metadata$ {
-            const constructor: abstract new () => ExportedClass;
+        namespace ExportedClass {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => ExportedClass;
+            }
         }
     }
     namespace foo {
@@ -28,9 +30,11 @@ declare namespace JS_TESTS {
             constructor();
             get value(): number;
         }
-        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-        namespace FileLevelExportedClass.$metadata$ {
-            const constructor: abstract new () => FileLevelExportedClass;
+        namespace FileLevelExportedClass {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => FileLevelExportedClass;
+            }
         }
     }
 }

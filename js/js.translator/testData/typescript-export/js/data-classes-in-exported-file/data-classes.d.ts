@@ -10,18 +10,20 @@ declare namespace JS_TESTS {
             hashCode(): number;
             equals(other: Nullable<any>): boolean;
         }
-        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-        namespace TestDataClass.$metadata$ {
-            const constructor: abstract new () => TestDataClass;
-        }
         namespace TestDataClass {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => TestDataClass;
+            }
             class Nested {
                 constructor();
                 get prop(): string;
             }
-            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-            namespace Nested.$metadata$ {
-                const constructor: abstract new () => Nested;
+            namespace Nested {
+                /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+                namespace $metadata$ {
+                    const constructor: abstract new () => Nested;
+                }
             }
         }
         class KT39423 {
@@ -33,17 +35,21 @@ declare namespace JS_TESTS {
             hashCode(): number;
             equals(other: Nullable<any>): boolean;
         }
-        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-        namespace KT39423.$metadata$ {
-            const constructor: abstract new () => KT39423;
+        namespace KT39423 {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => KT39423;
+            }
         }
         abstract class WithComponent1 {
             constructor();
             abstract component1(): string;
         }
-        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-        namespace WithComponent1.$metadata$ {
-            const constructor: abstract new () => WithComponent1;
+        namespace WithComponent1 {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => WithComponent1;
+            }
         }
         class Test2 extends foo.WithComponent1.$metadata$.constructor {
             constructor(value1: string, value2: string);
@@ -55,9 +61,11 @@ declare namespace JS_TESTS {
             hashCode(): number;
             equals(other: Nullable<any>): boolean;
         }
-        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-        namespace Test2.$metadata$ {
-            const constructor: abstract new () => Test2;
+        namespace Test2 {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => Test2;
+            }
         }
     }
 }
