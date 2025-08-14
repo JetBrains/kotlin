@@ -114,8 +114,8 @@ private val inventNamesForLocalClassesPhase = makeIrModulePhase(
     name = "InventNamesForLocalClasses",
 )
 
-val inventNamesForLocalFunctionsPhase = makeIrModulePhase(
-    ::KlibInventNamesForLocalFunctions,
+private val inventNamesForLocalFunctionsPhase = makeIrModulePhase(
+    { context: JsIrBackendContext -> KlibInventNamesForLocalFunctions(context, suggestUniqueNames = false) },
     name = "InventNamesForLocalFunctions",
 )
 

@@ -35,6 +35,12 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.name.Name
 import kotlin.collections.set
 
+/**
+ * Invent names for local functions before lifting them up.
+ *
+ * @property suggestUniqueNames When `true` appends a `$#index` suffix to lifted declaration names.
+ * @property compatibilityModeForInlinedLocalDelegatedPropertyAccessors Whether to keep old names for local delegated properties because of KT-49030.
+ */
 abstract class InventNamesForLocalFunctions : BodyLoweringPass {
     protected abstract val suggestUniqueNames: Boolean
     protected abstract val compatibilityModeForInlinedLocalDelegatedPropertyAccessors: Boolean
@@ -253,8 +259,8 @@ private class ScopeWithCounter(val irElement: IrElement) {
 
 class KlibInventNamesForLocalFunctions(
     private val context: CommonBackendContext,
-    override val suggestUniqueNames: Boolean
+    override val suggestUniqueNames: Boolean = true,
 ) : InventNamesForLocalFunctions() {
-    override val compatibilityModeForInlinedLocalDelegatedPropertyAccessors get() = false // Keep old names because of KT-49030
+    override val compatibilityModeForInlinedLocalDelegatedPropertyAccessors get() = false
     override fun sanitizeNameIfNeeded(name: String) = name
 }

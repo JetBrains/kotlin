@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.phaser.CompilerPhase
 import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
-import org.jetbrains.kotlin.ir.backend.js.inventNamesForLocalFunctionsPhase
 import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.AddContinuationToFunctionCallsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLowering
@@ -287,6 +286,11 @@ private val propertyReferenceLowering = makeIrModulePhase(
 private val callableReferencePhase = makeIrModulePhase(
     ::WasmCallableReferenceLowering,
     name = "WasmCallableReferenceLowering",
+)
+
+private val inventNamesForLocalFunctionsPhase = makeIrModulePhase(
+    ::KlibInventNamesForLocalFunctions,
+    name = "InventNamesForLocalFunctions",
 )
 
 private val singleAbstractMethodPhase = makeIrModulePhase(
