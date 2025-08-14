@@ -64,7 +64,7 @@ FILE fqName:<root> fileName:/1.kt
         public abstract fun bar <T> (): @[FlexibleNullability] T of <root>.Java2.bar? declared in <root>.Java2
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun bar <T> (): T of <root>.B.bar declared in <root>.B'
-          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type={T of <root>.B.bar & Any} origin=EXCLEXCL
             TYPE_ARG T0: kotlin.Nothing
             ARG arg0: CONST Null type=kotlin.Nothing? value=null
     FUN name:foo visibility:public modality:OPEN returnType:kotlin.Unit
@@ -140,7 +140,7 @@ FILE fqName:<root> fileName:/1.kt
         public abstract fun bar <T> (): T of <root>.KotlinInterface.bar declared in <root>.KotlinInterface
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun bar <T> (): T of <root>.D.bar declared in <root>.D'
-          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type={T of <root>.D.bar & Any} origin=EXCLEXCL
             TYPE_ARG T0: kotlin.Nothing
             ARG arg0: CONST Null type=kotlin.Nothing? value=null
     FUN name:foo visibility:public modality:OPEN returnType:kotlin.Unit
@@ -233,7 +233,7 @@ FILE fqName:<root> fileName:/1.kt
         public abstract fun bar <T> (): T of <root>.KotlinInterface.bar declared in <root>.KotlinInterface
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun bar <T> (): T of <root>.F.bar declared in <root>.F'
-          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type={T of <root>.F.bar & Any} origin=EXCLEXCL
             TYPE_ARG T0: kotlin.Nothing
             ARG arg0: CONST Null type=kotlin.Nothing? value=null
   CLASS INTERFACE name:KotlinInterface modality:ABSTRACT visibility:public superTypes:[kotlin.Any]

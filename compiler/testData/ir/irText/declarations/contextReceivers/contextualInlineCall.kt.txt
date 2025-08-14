@@ -25,7 +25,7 @@ class Context {
 }
 
 fun box(): String {
-  return with<Context, Nothing>(receiver = Context(), block = local fun Context.<anonymous>(): Nothing {
+  return with<Context, String>(receiver = Context(), block = local fun Context.<anonymous>(): String {
     var result: Int = 0
     result = result.plus(other = testInline(/* $context_receiver_0 = $this$with */))
     result = result.plus(other = testInlineWithArg(/* $context_receiver_0 = $this$with, */ i = 1))

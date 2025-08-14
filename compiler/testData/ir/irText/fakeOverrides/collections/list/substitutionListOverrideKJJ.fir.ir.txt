@@ -379,7 +379,7 @@ FILE fqName:<root> fileName:/1.kt
         public open fun removeAt (p0: kotlin.Int): @[EnhancedNullability] @[FlexibleNullability] T of <root>.Java1? declared in <root>.Java1
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun removeAt (index: kotlin.Int): T of <root>.B declared in <root>.B'
-          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type={T of <root>.B & Any} origin=EXCLEXCL
             TYPE_ARG T0: kotlin.Nothing
             ARG arg0: CONST Null type=kotlin.Nothing? value=null
     PROPERTY FAKE_OVERRIDE name:modCount visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
