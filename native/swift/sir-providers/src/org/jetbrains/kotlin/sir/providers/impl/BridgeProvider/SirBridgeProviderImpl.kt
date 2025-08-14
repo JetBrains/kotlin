@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.sir.providers.impl.BridgeProvider
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
+import org.jetbrains.kotlin.builtins.StandardNames.FqNames
+import org.jetbrains.kotlin.name.ClassId.Companion.topLevel
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.*
 import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
@@ -29,6 +31,8 @@ public class SirBridgeProviderImpl(private val session: SirSession, private val 
         swiftFqName: String,
         swiftSymbolName: String,
     ): SirTypeBindingBridge? {
+        if (kotlinFqName in fqNamesExcludedFromTypeBinding) return null
+
         val annotationName = "kotlin.native.internal.objc.BindClassToObjCName"
         val kotlinFqName = kotlinFqName.joinToString(".")
         return SirTypeBindingBridge(
@@ -269,3 +273,18 @@ private fun BridgeFunctionDescriptor.additionalImports(): List<String> {
 
 private val BridgeFunctionDescriptor.safeImportName: String
     get() = kotlinFqName.run { if (size <= 1) single() else joinToString("_") { it.replace("_", "__") } }
+
+// These classes already have ObjC counterparts assigned statically in ObjC Export.
+private val fqNamesExcludedFromTypeBinding: List<List<String>> by lazy {
+    listOf(
+        FqNames.set,
+        FqNames.mutableSet,
+        FqNames.map,
+        FqNames.mutableList,
+        FqNames.list,
+        FqNames.mutableMap,
+        FqNames.string.toSafe()
+    ).map {
+        it.pathSegments().map { it.toString() }
+    }
+}
