@@ -127,7 +127,9 @@ abstract class AbstractTypeCreatorDslTest : AbstractAnalysisApiBasedTest() {
                 return testCase.call(testClassInstance)
             }
 
-            private val testClassesMapping: Map<String, KClass<out TestCases>> = mapOf()
+            private val testClassesMapping: Map<String, KClass<out TestCases>> = mapOf(
+                "ClassType" to ClassTypeCreatorDslTestCases::class,
+            )
         }
 
         protected fun getTypeByCaret(label: String): KaType {

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.typeCreation.AbstractTypeCreatorDslTest;
 import org.jetbrains.kotlin.test.TestMetadata;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -43,5 +44,87 @@ public class Fe10IdeNormalAnalysisSourceModuleTypeCreatorDslTestGenerated extend
   @Test
   public void testAllFilesPresentInByDsl() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/types/typeCreation/byDsl/classType")
+  @TestDataPath("$PROJECT_ROOT")
+  public class ClassType {
+    @Test
+    public void testAllFilesPresentInClassType() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/classType"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("boxedArrayWithStringTypeArgument.kt")
+    public void testBoxedArrayWithStringTypeArgument() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/classType/boxedArrayWithStringTypeArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("intTypeMarkNullable.kt")
+    public void testIntTypeMarkNullable() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/classType/intTypeMarkNullable.kt");
+    }
+
+    @Test
+    @TestMetadata("lessTypeArgumentsThanExpected.kt")
+    public void testLessTypeArgumentsThanExpected() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/classType/lessTypeArgumentsThanExpected.kt");
+    }
+
+    @Test
+    @TestMetadata("localUserType.kt")
+    public void testLocalUserType() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/classType/localUserType.kt");
+    }
+
+    @Test
+    @TestMetadata("moreTypeArgumentsThanExpected.kt")
+    public void testMoreTypeArgumentsThanExpected() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/classType/moreTypeArgumentsThanExpected.kt");
+    }
+
+    @Test
+    @TestMetadata("nonExistingClassId.kt")
+    public void testNonExistingClassId() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/classType/nonExistingClassId.kt");
+    }
+
+    @Test
+    @TestMetadata("nonExistingClassIdWithAnnotations.kt")
+    public void testNonExistingClassIdWithAnnotations() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/classType/nonExistingClassIdWithAnnotations.kt");
+    }
+
+    @Test
+    @TestMetadata("userGenericTypeWithStarProjection.kt")
+    public void testUserGenericTypeWithStarProjection() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/classType/userGenericTypeWithStarProjection.kt");
+    }
+
+    @Test
+    @TestMetadata("userType.kt")
+    public void testUserType() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/classType/userType.kt");
+    }
+
+    @Test
+    @TestMetadata("userTypeWithAnnotations.kt")
+    public void testUserTypeWithAnnotations() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/classType/userTypeWithAnnotations.kt");
+    }
+
+    @Test
+    @TestMetadata("withAnnotationRequiringArguments.kt")
+    public void testWithAnnotationRequiringArguments() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/classType/withAnnotationRequiringArguments.kt");
+    }
+
+    @Test
+    @TestMetadata("withGenericAnnotation.kt")
+    public void testWithGenericAnnotation() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/classType/withGenericAnnotation.kt");
+    }
   }
 }
