@@ -12,6 +12,6 @@ val arrayOfFloatObjects = arrayOf(2f + 3f, -1.23E-7f, Float.MIN_VALUE, Float.MAX
 val arrayOfFloatPrimitives = floatArrayOf(2f + 3f, -1.23E-7f, Float.MIN_VALUE, Float.MAX_VALUE, Float.NaN, Float.POSITIVE_INFINITY, Float.NEGATIVE_INFINITY, 0.0f / 0.0f, 1.0f / 0.0f, -1.0f / 0.0f)
 val arrayOfStrings = arrayOf("", "quotes \" ''quotes", "\r\n", "你好世界")
 val arrayOfEnums = arrayOf(AnnotationTarget.CLASS, AnnotationTarget.PROPERTY)
-val arrayOfNAny = arrayOf(1, 2L, "abc", AnnotationTarget.CLASS, null)
+val arrayOfNAny = arrayOf<Any?>(1, 2L, "abc", AnnotationTarget.CLASS, null)
 val emptyArayOfStrings: Array<String> = arrayOf()
 val emptyArayOfInts: IntArray = intArrayOf()

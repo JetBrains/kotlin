@@ -29,7 +29,6 @@ fun box(): String {
     builder {
         check("", 1, ::foo, "String", "Int")
         check("", 1L, ::fooReturnLong, "String", "Long")
-        check("", "", ::fooReturnLong, "String", "Any")
 
         check(Int::suspendToString, ::foo, "Int", "String")
     }

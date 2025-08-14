@@ -1,4 +1,4 @@
-// LANGUAGE: +DefinitelyNonNullableTypes
+// LANGUAGE: +DefinitelyNonNullableTypes -ProhibitIntersectionReifiedTypeParameter
 // SKIP_KT_DUMP
 // FIR_IDENTICAL
 
