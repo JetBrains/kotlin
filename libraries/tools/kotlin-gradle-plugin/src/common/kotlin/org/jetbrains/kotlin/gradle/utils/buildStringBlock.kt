@@ -73,7 +73,7 @@ internal fun StringBlockBuilder.connectedLines(
  * @see buildStringBlock
  */
 @StringBlockBuilderDsl
-sealed interface StringBlockBuilder {
+internal sealed interface StringBlockBuilder {
 
     /**
      * Add a line to the current block.
@@ -84,7 +84,7 @@ sealed interface StringBlockBuilder {
     /**
      * Starts a new indented block, surrounded by [open] and [close].
      *
-     * All content added in [content] will be intended one level more than [the current indentation][level].
+     * All content added in [content] will be intended one level more than the current indentation.
      *
      * [open] and [close] will _not_ be indented.
      */
@@ -96,7 +96,7 @@ sealed interface StringBlockBuilder {
  * @see connectedLines
  */
 @StringBlockBuilderDsl
-sealed interface ConnectedLinesBuilder {
+internal sealed interface ConnectedLinesBuilder {
     /**
      * Add a new line, continuing from any previously added lines.
      *
