@@ -22,7 +22,7 @@ object JsAntlrParser {
         scope: JsScope,
         fileName: String
     ): List<JsStatement>? {
-        val parser = createJsParser(fileName, code, CodePosition(0, 0)).apply {
+        val parser = createJsParser(fileName, code, 0, CodePosition(0, 0)).apply {
             addErrorListener(reporter)
         }
         val mapper = JsAstMapper(scope, fileName)
@@ -53,7 +53,7 @@ object JsAntlrParser {
         reporter: ErrorReporter,
         scope: JsScope
     ): JsFunction? {
-        val parser = createJsParser(fileName, code, position).apply {
+        val parser = createJsParser(fileName, code, offset, position).apply {
             addErrorListener(reporter)
         }
         val mapper = JsAstMapper(scope, fileName)
@@ -61,8 +61,9 @@ object JsAntlrParser {
         return mapper.mapFunction(function)
     }
 
-    private fun createJsParser(file: String, code: String, startPosition: CodePosition): JavaScriptParser {
+    private fun createJsParser(file: String, code: String, offset: Int, startPosition: CodePosition): JavaScriptParser {
         val inputStream = CharStreams.fromString(code, file)
+        inputStream.seek(offset)
         val offsetStream = OffsetCharStream(
             inputStream,
             startPosition.line,

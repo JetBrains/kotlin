@@ -5,16 +5,21 @@
 
 package org.jetbrains.kotlin.js.parser.antlr
 
+import com.google.gwt.dev.js.ScopeContext
 import org.antlr.v4.runtime.tree.ErrorNode
 import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.RuleNode
 import org.antlr.v4.runtime.tree.TerminalNode
+import org.jetbrains.kotlin.js.backend.ast.JsBlock
 import org.jetbrains.kotlin.js.backend.ast.JsBreak
+import org.jetbrains.kotlin.js.backend.ast.JsFunction
+import org.jetbrains.kotlin.js.backend.ast.JsName
 import org.jetbrains.kotlin.js.backend.ast.JsNode
+import org.jetbrains.kotlin.js.backend.ast.JsParameter
 import org.jetbrains.kotlin.js.parser.antlr.generated.JavaScriptParser
 import org.jetbrains.kotlin.js.parser.antlr.generated.JavaScriptParserVisitor
 
-class JsAstMapperVisitor() : JavaScriptParserVisitor<JsNode?> {
+class JsAstMapperVisitor(private val fileName: String, private val scopeContext: ScopeContext) : JavaScriptParserVisitor<JsNode?> {
     override fun visitProgram(ctx: JavaScriptParser.ProgramContext?): JsNode? {
         TODO("Not yet implemented")
     }
@@ -377,7 +382,14 @@ class JsAstMapperVisitor() : JavaScriptParserVisitor<JsNode?> {
     }
 
     override fun visitFunctionExpression(ctx: JavaScriptParser.FunctionExpressionContext?): JsNode? {
-        TODO("Not yet implemented")
+        val anonymousFunction = ctx?.anonymousFunction() ?: return null
+
+        return when (anonymousFunction) {
+            is JavaScriptParser.AnonymousFunctionDeclContext -> visitAnonymousFunctionDecl(anonymousFunction)
+            is JavaScriptParser.ArrowFunctionContext -> visitArrowFunction(anonymousFunction)
+            is JavaScriptParser.NamedFunctionContext -> visitNamedFunction(anonymousFunction)
+            else -> TODO("Branch not supported yet")
+        }
     }
 
     override fun visitUnaryMinusExpression(ctx: JavaScriptParser.UnaryMinusExpressionContext?): JsNode? {
@@ -521,7 +533,26 @@ class JsAstMapperVisitor() : JavaScriptParserVisitor<JsNode?> {
     }
 
     override fun visitAnonymousFunctionDecl(ctx: JavaScriptParser.AnonymousFunctionDeclContext?): JsNode? {
-        TODO("Not yet implemented")
+        val function = scopeContext.enterFunction()
+
+        // Function is generator
+        if (ctx?.Multiply() != null)
+            function.modifiers.add(JsFunction.Modifier.GENERATOR)
+
+        ctx?.formalParameterList()?.formalParameterArg()?.forEach { paramNode ->
+            val identifier = paramNode.assignable().identifier()
+                ?: TODO("Only identifier parameters are supported yet")
+
+            val paramName = scopeContext.localNameFor(identifier.text)
+            function.parameters.add(JsParameter(paramName).applyLocation(fileName,paramNode))
+        }
+
+        val block = visitFunctionBody(ctx?.functionBody()) ?: TODO("Block is missing")
+        function.body = block as JsBlock
+
+        return function.also {
+            scopeContext.exitFunction()
+        }
     }
 
     override fun visitArrowFunction(ctx: JavaScriptParser.ArrowFunctionContext?): JsNode? {
