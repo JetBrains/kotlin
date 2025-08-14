@@ -130,7 +130,8 @@ fun test2(l: List2) {
 }
 
 fun test3(l: List3) {
-    l.get(0)
+    // Due to enhancements, UnnanotatedList.get gets @MURV from kotlin.collections.List.get
+    <!RETURN_VALUE_NOT_USED!>l.get(0)<!>
     l.notAListMember()
     l.size
     l.set(0, "")

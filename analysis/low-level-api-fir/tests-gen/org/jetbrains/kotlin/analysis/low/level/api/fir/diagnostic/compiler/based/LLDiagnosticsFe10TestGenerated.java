@@ -9785,6 +9785,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("kotlinJavaKotlin.kt")
+      public void testKotlinJavaKotlin() {
+        runTest("compiler/testData/diagnostics/tests/crv/kotlinJavaKotlin.kt");
+      }
+
+      @Test
       @TestMetadata("lambdas.kt")
       public void testLambdas() {
         runTest("compiler/testData/diagnostics/tests/crv/lambdas.kt");

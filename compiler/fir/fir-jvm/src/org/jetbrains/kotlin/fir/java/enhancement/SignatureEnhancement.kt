@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.*
@@ -59,6 +58,7 @@ import org.jetbrains.kotlin.load.java.AnnotationQualifierApplicabilityType.VALUE
 import org.jetbrains.kotlin.load.java.typeEnhancement.*
 import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
 import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.resolve.ReturnValueStatus
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
@@ -409,7 +409,7 @@ class FirSignatureEnhancement(
                     origin = declarationOrigin
 
                     this.name = name!!
-                    status = firMethod.status
+                    status = enhanceStatus(firMethod, predefinedEnhancementInfo, overriddenMembers)
                     symbol = if (isIntersectionOverride) {
                         FirIntersectionOverrideFunctionSymbol(
                             methodId, overriddenMembers.map { it.symbol },
@@ -503,6 +503,20 @@ class FirSignatureEnhancement(
         }
 
         return function.symbol
+    }
+
+    private fun enhanceStatus(
+        method: FirSimpleFunction,
+        predefinedEnhancementInfo: PredefinedFunctionEnhancementInfo?,
+        overriddenMembers: List<FirCallableDeclaration>,
+    ): FirDeclarationStatus {
+        val original = method.status
+        if (original.returnValueStatus != ReturnValueStatus.Unspecified) return original
+        val newRvStatus = overriddenMembers.firstNotNullOfOrNull { declaration ->
+            declaration.status.returnValueStatus.takeIf { it != ReturnValueStatus.Unspecified }
+        }
+        if (newRvStatus == null) return original
+        return original.copy(returnValueStatus = newRvStatus)
     }
 
     private fun buildEnhancedValueParameter(

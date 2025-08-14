@@ -130,6 +130,7 @@ fun test2(l: List2) {
 }
 
 fun test3(l: List3) {
+    // Due to enhancements, UnnanotatedList.get gets @MURV from kotlin.collections.List.get
     l.get(0)
     l.notAListMember()
     l.size

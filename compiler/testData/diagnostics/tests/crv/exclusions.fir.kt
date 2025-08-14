@@ -10,6 +10,7 @@ fun unitF(): Unit = Unit
 fun coll(m: MutableList<String>) {
     m.add("")
     <!RETURN_VALUE_NOT_USED!>m.isEmpty()<!>
+    <!RETURN_VALUE_NOT_USED!>m.toString()<!>
 }
 
 fun nullable(m: MutableList<String>?) {
@@ -20,6 +21,7 @@ fun nullable(m: MutableList<String>?) {
 fun lhs(s: LinkedHashSet<String>) {
     s.add("x")
     <!RETURN_VALUE_NOT_USED!>s.isEmpty()<!>
+    <!RETURN_VALUE_NOT_USED!>s.toString()<!>
 }
 
 fun javaType(m: java.util.ArrayList<String>) {
