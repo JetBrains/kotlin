@@ -39,11 +39,11 @@ object FirInlineBodyResolvableExpressionChecker : FirBasicExpressionChecker(MppC
         private val session: FirSession,
     ) {
         context(context: CheckerContext, reporter: DiagnosticReporter)
-        fun check(qualifiedAccess: FirStatement, targetSymbol: FirCallableSymbol<*>) {
-            val source = qualifiedAccess.source ?: return
+        fun check(statement: FirStatement, targetSymbol: FirCallableSymbol<*>) {
+            val source = statement.source ?: return
 
             if (targetSymbol in inlinableParameters) {
-                if (!qualifiedAccess.partOfCall()) {
+                if (!statement.partOfCall()) {
                     reporter.reportOn(source, FirErrors.USAGE_IS_NOT_INLINABLE, targetSymbol)
                 }
                 if (context.containingDeclarations.any { it in inlinableParameters }) {
@@ -55,13 +55,13 @@ object FirInlineBodyResolvableExpressionChecker : FirBasicExpressionChecker(MppC
                 }
             }
 
-            if (qualifiedAccess is FirQualifiedAccessExpression) {
-                checkReceiver(qualifiedAccess, qualifiedAccess.dispatchReceiver, targetSymbol)
-                checkReceiver(qualifiedAccess, qualifiedAccess.extensionReceiver, targetSymbol)
+            if (statement is FirQualifiedAccessExpression) {
+                checkReceiver(statement, statement.dispatchReceiver, targetSymbol)
+                checkReceiver(statement, statement.extensionReceiver, targetSymbol)
             }
 
-            if (qualifiedAccess is FirFunctionCall) {
-                checkArgumentsOfCall(qualifiedAccess, targetSymbol)
+            if (statement is FirCall) {
+                checkArgumentsOfCall(statement, targetSymbol)
             }
         }
 
@@ -146,7 +146,7 @@ object FirInlineBodyResolvableExpressionChecker : FirBasicExpressionChecker(MppC
 
         context(context: CheckerContext, reporter: DiagnosticReporter)
         private fun checkArgumentsOfCall(
-            functionCall: FirFunctionCall,
+            functionCall: FirCall,
             targetSymbol: FirBasedSymbol<*>,
         ) {
             if (context.isContractBody) return
