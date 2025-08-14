@@ -102,6 +102,17 @@ fun main(args: Array<String>) {
         }
 
         testGroup("wasm/wasm.tests/tests-gen", "compiler/testData", testRunnerMethodName = "runTest0") {
+            testClass<AbstractFirWasmJsPrecompiledStdlib> {
+                model("codegen/boxWasmPrecompile", pattern = jsTranslatorTestPattern)
+            }
+            testClass<AbstractFirWasmJsPrecompiledKotlinTest> {
+                model("codegen/boxWasmPrecompile", pattern = jsTranslatorTestPattern)
+            }
+
+            testClass<AbstractFirWasmJsCodegenSingleModuleBoxTest> {
+                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
+            }
+
             testClass<AbstractFirWasmJsCodegenBoxTest> {
                 model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
             }

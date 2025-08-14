@@ -159,7 +159,8 @@ class WasmLoweringFacade(
             debugInformation = null,
             dts = dts,
             useDebuggerCustomFormatters = useDebuggerCustomFormatters,
-            jsBuiltinsPolyfillsWrapper = jsBuiltinsPolyfillsWrapper
+            jsBuiltinsPolyfillsWrapper = jsBuiltinsPolyfillsWrapper,
+            baseFileName = baseFileName,
         )
     }
 }
