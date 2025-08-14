@@ -16,6 +16,9 @@ import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestServices
@@ -136,6 +139,90 @@ abstract class AbstractTypeCreatorDslTest : AbstractAnalysisApiBasedTest() {
 
         protected fun getTypeParameterSymbolByCaret(label: String): KaTypeParameterSymbol {
             return (caretToType[label] as? KaTypeParameterType)?.symbol ?: error("Type under `$label` is not a type parameter type")
+        }
+
+        inner class ClassType {
+            fun testIntTypeMarkNullable(): KaType {
+                val intTypeSymbol = getClassLikeSymbolByCaret("int")
+                return session.typeCreator.classType(intTypeSymbol) {
+                    isMarkedNullable = true
+                }
+            }
+
+            fun testUserType(): KaType {
+                val userTypeSymbol = getClassLikeSymbolByCaret("type")
+                return session.typeCreator.classType(userTypeSymbol)
+            }
+
+            fun testLocalUserType(): KaType {
+                val userTypeSymbol = getClassLikeSymbolByCaret("type")
+                return session.typeCreator.classType(userTypeSymbol)
+            }
+
+            fun testBoxedArrayWithStringTypeArgument(): KaType {
+                val arrayTypeSymbol = getClassLikeSymbolByCaret("array")
+                val stringType = getTypeByCaret("string")
+                return session.typeCreator.classType(arrayTypeSymbol) {
+                    typeArgument(Variance.IN_VARIANCE) {
+                        stringType
+                    }
+                }
+            }
+
+            fun testMoreTypeArgumentsThanExpected(): KaType {
+                val arrayTypeSymbol = getClassLikeSymbolByCaret("array")
+                val stringType = getTypeByCaret("string")
+                return session.typeCreator.classType(arrayTypeSymbol) {
+                    typeArgument(Variance.IN_VARIANCE) {
+                        stringType
+                    }
+                    typeArgument(Variance.OUT_VARIANCE) {
+                        stringType
+                    }
+                    invariantTypeArgument(stringType)
+                }
+            }
+
+            fun testLessTypeArgumentsThanExpected(): KaType {
+                val arrayTypeSymbol = getClassLikeSymbolByCaret("array")
+                return session.typeCreator.classType(arrayTypeSymbol)
+            }
+
+            fun testNonExistingClassId(): KaType {
+                return session.typeCreator.classType(ClassId(FqName.ROOT, Name.identifier("MyClass")))
+            }
+
+            fun testUserGenericTypeWithStarProjection(): KaType {
+                val userTypeSymbol = getClassLikeSymbolByCaret("type")
+                return session.typeCreator.classType(userTypeSymbol) {
+                    typeArgument(starTypeProjection())
+                }
+            }
+
+            fun testNonExistingClassIdWithAnnotations(): KaType {
+                val annotationClassId1 = ClassId.fromString("MyAnno1")
+                val annotationClassId2 = ClassId.fromString("MyAnno2")
+                val annotationClassId3 = ClassId.fromString("MyAnno3")
+
+                return session.typeCreator.classType(ClassId(FqName.ROOT, Name.identifier("MyClass"))) {
+                    annotation(annotationClassId1)
+                    annotation(annotationClassId2)
+                    annotation(annotationClassId3)
+                }
+            }
+
+            fun testUserTypeWithAnnotations(): KaType {
+                val annotationClassId1 = ClassId.fromString("MyAnno1")
+                val annotationClassId2 = ClassId.fromString("MyAnno2")
+                val annotationClassId3 = ClassId.fromString("MyAnno3")
+
+                val userTypeSymbol = getClassLikeSymbolByCaret("type")
+                return session.typeCreator.classType(userTypeSymbol) {
+                    annotation(annotationClassId1)
+                    annotation(annotationClassId2)
+                    annotation(annotationClassId3)
+                }
+            }
         }
     }
 }
