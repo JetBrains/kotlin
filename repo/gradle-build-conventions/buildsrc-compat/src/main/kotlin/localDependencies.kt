@@ -126,8 +126,6 @@ object IntellijRootUtils {
     }
 }
 
-fun Project.ideaHomePathForTests() = rootProject.layout.buildDirectory.dir("ideaHomeForTests")
-
 fun Project.ideaBuildNumberFileForTests() = objects.directoryProperty().value(ideaHomePathForTests()).file("build.txt")
 
 fun Project.writeIdeaBuildNumberForTests() {
