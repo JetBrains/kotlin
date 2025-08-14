@@ -14,4 +14,4 @@ public val <T> Array<out T>.foo: String
 
 import test.foo
 
-fun box(): String = arrayOf('O', "K").foo
+fun box(): String = arrayOf<Any>('O', "K").foo
