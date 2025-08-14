@@ -101,7 +101,7 @@ class DataFrameCommandLineProcessor : CommandLineProcessor {
         val SCHEMAS_OPTION = CliOption(
             "schemasPath",
             "path string",
-            "Disable generation of extension properties for @DataSchema annotated classes or interfaces",
+            "Path to a directory with dataframe schema JSON files. Should match output directory of the schema generator",
             required = false, allowMultipleOccurrences = false
         )
     }
