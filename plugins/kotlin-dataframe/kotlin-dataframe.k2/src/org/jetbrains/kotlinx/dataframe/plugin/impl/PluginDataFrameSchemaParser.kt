@@ -10,6 +10,7 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonPrimitive
+import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -29,7 +30,7 @@ data class ImportedDataSchema(
 
 class PluginDataFrameSchemaParser {
 
-    fun parseSchemaWithMeta(jsonString: String): ParseResult {
+    fun parseSchemaWithMeta(@Language("json") jsonString: String): ParseResult {
         return try {
             val json = Json { ignoreUnknownKeys = true }
             val jsonElement = json.parseToJsonElement(jsonString)

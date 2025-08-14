@@ -3,12 +3,7 @@ package org.jetbrains.kotlin.fir.dataframe
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.wrap
-import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchemaParser
-import org.jetbrains.kotlinx.dataframe.plugin.impl.ImportedDataSchema
-import org.jetbrains.kotlinx.dataframe.plugin.impl.ParseResult
-import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
-import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
-import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleFrameColumn
+import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -222,11 +217,11 @@ class PluginDataFrameSchemaParserTest {
         @Test
         fun `should fail when schema field is missing`() {
             val json = """
-        {
-          "format": "org.jetbrains.kotlinx.dataframe.io.JSON",
-          "data": "test.json"
-        }
-        """.trimIndent()
+            {
+              "format": "org.jetbrains.kotlinx.dataframe.io.JSON",
+              "data": "test.json"
+            }
+            """.trimIndent()
 
             val result = parser.parseSchemaWithMeta(json)
 
@@ -236,13 +231,13 @@ class PluginDataFrameSchemaParserTest {
         @Test
         fun `should fail when format field is missing`() {
             val json = """
-        {
-          "data": "test.json",
-          "schema": {
-            "id": "kotlin.Int"
-          }
-        }
-        """.trimIndent()
+            {
+              "data": "test.json",
+              "schema": {
+                "id": "kotlin.Int"
+              }
+            }
+            """.trimIndent()
 
             val result = parser.parseSchemaWithMeta(json)
 
@@ -252,13 +247,13 @@ class PluginDataFrameSchemaParserTest {
         @Test
         fun `should fail when data field is missing`() {
             val json = """
-        {
-          "format": "org.jetbrains.kotlinx.dataframe.io.JSON",
-          "schema": {
-            "id": "kotlin.Int"
-          }
-        }
-        """.trimIndent()
+            {
+              "format": "org.jetbrains.kotlinx.dataframe.io.JSON",
+              "schema": {
+                "id": "kotlin.Int"
+              }
+            }
+            """.trimIndent()
 
             val result = parser.parseSchemaWithMeta(json)
 
@@ -268,14 +263,14 @@ class PluginDataFrameSchemaParserTest {
         @Test
         fun `should fail with invalid JSON`() {
             val json = """
-        {
-          "format": "test",
-          "data": "test.json",
-          "schema": {
-            invalid json here
-          }
-        }
-        """.trimIndent()
+            {
+              "format": "test",
+              "data": "test.json",
+              "schema": {
+                invalid json here
+              }
+            }
+            """.trimIndent()
 
             val result = parser.parseSchemaWithMeta(json)
 
@@ -285,14 +280,14 @@ class PluginDataFrameSchemaParserTest {
         @Test
         fun `should fail with blank column name`() {
             val json = """
-        {
-          "format": "org.jetbrains.kotlinx.dataframe.io.JSON",
-          "data": "test.json",
-          "schema": {
-            "": "kotlin.Int"
-          }
-        }
-        """.trimIndent()
+            {
+              "format": "org.jetbrains.kotlinx.dataframe.io.JSON",
+              "data": "test.json",
+              "schema": {
+                "": "kotlin.Int"
+              }
+            }
+            """.trimIndent()
 
             val result = parser.parseSchemaWithMeta(json)
 
@@ -302,14 +297,14 @@ class PluginDataFrameSchemaParserTest {
         @Test
         fun `should fail with blank type string`() {
             val json = """
-        {
-          "format": "org.jetbrains.kotlinx.dataframe.io.JSON",
-          "data": "test.json",
-          "schema": {
-            "id": ""
-          }
-        }
-        """.trimIndent()
+            {
+              "format": "org.jetbrains.kotlinx.dataframe.io.JSON",
+              "data": "test.json",
+              "schema": {
+                "id": ""
+              }
+            }
+            """.trimIndent()
 
             val result = parser.parseSchemaWithMeta(json)
 
@@ -319,14 +314,14 @@ class PluginDataFrameSchemaParserTest {
         @Test
         fun `should fail when column group has no nested columns`() {
             val json = """
-        {
-          "format": "org.jetbrains.kotlinx.dataframe.io.JSON",
-          "data": "test.json",
-          "schema": {
-            "empty: ColumnGroup": {}
-          }
-        }
-        """.trimIndent()
+            {
+              "format": "org.jetbrains.kotlinx.dataframe.io.JSON",
+              "data": "test.json",
+              "schema": {
+                "empty: ColumnGroup": {}
+              }
+            }
+            """.trimIndent()
 
             val result = parser.parseSchemaWithMeta(json)
 
@@ -336,16 +331,16 @@ class PluginDataFrameSchemaParserTest {
         @Test
         fun `should fail when nested object lacks proper suffix`() {
             val json = """
-        {
-          "format": "org.jetbrains.kotlinx.dataframe.io.JSON",
-          "data": "test.json",
-          "schema": {
-            "invalidNested": {
-              "field": "kotlin.String"
+            {
+              "format": "org.jetbrains.kotlinx.dataframe.io.JSON",
+              "data": "test.json",
+              "schema": {
+                "invalidNested": {
+                  "field": "kotlin.String"
+                }
+              }
             }
-          }
-        }
-        """.trimIndent()
+            """.trimIndent()
 
             val result = parser.parseSchemaWithMeta(json)
 
