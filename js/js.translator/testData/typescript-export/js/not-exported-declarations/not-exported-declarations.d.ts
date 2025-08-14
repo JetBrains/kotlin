@@ -12,9 +12,11 @@ declare namespace JS_TESTS {
             get foo(): string;
             readonly __doNotUseOrImplementIt: foo.ExportedInterface["__doNotUseOrImplementIt"];
         }
-        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-        namespace OnlyFooParamExported.$metadata$ {
-            const constructor: abstract new () => OnlyFooParamExported;
+        namespace OnlyFooParamExported {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => OnlyFooParamExported;
+            }
         }
     }
 }

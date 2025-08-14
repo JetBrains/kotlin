@@ -5,8 +5,10 @@ export declare class MyClass {
     get stepId(): number;
     qux(): number;
 }
-/** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-export declare namespace MyClass.$metadata$ {
-    const constructor: abstract new () => MyClass;
+export declare namespace MyClass {
+    /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+    namespace $metadata$ {
+        const constructor: abstract new () => MyClass;
+    }
 }
 export declare function box(stepId: number, isWasm: boolean): string;

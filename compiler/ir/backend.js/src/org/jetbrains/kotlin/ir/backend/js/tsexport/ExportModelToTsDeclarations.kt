@@ -271,7 +271,7 @@ class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
             if (shouldGenerateObjectWithGetInstance) listOf(classContainingType, classContainingShape) else listOf(classContainingShape)
 
         val objectClass = (extraClassWithGetInstanceMethod ?: classContainingType).generateTypeScriptString(indent, prefix)
-        val objectMetadata = generateMetadataNamespace(name, metadataMembers).toTypeScript(indent, prefix)
+        val objectMetadata = ExportedNamespace(name, listOf(generateMetadataNamespace(metadataMembers))).toTypeScript(indent, prefix)
 
         return "$objectClass\n$objectMetadata"
     }
@@ -315,14 +315,7 @@ class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
 
         val bodyString = privateCtorString + membersString + indent
 
-        val realNestedClasses = nonInnerClasses + innerClasses.map { it.withProtectedConstructors() }
-
-        val klassExport =
-            "$prefix$modifiers$keyword $name$renderedTypeParameters$superClassClause$superInterfacesClause {\n$bodyString}"
-        val staticsExport =
-            if (realNestedClasses.isNotEmpty()) "\n" + ExportedNamespace(name, realNestedClasses).toTypeScript(indent, prefix) else ""
-
-        val metadataString = runIf(requireMetadata) {
+        val metadataNamespace = listOfNotNull(runIf(requireMetadata) {
             val constructorProperty = ExportedProperty(
                 name = MetadataConstructor,
                 type = ExportedType.ConstructorType(
@@ -338,16 +331,22 @@ class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
                 mutable = false,
                 isQualified = true
             )
-            generateMetadataNamespace(name, listOf(constructorProperty))
-                .toTypeScript(indent, prefix)
-                .let { "\n" + it }
-        }.orEmpty()
+            generateMetadataNamespace(listOf(constructorProperty))
+        })
+
+        val realNestedClasses = metadataNamespace + nonInnerClasses + innerClasses.map { it.withProtectedConstructors() }
+
+        val klassExport =
+            "$prefix$modifiers$keyword $name$renderedTypeParameters$superClassClause$superInterfacesClause {\n$bodyString}"
+
+        val staticsExport =
+            if (realNestedClasses.isNotEmpty()) "\n" + ExportedNamespace(name, realNestedClasses).toTypeScript(indent, prefix) else ""
 
         val interfaceCompanionsString = if (interfaceCompanions.isNotEmpty()) "\n" + interfaceCompanions.joinToString("\n") {
             (it as ExportedObject).copy(typeParameters = typeParameters).toTypeScript(indent, prefix)
         } else ""
 
-        return if (name.isValidES5Identifier()) klassExport + metadataString + staticsExport + interfaceCompanionsString else ""
+        return if (name.isValidES5Identifier()) klassExport + staticsExport + interfaceCompanionsString else ""
     }
 
     private fun List<ExportedType>.toExtendsClause(indent: String): String {
@@ -521,8 +520,8 @@ class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
         }
     }
 
-    private fun generateMetadataNamespace(name: String, members: List<ExportedDeclaration>): ExportedNamespace =
-        ExportedNamespace("$name.$Metadata", members)
+    private fun generateMetadataNamespace(members: List<ExportedDeclaration>): ExportedNamespace =
+        ExportedNamespace(Metadata, members)
             .apply { attributes += ExportedAttribute.DeprecatedAttribute("$Metadata is used for internal purposes, please don't use it in your code, because it can be removed at any moment") }
 
     private fun tsDeprecated(message: String): String {

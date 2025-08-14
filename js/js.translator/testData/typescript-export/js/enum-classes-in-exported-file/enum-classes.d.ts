@@ -21,28 +21,30 @@ declare namespace JS_TESTS {
             static values(): Array<foo.TestEnumClass>;
             static valueOf(value: string): foo.TestEnumClass;
         }
-        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-        namespace TestEnumClass.$metadata$ {
-            const constructor: abstract new () => TestEnumClass;
-        }
         namespace TestEnumClass {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => TestEnumClass;
+            }
             class Nested {
                 constructor();
                 get prop(): string;
             }
-            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-            namespace Nested.$metadata$ {
-                const constructor: abstract new () => Nested;
+            namespace Nested {
+                /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+                namespace $metadata$ {
+                    const constructor: abstract new () => Nested;
+                }
             }
         }
         class OuterClass {
             constructor();
         }
-        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-        namespace OuterClass.$metadata$ {
-            const constructor: abstract new () => OuterClass;
-        }
         namespace OuterClass {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => OuterClass;
+            }
             abstract class NestedEnum {
                 private constructor();
                 static get A(): foo.OuterClass.NestedEnum & {
@@ -58,9 +60,11 @@ declare namespace JS_TESTS {
                 static values(): Array<foo.OuterClass.NestedEnum>;
                 static valueOf(value: string): foo.OuterClass.NestedEnum;
             }
-            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-            namespace NestedEnum.$metadata$ {
-                const constructor: abstract new () => NestedEnum;
+            namespace NestedEnum {
+                /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+                namespace $metadata$ {
+                    const constructor: abstract new () => NestedEnum;
+                }
             }
         }
     }

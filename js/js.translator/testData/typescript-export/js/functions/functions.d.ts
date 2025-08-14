@@ -11,11 +11,13 @@ declare namespace JS_TESTS {
         abstract class KtMutableList<E> extends KtSingleton<KtMutableList.$metadata$.constructor>() {
             private constructor();
         }
-        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-        namespace KtMutableList.$metadata$ {
-            abstract class constructor {
-                fromJsArray<E>(array: ReadonlyArray<E>): kotlin.collections.KtMutableList<E>;
-                private constructor();
+        namespace KtMutableList {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                abstract class constructor {
+                    fromJsArray<E>(array: ReadonlyArray<E>): kotlin.collections.KtMutableList<E>;
+                    private constructor();
+                }
             }
         }
     }
@@ -46,18 +48,22 @@ declare namespace JS_TESTS {
             get a(): string;
             getA(): string;
         }
-        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-        namespace Scope1.$metadata$ {
-            const constructor: abstract new () => Scope1;
+        namespace Scope1 {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => Scope1;
+            }
         }
         class Scope2 {
             constructor(a: string);
             get a(): string;
             getA(): string;
         }
-        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-        namespace Scope2.$metadata$ {
-            const constructor: abstract new () => Scope2;
+        namespace Scope2 {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => Scope2;
+            }
         }
         function concatWithContextParameters(scope1: foo.Scope1, scope2: foo.Scope2): string;
         function concatWithExtensionAndContextParameter(scope1: foo.Scope1, _this_: foo.Scope2): string;
