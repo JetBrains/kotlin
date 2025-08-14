@@ -19,12 +19,12 @@ class KotlinObjectStubImpl(
     private val name: StringRef?,
     override val fqName: FqName?,
     override val classId: ClassId?,
-    private val _superNames: Array<StringRef>,
+    private val superNameRefs: Array<StringRef>,
     override val isTopLevel: Boolean,
     override val isLocal: Boolean,
     override val isObjectLiteral: Boolean,
 ) : KotlinStubBaseImpl<KtObjectDeclaration>(parent, KtStubElementTypes.OBJECT_DECLARATION), KotlinObjectStub {
-    override fun getName() = StringRef.toString(name)
+    override fun getName(): String? = name?.string
     override val superNames: List<String>
-        get() = _superNames.map { it.toString() }
+        get() = superNameRefs.map(StringRef::getString)
 }

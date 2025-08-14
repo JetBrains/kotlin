@@ -17,7 +17,7 @@ class KotlinConstantExpressionStubImpl(
     parent: StubElement<out PsiElement>?,
     elementType: KtConstantExpressionElementType,
     override val kind: ConstantValueKind,
-    private val _value: StringRef
+    private val valueRef: StringRef
 ) : KotlinStubBaseImpl<KtConstantExpression>(parent, elementType), KotlinConstantExpressionStub {
-    override val value: String get() = StringRef.toString(_value)
+    override val value: String get() = valueRef.string
 }

@@ -15,12 +15,9 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 class KotlinImportDirectiveStubImpl(
     parent: StubElement<*>,
     override val isAllUnder: Boolean,
-    private val _importedFqName: StringRef?,
+    private val importedFqNameRef: StringRef?,
     override val isValid: Boolean,
 ) : KotlinStubBaseImpl<KtImportDirective>(parent, KtStubElementTypes.IMPORT_DIRECTIVE), KotlinImportDirectiveStub {
     override val importedFqName: FqName?
-        get() {
-            val fqNameString = StringRef.toString(_importedFqName)
-            return if (fqNameString != null) FqName(fqNameString) else null
-        }
+        get() = importedFqNameRef?.string?.let(::FqName)
 }

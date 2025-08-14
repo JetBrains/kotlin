@@ -16,11 +16,11 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 class KotlinAnnotationEntryStubImpl(
     parent: StubElement<out PsiElement>?,
-    private val _shortName: StringRef?,
+    private val shortNameRef: StringRef?,
     override val hasValueArguments: Boolean,
     val valueArguments: Map<Name, ConstantValue<*>>?,
 ) : KotlinStubBaseImpl<KtAnnotationEntry>(parent, KtStubElementTypes.ANNOTATION_ENTRY), KotlinAnnotationEntryStub {
 
     override val shortName: String?
-        get() = _shortName?.string
+        get() = shortNameRef?.string
 }
