@@ -871,7 +871,8 @@ open class LocalDeclarationsLowering(
 
             // Name invention is based on a parent that will be a final parent after the lifting.
             // However, to preserve IR consistency newDeclaration.parent will be oldDeclaration.parent till the moment of actual lifting.
-            val newName = generateNameForLiftedDeclaration(oldDeclaration, ownerParent)
+//            val newName = generateNameForLiftedDeclaration(oldDeclaration, ownerParent)
+            val newName = oldDeclaration.name
 
             // TODO: consider using fields to access the closure of enclosing class.
             val (capturedValues, capturedTypeParameters) = localFunctionContext.closure
