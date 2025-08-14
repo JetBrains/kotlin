@@ -114,28 +114,11 @@ class IrCommonToPlatformDependencyActualizerMapContributor private constructor(
             processPairOfClasses(fromShared, fromPlatform)
         }
 
-        // TODO(KT-80002) why do we get a CME here without the copy?
-        val platformClassMapping = platformMappingProvider.classMapping.toMap()
-        for ((commonFirClassSymbol, platformFirClassSymbol) in platformClassMapping.values) {
-            if (commonFirClassSymbol is FirTypeAliasSymbol) {
-                check(platformFirClassSymbol is FirTypeAliasSymbol) {
-                    buildString {
-                        appendLine("Typealias from common klib should be also a typealias in platform library")
-                        appendLine("Common symbol: $commonFirClassSymbol")
-                        appendLine("Platform symbol: $platformFirClassSymbol")
-                    }
-                }
-                val expandedCommonFirClassSymbol = commonFirClassSymbol.fullyExpandedClass(platformMappingProvider.commonSymbolProvider.session)!!
-                val expandedPlatformFirClassSymbol = platformFirClassSymbol.fullyExpandedClass(platformMappingProvider.platformSymbolProvider.session)!!
-                processPairOfClasses(expandedCommonFirClassSymbol, expandedPlatformFirClassSymbol)
-            } else {
-                processPairOfClasses(commonFirClassSymbol, platformFirClassSymbol)
-            }
-        }
-
         for (commonMappingProvider in commonMappingProviders) {
-            for ((commonFirClassSymbol, _) in commonMappingProvider.classMapping.values) {
-                val platformFirClassSymbol = platformMappingProvider.getClassLikeSymbolByClassId(commonFirClassSymbol.classId)!!
+            // List copy is required because by querying the platform symbol provider might trigger the common symbol provider
+            for (pair in commonMappingProvider.classMapping.values.toList()) {
+                val commonFirClassSymbol = pair.platformClass ?: pair.commonClass ?: continue
+                val platformFirClassSymbol = platformSession.symbolProvider.getClassLikeSymbolByClassId(commonFirClassSymbol.classId)!!
                 processPairOfClasses(commonFirClassSymbol, platformFirClassSymbol)
             }
         }

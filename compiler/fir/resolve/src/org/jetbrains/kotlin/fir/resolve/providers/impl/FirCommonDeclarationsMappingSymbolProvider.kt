@@ -41,7 +41,7 @@ class FirCommonDeclarationsMappingSymbolProvider(
 ) : FirSymbolProvider(session) {
     private val providers: List<FirSymbolProvider> = listOf(commonSymbolProvider, platformSymbolProvider)
 
-    data class ClassPair(val commonClass: FirClassLikeSymbol<*>, val platformClass: FirClassLikeSymbol<*>)
+    data class ClassPair(val commonClass: FirClassLikeSymbol<*>?, val platformClass: FirClassLikeSymbol<*>?)
 
     val classMapping: Map<ClassId, ClassPair> get() = _classMapping
     private val _classMapping: MutableMap<ClassId, ClassPair> = mutableMapOf()
@@ -57,14 +57,15 @@ class FirCommonDeclarationsMappingSymbolProvider(
         val commonSymbol = commonSymbolProvider.getClassLikeSymbolByClassId(classId)
         val platformSymbol = platformSymbolProvider.getClassLikeSymbolByClassId(classId)
 
+        if (commonSymbol == null && platformSymbol == null) return null
+
+        _classMapping[classId] = ClassPair(commonSymbol, platformSymbol)
+
         return when {
             commonSymbol == null -> platformSymbol
             platformSymbol == null -> commonSymbol
             commonSymbol == platformSymbol -> commonSymbol
-            else -> {
-                _classMapping[classId] = ClassPair(commonSymbol, platformSymbol)
-                platformSymbol
-            }
+            else -> platformSymbol
         }
     }
 
