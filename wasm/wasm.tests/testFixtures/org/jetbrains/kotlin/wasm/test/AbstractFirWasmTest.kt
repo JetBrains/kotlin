@@ -112,7 +112,6 @@ open class AbstractFirWasmJsTest(
         get() = WasmTarget.JS
 }
 
-
 open class AbstractFirWasmJsCodegenBoxTest(
     testGroupOutputDirPrefix: String = "codegen/firBox/"
 ) : AbstractFirWasmJsTest(
