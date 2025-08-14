@@ -264,7 +264,7 @@ fun createTargetedAnnotationStubs(
         val (annotationWithArgs, target) = annotation
         val annotationEntryStubImpl = KotlinAnnotationEntryStubImpl(
             parent,
-            _shortName = annotationWithArgs.classId.shortClassName.ref(),
+            shortNameRef = annotationWithArgs.classId.shortClassName.ref(),
             hasValueArguments = false,
             annotationWithArgs.args,
         )

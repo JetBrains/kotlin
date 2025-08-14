@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 class KotlinParameterStubImpl(
     parent: StubElement<out PsiElement>?,
-    private val _fqName: StringRef?,
+    private val fqNameRef: StringRef?,
     private val name: StringRef?,
     override val isMutable: Boolean,
     override val hasValOrVar: Boolean,
@@ -23,11 +23,9 @@ class KotlinParameterStubImpl(
     val functionTypeParameterName: String? = null
 ) : KotlinStubBaseImpl<KtParameter>(parent, KtStubElementTypes.VALUE_PARAMETER), KotlinParameterStub {
 
-    override fun getName(): String? {
-        return StringRef.toString(name)
-    }
+    override fun getName(): String? = name?.string
 
     // val/var parameters from a primary constructor might have fqName
     override val fqName: FqName?
-        get() = if (_fqName != null) FqName(_fqName.string) else null
+        get() = fqNameRef?.string?.let(::FqName)
 }

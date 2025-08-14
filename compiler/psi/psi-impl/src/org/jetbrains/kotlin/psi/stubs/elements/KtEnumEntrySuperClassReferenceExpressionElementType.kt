@@ -26,7 +26,7 @@ class KtEnumEntrySuperClassReferenceExpressionElementType(@NonNls debugName: Str
         parentStub: StubElement<*>,
     ): KotlinEnumEntrySuperclassReferenceExpressionStubImpl = KotlinEnumEntrySuperclassReferenceExpressionStubImpl(
         parent = parentStub,
-        _referencedName = StringRef.fromString(psi.getReferencedName())!!,
+        referencedNameRef = StringRef.fromString(psi.getReferencedName()),
     )
 
     override fun serialize(stub: KotlinEnumEntrySuperclassReferenceExpressionStubImpl, dataStream: StubOutputStream) {

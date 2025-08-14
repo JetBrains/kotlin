@@ -21,7 +21,7 @@ class KotlinClassStubImpl(
     private val qualifiedName: StringRef?,
     override val classId: ClassId?,
     private val name: StringRef?,
-    private val _superNames: Array<StringRef>,
+    private val superNameRefs: Array<StringRef>,
     override val isInterface: Boolean,
     override val isEnumEntry: Boolean,
     override val isClsStubCompiledToJvmDefaultImplementation: Boolean,
@@ -39,5 +39,5 @@ class KotlinClassStubImpl(
     override fun getName(): String? = StringRef.toString(name)
 
     override val superNames: List<String>
-        get() = _superNames.map(StringRef::toString)
+        get() = superNameRefs.map(StringRef::toString)
 }

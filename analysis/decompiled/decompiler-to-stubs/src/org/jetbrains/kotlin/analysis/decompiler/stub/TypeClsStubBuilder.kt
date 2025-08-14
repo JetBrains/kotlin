@@ -317,7 +317,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
 
             val parameter = KotlinParameterStubImpl(
                 parameterList,
-                _fqName = null,
+                fqNameRef = null,
                 name = null,
                 isMutable = false,
                 hasValOrVar = false,
@@ -351,7 +351,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             val parameterStub = KotlinParameterStubImpl(
                 parameterListStub,
                 name = parameterName.ref(),
-                _fqName = null,
+                fqNameRef = null,
                 hasDefaultValue = hasDefaultValue,
                 hasValOrVar = false,
                 isMutable = false
@@ -479,7 +479,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             KotlinPlaceHolderStubImpl<KtContextReceiverList>(parent, KtStubElementTypes.CONTEXT_RECEIVER_LIST)
         for (contextReceiverType in contextReceiverTypes) {
             val contextReceiverStub =
-                KotlinContextReceiverStubImpl(contextReceiverListStub, KtStubElementTypes.CONTEXT_RECEIVER, _label = null)
+                KotlinContextReceiverStubImpl(contextReceiverListStub, KtStubElementTypes.CONTEXT_RECEIVER, labelRef = null)
             createTypeReferenceStub(contextReceiverStub, contextReceiverType)
         }
     }
