@@ -27,6 +27,3 @@ public annotation class ExperimentalAssociatedObjects
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.ANNOTATION_CLASS)
 public annotation class AssociatedObjectKey
-
-@ExperimentalAssociatedObjects
-public expect inline fun <reified T : Annotation> KClass<*>.findAssociatedObject(): Any?
