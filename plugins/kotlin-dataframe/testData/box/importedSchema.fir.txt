@@ -1,4 +1,4 @@
-FILE: dataSchemaSource.kt
+FILE: importedSchema.kt
     package org.jetbrains.kotlinx.dataframe.annotations
 
     @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchemaSource|() public abstract interface Schema : R|kotlin/Any| {
