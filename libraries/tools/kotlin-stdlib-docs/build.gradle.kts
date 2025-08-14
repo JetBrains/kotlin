@@ -143,6 +143,8 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
                 // regular declarations from it visible, they are explicitly included in js and wasm-js source sets.
                 sourceRoots.from("$kotlin_stdlib_dir/common-js-wasmjs/src/kotlin/JsInterop.kt")
                 sourceRoots.from("$kotlin_stdlib_dir/common-js-wasmjs/src/kotlin/js/ExperimentalWasmJsInterop.kt")
+                // We don't generate docus for the intermediate commonNonJvm source set, add them to the platform docs
+                sourceRoots.from("$kotlin_stdlib_dir/common-non-jvm/src/kotlin")
 
                 // builtin sources that are copied from common builtins during JS stdlib build
                 listOf(
@@ -174,6 +176,8 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
                 sourceRoots.from("$kotlin_native_root/Interop/Runtime/src/native/kotlin")
                 sourceRoots.from("$kotlin_native_root/runtime/src/main/kotlin")
                 sourceRoots.from("$kotlin_stdlib_dir/native-wasm/src")
+                // We don't generate docus for the intermediate commonNonJvm source set, add them to the platform docs
+                sourceRoots.from("$kotlin_stdlib_dir/common-non-jvm/src/kotlin")
                 perPackageOption("kotlin.test") {
                     suppress.set(true)
                 }
@@ -196,6 +200,8 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
                 // regular declarations from it visible, they are explicitly included in js and wasm-js source sets.
                 sourceRoots.from("$kotlin_stdlib_dir/common-js-wasmjs/src/kotlin/JsInterop.kt")
                 sourceRoots.from("$kotlin_stdlib_dir/common-js-wasmjs/src/kotlin/js/ExperimentalWasmJsInterop.kt")
+                // We don't generate docus for the intermediate commonNonJvm source set, add them to the platform docs
+                sourceRoots.from("$kotlin_stdlib_dir/common-non-jvm/src/kotlin")
 
                 // builtin sources that are copied from common builtins during Wasm stdlib build
                 listOf(
@@ -218,6 +224,8 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
                 sourceRoots.from("$kotlin_stdlib_dir/wasm/stubs")
                 sourceRoots.from("$kotlin_stdlib_dir/wasm/wasi/builtins")
                 sourceRoots.from("$kotlin_stdlib_dir/wasm/wasi/src")
+                // We don't generate docus for the intermediate commonNonJvm source set, add them to the platform docs
+                sourceRoots.from("$kotlin_stdlib_dir/common-non-jvm/src/kotlin")
 
                 // builtin sources that are copied from common builtins during Wasm stdlib build
                 listOf(
