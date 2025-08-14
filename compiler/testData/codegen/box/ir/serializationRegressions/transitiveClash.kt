@@ -6,6 +6,7 @@
 // IGNORE_BACKEND: ANDROID
 // NATIVE error caused by `foo()` clash: kotlin.AssertionError: Test failed with: 42K. Expected <OK>, actual <42K>.
 // DONT_TARGET_EXACT_BACKEND: NATIVE
+// WASM_FAILS_IN_SINGLE_MODULE_MODE
 
 // MODULE: lib1
 // FILE: lib1.kt

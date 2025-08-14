@@ -1,4 +1,5 @@
 // JVM_ABI_K1_K2_DIFF: K2 serializes annotation parameter default values (KT-59526).
+// WASM_FAILS_IN_SINGLE_MODULE_MODE
 
 // MODULE: lib
 // FILE: lib.kt
