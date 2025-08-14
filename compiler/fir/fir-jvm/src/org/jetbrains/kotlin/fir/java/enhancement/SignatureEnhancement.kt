@@ -512,11 +512,15 @@ class FirSignatureEnhancement(
     ): FirDeclarationStatus {
         val original = method.status
         if (original.returnValueStatus != ReturnValueStatus.Unspecified) return original
-        val newRvStatus = overriddenMembers.firstNotNullOfOrNull { declaration ->
-            declaration.status.returnValueStatus.takeIf { it != ReturnValueStatus.Unspecified }
+        predefinedEnhancementInfo?.returnValueStatus?.takeIf { it != ReturnValueStatus.Unspecified }?.let { newRvStatus ->
+            return original.copy(returnValueStatus = newRvStatus)
         }
-        if (newRvStatus == null) return original
-        return original.copy(returnValueStatus = newRvStatus)
+        overriddenMembers.firstNotNullOfOrNull { declaration ->
+            declaration.status.returnValueStatus.takeIf { it != ReturnValueStatus.Unspecified }
+        }?.let { newRvStatus ->
+            return original.copy(returnValueStatus = newRvStatus)
+        }
+        return original
     }
 
     private fun buildEnhancedValueParameter(

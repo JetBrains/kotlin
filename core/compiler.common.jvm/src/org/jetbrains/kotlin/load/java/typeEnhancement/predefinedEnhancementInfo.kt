@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.load.java.typeEnhancement
 
 import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
 import org.jetbrains.kotlin.load.kotlin.signatures
+import org.jetbrains.kotlin.resolve.ReturnValueStatus
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType.BOOLEAN
 
@@ -33,6 +34,7 @@ class PredefinedFunctionEnhancementInfo(
     val parametersInfo: List<TypeEnhancementInfo?> = emptyList(),
     // `null` means that it's enabled for any language version
     val errorsSinceLanguageVersion: String? = null,
+    val returnValueStatus: ReturnValueStatus? = null,
 ) {
     val warningModeClone: PredefinedFunctionEnhancementInfo? =
         if (errorsSinceLanguageVersion != null)
@@ -73,6 +75,7 @@ val PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE: Map<String, PredefinedFun
         forClass(javaLang("Iterable")) {
             function("spliterator") {
                 returns(javaUtil("Spliterator"), NOT_PLATFORM, NOT_PLATFORM)
+                mustUseReturnValue()
             }
         }
         forClass(javaUtil("Collection")) {
@@ -82,9 +85,11 @@ val PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE: Map<String, PredefinedFun
             }
             function("stream") {
                 returns(JUStream, NOT_PLATFORM, NOT_PLATFORM)
+                mustUseReturnValue()
             }
             function("parallelStream") {
                 returns(JUStream, NOT_PLATFORM, NOT_PLATFORM)
+                mustUseReturnValue()
             }
         }
         // See duplications here and in the LinkedList section
@@ -146,9 +151,11 @@ val PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE: Map<String, PredefinedFun
             }
             function("getFirst", errorsSinceLanguageVersion = "2.2") {
                 returns(JLObject, NOT_PLATFORM)
+                mustUseReturnValue()
             }
             function("getLast", errorsSinceLanguageVersion = "2.2") {
                 returns(JLObject, NOT_PLATFORM)
+                mustUseReturnValue()
             }
         }
         forClass(javaUtil("Map")) {
@@ -214,17 +221,21 @@ val PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE: Map<String, PredefinedFun
         forClass(JUOptional) {
             function("empty") {
                 returns(JUOptional, NOT_PLATFORM, NOT_NULLABLE)
+                mustUseReturnValue()
             }
             function("of") {
                 parameter(JLObject, NOT_NULLABLE)
                 returns(JUOptional, NOT_PLATFORM, NOT_NULLABLE)
+                mustUseReturnValue()
             }
             function("ofNullable") {
                 parameter(JLObject, NULLABLE)
                 returns(JUOptional, NOT_PLATFORM, NOT_NULLABLE)
+                mustUseReturnValue()
             }
             function("get") {
                 returns(JLObject, NOT_NULLABLE)
+                mustUseReturnValue()
             }
             function("ifPresent") {
                 parameter(JFConsumer, NOT_PLATFORM, NOT_NULLABLE)
@@ -307,6 +318,7 @@ private class SignatureEnhancementBuilder {
         ) {
             private val parameters = mutableListOf<Pair<String, TypeEnhancementInfo?>>()
             private var returnType: Pair<String, TypeEnhancementInfo?> = "V" to null
+            private var returnValueStatus: ReturnValueStatus? = null
 
             fun parameter(type: String, vararg pairs: Pair<Int, JavaTypeQualifiers>) {
                 parameters += type to
@@ -334,9 +346,20 @@ private class SignatureEnhancementBuilder {
                 returnType = type.desc to null
             }
 
+            // It is possible to also enhance methods with ExplicitlyIgnorable information (KT-80180),
+            // but it is not really necessary for checker to work correctly.
+            fun mustUseReturnValue() {
+                returnValueStatus = ReturnValueStatus.MustUse
+            }
+
             fun build() = with(SignatureBuildingComponents) {
                 signature(className, jvmDescriptor(functionName, parameters.map { it.first }, returnType.first)) to
-                        PredefinedFunctionEnhancementInfo(returnType.second, parameters.map { it.second }, errorsSinceLanguageVersion)
+                        PredefinedFunctionEnhancementInfo(
+                            returnType.second,
+                            parameters.map { it.second },
+                            errorsSinceLanguageVersion,
+                            returnValueStatus
+                        )
             }
         }
 

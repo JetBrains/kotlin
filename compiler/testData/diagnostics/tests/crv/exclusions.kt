@@ -4,30 +4,7 @@
 @file:MustUseReturnValue
 
 fun stringF(): String = ""
-fun nsf(): String? = "null"
 fun unitF(): Unit = Unit
-
-fun coll(m: MutableList<String>) {
-    m.add("")
-    m.isEmpty()
-    m.toString()
-}
-
-fun nullable(m: MutableList<String>?) {
-    m?.add("x")
-    m?.isEmpty()
-}
-
-fun lhs(s: LinkedHashSet<String>) {
-    s.add("x")
-    s.isEmpty()
-    s.toString()
-}
-
-fun javaType(m: java.util.ArrayList<String>) {
-    m.add("x")
-    m.isEmpty()
-}
 
 fun exlusionPropagation(cond: Boolean, m: MutableList<String>) {
     if (cond) m.add("x") else throw IllegalStateException()
