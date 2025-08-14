@@ -1,4 +1,24 @@
-FILE fqName:org.jetbrains.kotlinx.dataframe.annotations fileName:/dataSchemaSource.kt
+FILE fqName:org.jetbrains.kotlinx.dataframe.annotations fileName:/dataSchemaSourceDeclaration.kt
+  CLASS ANNOTATION_CLASS name:DataSchemaSource modality:OPEN visibility:public superTypes:[kotlin.Annotation]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:org.jetbrains.kotlinx.dataframe.annotations.DataSchemaSource
+    CONSTRUCTOR visibility:public returnType:org.jetbrains.kotlinx.dataframe.annotations.DataSchemaSource [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:DataSchemaSource modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Annotation
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Annotation
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Annotation
+FILE fqName:org.jetbrains.kotlinx.dataframe.annotations fileName:/importedSchema.kt
   CLASS INTERFACE name:Schema modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     annotations:
       DataSchemaSource
@@ -76,25 +96,25 @@ FILE fqName:org.jetbrains.kotlinx.dataframe.annotations fileName:/dataSchemaSour
         FUN DEFAULT_PROPERTY_ACCESSOR name:<get-deepGroup> visibility:public modality:ABSTRACT returnType:org.jetbrains.kotlinx.dataframe.DataRow<org.jetbrains.kotlinx.dataframe.annotations.Schema.deepGroup>
           VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:org.jetbrains.kotlinx.dataframe.annotations.Schema.group
           correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin] name:deepGroup visibility:public modality:ABSTRACT [val]
-    CLASS GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataSchemaSourceCompanionKey] OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[org.jetbrains.kotlinx.dataframe.io.DataFrameProvider<org.jetbrains.kotlinx.dataframe.annotations.Schema>]
+    CLASS GENERATED[org.jetbrains.kotlinx.dataframe.plugin.ImportedSchemaCompanionKey] OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[org.jetbrains.kotlinx.dataframe.io.DataFrameProvider<org.jetbrains.kotlinx.dataframe.annotations.Schema>]
       thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:org.jetbrains.kotlinx.dataframe.annotations.Schema.Companion
-      PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataSchemaSourceCompanionKey] name:schemaKType visibility:public modality:FINAL [val]
+      PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.ImportedSchemaCompanionKey] name:schemaKType visibility:public modality:FINAL [val]
         overridden:
           public abstract schemaKType: kotlin.reflect.KType declared in org.jetbrains.kotlinx.dataframe.io.DataFrameProvider
         FIELD PROPERTY_BACKING_FIELD name:schemaKType type:kotlin.reflect.KType visibility:private [final]
         FUN DEFAULT_PROPERTY_ACCESSOR name:<get-schemaKType> visibility:public modality:FINAL returnType:kotlin.reflect.KType
           VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:org.jetbrains.kotlinx.dataframe.annotations.Schema.Companion
-          correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataSchemaSourceCompanionKey] name:schemaKType visibility:public modality:FINAL [val]
+          correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.ImportedSchemaCompanionKey] name:schemaKType visibility:public modality:FINAL [val]
           overridden:
             public abstract fun <get-schemaKType> (): kotlin.reflect.KType declared in org.jetbrains.kotlinx.dataframe.io.DataFrameProvider
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='public final fun <get-schemaKType> (): kotlin.reflect.KType declared in org.jetbrains.kotlinx.dataframe.annotations.Schema.Companion'
               CALL 'public final fun typeOf <T> (): kotlin.reflect.KType declared in kotlin.reflect' type=kotlin.reflect.KType origin=null
                 TYPE_ARG T: org.jetbrains.kotlinx.dataframe.annotations.Schema
-      CONSTRUCTOR GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataSchemaSourceCompanionKey] visibility:public returnType:org.jetbrains.kotlinx.dataframe.annotations.Schema.Companion [primary]
+      CONSTRUCTOR GENERATED[org.jetbrains.kotlinx.dataframe.plugin.ImportedSchemaCompanionKey] visibility:public returnType:org.jetbrains.kotlinx.dataframe.annotations.Schema.Companion [primary]
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataSchemaSourceCompanionKey] OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[org.jetbrains.kotlinx.dataframe.io.DataFrameProvider<org.jetbrains.kotlinx.dataframe.annotations.Schema>]' type=org.jetbrains.kotlinx.dataframe.annotations.Schema.Companion
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS GENERATED[org.jetbrains.kotlinx.dataframe.plugin.ImportedSchemaCompanionKey] OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[org.jetbrains.kotlinx.dataframe.io.DataFrameProvider<org.jetbrains.kotlinx.dataframe.annotations.Schema>]' type=org.jetbrains.kotlinx.dataframe.annotations.Schema.Companion
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
         VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
@@ -108,7 +128,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe.annotations fileName:/dataSchemaSour
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
         overridden:
           public open fun toString (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.io.DataFrameProvider
-      FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataSchemaSourceCompanionKey] name:default visibility:public modality:FINAL returnType:org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.annotations.Schema>
+      FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.ImportedSchemaCompanionKey] name:default visibility:public modality:FINAL returnType:org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.annotations.Schema>
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:org.jetbrains.kotlinx.dataframe.annotations.Schema.Companion
         overridden:
           public abstract fun default (): org.jetbrains.kotlinx.dataframe.DataFrame<T of org.jetbrains.kotlinx.dataframe.io.DataFrameProvider> declared in org.jetbrains.kotlinx.dataframe.io.DataFrameProvider
@@ -118,9 +138,9 @@ FILE fqName:org.jetbrains.kotlinx.dataframe.annotations fileName:/dataSchemaSour
               CALL 'public open fun default (path: kotlin.String): org.jetbrains.kotlinx.dataframe.DataFrame<*> declared in org.jetbrains.kotlinx.dataframe.io.SchemaReader' type=org.jetbrains.kotlinx.dataframe.DataFrame<*> origin=null
                 ARG <this>: CONSTRUCTOR_CALL 'public constructor <init> (typeClashTactic: org.jetbrains.kotlinx.dataframe.io.JSON.TypeClashTactic, keyValuePaths: kotlin.collections.List<org.jetbrains.kotlinx.dataframe.api.JsonPath>, unifyNumbers: kotlin.Boolean) declared in org.jetbrains.kotlinx.dataframe.io.JSON' type=org.jetbrains.kotlinx.dataframe.io.JSON origin=null
                 ARG path: CONST String type=kotlin.String value="test.json"
-      FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataSchemaSourceCompanionKey] name:read visibility:public modality:FINAL returnType:org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.annotations.Schema>
+      FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.ImportedSchemaCompanionKey] name:read visibility:public modality:FINAL returnType:org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.annotations.Schema>
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:org.jetbrains.kotlinx.dataframe.annotations.Schema.Companion
-        VALUE_PARAMETER GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataSchemaSourceCompanionKey] kind:Regular name:path index:1 type:kotlin.String
+        VALUE_PARAMETER GENERATED[org.jetbrains.kotlinx.dataframe.plugin.ImportedSchemaCompanionKey] kind:Regular name:path index:1 type:kotlin.String
         overridden:
           public abstract fun read (path: kotlin.String): org.jetbrains.kotlinx.dataframe.DataFrame<T of org.jetbrains.kotlinx.dataframe.io.DataFrameProvider> declared in org.jetbrains.kotlinx.dataframe.io.DataFrameProvider
         BLOCK_BODY
@@ -166,7 +186,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe.annotations fileName:/dataSchemaSour
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public final fun read (path: kotlin.String): org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.annotations.Schema> declared in org.jetbrains.kotlinx.dataframe.annotations.Schema.Companion' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.annotations.Schema> origin=null
-          ARG <this>: GET_OBJECT 'CLASS GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataSchemaSourceCompanionKey] OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[org.jetbrains.kotlinx.dataframe.io.DataFrameProvider<org.jetbrains.kotlinx.dataframe.annotations.Schema>]' type=org.jetbrains.kotlinx.dataframe.annotations.Schema.Companion
+          ARG <this>: GET_OBJECT 'CLASS GENERATED[org.jetbrains.kotlinx.dataframe.plugin.ImportedSchemaCompanionKey] OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[org.jetbrains.kotlinx.dataframe.io.DataFrameProvider<org.jetbrains.kotlinx.dataframe.annotations.Schema>]' type=org.jetbrains.kotlinx.dataframe.annotations.Schema.Companion
           ARG path: CONST String type=kotlin.String value="path/to/file"
   FUN name:test visibility:public modality:FINAL returnType:kotlin.Unit
     VALUE_PARAMETER kind:Regular name:df index:0 type:org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.annotations.Schema>
@@ -848,26 +868,6 @@ FILE fqName:org.jetbrains.kotlinx.dataframe.annotations fileName:/dataSchemaSour
         CALL 'public final fun <get-frame> (<this>: org.jetbrains.kotlinx.dataframe.ColumnsScope<org.jetbrains.kotlinx.dataframe.annotations.test.<anonymous>.Schema_41I>): org.jetbrains.kotlinx.dataframe.DataColumn<org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.annotations.test.<anonymous>.Frame_041>> declared in org.jetbrains.kotlinx.dataframe.annotations.test.<anonymous>.Scope0' type=org.jetbrains.kotlinx.dataframe.DataColumn<org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.annotations.test.<anonymous>.Frame_041>> origin=GET_PROPERTY
           ARG <this>(index:0): CONSTRUCTOR_CALL 'public constructor <init> () declared in org.jetbrains.kotlinx.dataframe.annotations.test.<anonymous>.Scope0' type=org.jetbrains.kotlinx.dataframe.annotations.test.<anonymous>.Scope0 origin=null
           ARG <this>(index:1): GET_VAR 'val df1: org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.annotations.test.<anonymous>.Schema_41> declared in org.jetbrains.kotlinx.dataframe.annotations.test' type=org.jetbrains.kotlinx.dataframe.DataFrame<org.jetbrains.kotlinx.dataframe.annotations.test.<anonymous>.Schema_41> origin=null
-FILE fqName:org.jetbrains.kotlinx.dataframe.annotations fileName:/dataSchemaSourceDeclaration.kt
-  CLASS ANNOTATION_CLASS name:DataSchemaSource modality:OPEN visibility:public superTypes:[kotlin.Annotation]
-    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:org.jetbrains.kotlinx.dataframe.annotations.DataSchemaSource
-    CONSTRUCTOR visibility:public returnType:org.jetbrains.kotlinx.dataframe.annotations.DataSchemaSource [primary]
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:DataSchemaSource modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.Unit
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
-      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
-      overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Annotation
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Annotation
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Annotation
 FILE fqName:org.jetbrains.kotlinx.dataframe.io fileName:/schemaReaderDeclaration.kt
   CLASS INTERFACE name:DataFrameProvider modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:org.jetbrains.kotlinx.dataframe.io.DataFrameProvider<T of org.jetbrains.kotlinx.dataframe.io.DataFrameProvider>
