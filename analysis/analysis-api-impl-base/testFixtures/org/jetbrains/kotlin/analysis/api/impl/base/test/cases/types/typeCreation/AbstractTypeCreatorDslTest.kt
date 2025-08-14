@@ -67,6 +67,7 @@ abstract class AbstractTypeCreatorDslTest : AbstractAnalysisApiBasedTest() {
     private fun KaSession.render(value: Any?): String {
         val renderer = KaTypeRendererForSource.WITH_QUALIFIED_NAMES.with {
             this.capturedTypeRenderer = KaCapturedTypeRenderer.AS_CAPTURED_TYPE_WITH_PROJECTION
+            this.annotationsRenderer
         }
         return buildString {
             when (value) {
@@ -127,7 +128,9 @@ abstract class AbstractTypeCreatorDslTest : AbstractAnalysisApiBasedTest() {
                 return testCase.call(testClassInstance)
             }
 
-            private val testClassesMapping: Map<String, KClass<out TestCases>> = mapOf()
+            private val testClassesMapping: Map<String, KClass<out TestCases>> = mapOf(
+                "ClassType" to ClassTypeCreatorDslTestCases::class,
+            )
         }
 
         protected fun getTypeByCaret(label: String): KaType {

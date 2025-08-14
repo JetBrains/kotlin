@@ -1,0 +1,1 @@
+val xx = 6<caret_int>5
