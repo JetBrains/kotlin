@@ -27,14 +27,9 @@ sourceSets {
 
 
 compilerTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
-        dependsOn(":dist")
-        workingDir = rootDir
+    nativeTestTask("test", tag = null) {
+        systemProperty("kotlin.native.home", kotlinNativeDist.absolutePath)
     }
-}
-
-val test by nativeTest("test", null) {
-    systemProperty("kotlin.native.home", kotlinNativeDist.absolutePath)
 }
 
 testsJar()

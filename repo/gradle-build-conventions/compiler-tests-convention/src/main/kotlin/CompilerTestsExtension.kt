@@ -22,7 +22,7 @@ import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.project
 import java.io.File
 
-abstract class CompilerTestsExtension(private val project: Project) {
+abstract class CompilerTestsExtension(val project: Project) {
     abstract val allowFlaky: Property<Boolean>
 
     // -------------------- dependencies for runtime of tests --------------------

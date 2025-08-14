@@ -2,6 +2,7 @@
 
 plugins {
     kotlin("jvm")
+    id("compiler-tests-convention")
 }
 
 sourceSets {
@@ -47,12 +48,14 @@ tasks.test.configure {
     enabled = false
 }
 
-objCExportHeaderGeneratorTest("testK1", testDisplayNameTag = "K1") {
-    classpath += k1TestRuntimeClasspath
-}
+compilerTests {
+    objCExportHeaderGeneratorTestTask("testK1", testDisplayNameTag = "K1") {
+        classpath += k1TestRuntimeClasspath
+    }
 
-objCExportHeaderGeneratorTest("testAnalysisApi", testDisplayNameTag = "AA") {
-    classpath += analysisApiRuntimeClasspath
+    objCExportHeaderGeneratorTestTask("testAnalysisApi", testDisplayNameTag = "AA") {
+        classpath += analysisApiRuntimeClasspath
+    }
 }
 
 tasks.check.configure {

@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm")
+    id("compiler-tests-convention")
 }
 
 dependencies {
@@ -20,9 +21,11 @@ sourceSets {
 
 testsJar {}
 
-val testTags = findProperty("kotlin.native.tests.tags")?.toString()
-nativeTest(
-    "test",
-    testTags,
-    allowParallelExecution = false, // Driver tests run Native compiler from CLI. This is resource-intensive and should be done isolated.
-)
+compilerTests {
+    val testTags = findProperty("kotlin.native.tests.tags")?.toString()
+    nativeTestTask(
+        "test",
+        testTags,
+        allowParallelExecution = false, // Driver tests run Native compiler from CLI. This is resource-intensive and should be done isolated.
+    )
+}

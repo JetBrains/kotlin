@@ -1,4 +1,3 @@
-import org.gradle.api.Project
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
 import org.gradle.api.tasks.PathSensitivity
@@ -19,19 +18,19 @@ import java.io.File
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-const val NATIVE_TEST_DEPENDENCY_KLIBS_CONFIGURATION_NAME = "testDependencyLibraryKlibs"
-
 /**
  * Wrapper for [nativeTest] which provides access to external libraries via `testDependencyKlibs` system property.
  * Use this one when you need to write tests against external libraries like kotlinx.* ones.
  */
-fun Project.nativeTestWithExternalDependencies(
+fun CompilerTestsExtension.nativeTestTaskWithExternalDependencies(
     taskName: String,
     requirePlatformLibs: Boolean = false,
     configure: Test.() -> Unit = {}
 ) : TaskProvider<Test> {
     /* Configuration to resolve klibs for the current host */
-    val testDependencyProjectKlibs = configurations.maybeCreate("testDependencyProjectKlibs").also { testDependencyProjectKlibs ->
+
+    val objects = project.objects
+    val testDependencyProjectKlibs = project.configurations.maybeCreate("testDependencyProjectKlibs").also { testDependencyProjectKlibs ->
         testDependencyProjectKlibs.attributes {
             attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
             attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
@@ -40,7 +39,7 @@ fun Project.nativeTestWithExternalDependencies(
             attribute(KotlinNativeTarget.konanTargetAttribute, HostManager.host.name)
         }
 
-        dependencies {
+        project.dependencies {
             testDependencyProjectKlibs(project(":native:external-projects-test-utils:testLibraryA"))
             testDependencyProjectKlibs(project(":native:external-projects-test-utils:testLibraryB"))
             testDependencyProjectKlibs(project(":native:external-projects-test-utils:testLibraryC"))
@@ -51,7 +50,7 @@ fun Project.nativeTestWithExternalDependencies(
 
     /* Configuration to resolve klibs for macosArm64 (used to resolve remote libraries consistently on CI and locally) */
     val testDependencyLibraryKlibs =
-        configurations.maybeCreate(NATIVE_TEST_DEPENDENCY_KLIBS_CONFIGURATION_NAME).also { testDependencyLibraryKlibs ->
+        project.configurations.maybeCreate(NATIVE_TEST_DEPENDENCY_KLIBS_CONFIGURATION_NAME).also { testDependencyLibraryKlibs ->
             testDependencyLibraryKlibs.attributes {
                 attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
                 attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
@@ -60,7 +59,7 @@ fun Project.nativeTestWithExternalDependencies(
                 attribute(KotlinNativeTarget.konanTargetAttribute, MACOS_ARM64.name)
             }
 
-            dependencies {
+            project.dependencies {
                 testDependencyLibraryKlibs("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
                 testDependencyLibraryKlibs("org.jetbrains.kotlinx:kotlinx-serialization-core:1.6.3")
                 testDependencyLibraryKlibs("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0")
@@ -80,9 +79,9 @@ fun Project.nativeTestWithExternalDependencies(
             }
         }
 
-    val testTags = findProperty("kotlin.native.tests.tags")?.toString()
+    val testTags = project.findProperty("kotlin.native.tests.tags")?.toString()
 
-    return nativeTest(
+    return nativeTestTask(
         taskName = taskName,
         tag = "$testTags|none()",
         requirePlatformLibs = requirePlatformLibs,
@@ -115,12 +114,12 @@ fun Project.nativeTestWithExternalDependencies(
  * Wrapper for [nativeTest] which helps to apply defaults expected by
  * projects under ':native:objcexport-header-generator:*'
  */
-fun Project.objCExportHeaderGeneratorTest(
+fun CompilerTestsExtension.objCExportHeaderGeneratorTestTask(
     taskName: String,
     testDisplayNameTag: String? = null,
     configure: Test.() -> Unit = {},
 ): TaskProvider<Test> {
-    return nativeTestWithExternalDependencies(taskName = taskName) {
+    return nativeTestTaskWithExternalDependencies(taskName = taskName) {
         useJUnitPlatform()
         enableJunit5ExtensionsAutodetection()
 
@@ -133,4 +132,8 @@ fun Project.objCExportHeaderGeneratorTest(
         }
         configure()
     }
+}
+
+private fun Test.enableJunit5ExtensionsAutodetection() {
+    systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
 }

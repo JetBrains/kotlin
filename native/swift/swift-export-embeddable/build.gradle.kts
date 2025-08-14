@@ -2,6 +2,8 @@ import java.util.zip.ZipFile
 
 plugins {
     java
+    kotlin("jvm")
+    id("compiler-tests-convention")
 }
 
 description = "Runner for Swift Export (for embedding purpose)"
@@ -202,30 +204,32 @@ val unarchivedStandaloneExternalITClasses = tasks.register<Sync>("unarchivedStan
     into(layout.buildDirectory.dir("unarchivedStandaloneExternalITClasses"))
 }
 
-nativeTest("testSimpleITWithEmbeddable", null) {
-    classpath = files(
-        // swift-export-embeddable and its runtime dependencies is what KGP will see in SwiftExportAction
-        swiftExportEmbeddableJar,
-        configurations.runtimeClasspath,
-        // These dependencies are used by the test classes
-        shadedIntransitiveTestDependenciesJar,
-        transitiveTestRuntimeClasspath,
-    )
-    testClassesDirs = files(
-        unarchivedStandaloneSimpleITClasses,
-    )
-}
+compilerTests {
+    nativeTestTask("testSimpleITWithEmbeddable", null) {
+        classpath = files(
+            // swift-export-embeddable and its runtime dependencies is what KGP will see in SwiftExportAction
+            swiftExportEmbeddableJar,
+            configurations.runtimeClasspath,
+            // These dependencies are used by the test classes
+            shadedIntransitiveTestDependenciesJar,
+            transitiveTestRuntimeClasspath,
+        )
+        testClassesDirs = files(
+            unarchivedStandaloneSimpleITClasses,
+        )
+    }
 
-nativeTestWithExternalDependencies("testExternalITWithEmbeddable", requirePlatformLibs = true) {
-    classpath = files(
-        // swift-export-embeddable and its runtime dependencies is what KGP will see in SwiftExportAction
-        swiftExportEmbeddableJar,
-        configurations.runtimeClasspath,
-        // These dependencies are used by the test classes
-        shadedIntransitiveTestDependenciesJar,
-        transitiveTestRuntimeClasspath,
-    )
-    testClassesDirs = files(
-        unarchivedStandaloneExternalITClasses,
-    )
+    nativeTestTaskWithExternalDependencies("testExternalITWithEmbeddable", requirePlatformLibs = true) {
+        classpath = files(
+            // swift-export-embeddable and its runtime dependencies is what KGP will see in SwiftExportAction
+            swiftExportEmbeddableJar,
+            configurations.runtimeClasspath,
+            // These dependencies are used by the test classes
+            shadedIntransitiveTestDependenciesJar,
+            transitiveTestRuntimeClasspath,
+        )
+        testClassesDirs = files(
+            unarchivedStandaloneExternalITClasses,
+        )
+    }
 }

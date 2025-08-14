@@ -28,8 +28,8 @@ compilerTests {
         dependsOn(":dist")
         workingDir = rootDir
     }
-}
 
-nativeTest("llFirNativeTests", "llFirNative", requirePlatformLibs = true)
+    nativeTestTask("llFirNativeTests", "llFirNative", requirePlatformLibs = true)
+}
 
 testsJar()

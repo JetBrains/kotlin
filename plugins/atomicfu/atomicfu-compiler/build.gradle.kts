@@ -210,6 +210,33 @@ compilerTests {
         }
     }
 
+    val inputTags = findProperty("kotlin.native.tests.tags")?.toString()
+    val tags = buildString {
+        append("atomicfu-native") // Include all tests with the "atomicfu-native" tag
+        if (inputTags != null) {
+            append("&($inputTags)")
+        }
+    }
+
+    nativeTestTask(
+        taskName = "nativeTest",
+        tag = tags,
+        requirePlatformLibs = true,
+        customCompilerDependencies = listOf(atomicfuJvmClasspath),
+        customTestDependencies = listOf(atomicfuNativeKlib),
+        compilerPluginDependencies = listOf(atomicfuCompilerPluginForTests)
+    ) {
+        val localAtomicfuNativeKlib: FileCollection = atomicfuNativeKlib
+        doFirst {
+            systemProperty("atomicfuNative.classpath", localAtomicfuNativeKlib.asPath)
+        }
+
+        // To workaround KTI-2421, we make these tests run on JDK 11 instead of the project-default JDK 8.
+        // Kotlin test infra uses reflection to access JDK internals.
+        // With JDK 11, some JVM args are required to silence the warnings caused by that:
+        jvmArgs("--add-opens=java.base/java.io=ALL-UNNAMED")
+    }
+
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateAtomicfuTestsKt") {
         javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
         dependsOn(":compiler:generateTestData")
@@ -219,37 +246,11 @@ compilerTests {
 publish()
 standardPublicJars()
 
-val inputTags = findProperty("kotlin.native.tests.tags")?.toString()
-val tags = buildString {
-    append("atomicfu-native") // Include all tests with the "atomicfu-native" tag
-    if (inputTags != null) {
-        append("&($inputTags)")
-    }
-}
-val nativeTest = nativeTest(
-    taskName = "nativeTest",
-    tag = tags,
-    requirePlatformLibs = true,
-    customCompilerDependencies = listOf(atomicfuJvmClasspath),
-    customTestDependencies = listOf(atomicfuNativeKlib),
-    compilerPluginDependencies = listOf(atomicfuCompilerPluginForTests)
-) {
-    val localAtomicfuNativeKlib: FileCollection = atomicfuNativeKlib
-    doFirst {
-        systemProperty("atomicfuNative.classpath", localAtomicfuNativeKlib.asPath)
-    }
-
-    // To workaround KTI-2421, we make these tests run on JDK 11 instead of the project-default JDK 8.
-    // Kotlin test infra uses reflection to access JDK internals.
-    // With JDK 11, some JVM args are required to silence the warnings caused by that:
-    jvmArgs("--add-opens=java.base/java.io=ALL-UNNAMED")
-}
-
 tasks.named("check") {
     // Depend on the test task that launches Native tests so that it will also run together with tests
     // for all other targets if K/N is enabled
     if (kotlinBuildProperties.isKotlinNativeEnabled) {
-        dependsOn(nativeTest)
+        dependsOn(tasks.named("nativeTest"))
     }
 }
 
