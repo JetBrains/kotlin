@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ContextParameters
 // ISSUE: KT-79327
-context(<!WRONG_MODIFIER_TARGET, WRONG_MODIFIER_TARGET!>private<!> _: String)
+context(<!WRONG_MODIFIER_TARGET!>private<!> _: String)
 fun foo() {
 }
 

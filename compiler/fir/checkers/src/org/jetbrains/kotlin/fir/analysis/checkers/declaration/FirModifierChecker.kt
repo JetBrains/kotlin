@@ -40,6 +40,9 @@ import org.jetbrains.kotlin.resolve.*
 object FirModifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirDeclaration) {
+        // Checked separately
+        if (declaration is FirValueParameter && declaration.valueParameterKind == FirValueParameterKind.ContextParameter) return
+
         val source = when (declaration) {
             is FirFile -> declaration.packageDirective.source
             else -> declaration.source
