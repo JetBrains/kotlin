@@ -42674,6 +42674,12 @@ public class FirPsiSerializeCompileKotlinAgainstInlineKotlinTestGenerated extend
           }
 
           @Test
+          @TestMetadata("fakeOverrideExpectSuperTypeFromLib.kt")
+          public void testFakeOverrideExpectSuperTypeFromLib() {
+            runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/fakeOverrideExpectSuperTypeFromLib.kt");
+          }
+
+          @Test
           @TestMetadata("iheritanceFromExpected2-2.kt")
           public void testIheritanceFromExpected2_2() {
             runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/iheritanceFromExpected2-2.kt");
