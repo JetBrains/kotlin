@@ -167,7 +167,7 @@ abstract class InventNamesForLocalFunctions : BodyLoweringPass {
             val declarationName = sanitizeNameIfNeeded(declaration.name.asString())
 
             val functionContext = localFunctions[declaration] ?: return declarationName
-            if (functionContext.index <= 0) return declarationName
+            if (functionContext.index < 0) return declarationName
 
             val baseName = when {
                 declaration.name.isSpecial -> if (functionContext.isNestedInLambda) "" else "lambda"
