@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.powerassert.PowerAssertPluginNames.PLUGIN_ID
 
 val KEY_FUNCTIONS = CompilerConfigurationKey<List<String>>("fully-qualified function names")
 
@@ -32,6 +33,8 @@ class PowerAssertCompilerPluginRegistrar(
 ) : CompilerPluginRegistrar() {
     @Suppress("unused")
     constructor() : this(emptySet()) // Used by service loader
+
+    override val pluginId: String get() = PLUGIN_ID
 
     override val supportsK2: Boolean = true
 

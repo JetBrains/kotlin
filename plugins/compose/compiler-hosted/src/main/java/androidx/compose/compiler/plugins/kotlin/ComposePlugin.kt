@@ -577,6 +577,8 @@ fun validateFeatureFlag(
 
 @OptIn(ExperimentalCompilerApi::class)
 class ComposePluginRegistrar : CompilerPluginRegistrar() {
+    override val pluginId: String get() = COMPOSE_PLUGIN_ID
+
     override val supportsK2: Boolean
         get() = true
 

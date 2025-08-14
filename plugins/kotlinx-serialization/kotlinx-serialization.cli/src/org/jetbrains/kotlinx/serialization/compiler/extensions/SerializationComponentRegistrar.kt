@@ -25,6 +25,10 @@ import org.jetbrains.kotlinx.serialization.compiler.diagnostic.SerializationPlug
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationConfigurationKeys.DISABLE_INTRINSIC
 import org.jetbrains.kotlinx.serialization.compiler.fir.FirSerializationExtensionRegistrar
 
+object SerializationPluginNames {
+    const val PLUGIN_ID = "org.jetbrains.kotlinx.serialization"
+}
+
 object SerializationConfigurationKeys {
     val DISABLE_INTRINSIC: CompilerConfigurationKey<Boolean> =
         CompilerConfigurationKey.create("Disable replacement of serializer<T>() call with direct serializer retrieval.")
@@ -39,7 +43,7 @@ class SerializationPluginOptions : CommandLineProcessor {
         )
     }
 
-    override val pluginId = "org.jetbrains.kotlinx.serialization"
+    override val pluginId get() = SerializationPluginNames.PLUGIN_ID
     override val pluginOptions = listOf(DISABLE_INTRINSIC_OPTION)
 
     override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) = when (option) {
@@ -56,6 +60,8 @@ class SerializationComponentRegistrar : CompilerPluginRegistrar() {
 
     private fun loadDisableIntrinsic(configuration: CompilerConfiguration) =
         if (configuration.get(DISABLE_INTRINSIC) == true) SerializationIntrinsicsState.DISABLED else SerializationIntrinsicsState.NORMAL
+
+    override val pluginId: String get() = SerializationPluginNames.PLUGIN_ID
 
     override val supportsK2: Boolean
         get() = true

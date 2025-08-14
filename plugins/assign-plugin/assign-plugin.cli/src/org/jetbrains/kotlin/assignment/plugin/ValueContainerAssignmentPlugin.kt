@@ -54,6 +54,8 @@ class AssignmentComponentRegistrar : CompilerPluginRegistrar() {
         }
     }
 
+    override val pluginId: String get() = PLUGIN_ID
+
     override val supportsK2: Boolean
         get() = true
 }

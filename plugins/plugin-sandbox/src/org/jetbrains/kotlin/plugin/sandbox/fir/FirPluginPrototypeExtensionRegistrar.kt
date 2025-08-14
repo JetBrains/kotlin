@@ -57,6 +57,8 @@ class FirPluginPrototypeExtensionRegistrar : FirExtensionRegistrar() {
 }
 
 class FirPluginPrototypeComponentRegistrar : CompilerPluginRegistrar() {
+    override val pluginId: String get() = "org.jetbrains.kotlin.plugin.sandbox"
+
     override val supportsK2: Boolean
         get() = true
 

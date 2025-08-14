@@ -108,6 +108,8 @@ class ScriptingK2CompilerPluginRegistrar : CompilerPluginRegistrar() {
         registerComponents(this, configuration)
     }
 
+    override val pluginId: String get() = KOTLIN_SCRIPTING_PLUGIN_ID
+
     override val supportsK2: Boolean
         get() = true
 }
