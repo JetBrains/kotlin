@@ -430,6 +430,7 @@ enum class LanguageFeature(
     ProhibitNullableTypeThroughTypealias(KOTLIN_2_3, enabledInProgressiveMode = true, "KTLC-279"),
     ForbidObjectDelegationToItself(KOTLIN_2_3, enabledInProgressiveMode = true, "KT-17417"),
     JvmIndyAllowLambdasWithAnnotations(KOTLIN_2_3, "KT-76606"),
+    ProhibitIntersectionReifiedTypeParameter(KOTLIN_2_3, enabledInProgressiveMode = true, "KT-71420"),
 
     AllowCheckForErasedTypesInContracts(KOTLIN_2_3, "KT-45683"),
     AllowContractsOnSomeOperators(KOTLIN_2_3, "KT-32313"),
@@ -506,7 +507,6 @@ enum class LanguageFeature(
     MultiPlatformProjects(sinceVersion = null, NO_ISSUE_SPECIFIED),
     ProhibitComparisonOfIncompatibleClasses(sinceVersion = null, enabledInProgressiveMode = true, NO_ISSUE_SPECIFIED),
     ProhibitAllMultipleDefaultsInheritedFromSupertypes(sinceVersion = null, enabledInProgressiveMode = false, NO_ISSUE_SPECIFIED),
-    ProhibitIntersectionReifiedTypeParameter(sinceVersion = null, enabledInProgressiveMode = true, "KT-71420"),
     ExplicitBackingFields(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-14663"),
     FunctionalTypeWithExtensionAsSupertype(sinceVersion = null, NO_ISSUE_SPECIFIED),
     JsAllowValueClassesInExternals(sinceVersion = null, NO_ISSUE_SPECIFIED),
