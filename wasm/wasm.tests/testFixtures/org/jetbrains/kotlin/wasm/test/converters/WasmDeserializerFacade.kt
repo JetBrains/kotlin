@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.wasm.test.converters
 
+import org.jetbrains.kotlin.backend.common.IrModuleInfo
+import org.jetbrains.kotlin.backend.common.LoadedKlibs
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageConfig
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageLogLevel
@@ -12,12 +14,14 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageMode
 import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
 import org.jetbrains.kotlin.ir.backend.js.loadIr
+import org.jetbrains.kotlin.ir.backend.js.loadIrForSingleModule
 import org.jetbrains.kotlin.ir.backend.js.loadWebKlibsInTestPipeline
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.util.SymbolTable
@@ -41,27 +45,38 @@ import org.jetbrains.kotlin.test.services.service
 import org.jetbrains.kotlin.wasm.config.wasmTarget
 import java.io.File
 
-class WasmDeserializerFacade(
+class WasmDeserializerSingleModuleFacade(testServices: TestServices) :
+    WasmDeserializerFacadeBase(testServices) {
+
+    override fun loadKLibsIr(modulesStructure: ModulesStructure): IrModuleInfo =
+        loadIrForSingleModule(modulesStructure, IrFactoryImplForWasmIC(WholeWorldStageController()))
+}
+
+class WasmDeserializerFacade(testServices: TestServices) : WasmDeserializerFacadeBase(testServices) {
+    override fun loadKLibsIr(modulesStructure: ModulesStructure): IrModuleInfo {
+        return loadIr(
+            modulesStructure = modulesStructure,
+            irFactory = IrFactoryImplForWasmIC(WholeWorldStageController()),
+            loadFunctionInterfacesIntoStdlib = true,
+        )
+    }
+}
+
+abstract class WasmDeserializerFacadeBase(
     testServices: TestServices,
 ) : DeserializerFacade<BinaryArtifacts.KLib, IrBackendInput>(testServices, ArtifactKinds.KLib, BackendKinds.IrBackend) {
 
-    override val additionalServices: List<ServiceRegistrationData>
-        get() = listOf(
-            service(::ModuleDescriptorProvider),
-            service(::LibraryProvider)
-        )
+    abstract fun loadKLibsIr(modulesStructure: ModulesStructure): IrModuleInfo
 
     override fun shouldTransform(module: TestModule): Boolean {
         require(testServices.defaultsProvider.backendKind == outputKind)
         return true
     }
 
-    override fun transform(module: TestModule, inputArtifact: BinaryArtifacts.KLib): IrBackendInput? {
-        val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+    open fun getMainModule(module: TestModule, inputArtifact: BinaryArtifacts.KLib): MainModule.Klib =
+        MainModule.Klib(inputArtifact.outputFile.absolutePath)
 
-        // Enforce PL with the ERROR log level to fail any tests where PL detected any incompatibilities.
-        configuration.setupPartialLinkageConfig(PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.ERROR))
-
+    open fun loadKLibs(module: TestModule, mainModule: MainModule.Klib, configuration: CompilerConfiguration): LoadedKlibs {
         val wasmTarget = configuration.wasmTarget
 
         val runtimeKlibs: List<String> = WasmEnvironmentConfigurator.getRuntimePathsForModule(wasmTarget)
@@ -70,16 +85,32 @@ class WasmDeserializerFacade(
         val klibFriendDependencies: List<String> = getKlibDependencies(module, testServices, DependencyRelation.FriendDependency)
             .map { it.absolutePath }
 
-        val mainModule = MainModule.Klib(inputArtifact.outputFile.absolutePath)
         val mainPath = File(mainModule.libPath).canonicalPath
 
-        val klibs = loadWebKlibsInTestPipeline(
+        return loadWebKlibsInTestPipeline(
             configuration = configuration,
             libraryPaths = runtimeKlibs + klibDependencies + klibFriendDependencies + mainPath,
             friendPaths = klibFriendDependencies,
             includedPath = mainPath,
             platformChecker = KlibPlatformChecker.Wasm(wasmTarget.alias)
         )
+    }
+
+    override val additionalServices: List<ServiceRegistrationData>
+        get() = listOf(
+            service(::ModuleDescriptorProvider),
+            service(::LibraryProvider)
+        )
+
+    override fun transform(module: TestModule, inputArtifact: BinaryArtifacts.KLib): IrBackendInput? {
+        val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+
+        // Enforce PL with the ERROR log level to fail any tests where PL detected any incompatibilities.
+        configuration.setupPartialLinkageConfig(PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.ERROR))
+
+        val mainModule = getMainModule(module, inputArtifact)
+
+        val klibs = loadKLibs(module, mainModule, configuration)
 
         val modulesStructure = ModulesStructure(
             project = testServices.compilerConfigurationProvider.getProject(module),
@@ -91,11 +122,7 @@ class WasmDeserializerFacade(
         val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), IrFactoryImplForWasmIC(WholeWorldStageController()))
         val mainModuleLib: KotlinLibrary = klibs.included ?: error("No module with ${mainModule.libPath} found")
 
-        val moduleInfo = loadIr(
-            modulesStructure = modulesStructure,
-            irFactory = IrFactoryImplForWasmIC(WholeWorldStageController()),
-            loadFunctionInterfacesIntoStdlib = true,
-        )
+        val moduleInfo = loadKLibsIr(modulesStructure)
 
         // This is only needed to create the plugin context, which may be required by the downstream test handlers.
         // Most of the time those handlers use it only for obtaining IrBuiltIns.
