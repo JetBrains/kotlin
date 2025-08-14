@@ -23037,6 +23037,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Test
+      @TestMetadata("illegalUsageOfCrossInline.kt")
+      public void testIllegalUsageOfCrossInline() {
+        runTest("compiler/testData/diagnostics/tests/inline/illegalUsageOfCrossInline.kt");
+      }
+
+      @Test
       @TestMetadata("inlineCallsPrivateInline.kt")
       public void testInlineCallsPrivateInline() {
         runTest("compiler/testData/diagnostics/tests/inline/inlineCallsPrivateInline.kt");
