@@ -1,0 +1,25 @@
+KaType
+KaClassErrorType:
+  abbreviation: null
+  annotations: [
+    MyAnno1()
+      psi: null
+    MyAnno2()
+      psi: null
+    MyAnno3()
+      psi: null
+  ]
+  candidateSymbols: []
+  errorMessage: Symbol not found for /MyClass
+  presentableText: MyClass
+  qualifiers: [
+    KaUnresolvedClassTypeQualifier:
+      name: MyClass
+      typeArguments: []
+  ]
+  isMarkedNullable: false
+  isNullable: true
+  hasFlexibleNullability: true
+
+Rendered type:
+@MyAnno1 @MyAnno2 @MyAnno3MyClass
