@@ -21,14 +21,12 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
-import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.expressions.IrInlinedFunctionBlock
 import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrRichPropertyReference
 import org.jetbrains.kotlin.ir.irAttribute
-import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.util.isFunctionInlining
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
@@ -55,32 +53,9 @@ abstract class InventNamesForLocalFunctions : BodyLoweringPass {
 
     private class LocalFunctionContext(
         val index: Int,
-        val ownerForLoweredDeclaration: OwnerForLoweredDeclaration,
+        val newOwnerForLiftedUpFunction: IrDeclarationContainer,
         val isNestedInLambda: Boolean,
     )
-
-    private sealed class OwnerForLoweredDeclaration(val isLocal: Boolean) {
-        abstract fun addChild(declaration: IrDeclaration)
-        abstract fun closestDeclarationParent(): IrDeclarationParent
-
-        // Usually, just move local functions to the nearest class or file.
-        class DeclarationContainer(private val irDeclarationContainer: IrDeclarationContainer) : OwnerForLoweredDeclaration(false) {
-            override fun addChild(declaration: IrDeclaration) = irDeclarationContainer.addChild(declaration)
-
-            override fun closestDeclarationParent() = irDeclarationContainer
-        }
-
-        // But, local functions defined in an inline lambda need to be popped up to the root inline call.
-        class Block(private val irBlock: IrBlock, private val irDeclarationParent: IrDeclarationParent) : OwnerForLoweredDeclaration(true) {
-            private val initialStatementsCount = irBlock.statements.size
-            override fun addChild(declaration: IrDeclaration) {
-                // Place all children at the block's start but in order they are being added.
-                irBlock.statements.add(irBlock.statements.size - initialStatementsCount, declaration)
-            }
-
-            override fun closestDeclarationParent() = irDeclarationParent
-        }
-    }
 
     private inner class NameInventor(
         val container: IrDeclaration
@@ -128,26 +103,22 @@ abstract class InventNamesForLocalFunctions : BodyLoweringPass {
                     if (declaration.name.isSpecial || declaration.name in enclosingScope.usedLocalFunctionNames)
                         enclosingScope.counter++
                     else -1
-                val ownerForLoweredDeclaration =
+                val newOwnerForLiftedUpFunction =
                     data.currentScope?.let {
                         when (it.irElement) {
-                            is IrDeclarationContainer -> OwnerForLoweredDeclaration.DeclarationContainer(it.irElement)
-                            is IrField -> OwnerForLoweredDeclaration.DeclarationContainer(it.irElement.parentClassOrNull!!)
-                            is IrFunction -> localFunctions[enclosingScope.irElement]!!.ownerForLoweredDeclaration
+                            is IrDeclarationContainer -> it.irElement
+                            is IrField -> it.irElement.parentClassOrNull!!
+                            is IrFunction -> localFunctions[enclosingScope.irElement]!!.newOwnerForLiftedUpFunction
                             else -> error("Unknown owner for lowered declaration")
                         }
                     }
-                        ?: (enclosingScope.irElement as? IrField)?.let { enclosingField ->
-                            OwnerForLoweredDeclaration.DeclarationContainer(enclosingField.parentClassOrNull!!)
-                        }
-                        ?: (enclosingScope.irElement as? IrFunction)?.let { enclosingFunction ->
-                            OwnerForLoweredDeclaration.DeclarationContainer(enclosingFunction.parentClassOrNull!!)
-                        }
-                        ?: OwnerForLoweredDeclaration.DeclarationContainer(enclosingScope.irElement as IrDeclarationContainer)
+                        ?: (enclosingScope.irElement as? IrField)?.let { enclosingField -> enclosingField.parentClassOrNull!! }
+                        ?: (enclosingScope.irElement as? IrFunction)?.let { enclosingFunction -> enclosingFunction.parentClassOrNull!! }
+                        ?: enclosingScope.irElement as IrDeclarationContainer
 
                 val functionContext = LocalFunctionContext(
                     index = index,
-                    ownerForLoweredDeclaration = ownerForLoweredDeclaration,
+                    newOwnerForLiftedUpFunction = newOwnerForLiftedUpFunction,
                     isNestedInLambda = data.isInLambdaFunction,
                 )
                 localFunctions[declaration] = functionContext
@@ -155,7 +126,7 @@ abstract class InventNamesForLocalFunctions : BodyLoweringPass {
 
                 declaration.name = generateNameForLiftedFunction(
                     function = declaration,
-                    newOwner = functionContext.ownerForLoweredDeclaration.closestDeclarationParent()
+                    newOwnerForLiftedUpFunction = functionContext.newOwnerForLiftedUpFunction
                 )
             }
 
@@ -172,9 +143,9 @@ abstract class InventNamesForLocalFunctions : BodyLoweringPass {
 
         private fun generateNameForLiftedFunction(
             function: IrSimpleFunction,
-            newOwner: IrDeclarationParent,
+            newOwnerForLiftedUpFunction: IrDeclarationParent,
         ): Name {
-            val parents = function.parentsWithSelf.takeWhile { it != newOwner }.toList().reversed()
+            val parents = function.parentsWithSelf.takeWhile { it != newOwnerForLiftedUpFunction }.toList().reversed()
             val nameFromParents = parents.joinToString(separator = "$") { suggestLocalName(it as IrDeclarationWithName) }
             // Local functions declared in anonymous initializers have classes as their parents.
             // Such anonymous initializers, however, are inlined into the constructors delegating to super class constructor.
