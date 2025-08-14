@@ -209,6 +209,106 @@ fun loadIr(
 }
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
+fun loadIrForSingleModule(
+    modulesStructure: ModulesStructure,
+    irFactory: IrFactory,
+): IrModuleInfo {
+    val mainModule = modulesStructure.mainModule
+    val configuration = modulesStructure.compilerConfiguration
+    val messageLogger = configuration.messageCollector
+
+    val signaturer = IdSignatureDescriptor(JsManglerDesc)
+    val symbolTable = SymbolTable(signaturer, irFactory)
+
+    check(mainModule is MainModule.Klib)
+
+    val mainModuleLib = modulesStructure.klibs.included
+        ?: error("No module with ${mainModule.libPath} found")
+    val moduleDescriptor = modulesStructure.getModuleDescriptor(mainModuleLib)
+    val friendModules = mapOf(mainModuleLib.uniqueName to modulesStructure.klibs.friends.map { it.uniqueName })
+
+    val typeTranslator = TypeTranslatorImpl(symbolTable, configuration.languageVersionSettings, moduleDescriptor)
+    val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
+
+    val irLinker = JsIrLinker(
+        currentModule = null,
+        messageCollector = messageLogger,
+        builtIns = irBuiltIns,
+        symbolTable = symbolTable,
+        partialLinkageSupport = createPartialLinkageSupportForLinker(
+            partialLinkageConfig = configuration.partialLinkageConfig,
+            builtIns = irBuiltIns,
+            messageCollector = messageLogger
+        ),
+        icData = null,
+        friendModules = friendModules
+    )
+
+    var stdlibFragment: IrModuleFragment? = null
+    var mainFragment: IrModuleFragment? = null
+    val deserializedFragments = modulesStructure.klibs.all.map { klib ->
+        val moduleDescriptor = modulesStructure.getModuleDescriptor(klib)
+        val fragment = if (klib == modulesStructure.klibs.included) {
+            irLinker.deserializeFullModule(moduleDescriptor, klib)
+        } else {
+            irLinker.deserializeHeadersWithInlineBodies(moduleDescriptor, klib)
+        }
+
+        if (klib == modulesStructure.klibs.included) {
+            mainFragment = fragment
+        }
+        if (klib.isWasmStdlib) {
+            stdlibFragment = fragment
+        }
+
+        fragment
+    }
+
+    check(mainFragment != null)
+    check(stdlibFragment != null)
+
+    irBuiltIns.functionFactory = IrDescriptorBasedFunctionFactory(
+        irBuiltIns = irBuiltIns,
+        symbolTable = symbolTable,
+        typeTranslator = typeTranslator,
+        getPackageFragment = FunctionTypeInterfacePackages().makePackageAccessor(stdlibFragment),
+        referenceFunctionsWhenKFunctionAreReferenced = true
+    )
+
+    irLinker.init(null)
+    ExternalDependenciesGenerator(symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
+    irLinker.postProcess(inOrAfterLinkageStep = true)
+
+    val isStdlibCompilation = mainFragment == stdlibFragment
+
+    val moduleDependencies = IrModuleDependencies(
+        all = deserializedFragments,
+        stdlib = stdlibFragment.takeIf { !isStdlibCompilation },
+        included = mainFragment,
+        fragmentNames = deserializedFragments.getUniqueNameForEachFragment(),
+    )
+
+    //Hack - pre-load functional interfaces in case if IrLoader cut its count (KT-71039)
+    if (isStdlibCompilation) {
+        repeat(25) {
+            irBuiltIns.functionN(it)
+            irBuiltIns.suspendFunctionN(it)
+            irBuiltIns.kFunctionN(it)
+            irBuiltIns.kSuspendFunctionN(it)
+        }
+    }
+
+
+    return IrModuleInfo(
+        module = mainFragment,
+        dependencies = moduleDependencies,
+        bultins = irBuiltIns,
+        symbolTable = symbolTable,
+        deserializer = irLinker,
+    )
+}
+
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 fun getIrModuleInfoForKlib(
     moduleDescriptor: ModuleDescriptor,
     klibs: LoadedKlibs,
