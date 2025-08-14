@@ -175,6 +175,11 @@ interface FrontendSymbols {
         override val arrays: List<IrClassSymbol>
             get() = irBuiltIns.primitiveTypesToPrimitiveArrays.values + irBuiltIns.unsignedTypesToUnsignedArrays.values + irBuiltIns.arrayClass
 
+        override val throwUninitializedPropertyAccessException =
+            symbolFinder.topLevelFunction(kotlinInternalPackageFqn, "throwUninitializedPropertyAccessException")
+
+        override val throwUnsupportedOperationException =
+            symbolFinder.topLevelFunction(kotlinInternalPackageFqn, "throwUnsupportedOperationException")
     }
 }
 
@@ -229,12 +234,6 @@ interface FrontendJsSymbols : FrontendWebSymbols {
     val jsUnboxIntrinsic: IrSimpleFunctionSymbol
 
     open class Impl(irBuiltIns: IrBuiltIns) : FrontendJsSymbols, FrontendWebSymbols.Impl(irBuiltIns) {
-        override val throwUninitializedPropertyAccessException =
-            symbolFinder.topLevelFunction(kotlinPackageFqn, "throwUninitializedPropertyAccessException")
-
-        override val throwUnsupportedOperationException =
-            symbolFinder.topLevelFunction(kotlinPackageFqn, "throwUnsupportedOperationException")
-
         override val defaultConstructorMarker =
             symbolFinder.topLevelClass(BASE_JS_PACKAGE, "DefaultConstructorMarker")
 
@@ -282,12 +281,6 @@ interface FrontendJsSymbols : FrontendWebSymbols {
 
 interface FrontendWasmSymbols : FrontendWebSymbols {
     open class Impl(irBuiltIns: IrBuiltIns) : FrontendWasmSymbols, FrontendWebSymbols.Impl(irBuiltIns) {
-        override val throwUninitializedPropertyAccessException =
-            getInternalWasmFunction("throwUninitializedPropertyAccessException")
-
-        override val throwUnsupportedOperationException =
-            getInternalWasmFunction("throwUnsupportedOperationException")
-
         override val defaultConstructorMarker =
             getIrClass(FqName("kotlin.wasm.internal.DefaultConstructorMarker"))
 
@@ -330,8 +323,6 @@ interface FrontendNativeSymbols : FrontendKlibSymbols {
             val defaultConstructorMarker = "DefaultConstructorMarker".internalClassId
         }
 
-        override val throwUninitializedPropertyAccessException = CallableIds.throwUninitializedPropertyAccessException.functionSymbol()
-        override val throwUnsupportedOperationException = CallableIds.throwUnsupportedOperationException.functionSymbol()
         override val defaultConstructorMarker = ClassIds.defaultConstructorMarker.classSymbol()
         override val isAssertionArgumentEvaluationEnabled = CallableIds.isAssertionArgumentEvaluationEnabled.functionSymbol()
 

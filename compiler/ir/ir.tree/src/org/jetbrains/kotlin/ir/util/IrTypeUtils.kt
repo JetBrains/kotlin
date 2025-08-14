@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 val kotlinPackageFqn = FqName.fromSegments(listOf("kotlin"))
+val kotlinInternalPackageFqn = kotlinPackageFqn.child(Name.identifier("internal"))
 private val kotlinReflectionPackageFqn = kotlinPackageFqn.child(Name.identifier("reflect"))
 private val kotlinCoroutinesPackageFqn = kotlinPackageFqn.child(Name.identifier("coroutines"))
 

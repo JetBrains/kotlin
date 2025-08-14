@@ -6,6 +6,7 @@
 package kotlin.js
 
 import kotlin.internal.throwIrLinkageError
+import kotlin.internal.throwUnsupportedOperationException
 import kotlin.reflect.KProperty
 
 internal fun throwLinkageErrorInCallableName(function: dynamic, linkageError: String) {
