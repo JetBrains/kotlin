@@ -5,19 +5,18 @@
 
 package org.jetbrains.kotlin.client
 
-import client.RemoteClientInterceptor
 import client.GrpcClientRemoteCompilationService
 import common.CLIENT_COMPILED_DIR
 import common.OneFileOneChunkStrategy
 import common.buildAbsPath
 import common.computeSha256
-import io.grpc.ManagedChannelBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import main.kotlin.server.ServerImplType
 import model.CompilationMetadata
 import model.CompilationResult
 import model.CompileRequest
@@ -31,7 +30,9 @@ import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.CompilerMode
 import java.io.File
 
-class RemoteDaemonClient {
+class RemoteCompilationClient(
+    val serverImplType: ServerImplType
+) {
 
     init {
         File(CLIENT_COMPILED_DIR).mkdir()
@@ -111,7 +112,7 @@ class RemoteDaemonClient {
 
 }
 suspend fun main(args: Array<String>) {
-    val client = RemoteDaemonClient()
+    val client = RemoteCompilationClient(ServerImplType.GRPC)
 
     val compilationOptions = CompilationOptions(
         compilerMode = CompilerMode.NON_INCREMENTAL_COMPILER,

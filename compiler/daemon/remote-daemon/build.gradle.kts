@@ -1,24 +1,27 @@
 plugins {
-    kotlin("jvm")
+    id("org.jetbrains.kotlin.jvm")
     id("com.google.protobuf") version "0.9.5"
     id("org.jetbrains.kotlin.plugin.serialization")
     application  // This plugin is required
+    id("org.jetbrains.kotlinx.rpc.plugin") version "0.9.1"
 }
 
 application {
-    mainClass.set("org.jetbrains.kotlin.server.RemoteKotlinDaemonKt")  // Your main class
+    mainClass.set("org.jetbrains.kotlin.server.RemoteKotlinDaemonKt")
 }
 
 
 group = "org.jetbrains.kotlin"
-version = "2.3.255-SNAPSHOT"
-
 
 repositories {
+    google()
     mavenCentral()
-    mavenCentral()
-
 }
+
+
+//rpc {
+//    annotationTypeSafetyEnabled = true
+//}
 
 dependencies {
     compileOnly(project(":kotlin-daemon"))
@@ -56,6 +59,20 @@ dependencies {
     testImplementation("io.grpc:grpc-testing:1.74.0")
     testImplementation("io.grpc:grpc-inprocess:1.74.0")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
+
+    // koltinx rpc
+    implementation("org.jetbrains.kotlinx:kotlinx-rpc-krpc-client:0.9.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-rpc-krpc-server:0.9.1")
+    implementation("io.ktor:ktor-server-core:3.2.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-rpc-krpc-client:0.9.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-rpc-krpc-ktor-client:0.9.1")
+    implementation("io.ktor:ktor-server-netty-jvm:3.2.3")
+    implementation("ch.qos.logback:logback-classic:1.5.18")
+    implementation("org.jetbrains.kotlinx:kotlinx-rpc-krpc-server:0.9.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-rpc-krpc-ktor-server:0.9.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-rpc-krpc-serialization-json:0.9.1")
+
+    kotlinCompilerPluginClasspathMain("org.jetbrains.kotlinx:kotlinx-rpc-compiler-plugin-k2:2.2.0-0.9.1!")
 }
 
 // workaround that IDEA run configuration does not properly resolve runtime classpath
