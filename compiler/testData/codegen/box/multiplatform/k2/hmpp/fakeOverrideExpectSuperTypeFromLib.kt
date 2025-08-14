@@ -1,6 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-80131
-// IGNORE_HMPP: ANY
 // MODULE: lib-common
 expect open class Foo() {
     val size: Int
