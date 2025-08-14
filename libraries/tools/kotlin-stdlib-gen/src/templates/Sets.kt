@@ -136,6 +136,19 @@ object SetOps : TemplateGroupBase() {
         include(Family.defaultFamilies - Sequences)
     } builder {
         infix()
+
+        var symmetryNote = ""
+        specialFor(Iterables) {
+            symmetryNote = """
+                
+            If either [this], [other], or both implement [Collection] and use a criterion other than structural equality (`==`)
+            to check if they contain an element, a set representing the intersection of [this] and [other] may contain different
+            elements compared to a set representing intersection of [other] and [this] 
+            (in other words, the following may be true: `this intersect other != other intersect this`).
+                
+            """.trimIndent()
+        }
+
         doc {
             """
             Returns a set containing all elements that are contained by both this ${f.collection} and the specified collection.
@@ -144,7 +157,7 @@ object SetOps : TemplateGroupBase() {
             
             The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
             structurally equal, but otherwise different elements in it.
-            
+            $symmetryNote
             To get a set containing all elements that are contained at least in one of these collections use [union].
             """
         }
