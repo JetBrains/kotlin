@@ -123,8 +123,7 @@ private val indexes = arrayOf(
     WasmV128,
     WasmI8,
     WasmI16,
-    WasmFuncRef,
-    WasmExternRef,
+    WasmEqRef,
     WasmAnyRef,
     WasmStructRef,
 )
