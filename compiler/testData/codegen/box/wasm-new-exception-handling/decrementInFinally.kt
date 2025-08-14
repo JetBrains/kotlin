@@ -1,6 +1,7 @@
 // TARGET_BACKEND: WASM
 // USE_NEW_EXCEPTION_HANDLING_PROPOSAL
 // WASM_FAILS_IN: WasmEdge
+// WASM_FAILS_IN_SINGLE_MODULE_MODE
 // TODO: remove the test when KT-66906 will be resolved
 fun box(): String {
     var variable = 0

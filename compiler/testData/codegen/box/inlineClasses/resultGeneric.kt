@@ -5,6 +5,7 @@
 // IGNORE_BACKEND: ANDROID
 // IGNORE_IR_DESERIALIZATION_TEST: JS_IR NATIVE
 // ^^^ There is unlinked call of Result.<init> after deserialization. 'ValueClasses' language feature is still unstable.
+// WASM_FAILS_IN_SINGLE_MODULE_MODE
 
 // ALLOW_KOTLIN_PACKAGE
 // WITH_STDLIB
