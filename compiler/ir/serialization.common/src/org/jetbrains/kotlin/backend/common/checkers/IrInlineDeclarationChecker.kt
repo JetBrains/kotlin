@@ -3,9 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.common.checkers
+package org.jetbrains.kotlin.ir.validation.checkers
 
-import org.jetbrains.kotlin.backend.common.checkers.IrInlineDeclarationChecker.InlineFunctionInfo
 import org.jetbrains.kotlin.backend.common.diagnostics.SerializationErrors
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.IrElement
@@ -18,6 +17,7 @@ import org.jetbrains.kotlin.ir.overrides.isNonPrivate
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.parents
+import org.jetbrains.kotlin.ir.validation.checkers.IrInlineDeclarationChecker.InlineFunctionInfo
 import org.jetbrains.kotlin.ir.visitors.IrTypeVisitor
 
 /**

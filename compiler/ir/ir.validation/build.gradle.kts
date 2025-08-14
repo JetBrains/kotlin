@@ -4,14 +4,9 @@ plugins {
 }
 
 dependencies {
-    api(project(":compiler:util"))
-    api(project(":compiler:frontend"))
-    api(project(":compiler:backend-common"))
     api(project(":compiler:ir.tree"))
-    api(project(":compiler:ir.interpreter"))
-    api(project(":compiler:ir.serialization.common"))
-    api(project(":compiler:ir.validation"))
     implementation(project(":kotlin-util-klib"))
+
     compileOnly(intellijCore())
 
     testImplementation(kotlinTest("junit"))
@@ -24,4 +19,3 @@ sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
 }
-
