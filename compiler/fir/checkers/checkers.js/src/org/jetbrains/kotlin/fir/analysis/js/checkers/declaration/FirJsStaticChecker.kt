@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.js.checkers.declaration
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.isInterface
@@ -71,7 +72,12 @@ object FirJsStaticChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
 
         val container = declaration.getContainingClassSymbol() ?: return
 
-        if (!container.isCompanion() || container.containerIsInterface()) {
+        if (
+            !container.isCompanion() || (
+                    container.containerIsInterface() &&
+                    !context.languageVersionSettings.supportsFeature(LanguageFeature.JsStaticInInterface)
+            )
+        ) {
             reporter.reportOn(targetSource, FirJsErrors.JS_STATIC_NOT_IN_CLASS_COMPANION)
         }
 

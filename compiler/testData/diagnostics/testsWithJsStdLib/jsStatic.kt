@@ -44,7 +44,7 @@ class A {
 
 interface B {
     companion object {
-        <!JS_STATIC_NOT_IN_CLASS_COMPANION!>@JsStatic fun a1()<!> {
+        @JsStatic fun a1() {
 
         }
     }
