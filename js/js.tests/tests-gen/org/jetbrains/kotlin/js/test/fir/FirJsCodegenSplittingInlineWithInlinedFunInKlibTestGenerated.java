@@ -40959,12 +40959,6 @@ public class FirJsCodegenSplittingInlineWithInlinedFunInKlibTestGenerated extend
         }
 
         @Test
-        @TestMetadata("intersectionType.kt")
-        public void testIntersectionType() {
-          runTest("compiler/testData/codegen/box/reflection/typeOf/intersectionType.kt");
-        }
-
-        @Test
         @TestMetadata("localClass.kt")
         public void testLocalClass() {
           runTest("compiler/testData/codegen/box/reflection/typeOf/localClass.kt");
@@ -41801,24 +41795,6 @@ public class FirJsCodegenSplittingInlineWithInlinedFunInKlibTestGenerated extend
       @TestMetadata("reifiedChain.kt")
       public void testReifiedChain() {
         runTest("compiler/testData/codegen/box/reified/reifiedChain.kt");
-      }
-
-      @Test
-      @TestMetadata("reifiedIntersectionType.kt")
-      public void testReifiedIntersectionType() {
-        runTest("compiler/testData/codegen/box/reified/reifiedIntersectionType.kt");
-      }
-
-      @Test
-      @TestMetadata("reifiedIntersectionTypeArgument.kt")
-      public void testReifiedIntersectionTypeArgument() {
-        runTest("compiler/testData/codegen/box/reified/reifiedIntersectionTypeArgument.kt");
-      }
-
-      @Test
-      @TestMetadata("reifiedIntersectionTypeArgumentCrossModule.kt")
-      public void testReifiedIntersectionTypeArgumentCrossModule() {
-        runTest("compiler/testData/codegen/box/reified/reifiedIntersectionTypeArgumentCrossModule.kt");
       }
 
       @Test

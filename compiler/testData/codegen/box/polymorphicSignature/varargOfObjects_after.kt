@@ -16,7 +16,7 @@ fun box(): String {
         MethodType.methodType(Any::class.java, Array<Any>::class.java)
     )
 
-    val args = arrayOf("aaa", 1)
+    val args = arrayOf<Any>("aaa", 1)
 
     val r1 = mh.invokeExact(args)
     if (r1 != "aaa") return "Fail 1: $r1"
