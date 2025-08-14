@@ -584,7 +584,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=E]
       FUN[fqName=kotlin.collections.MutableCollection.add, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=add]
-        MODIFIER_LIST[public abstract]
+        MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -603,7 +603,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
       FUN[fqName=kotlin.collections.MutableCollection.remove, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=remove]
-        MODIFIER_LIST[public abstract]
+        MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -622,7 +622,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
       FUN[fqName=kotlin.collections.MutableCollection.addAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=addAll]
-        MODIFIER_LIST[public abstract]
+        MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -650,7 +650,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
       FUN[fqName=kotlin.collections.MutableCollection.removeAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=removeAll]
-        MODIFIER_LIST[public abstract]
+        MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -678,7 +678,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
       FUN[fqName=kotlin.collections.MutableCollection.retainAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=retainAll]
-        MODIFIER_LIST[public abstract]
+        MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -809,7 +809,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                     REFERENCE_EXPRESSION[referencedName=E]
     CLASS_BODY
       FUN[fqName=kotlin.collections.MutableList.add, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=add]
-        MODIFIER_LIST[public abstract]
+        MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -828,7 +828,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
       FUN[fqName=kotlin.collections.MutableList.remove, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=remove]
-        MODIFIER_LIST[public abstract]
+        MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -847,7 +847,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
       FUN[fqName=kotlin.collections.MutableList.addAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=addAll]
-        MODIFIER_LIST[public abstract]
+        MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -875,7 +875,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
       FUN[fqName=kotlin.collections.MutableList.addAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=addAll]
-        MODIFIER_LIST[public abstract]
+        MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -909,7 +909,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
       FUN[fqName=kotlin.collections.MutableList.removeAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=removeAll]
-        MODIFIER_LIST[public abstract]
+        MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -937,7 +937,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
       FUN[fqName=kotlin.collections.MutableList.retainAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=retainAll]
-        MODIFIER_LIST[public abstract]
+        MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -973,7 +973,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
       FUN[fqName=kotlin.collections.MutableList.set, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=set]
-        MODIFIER_LIST[public abstract operator]
+        MODIFIER_LIST[public abstract operator IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -1014,7 +1014,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
       FUN[fqName=kotlin.collections.MutableList.removeAt, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=removeAt]
-        MODIFIER_LIST[public abstract]
+        MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -1255,7 +1255,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                           USER_TYPE
                             REFERENCE_EXPRESSION[referencedName=V]
       FUN[fqName=kotlin.collections.MutableMap.put, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=put]
-        MODIFIER_LIST[public abstract]
+        MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -1277,7 +1277,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=V]
       FUN[fqName=kotlin.collections.MutableMap.remove, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=remove]
-        MODIFIER_LIST[public abstract]
+        MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -1387,7 +1387,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                         REFERENCE_EXPRESSION[referencedName=V]
         CLASS_BODY
           FUN[fqName=kotlin.collections.MutableMap.MutableEntry.setValue, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=setValue]
-            MODIFIER_LIST[public abstract]
+            MODIFIER_LIST[public abstract IgnorableReturnValue]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
@@ -1451,7 +1451,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=E]
       FUN[fqName=kotlin.collections.MutableSet.add, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=add]
-        MODIFIER_LIST[public abstract]
+        MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -1470,7 +1470,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
       FUN[fqName=kotlin.collections.MutableSet.remove, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=remove]
-        MODIFIER_LIST[public abstract]
+        MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -1489,7 +1489,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
       FUN[fqName=kotlin.collections.MutableSet.addAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=addAll]
-        MODIFIER_LIST[public abstract]
+        MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -1517,7 +1517,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
       FUN[fqName=kotlin.collections.MutableSet.removeAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=removeAll]
-        MODIFIER_LIST[public abstract]
+        MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -1545,7 +1545,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
       FUN[fqName=kotlin.collections.MutableSet.retainAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=retainAll]
-        MODIFIER_LIST[public abstract]
+        MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
