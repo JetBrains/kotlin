@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.name.NameUtils.sanitizeAsJavaIdentifier
 
 @PhaseDescription(
     name = "InventNamesForLocalClasses",
+    prerequisite = [FunctionReferenceLowering::class],
 )
 internal class JvmInventNamesForLocalFunctions(
     private val context: JvmBackendContext
