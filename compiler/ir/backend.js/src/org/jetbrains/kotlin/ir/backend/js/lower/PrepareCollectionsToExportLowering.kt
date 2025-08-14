@@ -63,6 +63,9 @@ class PrepareCollectionsToExportLowering(private val context: JsIrBackendContext
 
     private val exportedCollectionsInfo = ExportedCollectionsInfo(context)
 
+    private val jsStatic by lazy(LazyThreadSafetyMode.NONE) {
+        context.intrinsics.jsStaticAnnotationSymbol.primaryConstructorSymbol
+    }
     private val jsNameCtor by lazy(LazyThreadSafetyMode.NONE) {
         context.intrinsics.jsNameAnnotationSymbol.primaryConstructorSymbol
     }
@@ -121,6 +124,7 @@ class PrepareCollectionsToExportLowering(private val context: JsIrBackendContext
             companionObject.parent = this
             companionObject.createThisReceiverParameter()
             companionObject.thisReceiver!!.origin = FACTORY_FOR_KOTLIN_COLLECTIONS
+            companionObject.excludeFromJsExport()
         }
 
         val factoryMethod = context.irFactory.createSimpleFunction(
@@ -140,6 +144,7 @@ class PrepareCollectionsToExportLowering(private val context: JsIrBackendContext
             isInfix = false,
             isExternal = false
         ).also {
+            it.addJsStatic()
             it.parent = companionObject
             it.copyValueAndTypeParametersFrom(factoryMethodForTheCollectionSymbol.owner)
             it.parameters = listOfNotNull(companionObject.thisReceiver?.copyTo(it)) + it.nonDispatchParameters
@@ -192,6 +197,10 @@ class PrepareCollectionsToExportLowering(private val context: JsIrBackendContext
         annotations = annotations memoryOptimizedPlus JsIrBuilder.buildConstructorCall(jsNameCtor).apply {
             arguments[0] = "Kt${name.asString()}".toIrConst(context.irBuiltIns.stringType)
         }
+    }
+
+    private fun IrDeclarationWithName.addJsStatic() {
+        annotations = annotations memoryOptimizedPlus JsIrBuilder.buildConstructorCall(jsStatic)
     }
 
     private fun IrDeclaration.markWithJsImplicitExport() {

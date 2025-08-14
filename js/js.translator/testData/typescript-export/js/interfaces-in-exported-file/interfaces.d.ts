@@ -47,14 +47,16 @@ declare namespace JS_TESTS {
                 readonly "foo.WithTheCompanion": unique symbol;
             };
         }
-        abstract class WithTheCompanion extends KtSingleton<WithTheCompanion.$metadata$.constructor>() {
-            private constructor();
-        }
-        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-        namespace WithTheCompanion.$metadata$ {
-            abstract class constructor {
-                companionFunction(): string;
+        namespace WithTheCompanion {
+            abstract class Companion extends KtSingleton<Companion.$metadata$.constructor>() {
                 private constructor();
+            }
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace Companion.$metadata$ {
+                abstract class constructor {
+                    companionFunction(): string;
+                    private constructor();
+                }
             }
         }
         function processOptionalInterface(a: foo.OptionalFieldsInterface): string;

@@ -7,15 +7,8 @@ export declare namespace kotlin.collections {
             readonly "kotlin.collections.KtList": unique symbol;
         };
     }
-    abstract class KtList<E> extends KtSingleton<KtList.$metadata$.constructor>() {
-        private constructor();
-    }
-    /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-    namespace KtList.$metadata$ {
-        abstract class constructor {
-            fromJsArray<E>(array: ReadonlyArray<E>): kotlin.collections.KtList<E>;
-            private constructor();
-        }
+    namespace KtList {
+        function fromJsArray<E>(array: ReadonlyArray<E>): kotlin.collections.KtList<E>;
     }
 }
 export declare namespace foo {

@@ -196,7 +196,7 @@ class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
     }
 
     private fun ExportedObject.generateTypeScriptString(indent: String, prefix: String): String {
-        val shouldGenerateObjectWithGetInstance = isEsModules && !ir.isEffectivelyExternal()
+        val shouldGenerateObjectWithGetInstance = isEsModules && !ir.isEffectivelyExternal() && ir.isTopLevel
         val constructorTypeReference =
             if (shouldGenerateObjectWithGetInstance) MetadataConstructor else "$name.$Metadata.$MetadataConstructor"
 
@@ -270,13 +270,14 @@ class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
 
     private fun ExportedRegularClass.generateTypeScriptString(indent: String, prefix: String): String {
         val keyword = if (isInterface) "interface" else "class"
-        val (interfaceCompanions, allNestedClasses) = nestedClasses.partition { isInterface && it.ir.isCompanion }
         val superInterfacesKeyword = if (isInterface) "extends" else "implements"
 
         val superClassClause = superClasses.toExtendsClause(indent)
         val superInterfacesClause = superInterfaces.toImplementsClause(superInterfacesKeyword, indent)
 
-        val members = members.map {
+        val (membersForClassItself, membersForNamespace) = members.partition { !isInterface || it !is ExportedFunction || !it.isStatic }
+        val namespaceMembers = membersForNamespace.map { (it as ExportedFunction).copy(isMember = false) }
+        val classMembers = membersForClassItself.map {
             if (!ir.isInner || it !is ExportedFunction || !it.isStatic) {
                 it
             } else {
@@ -285,13 +286,13 @@ class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
             }
         }
 
-        val (innerClasses, nonInnerClasses) = allNestedClasses.partition { it.ir.isInner }
+        val (innerClasses, nonInnerClasses) = nestedClasses.partition { it.ir.isInner }
         val innerClassesProperties = innerClasses.map { it.toReadonlyProperty() }
-        val membersString = (members + innerClassesProperties)
+        val membersString = (classMembers + innerClassesProperties)
             .joinToString("") { it.toTypeScript("$indent    ") + "\n" }
 
         // If there are no exported constructors, add a private constructor to disable default one
-        val privateCtorString = if (!isInterface && !isAbstract && members.none { it is ExportedConstructor }) {
+        val privateCtorString = if (!isInterface && !isAbstract && classMembers.none { it is ExportedConstructor }) {
             "$indent    private constructor();\n"
         } else {
             ""
@@ -307,12 +308,12 @@ class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
 
         val bodyString = privateCtorString + membersString + indent
 
-        val realNestedClasses = nonInnerClasses + innerClasses.map { it.withProtectedConstructors() }
+        val realNestedDeclarations = namespaceMembers + nonInnerClasses + innerClasses.map { it.withProtectedConstructors() }
 
         val klassExport =
             "$prefix$modifiers$keyword $name$renderedTypeParameters$superClassClause$superInterfacesClause {\n$bodyString}"
         val staticsExport =
-            if (realNestedClasses.isNotEmpty()) "\n" + ExportedNamespace(name, realNestedClasses).toTypeScript(indent, prefix) else ""
+            if (realNestedDeclarations.isNotEmpty()) "\n" + ExportedNamespace(name, realNestedDeclarations).toTypeScript(indent, prefix) else ""
 
         val metadataString = runIf(requireMetadata) {
             val constructorProperty = ExportedProperty(
@@ -329,11 +330,7 @@ class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
                 .let { "\n" + it }
         }.orEmpty()
 
-        val interfaceCompanionsString = if (interfaceCompanions.isNotEmpty()) "\n" + interfaceCompanions.joinToString("\n") {
-            (it as ExportedObject).copy(typeParameters = typeParameters).toTypeScript(indent, prefix)
-        } else ""
-
-        return if (name.isValidES5Identifier()) klassExport + metadataString + staticsExport + interfaceCompanionsString else ""
+        return if (name.isValidES5Identifier()) klassExport + metadataString + staticsExport else ""
     }
 
     private fun List<ExportedType>.toExtendsClause(indent: String): String {

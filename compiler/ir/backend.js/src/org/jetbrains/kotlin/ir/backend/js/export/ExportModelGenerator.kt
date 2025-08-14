@@ -463,7 +463,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
             .map { exportType(it, shouldCalculateExportedSupertypeForImplicit = false) }
             .memoryOptimizedFilter { it !is ExportedType.ErrorType }
 
-        val name = klass.getExportedIdentifierForClass()
+        val name = klass.getExportedIdentifier()
 
         return if (klass.kind == ClassKind.OBJECT) {
             return ExportedObject(
@@ -914,13 +914,6 @@ fun <T : ExportedDeclaration> T.withAttributesFor(declaration: IrDeclaration): T
     declaration.getDeprecated()?.let { attributes.add(ExportedAttribute.DeprecatedAttribute(it)) }
 
     return this
-}
-
-fun IrClass.getExportedIdentifierForClass(): String {
-    val parentClass = parentClassOrNull
-    return if (parentClass != null && isCompanion && parentClass.isInterface) {
-        parentClass.getExportedIdentifierForClass()
-    } else getExportedIdentifier()
 }
 
 fun IrDeclarationWithName.getExportedIdentifier(): String =

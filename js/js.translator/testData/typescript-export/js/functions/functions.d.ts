@@ -8,15 +8,8 @@ declare namespace JS_TESTS {
                 readonly "kotlin.collections.KtMutableList": unique symbol;
             };
         }
-        abstract class KtMutableList<E> extends KtSingleton<KtMutableList.$metadata$.constructor>() {
-            private constructor();
-        }
-        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-        namespace KtMutableList.$metadata$ {
-            abstract class constructor {
-                fromJsArray<E>(array: ReadonlyArray<E>): kotlin.collections.KtMutableList<E>;
-                private constructor();
-            }
+        namespace KtMutableList {
+            function fromJsArray<E>(array: ReadonlyArray<E>): kotlin.collections.KtMutableList<E>;
         }
     }
     namespace foo {

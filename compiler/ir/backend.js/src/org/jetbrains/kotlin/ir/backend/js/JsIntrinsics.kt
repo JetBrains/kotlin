@@ -383,6 +383,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, private val configuration
 
     val jsOutlinedFunctionAnnotationSymbol: IrClassSymbol = symbolFinder.topLevelClass(JsStandardClassIds.Annotations.JsOutlinedFunction)
     val jsNameAnnotationSymbol: IrClassSymbol = symbolFinder.topLevelClass(JsStandardClassIds.Annotations.JsName)
+    val jsStaticAnnotationSymbol: IrClassSymbol = symbolFinder.topLevelClass(JsStandardClassIds.Annotations.JsStatic)
     val jsExportAnnotationSymbol: IrClassSymbol = symbolFinder.topLevelClass(JsStandardClassIds.Annotations.JsExport)
     val jsGeneratorAnnotationSymbol: IrClassSymbol = symbolFinder.topLevelClass(JsStandardClassIds.Annotations.JsGenerator)
 
