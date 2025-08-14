@@ -3,6 +3,7 @@ description = "Kotlin Daemon Client"
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("compiler-tests-convention")
 }
 
 dependencies {
@@ -18,8 +19,8 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
 }
 
-projectTest(jUnitMode = JUnitMode.JUnit5) {
-    useJUnitPlatform()
+compilerTests {
+    testTask(jUnitMode = JUnitMode.JUnit5)
 }
 
 configureKotlinCompileTasksGradleCompatibility()
