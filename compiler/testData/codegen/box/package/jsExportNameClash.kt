@@ -4,6 +4,7 @@
 // TARGET_BACKEND: WASM
 // KT-65779: SyntaxError: Identifier 'bar' has already been declared
 // IGNORE_BACKEND: WASM
+// WASM_FAILS_IN_SINGLE_MODULE_MODE
 
 // MODULE: m1
 // FILE: f1.kt
