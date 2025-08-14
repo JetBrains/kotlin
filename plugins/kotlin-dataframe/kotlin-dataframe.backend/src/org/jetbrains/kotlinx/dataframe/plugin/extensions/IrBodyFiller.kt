@@ -8,8 +8,11 @@ package org.jetbrains.kotlinx.dataframe.plugin.extensions
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.builders.irBlockBody
+import org.jetbrains.kotlin.ir.builders.irDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -182,20 +185,15 @@ fun generateBodyForDefaultConstructor(context: IrPluginContext, declaration: IrC
         irType.classOrFail.owner.primaryConstructor?.symbol ?: context.irBuiltIns.anyType.classOrNull?.constructors?.firstOrNull()
         ?: return null
     val type = declaration.returnType as? IrSimpleType ?: return null
-    val delegatingAnyCall = IrDelegatingConstructorCallImpl(
-        -1,
-        -1,
-        irType,
-        symbol,
-        typeArgumentsCount = 0,
-    ).also { it.copyAttributes(declaration.parentAsClass) }
-
-    val initializerCall = IrInstanceInitializerCallImpl(
-        -1,
-        -1,
-        (declaration.parent as? IrClass)?.symbol ?: return null,
-        type
-    )
-
-    return context.irFactory.createBlockBody(-1, -1, listOf(delegatingAnyCall, initializerCall))
+    return context.irBuiltIns.createIrBuilder(declaration.symbol).run {
+        irBlockBody {
+            +irDelegatingConstructorCall(symbol.owner).also { it.copyAttributes(declaration.parentAsClass) }
+            +IrInstanceInitializerCallImpl(
+                startOffset = -1,
+                endOffset = -1,
+                classSymbol = (declaration.parent as? IrClass)?.symbol ?: return null,
+                type = type
+            )
+        }
+    }
 }
