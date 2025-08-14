@@ -30,6 +30,12 @@ public class CodeFragmentCapturingTestGenerated extends AbstractCodeFragmentCapt
   }
 
   @Test
+  @TestMetadata("contextParameter.kt")
+  public void testContextParameter() {
+    runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/contextParameter.kt");
+  }
+
+  @Test
   @TestMetadata("contextReceiver.kt")
   public void testContextReceiver() {
     runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/contextReceiver.kt");
