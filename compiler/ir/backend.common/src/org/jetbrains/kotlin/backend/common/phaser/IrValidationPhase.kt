@@ -5,19 +5,17 @@
 
 package org.jetbrains.kotlin.backend.common.phaser
 
-import org.jetbrains.kotlin.backend.common.*
-import org.jetbrains.kotlin.backend.common.checkers.declaration.IrFieldVisibilityChecker
-import org.jetbrains.kotlin.backend.common.checkers.declaration.IrExpressionBodyInFunctionChecker
-import org.jetbrains.kotlin.backend.common.checkers.declaration.IrPrivateDeclarationOverrideChecker
-import org.jetbrains.kotlin.backend.common.checkers.expression.IrCrossFileFieldUsageChecker
-import org.jetbrains.kotlin.backend.common.checkers.expression.IrValueAccessScopeChecker
-import org.jetbrains.kotlin.backend.common.checkers.expression.InlineFunctionUseSiteChecker
-import org.jetbrains.kotlin.backend.common.checkers.symbol.IrVisibilityChecker
-import org.jetbrains.kotlin.backend.common.withBasicChecks
-import org.jetbrains.kotlin.backend.common.withInlineFunctionCallsiteCheck
-import org.jetbrains.kotlin.backend.common.withVarargChecks
+import org.jetbrains.kotlin.backend.common.LoweringContext
+import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.validation.*
+import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrExpressionBodyInFunctionChecker
+import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrFieldVisibilityChecker
+import org.jetbrains.kotlin.ir.validation.checkers.expression.InlineFunctionUseSiteChecker
+import org.jetbrains.kotlin.ir.validation.checkers.expression.IrCrossFileFieldUsageChecker
+import org.jetbrains.kotlin.ir.validation.checkers.expression.IrValueAccessScopeChecker
+import org.jetbrains.kotlin.ir.validation.checkers.symbol.IrVisibilityChecker
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
 abstract class IrValidationPhase<Context : LoweringContext>(val context: Context) : ModuleLoweringPass {

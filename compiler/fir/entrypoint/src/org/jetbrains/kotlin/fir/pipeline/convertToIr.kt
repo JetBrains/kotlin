@@ -5,10 +5,9 @@
 
 package org.jetbrains.kotlin.fir.pipeline
 
-import org.jetbrains.kotlin.backend.common.*
+import org.jetbrains.kotlin.backend.common.BackendException
+import org.jetbrains.kotlin.backend.common.IrSpecialAnnotationsProvider
 import org.jetbrains.kotlin.backend.common.actualizer.*
-import org.jetbrains.kotlin.backend.common.checkers.declaration.IrFieldVisibilityChecker
-import org.jetbrains.kotlin.backend.common.checkers.expression.IrCrossFileFieldUsageChecker
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -41,6 +40,11 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.validation.IrValidatorConfig
+import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrFieldVisibilityChecker
+import org.jetbrains.kotlin.ir.validation.checkers.expression.IrCrossFileFieldUsageChecker
+import org.jetbrains.kotlin.ir.validation.validateIr
+import org.jetbrains.kotlin.ir.validation.withBasicChecks
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid

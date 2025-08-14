@@ -84,6 +84,7 @@
 /compiler/ir/serialization.jvm/ @JetBrains/kotlin-jvm
 /compiler/ir/serialization.native/ @JetBrains/kotlin-native
 /compiler/ir/ir.inline/ @JetBrains/kotlin-common-backend
+/compiler/ir/ir.validation/ @JetBrains/kotlin-common-backend
 /compiler/javac-wrapper/ @JetBrains/kotlin-frontend
 /compiler/light-classes/ @JetBrains/kotlin-analysis-api
 /compiler/plugin-api/ @JetBrains/kotlin-frontend

@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.ir.inline
 
 import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
-import org.jetbrains.kotlin.backend.common.checkers.IrInlineDeclarationChecker
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.impl.deduplicating
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.validation.checkers.IrInlineDeclarationChecker
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 
 class InlineDeclarationCheckerLowering<Context : PreSerializationLoweringContext>(val context: Context) : ModuleLoweringPass {

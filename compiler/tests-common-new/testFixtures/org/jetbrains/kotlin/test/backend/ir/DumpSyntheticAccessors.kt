@@ -5,21 +5,18 @@
 
 package org.jetbrains.kotlin.test.backend.ir
 
-import org.jetbrains.kotlin.backend.common.*
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.syntheticBodyIsNotSupported
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.validation.temporarilyPushing
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
-import java.io.File
 
 /**
  * Dumps synthetic accessors and their call sites (used only for testing and debugging).
