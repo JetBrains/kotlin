@@ -7,7 +7,10 @@ package androidx.compose.compiler.mapping.bytecode
 
 import androidx.compose.compiler.mapping.group.GroupType
 import org.objectweb.asm.Handle
-import org.objectweb.asm.tree.*
+import org.objectweb.asm.tree.AbstractInsnNode
+import org.objectweb.asm.tree.InsnNode
+import org.objectweb.asm.tree.LabelNode
+import org.objectweb.asm.tree.LineNumberNode
 
 internal sealed interface StartGroupToken : BytecodeToken {
     val key: Int
@@ -71,10 +74,11 @@ internal sealed interface BytecodeToken {
     }
 
     class JumpToken(
-        val jumpInsn: JumpInsnNode
+        val insn: AbstractInsnNode,
+        val labels: List<LabelNode>
     ) : BytecodeToken {
-        override val instructions: List<AbstractInsnNode> = listOf(jumpInsn)
-        override fun toString(): String = "JumpToken(jump=${jumpInsn.opcode}, label=${jumpInsn.label.label})"
+        override val instructions: List<AbstractInsnNode> = listOf(insn)
+        override fun toString(): String = "JumpToken(jump=${insn.opcode}, labels=${labels.map { it.label }})"
     }
 
     class ThrowToken(

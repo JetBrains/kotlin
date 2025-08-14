@@ -325,6 +325,32 @@ class GroupAnalysisCompilerTest(
         checkOptimizeGroups = true
     )
 
+    @Test
+    fun groupAroundExhaustiveWhenInline() = groups(
+        """
+            @Composable
+            fun Test(param: Value): String {
+                Str {
+                    when(param) {
+                        Value.A -> "A"
+                        Value.B -> "B"
+                    }
+                } 
+
+                return Test(param)
+            }
+        """,
+        """
+            enum class Value { A, B; }
+
+            @Composable inline fun Str(f: @Composable () -> String) { 
+                println(f())
+                println(f())
+            }
+        """.trimIndent(),
+        checkOptimizeGroups = true
+    )
+
     @JvmField
     @Rule
     val goldenTransformRule = GoldenTransformRule()
@@ -368,7 +394,9 @@ class GroupAnalysisCompilerTest(
                     .forEach { file ->
                         mapping.append(file.asByteArray())
                     }
-                p to mapping.asProguardMapping().trim().redactGroupKeys(regex = MAPPING_REGEX)
+                p to buildString {
+                    mapping.writeProguardMapping(this)
+                }.trim().redactGroupKeys(regex = MAPPING_REGEX)
             }
         } else {
             val lambdaKeyCache = LambdaKeyCache()
@@ -437,13 +465,18 @@ class GroupAnalysisCompilerTest(
     }
 
     private fun String.redactGroupKeys(regex: Regex): String {
-        val previousKeys = mutableSetOf<String>()
+        val counts = mutableMapOf<String, Int>()
+        regex.findAll(this).forEach {
+            val keyMatch = it.groups[1] ?: error("Match without a key: ${it.value}")
+            val keyValue = keyMatch.value
+            counts[keyValue] = (counts[keyValue] ?: 0) + 1
+        }
         return regex.replace(this) {
             val keyMatch = it.groups[1] ?: error("Match without a key: ${it.value}")
             val keyValue = keyMatch.value
             val value = if (keyValue == "null") {
                 keyValue
-            } else if (previousKeys.add(keyValue)) {
+            } else if (counts[keyValue] == 1) {
                 "<key>"
             } else {
                 "<!DUPLICATED KEY: $keyValue!>"

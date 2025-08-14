@@ -20,10 +20,10 @@ TestKt {
     file: Test.kt
     Test(Ljava/lang/String;Ljava/lang/String;Landroidx/compose/runtime/Composer;I)V
         RestartGroup { key: <key>, line: 4 }
-    Test$lambda$0(Ljava/lang/String;Ljava/lang/String;Landroidx/compose/runtime/Composer;I)Lkotlin/Unit;
-        Root { key: <key>, line: 6 }
     Test$lambda$0$0(Ljava/lang/String;Ljava/lang/String;Landroidx/compose/runtime/Composer;I)Lkotlin/Unit;
         Root { key: <key>, line: 7 }
+    Test$lambda$0(Ljava/lang/String;Ljava/lang/String;Landroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+        Root { key: <key>, line: 6 }
 }
 
 ========= FunctionMeta: false, OptimizeGroups: true =========
@@ -32,8 +32,8 @@ TestKt {
     Test(Ljava/lang/String;Ljava/lang/String;Landroidx/compose/runtime/Composer;I)V
         RestartGroup { key: <key>, line: 4 }
         Root { key: null, line: 4 }
-    Test$lambda$0(Ljava/lang/String;Ljava/lang/String;Landroidx/compose/runtime/Composer;I)Lkotlin/Unit;
-        Root { key: <key>, line: 6 }
     Test$lambda$0$0(Ljava/lang/String;Ljava/lang/String;Landroidx/compose/runtime/Composer;I)Lkotlin/Unit;
         Root { key: <key>, line: 7 }
+    Test$lambda$0(Ljava/lang/String;Ljava/lang/String;Landroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+        Root { key: <key>, line: 6 }
 }

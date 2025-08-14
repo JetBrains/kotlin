@@ -1,0 +1,38 @@
+//
+// Source
+// ------------------------------------------
+
+@Composable
+fun Test(param: Value): String {
+    Str {
+        when(param) {
+            Value.A -> "A"
+            Value.B -> "B"
+        }
+    } 
+
+    return Test(param)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+========= FunctionMeta: true, OptimizeGroups: true =========
+TestKt {
+    file: Test.kt
+    Test(LValue;Landroidx/compose/runtime/Composer;I)Ljava/lang/String;
+        ReplaceGroup { key: <!DUPLICATED KEY: 244975037!>, line: 16 }
+        ReplaceGroup { key: <!DUPLICATED KEY: 244975037!>, line: 17 }
+        Root { key: <key>, line: 6 }
+}
+
+========= FunctionMeta: true, OptimizeGroups: false =========
+TestKt {
+    file: Test.kt
+    Test(LValue;Landroidx/compose/runtime/Composer;I)Ljava/lang/String;
+        ReplaceGroup { key: <!DUPLICATED KEY: 244975037!>, line: 16 }
+        ReplaceGroup { key: <!DUPLICATED KEY: 244975037!>, line: 17 }
+        ReplaceGroup { key: <key>, line: 6 }
+        ReplaceGroup { key: <key>, line: 6 }
+}

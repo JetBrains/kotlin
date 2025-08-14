@@ -87,10 +87,19 @@ private val LabelTokenizer = SingleInstructionTokenizer { instruction ->
 }
 
 private val JumpTokenizer = SingleInstructionTokenizer { instruction ->
-    if (instruction is JumpInsnNode) {
-        JumpToken(instruction)
-    } else {
-        null
+    when (instruction) {
+        is JumpInsnNode -> {
+            JumpToken(instruction, listOf(instruction.label))
+        }
+        is LookupSwitchInsnNode -> {
+            JumpToken(instruction, instruction.labels)
+        }
+        is TableSwitchInsnNode -> {
+            JumpToken(instruction, instruction.labels)
+        }
+        else -> {
+            null
+        }
     }
 }
 
@@ -202,10 +211,12 @@ private object EndToMarkerTokenizer : BytecodeTokenizer {
         if (expectedILoadInsn.opcode != Opcodes.ILOAD) return null
         if (MethodId(expectedEndToMarkerInvocation) != ComposeIds.Composer.endToMarker) return null
 
+        val jump = context[2]?.takeIf { it.opcode == Opcodes.GOTO }
+
         return Result.success(
             EndToMarkerToken(
                 variableIndex = expectedILoadInsn.`var`,
-                instructions = listOf(expectedILoadInsn, expectedEndToMarkerInvocation)
+                instructions = listOfNotNull(expectedILoadInsn, expectedEndToMarkerInvocation, jump)
             )
         )
     }

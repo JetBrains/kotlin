@@ -6,7 +6,6 @@ import androidx.compose.compiler.mapping.MethodId
 import androidx.compose.compiler.mapping.bytecode.*
 import androidx.compose.compiler.mapping.bytecode.BytecodeToken.*
 import org.objectweb.asm.Label
-import org.objectweb.asm.Opcodes
 import org.objectweb.asm.tree.MethodNode
 
 context(reporter: ErrorReporter, keyCache: LambdaKeyCache)
@@ -116,16 +115,13 @@ private fun parseGroupInfoFromTokens(
             }
 
             is JumpToken -> {
-                if (token.jumpInsn.opcode == Opcodes.GOTO) {
-                    // Ignore GOTO because it is not a conditional branch
-                    continue
-                }
-
-                val label = token.jumpInsn.label.label
-                val labelIndex = tokens.indexOfFirst { it is LabelToken && it.labelInsn.label == label }
-                if (labelIndex > i) {
-                    // Only consider forward branches, backward branches are already processed
-                    currentNode?.incompleteLabels += label
+                token.labels.forEach {
+                    val label = it.label
+                    val labelIndex = tokens.indexOfFirst { it is LabelToken && it.labelInsn.label == label }
+                    if (labelIndex > i) {
+                        // Only consider forward branches, backward branches are already processed
+                        currentNode?.incompleteLabels += label
+                    }
                 }
             }
 
@@ -157,11 +153,16 @@ private fun parseGroupInfoFromTokens(
             }
 
             is ThrowToken -> {
-                val nodeIndex = nodeStack.indexOfLast { it.type == GroupType.Root || it.incompleteLabels.isNotEmpty() }
-                for (i in (nodeStack.size - 1) downTo nodeIndex + 1) {
-                    val node = nodeStack[i]
-                    nodeStack.removeAt(i)
+                var toRemove = nodeStack.lastIndex
+                while (toRemove >= 0) {
+                    val node = nodeStack[toRemove]
+                    if (node.type == GroupType.Root || node.incompleteLabels.isNotEmpty()) {
+                        break
+                    }
+
+                    nodeStack.removeAt(toRemove)
                     result += node.build()
+                    toRemove--
                 }
             }
 
