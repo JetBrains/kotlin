@@ -815,6 +815,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleCompilerFacilityTestGenerate
       }
 
       @Test
+      @TestMetadata("unnamedContextParameter.kt")
+      public void testUnnamedContextParameter() {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/unnamedContextParameter.kt");
+      }
+
+      @Test
       @TestMetadata("valueParameter.kt")
       public void testValueParameter() {
         runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/valueParameter.kt");

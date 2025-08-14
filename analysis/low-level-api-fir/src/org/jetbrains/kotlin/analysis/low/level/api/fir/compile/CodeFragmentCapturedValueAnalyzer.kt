@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.parentsCodeFragmentA
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.anonymousContextParameterName
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
@@ -32,8 +33,11 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.resolvedType
+import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -42,6 +46,7 @@ import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.resolve.jvm.JvmConstants
 import java.util.*
 
 @KaImplementationDetail
@@ -251,7 +256,10 @@ private class CodeFragmentCapturedValueVisitor(
         when (symbol) {
             is FirValueParameterSymbol -> {
                 val isCrossingInlineBounds = isCrossingInlineBounds(element, symbol)
-                val capturedValue = CodeFragmentCapturedValue.Local(symbol.name, isMutated, isCrossingInlineBounds, depth)
+                val name = symbol.anonymousContextParameterName(session, JvmConstants.INVALID_CHARS)
+                    ?.let { Name.identifier(it) }
+                    ?: symbol.name
+                val capturedValue = CodeFragmentCapturedValue.Local(name, isMutated, isCrossingInlineBounds, depth)
                 register(CodeFragmentCapturedSymbol(capturedValue, symbol, symbol.resolvedReturnTypeRef))
             }
             is FirPropertySymbol -> {
