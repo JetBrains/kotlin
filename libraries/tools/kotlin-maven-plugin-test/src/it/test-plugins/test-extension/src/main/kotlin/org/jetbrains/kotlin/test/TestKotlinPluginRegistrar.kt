@@ -43,6 +43,6 @@ class TestKotlinPluginRegistrar : CompilerPluginRegistrar() {
         collector.report(CompilerMessageSeverity.INFO, "Option value: $option")
     }
 
-    override val supportsK2: Boolean
-        get() = true
+    override val pluginId: String get() = "test.compiler.plugin"
+    override val supportsK2: Boolean get() = true
 }

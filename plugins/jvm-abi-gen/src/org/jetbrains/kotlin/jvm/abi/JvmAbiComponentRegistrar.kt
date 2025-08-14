@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.codegen.extensions.ClassFileFactoryFinalizerExtensio
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.jvm.abi.JvmAbiCommandLineProcessor.Companion.COMPILER_PLUGIN_ID
 import java.io.File
 
 /**
@@ -51,6 +52,8 @@ class JvmAbiComponentRegistrar(
         ClassGeneratorExtension.registerExtension(builderExtension)
         ClassFileFactoryFinalizerExtension.registerExtension(outputExtension)
     }
+
+    override val pluginId: String get() = COMPILER_PLUGIN_ID
 
     override val supportsK2: Boolean
         get() = true

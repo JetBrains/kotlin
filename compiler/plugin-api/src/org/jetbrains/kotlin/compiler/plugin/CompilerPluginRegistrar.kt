@@ -23,8 +23,7 @@ abstract class CompilerPluginRegistrar {
      * Uniquely identifies the Kotlin compiler plugin. Must match the `pluginId` specified in [CommandLineProcessor].
      * The ID can be used in combination with `-Xcompiler-plugin-order` to control execution order of compiler plugins.
      */
-    open val pluginId: String
-        get() = "" // TODO(KT-55300) property will be made abstract in immediate followup.
+    abstract val pluginId: String
 
     abstract fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration)
 

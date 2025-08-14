@@ -29,6 +29,8 @@ class AtomicfuComponentRegistrar : CompilerPluginRegistrar() {
         registerExtensions(this)
     }
 
+    override val pluginId: String get() = "org.jetbrains.kotlinx.atomicfu"
+
     override val supportsK2: Boolean
         get() = true
 

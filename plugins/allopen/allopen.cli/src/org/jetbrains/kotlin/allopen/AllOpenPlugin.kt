@@ -56,6 +56,8 @@ class AllOpenComponentRegistrar : CompilerPluginRegistrar() {
         FirExtensionRegistrarAdapter.registerExtension(FirAllOpenExtensionRegistrar(annotations))
     }
 
+    override val pluginId: String get() = AllOpenPluginNames.PLUGIN_ID
+
     override val supportsK2: Boolean
         get() = true
 }

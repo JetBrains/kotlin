@@ -58,6 +58,8 @@ class FirDataFrameComponentRegistrar : CompilerPluginRegistrar() {
         IrGenerationExtension.registerExtension(IrBodyFiller())
     }
 
+    override val pluginId: String get() = DataFramePluginNames.PLUGIN_ID
+
     override val supportsK2: Boolean = true
 }
 
@@ -76,7 +78,8 @@ class DataFrameCommandLineProcessor : CommandLineProcessor {
         )
     }
 
-    override val pluginId: String = "org.jetbrains.kotlin.dataframe"
+    override val pluginId: String
+        get() = DataFramePluginNames.PLUGIN_ID
 
     override val pluginOptions: Collection<AbstractCliOption> = listOf(DISABLE_TOP_LEVEL_EXTENSION_PROPERTIES_OPTION)
 
@@ -86,4 +89,8 @@ class DataFrameCommandLineProcessor : CommandLineProcessor {
             else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
         }
     }
+}
+
+object DataFramePluginNames {
+    const val PLUGIN_ID = "org.jetbrains.kotlin.dataframe"
 }

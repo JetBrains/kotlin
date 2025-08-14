@@ -21,8 +21,8 @@ class Registrar : CompilerPluginRegistrar() {
         IrGenerationExtension.registerExtension(IrExtension2())
     }
 
-    override val supportsK2: Boolean
-        get() = false
+    override val pluginId: String get() = "test.compiler.plugin"
+    override val supportsK2: Boolean get() = false
 }
 
 class FrontendExtension : TypeResolutionInterceptorExtension {

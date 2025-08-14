@@ -18,8 +18,8 @@ class Registrar : CompilerPluginRegistrar() {
         IrGenerationExtension.registerExtension(IrExtension())
     }
 
-    override val supportsK2: Boolean
-        get() = true
+    override val pluginId: String get() = "plugin"
+    override val supportsK2: Boolean get() = true
 }
 
 class FirRegistrar : FirExtensionRegistrar() {

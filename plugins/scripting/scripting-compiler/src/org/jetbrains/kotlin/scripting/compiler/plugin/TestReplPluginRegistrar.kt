@@ -34,6 +34,8 @@ class ReplCompilerPluginRegistrar(val hostConfiguration: ScriptingHostConfigurat
         }
     }
 
+    override val pluginId: String get() = "kotlin.repl"
+
     override val supportsK2: Boolean
         get() = true
 }
