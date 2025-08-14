@@ -54,18 +54,7 @@ interface SearchPathResolver<L : KotlinLibrary> : WithLogger {
 
         companion object {
             fun lookUpByAbsolutePath(absoluteLibraryPath: File): File? {
-                if (absoluteLibraryPath.isFile) {
-                    // It's a really existing file.
-                    val extension = absoluteLibraryPath.extension
-                    if (extension != KLIB_FILE_EXTENSION &&
-                        /* A special workaround for old JS stdlib, that was packed in a JAR file. */ extension != "jar"
-                    ) {
-                        return null
-                    }
-                } else if (!absoluteLibraryPath.isDirectory) {
-                    // Neither a directory.
-                    return null
-                }
+                if (!absoluteLibraryPath.isFile && !absoluteLibraryPath.isDirectory) return null
 
                 val rawPath: String = absoluteLibraryPath.path
                 // The "official" way of `Paths.get(path).toRealPath()` does not work on Windows
