@@ -1,5 +1,4 @@
 // LANGUAGE: +MultiPlatformProjects
-// KT-77599 K2: HMPP compilation scheme: ClassCastException on typealias actualization
 
 // MODULE: lib-common
 expect class LibClass1 { fun foo(): String }
