@@ -331,6 +331,7 @@ class Framework(
     /**
      * Export KDocs to frameworks header file.
      */
+    @ExperimentalKotlinGradlePluginApi
     val exportKdoc: Property<Boolean> = project.objects.property(true)
 
     @Suppress("DEPRECATION_ERROR")
