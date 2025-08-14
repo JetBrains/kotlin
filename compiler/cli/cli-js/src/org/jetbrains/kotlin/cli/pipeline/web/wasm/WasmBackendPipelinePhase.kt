@@ -5,12 +5,11 @@
 
 package org.jetbrains.kotlin.cli.pipeline.web.wasm
 
-import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
-import org.jetbrains.kotlin.backend.wasm.compileToLoweredIr
-import org.jetbrains.kotlin.backend.wasm.compileWasm
+import org.jetbrains.kotlin.backend.wasm.*
 import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
 import org.jetbrains.kotlin.backend.wasm.ic.WasmModuleArtifact
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledFileFragment
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleFragmentGenerator
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleMetadataCache
 import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
@@ -26,12 +25,42 @@ import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
 import org.jetbrains.kotlin.ir.backend.js.dce.DceDumpNameCache
 import org.jetbrains.kotlin.ir.backend.js.dce.dumpDeclarationIrSizesIfNeed
 import org.jetbrains.kotlin.ir.backend.js.loadIr
+import org.jetbrains.kotlin.ir.backend.js.loadIrForSingleModule
+import org.jetbrains.kotlin.ir.declarations.IdSignatureRetriever
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.js.config.*
+import org.jetbrains.kotlin.library.isWasmStdlib
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import java.io.File
+import java.net.URLEncoder
+
+fun getAllReferencedDeclarations(
+    wasmCompiledFileFragment: WasmCompiledFileFragment,
+    additionalSignatureToImport: Set<IdSignature>
+): Set<IdSignature> {
+    val signatures = mutableSetOf<IdSignature>()
+    signatures.addAll(wasmCompiledFileFragment.functions.unbound.keys)
+    signatures.addAll(wasmCompiledFileFragment.globalFields.unbound.keys)
+    signatures.addAll(wasmCompiledFileFragment.globalVTables.unbound.keys)
+    signatures.addAll(wasmCompiledFileFragment.globalClassITables.unbound.keys)
+    wasmCompiledFileFragment.rttiElements?.let {
+        signatures.addAll(it.globalReferences.unbound.keys)
+    }
+    signatures.addAll(additionalSignatureToImport)
+    return signatures
+}
+
+private val IrModuleFragment.outputFileName
+    get() = name.asString()
+        .replace("<", "_")
+        .replace(">", "_")
+        .let { URLEncoder.encode(it, "UTF-8") }
 
 object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArtifact>("WasmBackendPipelinePhase") {
     override val configFiles: EnvironmentConfigFiles
@@ -127,6 +156,39 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
         wasmDebug: Boolean,
         generateDwarf: Boolean
     ): WasmCompilerResult {
+        return if (!configuration.getBoolean(WasmConfigurationKeys.WASM_INCLUDED_MODULE_ONLY)) {
+            compileWholeProgramMode(
+                configuration = configuration,
+                module = module,
+                outputName = outputName,
+                outputDir = outputDir,
+                propertyLazyInitialization = propertyLazyInitialization,
+                dce = dce,
+                dceDumpDeclarationIrSizesToFile = dceDumpDeclarationIrSizesToFile,
+                wasmDebug = wasmDebug,
+                generateDwarf = generateDwarf,
+            )
+        } else {
+            compileSingleModule(
+                configuration = configuration,
+                module = module,
+                outputDir = outputDir,
+                wasmDebug = wasmDebug,
+            )
+        }
+    }
+
+    internal fun compileWholeProgramMode(
+        configuration: CompilerConfiguration,
+        module: ModulesStructure,
+        outputName: String,
+        outputDir: File,
+        propertyLazyInitialization: Boolean,
+        dce: Boolean,
+        dceDumpDeclarationIrSizesToFile: String?,
+        wasmDebug: Boolean,
+        generateDwarf: Boolean
+    ): WasmCompilerResult {
         val performanceManager = configuration.perfManager
         performanceManager?.let {
             @OptIn(PotentiallyIncorrectPhaseTimeMeasurement::class)
@@ -197,4 +259,115 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
             return res
         }
     }
+
+    private fun compileSingleModule(
+        configuration: CompilerConfiguration,
+        module: ModulesStructure,
+        outputDir: File,
+        wasmDebug: Boolean,
+    ): WasmCompilerResult {
+        val performanceManager = configuration.perfManager
+
+        val irFactory = IrFactoryImplForWasmIC(WholeWorldStageController())
+
+        val irModuleInfo = loadIrForSingleModule(
+            modulesStructure = module,
+            irFactory = irFactory,
+        )
+
+        val (allModules, backendContext, _) = compileToLoweredIr(
+            irModuleInfo,
+            module.mainModule,
+            configuration,
+            performanceManager,
+            exportedDeclarations = setOf(FqName("main")),
+            generateTypeScriptFragment = false,
+            propertyLazyInitialization = configuration.propertyLazyInitialization,
+            disableCrossFileOptimisations = true,
+        )
+
+        performanceManager.tryMeasurePhaseTime(PhaseType.Backend) {
+
+            val compilationResult = compileWasmLoweredFragmentsForSingleModule(
+                configuration = configuration,
+                loweredIrFragments = allModules,
+                backendContext = backendContext,
+                signatureRetriever = irFactory,
+                stdlibIsMainModule = module.klibs.included?.isWasmStdlib == true,
+                generateWat = configuration.get(WasmConfigurationKeys.WASM_GENERATE_WAT, false),
+                wasmDebug = wasmDebug,
+            )
+
+            writeCompilationResult(
+                result = compilationResult,
+                dir = outputDir,
+                fileNameBase = allModules.last().outputFileName,
+            )
+
+            return compilationResult
+        }
+    }
+}
+
+fun compileWasmLoweredFragmentsForSingleModule(
+    configuration: CompilerConfiguration,
+    loweredIrFragments: List<IrModuleFragment>,
+    backendContext: WasmBackendContext,
+    signatureRetriever: IdSignatureRetriever,
+    stdlibIsMainModule: Boolean,
+    generateWat: Boolean,
+    wasmDebug: Boolean,
+): WasmCompilerResult {
+    val mainModuleFragment = backendContext.irModuleFragment
+    val moduleName = mainModuleFragment.name.asString()
+
+    val wasmModuleMetadataCache = WasmModuleMetadataCache(backendContext)
+    val codeGenerator = WasmModuleFragmentGenerator(
+        backendContext,
+        wasmModuleMetadataCache,
+        signatureRetriever,
+        allowIncompleteImplementations = false,
+        skipCommentInstructions = !generateWat,
+        inlineUnitGetter = stdlibIsMainModule,
+    )
+
+    val wasmCompiledFileFragments = mutableListOf<WasmCompiledFileFragment>()
+    val dependencyImports = mutableSetOf<WasmModuleDependencyImport>()
+
+    val mainModuleFileFragment = codeGenerator.generateModuleAsSingleFileFragmentWithModuleExport(mainModuleFragment)
+
+    // This signature needed to dynamically load module services
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    val additionalSignatureToImport =
+        if (stdlibIsMainModule) emptySet() else setOf(
+            signatureRetriever.declarationSignature(backendContext.wasmSymbols.registerModuleDescriptor.owner)!!,
+            signatureRetriever.declarationSignature(backendContext.wasmSymbols.createString.owner)!!,
+            signatureRetriever.declarationSignature(backendContext.wasmSymbols.tryGetAssociatedObject.owner)!!,
+        )
+
+    val importedDeclarations = getAllReferencedDeclarations(mainModuleFileFragment, additionalSignatureToImport)
+
+    val dependencyModules = loweredIrFragments.filterNot { it == mainModuleFragment }
+    dependencyModules.mapTo(wasmCompiledFileFragments) {
+        val dependencyName = it.name.asString()
+        dependencyImports.add(WasmModuleDependencyImport(dependencyName, it.outputFileName))
+        codeGenerator.generateModuleAsSingleFileFragmentWithModuleImport(it, dependencyName, importedDeclarations)
+    }
+    wasmCompiledFileFragments.add(mainModuleFileFragment)
+
+    return compileWasm(
+        wasmCompiledFileFragments = wasmCompiledFileFragments,
+        moduleName = moduleName,
+        configuration = configuration,
+        typeScriptFragment = null,
+        baseFileName = mainModuleFragment.outputFileName,
+        emitNameSection = wasmDebug,
+        generateWat = generateWat,
+        generateSourceMaps = false,
+        generateDwarf = false,
+        useDebuggerCustomFormatters = false,
+        stdlibModuleNameForImport = loweredIrFragments.first().name.asString().takeIf { !stdlibIsMainModule },
+        dependencyModules = dependencyImports,
+        initializeUnit = stdlibIsMainModule,
+    )
 }

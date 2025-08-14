@@ -76,7 +76,7 @@ class WasmSymbols(
         "isNotFirstWasmExportCall"
     )
 
-    internal val tryGetAssociatedObject = getInternalWasmFunction("tryGetAssociatedObject")
+    val tryGetAssociatedObject = getInternalWasmFunction("tryGetAssociatedObject")
     internal val callAssociatedObjectGetter = getInternalWasmFunction("callAssociatedObjectGetter")
     val registerModuleDescriptor = getInternalWasmFunction("registerModuleDescriptor")
 
