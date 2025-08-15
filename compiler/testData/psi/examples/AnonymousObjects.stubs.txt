@@ -3,7 +3,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=AnonymousObjectsKt]]
   IMPORT_LIST
   FUN[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     VALUE_PARAMETER_LIST
-    OBJECT_DECLARATION[classId=null, fqName=null, isCompanion=false, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[MouseAdapter]]
+    OBJECT_DECLARATION[classId=null, fqName=null, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[MouseAdapter]]
       SUPER_TYPE_LIST
         SUPER_TYPE_CALL_ENTRY
           CONSTRUCTOR_CALLEE
@@ -25,7 +25,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=AnonymousObjectsKt]]
       CLASS_BODY
         ENUM_ENTRY[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=true, isTopLevel=false, name=TOO_MANY_CLICKS, superNames=[]]
         ENUM_ENTRY[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=true, isTopLevel=false, name=ONE_MORE_MESSAGE, superNames=[]]
-    OBJECT_DECLARATION[classId=null, fqName=null, isCompanion=false, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[]]
+    OBJECT_DECLARATION[classId=null, fqName=null, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[]]
       CLASS_BODY
         FUN[fqName=null, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=sendMessage]
           VALUE_PARAMETER_LIST

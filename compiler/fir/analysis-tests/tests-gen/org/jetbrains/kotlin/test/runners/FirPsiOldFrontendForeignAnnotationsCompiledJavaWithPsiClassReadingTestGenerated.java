@@ -813,6 +813,12 @@ public class FirPsiOldFrontendForeignAnnotationsCompiledJavaWithPsiClassReadingT
         }
 
         @Test
+        @TestMetadata("CovariantReturn.kt")
+        public void testCovariantReturn() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/CovariantReturn.kt");
+        }
+
+        @Test
         @TestMetadata("Defaults.kt")
         public void testDefaults() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/Defaults.kt");

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,7 +13,5 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderWithTextStub
 class KotlinPlaceHolderWithTextStubImpl<T : KtElementImplStub<out StubElement<*>>>(
     parent: StubElement<*>,
     elementType: IStubElementType<*, *>,
-    private val text: String
-) : KotlinStubBaseImpl<T>(parent, elementType), KotlinPlaceHolderWithTextStub<T> {
-    override fun text(): String = text
-}
+    override val text: String
+) : KotlinStubBaseImpl<T>(parent, elementType), KotlinPlaceHolderWithTextStub<T>

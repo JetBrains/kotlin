@@ -9587,6 +9587,18 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       public void testOverrideFullWithChecker() {
         runTest("compiler/testData/diagnostics/tests/crvDifferent/overrideFullWithChecker.kt");
       }
+
+      @Test
+      @TestMetadata("overrideFullWithDisabledToPropagate.kt")
+      public void testOverrideFullWithDisabledToPropagate() {
+        runTest("compiler/testData/diagnostics/tests/crvDifferent/overrideFullWithDisabledToPropagate.kt");
+      }
+
+      @Test
+      @TestMetadata("overridesWithAny.kt")
+      public void testOverridesWithAny() {
+        runTest("compiler/testData/diagnostics/tests/crvDifferent/overridesWithAny.kt");
+      }
     }
 
     @Nested
@@ -45921,6 +45933,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       @TestDataPath("$PROJECT_ROOT")
       public class Exhaustive {
         @Test
+        @TestMetadata("complementarySealedVariantsLimitations.kt")
+        public void testComplementarySealedVariantsLimitations() {
+          runTest("compiler/testData/diagnostics/tests/when/exhaustive/complementarySealedVariantsLimitations.kt");
+        }
+
+        @Test
         @TestMetadata("ExhaustiveStarProjection.kt")
         public void testExhaustiveStarProjection() {
           runTest("compiler/testData/diagnostics/tests/when/exhaustive/ExhaustiveStarProjection.kt");
@@ -45930,6 +45948,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
         @TestMetadata("exhaustiveWithComplementaryLowersFromNegativeCheck.kt")
         public void testExhaustiveWithComplementaryLowersFromNegativeCheck() {
           runTest("compiler/testData/diagnostics/tests/when/exhaustive/exhaustiveWithComplementaryLowersFromNegativeCheck.kt");
+        }
+
+        @Test
+        @TestMetadata("exhaustiveWithComplementarySealedVariants.kt")
+        public void testExhaustiveWithComplementarySealedVariants() {
+          runTest("compiler/testData/diagnostics/tests/when/exhaustive/exhaustiveWithComplementarySealedVariants.kt");
         }
 
         @Test

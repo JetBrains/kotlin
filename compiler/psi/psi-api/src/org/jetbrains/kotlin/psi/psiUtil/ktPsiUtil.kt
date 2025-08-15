@@ -192,7 +192,7 @@ fun StubBasedPsiElementBase<out KotlinClassOrObjectStub<out KtClassOrObject>>.ge
 
     val stub = greenStub
     if (stub != null) {
-        return stub.getSuperNames()
+        return stub.superNames
     }
 
     val specifiers = this.superTypeListEntries

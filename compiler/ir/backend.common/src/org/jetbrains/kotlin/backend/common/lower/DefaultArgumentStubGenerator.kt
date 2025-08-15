@@ -81,9 +81,7 @@ open class DefaultArgumentStubGenerator<TContext : CommonBackendContext>(
 
                 generateSuperCallHandlerCheckIfNeeded(originalDeclaration, newIrFunction)
 
-                val intAnd = this@DefaultArgumentStubGenerator.context.symbols.getBinaryOperator(
-                    OperatorNameConventions.AND, context.irBuiltIns.intType, context.irBuiltIns.intType
-                )
+                val intAnd = this@DefaultArgumentStubGenerator.context.irBuiltIns.intAndSymbol
                 var defaultableParameterIndex = -1
                 val variablesForDefaultParameters = originalDeclaration.parameters.map { valueParameter ->
                     val canHaveDefaultValue = valueParameter.canHaveDefaultValue()

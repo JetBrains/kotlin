@@ -7,7 +7,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
   CLASS[classId=kotlin/collections/Collection, fqName=kotlin.collections.Collection, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=Collection, superNames=[Iterable]]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=true, name=E]
+      TYPE_PARAMETER[fqName=null, name=E]
         MODIFIER_LIST[out]
     SUPER_TYPE_LIST
       SUPER_TYPE_ENTRY
@@ -90,7 +90,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
   CLASS[classId=kotlin/collections/Iterable, fqName=kotlin.collections.Iterable, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=Iterable, superNames=[]]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=true, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
         MODIFIER_LIST[out]
     CLASS_BODY
       FUN[fqName=kotlin.collections.Iterable.iterator, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=iterator]
@@ -111,7 +111,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
   CLASS[classId=kotlin/collections/Iterator, fqName=kotlin.collections.Iterator, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=Iterator, superNames=[]]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=true, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
         MODIFIER_LIST[out]
     CLASS_BODY
       FUN[fqName=kotlin.collections.Iterator.next, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=next]
@@ -131,7 +131,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
   CLASS[classId=kotlin/collections/List, fqName=kotlin.collections.List, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=List, superNames=[Collection]]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=true, name=E]
+      TYPE_PARAMETER[fqName=null, name=E]
         MODIFIER_LIST[out]
     SUPER_TYPE_LIST
       SUPER_TYPE_ENTRY
@@ -313,7 +313,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
   CLASS[classId=kotlin/collections/ListIterator, fqName=kotlin.collections.ListIterator, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=ListIterator, superNames=[Iterator]]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=true, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
         MODIFIER_LIST[out]
     SUPER_TYPE_LIST
       SUPER_TYPE_ENTRY
@@ -377,8 +377,8 @@ FILE[kind=File[packageFqName=kotlin.collections]]
   CLASS[classId=kotlin/collections/Map, fqName=kotlin.collections.Map, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=Map, superNames=[]]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=K]
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=true, name=V]
+      TYPE_PARAMETER[fqName=null, name=K]
+      TYPE_PARAMETER[fqName=null, name=V]
         MODIFIER_LIST[out]
     CLASS_BODY
       PROPERTY[fqName=kotlin.collections.Map.size, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=size]
@@ -521,9 +521,9 @@ FILE[kind=File[packageFqName=kotlin.collections]]
       CLASS[classId=kotlin/collections/Map.Entry, fqName=kotlin.collections.Map.Entry, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=false, name=Entry, superNames=[]]
         MODIFIER_LIST[public]
         TYPE_PARAMETER_LIST
-          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=true, name=K]
+          TYPE_PARAMETER[fqName=null, name=K]
             MODIFIER_LIST[out]
-          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=true, name=V]
+          TYPE_PARAMETER[fqName=null, name=V]
             MODIFIER_LIST[out]
         CLASS_BODY
           PROPERTY[fqName=kotlin.collections.Map.Entry.key, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=key]
@@ -539,7 +539,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
   CLASS[classId=kotlin/collections/MutableCollection, fqName=kotlin.collections.MutableCollection, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=MutableCollection, superNames=[Collection, MutableIterable]]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=E]
+      TYPE_PARAMETER[fqName=null, name=E]
     SUPER_TYPE_LIST
       SUPER_TYPE_ENTRY
         TYPE_REFERENCE
@@ -584,7 +584,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=E]
       FUN[fqName=kotlin.collections.MutableCollection.add, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=add]
-        MODIFIER_LIST[public abstract]
+        MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -603,7 +603,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
       FUN[fqName=kotlin.collections.MutableCollection.remove, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=remove]
-        MODIFIER_LIST[public abstract]
+        MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -622,7 +622,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
       FUN[fqName=kotlin.collections.MutableCollection.addAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=addAll]
-        MODIFIER_LIST[public abstract]
+        MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -650,7 +650,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
       FUN[fqName=kotlin.collections.MutableCollection.removeAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=removeAll]
-        MODIFIER_LIST[public abstract]
+        MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -678,7 +678,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
       FUN[fqName=kotlin.collections.MutableCollection.retainAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=retainAll]
-        MODIFIER_LIST[public abstract]
+        MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -716,7 +716,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
   CLASS[classId=kotlin/collections/MutableIterable, fqName=kotlin.collections.MutableIterable, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=MutableIterable, superNames=[Iterable]]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=true, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
         MODIFIER_LIST[out]
     SUPER_TYPE_LIST
       SUPER_TYPE_ENTRY
@@ -751,7 +751,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
   CLASS[classId=kotlin/collections/MutableIterator, fqName=kotlin.collections.MutableIterator, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=MutableIterator, superNames=[Iterator]]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=true, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
         MODIFIER_LIST[out]
     SUPER_TYPE_LIST
       SUPER_TYPE_ENTRY
@@ -779,7 +779,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
   CLASS[classId=kotlin/collections/MutableList, fqName=kotlin.collections.MutableList, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=MutableList, superNames=[List, MutableCollection]]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=E]
+      TYPE_PARAMETER[fqName=null, name=E]
     SUPER_TYPE_LIST
       SUPER_TYPE_ENTRY
         TYPE_REFERENCE
@@ -809,7 +809,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                     REFERENCE_EXPRESSION[referencedName=E]
     CLASS_BODY
       FUN[fqName=kotlin.collections.MutableList.add, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=add]
-        MODIFIER_LIST[public abstract]
+        MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -828,7 +828,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
       FUN[fqName=kotlin.collections.MutableList.remove, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=remove]
-        MODIFIER_LIST[public abstract]
+        MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -847,7 +847,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
       FUN[fqName=kotlin.collections.MutableList.addAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=addAll]
-        MODIFIER_LIST[public abstract]
+        MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -875,7 +875,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
       FUN[fqName=kotlin.collections.MutableList.addAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=addAll]
-        MODIFIER_LIST[public abstract]
+        MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -909,7 +909,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
       FUN[fqName=kotlin.collections.MutableList.removeAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=removeAll]
-        MODIFIER_LIST[public abstract]
+        MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -937,7 +937,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
       FUN[fqName=kotlin.collections.MutableList.retainAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=retainAll]
-        MODIFIER_LIST[public abstract]
+        MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -973,7 +973,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
       FUN[fqName=kotlin.collections.MutableList.set, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=set]
-        MODIFIER_LIST[public abstract operator]
+        MODIFIER_LIST[public abstract operator IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -1014,7 +1014,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
       FUN[fqName=kotlin.collections.MutableList.removeAt, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=removeAt]
-        MODIFIER_LIST[public abstract]
+        MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -1098,7 +1098,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
   CLASS[classId=kotlin/collections/MutableListIterator, fqName=kotlin.collections.MutableListIterator, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=MutableListIterator, superNames=[ListIterator, MutableIterator]]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
     SUPER_TYPE_LIST
       SUPER_TYPE_ENTRY
         TYPE_REFERENCE
@@ -1176,8 +1176,8 @@ FILE[kind=File[packageFqName=kotlin.collections]]
   CLASS[classId=kotlin/collections/MutableMap, fqName=kotlin.collections.MutableMap, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=MutableMap, superNames=[Map]]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=K]
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=V]
+      TYPE_PARAMETER[fqName=null, name=K]
+      TYPE_PARAMETER[fqName=null, name=V]
     SUPER_TYPE_LIST
       SUPER_TYPE_ENTRY
         TYPE_REFERENCE
@@ -1255,7 +1255,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                           USER_TYPE
                             REFERENCE_EXPRESSION[referencedName=V]
       FUN[fqName=kotlin.collections.MutableMap.put, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=put]
-        MODIFIER_LIST[public abstract]
+        MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -1277,7 +1277,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=V]
       FUN[fqName=kotlin.collections.MutableMap.remove, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=remove]
-        MODIFIER_LIST[public abstract]
+        MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -1363,8 +1363,8 @@ FILE[kind=File[packageFqName=kotlin.collections]]
       CLASS[classId=kotlin/collections/MutableMap.MutableEntry, fqName=kotlin.collections.MutableMap.MutableEntry, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=false, name=MutableEntry, superNames=[Entry]]
         MODIFIER_LIST[public]
         TYPE_PARAMETER_LIST
-          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=K]
-          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=V]
+          TYPE_PARAMETER[fqName=null, name=K]
+          TYPE_PARAMETER[fqName=null, name=V]
         SUPER_TYPE_LIST
           SUPER_TYPE_ENTRY
             TYPE_REFERENCE
@@ -1387,7 +1387,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                         REFERENCE_EXPRESSION[referencedName=V]
         CLASS_BODY
           FUN[fqName=kotlin.collections.MutableMap.MutableEntry.setValue, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=setValue]
-            MODIFIER_LIST[public abstract]
+            MODIFIER_LIST[public abstract IgnorableReturnValue]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
@@ -1406,7 +1406,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
   CLASS[classId=kotlin/collections/MutableSet, fqName=kotlin.collections.MutableSet, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=MutableSet, superNames=[Set, MutableCollection]]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=E]
+      TYPE_PARAMETER[fqName=null, name=E]
     SUPER_TYPE_LIST
       SUPER_TYPE_ENTRY
         TYPE_REFERENCE
@@ -1451,7 +1451,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=E]
       FUN[fqName=kotlin.collections.MutableSet.add, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=add]
-        MODIFIER_LIST[public abstract]
+        MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -1470,7 +1470,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
       FUN[fqName=kotlin.collections.MutableSet.remove, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=remove]
-        MODIFIER_LIST[public abstract]
+        MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -1489,7 +1489,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
       FUN[fqName=kotlin.collections.MutableSet.addAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=addAll]
-        MODIFIER_LIST[public abstract]
+        MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -1517,7 +1517,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
       FUN[fqName=kotlin.collections.MutableSet.removeAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=removeAll]
-        MODIFIER_LIST[public abstract]
+        MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -1545,7 +1545,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
       FUN[fqName=kotlin.collections.MutableSet.retainAll, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=retainAll]
-        MODIFIER_LIST[public abstract]
+        MODIFIER_LIST[public abstract IgnorableReturnValue]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
@@ -1583,7 +1583,7 @@ FILE[kind=File[packageFqName=kotlin.collections]]
   CLASS[classId=kotlin/collections/Set, fqName=kotlin.collections.Set, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=Set, superNames=[Collection]]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=true, name=E]
+      TYPE_PARAMETER[fqName=null, name=E]
         MODIFIER_LIST[out]
     SUPER_TYPE_LIST
       SUPER_TYPE_ENTRY

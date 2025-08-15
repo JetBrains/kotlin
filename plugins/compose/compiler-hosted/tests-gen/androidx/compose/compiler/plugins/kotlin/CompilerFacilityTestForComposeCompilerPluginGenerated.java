@@ -186,6 +186,12 @@ public class CompilerFacilityTestForComposeCompilerPluginGenerated extends Abstr
   }
 
   @Test
+  @TestMetadata("testOverrideLambda.kt")
+  public void testTestOverrideLambda() {
+    runTest("plugins/compose/compiler-hosted/testData/codegen/testOverrideLambda.kt");
+  }
+
+  @Test
   @TestMetadata("valueArgumentForLibraryConstructor.kt")
   public void testValueArgumentForLibraryConstructor() {
     runTest("plugins/compose/compiler-hosted/testData/codegen/valueArgumentForLibraryConstructor.kt");

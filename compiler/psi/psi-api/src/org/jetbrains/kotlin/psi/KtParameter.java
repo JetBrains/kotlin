@@ -65,7 +65,7 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
     public boolean hasDefaultValue() {
         KotlinParameterStub stub = getGreenStub();
         if (stub != null) {
-            return stub.hasDefaultValue();
+            return stub.getHasDefaultValue();
         }
         return getDefaultValue() != null;
     }
@@ -74,7 +74,7 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
     public KtExpression getDefaultValue() {
         KotlinParameterStub stub = getStub();
         if (stub != null) {
-            if (!stub.hasDefaultValue()) {
+            if (!stub.getHasDefaultValue()) {
                 return null;
             }
 
@@ -105,7 +105,7 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
     public boolean hasValOrVar() {
         KotlinParameterStub stub = getGreenStub();
         if (stub != null) {
-            return stub.hasValOrVar();
+            return stub.getHasValOrVar();
         }
         return getValOrVarKeyword() != null;
     }
@@ -114,7 +114,7 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
     @Nullable
     public PsiElement getValOrVarKeyword() {
         KotlinParameterStub stub = getStub();
-        if (stub != null && !stub.hasValOrVar()) {
+        if (stub != null && !stub.getHasValOrVar()) {
             return null;
         }
         return findChildByType(KtTokens.VAL_VAR);

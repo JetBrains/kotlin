@@ -1,5 +1,4 @@
 // LANGUAGE: +MultiPlatformProjects
-// IGNORE_HMPP: JVM_IR, JS_IR
 // KT-77599 K2: HMPP compilation scheme: ClassCastException on typealias actualization
 
 // MODULE: lib-common

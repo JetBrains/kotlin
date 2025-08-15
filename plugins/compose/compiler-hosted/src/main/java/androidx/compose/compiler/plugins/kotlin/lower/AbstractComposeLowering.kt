@@ -365,8 +365,16 @@ abstract class AbstractComposeLowering(
         }
     }
 
-    protected fun IrType.binaryOperator(name: Name, paramType: IrType): IrFunctionSymbol =
-        context.symbols.getBinaryOperator(name, this, paramType)
+    protected fun IrType.binaryOperator(name: Name, paramType: IrType): IrFunctionSymbol {
+        return context.referenceFunctions(CallableId(this.classOrFail.owner.classId!!, name))
+            .single {
+                it.owner.hasShape(
+                    dispatchReceiver = true,
+                    regularParameters = 1,
+                    parameterTypes = listOf(this, paramType)
+                )
+            }
+    }
 
     private fun binaryOperatorCall(
         lhs: IrExpression,

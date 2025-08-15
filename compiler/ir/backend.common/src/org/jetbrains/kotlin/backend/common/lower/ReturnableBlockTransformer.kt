@@ -78,7 +78,14 @@ class ReturnableBlockTransformer(
         val scopeSymbol = currentScope?.scope?.scopeOwnerSymbol ?: containerSymbol
         val builder = context.createIrBuilder(scopeSymbol!!)
         val variable by lazy {
-            builder.scope.createTmpVariable(expression.type, "tmp\$ret\$${labelCnt++}", true).apply {
+            builder.scope.createTemporaryVariable(
+                irExpression = expression,
+                nameHint = "tmp\$ret\$${labelCnt++}",
+                isMutable = true,
+                startOffset = UNDEFINED_OFFSET,
+                endOffset = UNDEFINED_OFFSET,
+                inventUniqueName = false,
+            ).apply {
                 // Consider the code:
                 //
                 // inline fun <T> myrun(block: () -> T) = block()
@@ -92,9 +99,12 @@ class ReturnableBlockTransformer(
                 // block's type in IR can be any superclass of `Unit`, e.g. `Any?`. Thus, the workaround does not work in that case.
                 // Therefore, we should explicitly initialize `variable`.
                 // It is safe even if block actually returns something, because in that case `Unit` initializer will be overwritten.
-                if (!expression.type.isUnit() && context.irBuiltIns.unitType.isSubtypeOf(expression.type, context.typeSystem)) {
-                    initializer = builder.irUnit()
-                }
+                initializer =
+                    if (!expression.type.isUnit() && context.irBuiltIns.unitType.isSubtypeOf(expression.type, context.typeSystem)) {
+                        builder.irUnit()
+                    } else {
+                        null
+                    }
             }
         }
 

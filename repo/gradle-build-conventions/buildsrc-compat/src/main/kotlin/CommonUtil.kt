@@ -81,12 +81,6 @@ fun Project.getBooleanProperty(name: String): Boolean? = this.findProperty(name)
     else v.toBoolean()
 }
 
-inline fun CopySourceSpec.from(crossinline filesProvider: () -> Any?): CopySourceSpec = from(Callable { filesProvider() })
-
-fun Project.javaPluginExtension(): JavaPluginExtension = extensions.getByType()
-
-fun Project.findJavaPluginExtension(): JavaPluginExtension? = extensions.findByType()
-
 fun JavaExec.pathRelativeToWorkingDir(file: File): String = file.relativeTo(workingDir).invariantSeparatorsPath
 
 fun Task.singleOutputFile(layout: ProjectLayout): File = when (this) {
@@ -108,7 +102,3 @@ fun getMvnwCmd(): List<String> = when {
     OperatingSystem.current().isWindows -> listOf("cmd", "/c", "mvnw.cmd")
     else -> listOf("./mvnw")
 }
-
-fun String.capitalize(): String = capitalize(Locale.ROOT)
-
-fun String.capitalize(locale: Locale): String = replaceFirstChar { if (it.isLowerCase()) it.titlecase(locale) else it.toString() }

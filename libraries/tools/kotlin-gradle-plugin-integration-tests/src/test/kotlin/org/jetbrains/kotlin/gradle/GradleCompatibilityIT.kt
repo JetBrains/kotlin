@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.JavaVersion
+import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginDsl
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.testbase.GradleTest
 import org.jetbrains.kotlin.gradle.testbase.GradleTestVersions
 import org.jetbrains.kotlin.gradle.testbase.GradleWithJdkTest
@@ -17,8 +20,14 @@ import org.jetbrains.kotlin.gradle.testbase.TestVersions
 import org.jetbrains.kotlin.gradle.testbase.assertOutputContains
 import org.jetbrains.kotlin.gradle.testbase.build
 import org.jetbrains.kotlin.gradle.testbase.buildAndFail
+import org.jetbrains.kotlin.gradle.testbase.buildScriptReturn
+import org.jetbrains.kotlin.gradle.testbase.plugins
 import org.jetbrains.kotlin.gradle.testbase.project
 import org.junit.jupiter.api.DisplayName
+import java.io.File
+import kotlin.io.path.pathString
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 @DisplayName("Tests on compatibility with various Gradle versions")
 @JvmGradlePluginTests
@@ -82,5 +91,51 @@ class GradleCompatibilityIT : KGPBaseTest() {
                 assertOutputContains("Please update the Gradle version to at least Gradle ${TestVersions.Gradle.MIN_SUPPORTED}")
             }
         }
+    }
+
+    @DisplayName("KT-78785: build script resolves Gradle version specific jars")
+    @Test
+    fun buildScriptResolvesGradleVersionSpecificJars() {
+        fun resolveKgpJars(gradleVersion: GradleVersion): List<File> {
+            return project("empty", gradleVersion) {
+                plugins {
+                    kotlin("jvm")
+                }
+            }.buildScriptReturn {
+                listOf(
+                    KotlinMultiplatformExtension::class.java.protectionDomain.codeSource.location,
+                    KotlinGradlePluginDsl::class.java.protectionDomain.codeSource.location,
+                ).map { File(it.toURI()) }
+            }.buildAndReturn()
+        }
+
+        val maximumGradleVariantArtifactSuffix = System.getProperty("kotlin.gradle.maximumSupportedGradleVariant.artifactSuffix")
+        val resolvedJars = mapOf(
+            TestVersions.Gradle.MIN_SUPPORTED to resolveKgpJars(
+                gradleVersion = GradleVersion.version(TestVersions.Gradle.MIN_SUPPORTED)
+            ),
+            // This test relies on TestVersions.Gradle.MAX_SUPPORTED being >= maximumGradleVariantArtifactSuffix
+            TestVersions.Gradle.MAX_SUPPORTED to resolveKgpJars(
+                gradleVersion = GradleVersion.version(TestVersions.Gradle.MAX_SUPPORTED)
+            ),
+        ).mapValues {
+            it.value.map {
+                it.toPath().toList().last().pathString
+            }
+        }
+
+        assertEquals(
+            mapOf(
+                TestVersions.Gradle.MIN_SUPPORTED to listOf(
+                    "kotlin-gradle-plugin-${defaultBuildOptions.kotlinVersion}.jar",
+                    "kotlin-gradle-plugin-api-${defaultBuildOptions.kotlinVersion}.jar",
+                ),
+                TestVersions.Gradle.MAX_SUPPORTED to listOf(
+                    "kotlin-gradle-plugin-${defaultBuildOptions.kotlinVersion}-${maximumGradleVariantArtifactSuffix}.jar",
+                    "kotlin-gradle-plugin-api-${defaultBuildOptions.kotlinVersion}-${maximumGradleVariantArtifactSuffix}.jar",
+                ),
+            ),
+            resolvedJars,
+        )
     }
 }

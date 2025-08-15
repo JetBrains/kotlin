@@ -27,56 +27,55 @@ interface KotlinFileStub : PsiFileStub<KtFile> {
 interface KotlinPlaceHolderStub<T : KtElement> : StubElement<T>
 
 interface KotlinPlaceHolderWithTextStub<T : KtElement> : KotlinPlaceHolderStub<T> {
-    fun text(): String
+    val text: String
 }
 
 interface KotlinStubWithFqName<T : PsiNamedElement> : NamedStub<T> {
-    fun getFqName(): FqName?
+    val fqName: FqName?
 }
 
 interface KotlinClassifierStub {
-    fun getClassId(): ClassId?
+    val classId: ClassId?
 }
 
 interface KotlinTypeAliasStub : KotlinClassifierStub, KotlinStubWithFqName<KtTypeAlias> {
-    fun isTopLevel(): Boolean
+    val isTopLevel: Boolean
 }
 
 interface KotlinClassOrObjectStub<T : KtClassOrObject> : KotlinClassifierStub, KotlinStubWithFqName<T> {
-    fun isLocal(): Boolean
-    fun getSuperNames(): List<String>
-    fun isTopLevel(): Boolean
+    val isLocal: Boolean
+    val superNames: List<String>
+    val isTopLevel: Boolean
 }
 
 interface KotlinClassStub : KotlinClassOrObjectStub<KtClass> {
-    fun isInterface(): Boolean
-    fun isEnumEntry(): Boolean
+    val isInterface: Boolean
+    val isEnumEntry: Boolean
 
     /**
      * When we build [KotlinClassStub] for source stubs, this function always returns `false`. For binary stubs, it returns whether
      * the binary class was compiled with `-jvm-default={enable|no-compatibility}` option or not.
      */
-    fun isClsStubCompiledToJvmDefaultImplementation(): Boolean
+    val isClsStubCompiledToJvmDefaultImplementation: Boolean
 }
 
 interface KotlinObjectStub : KotlinClassOrObjectStub<KtObjectDeclaration> {
-    fun isCompanion(): Boolean
-    fun isObjectLiteral(): Boolean
+    val isObjectLiteral: Boolean
 }
 
 interface KotlinValueArgumentStub<T : KtValueArgument> : KotlinPlaceHolderStub<T> {
-    fun isSpread(): Boolean
+    val isSpread: Boolean
 }
 
 interface KotlinContractEffectStub : KotlinPlaceHolderStub<KtContractEffect> {}
 
 interface KotlinAnnotationEntryStub : StubElement<KtAnnotationEntry> {
-    fun getShortName(): String?
-    fun hasValueArguments(): Boolean
+    val shortName: String?
+    val hasValueArguments: Boolean
 }
 
 interface KotlinAnnotationUseSiteTargetStub : StubElement<KtAnnotationUseSiteTarget> {
-    fun getUseSiteTarget(): String
+    val useSiteTarget: String
 }
 
 /**
@@ -88,37 +87,34 @@ interface KotlinDeclarationWithBodyStub<T : KtDeclarationWithBody> : StubElement
      * **false** means that the declaration is definitely having no contract,
      * but **true** doesn't guarantee that the declaration has a contract.
      */
-    fun mayHaveContract(): Boolean
+    val mayHaveContract: Boolean
 
     /**
      * Whether the declaration has a block body or no bodies at all.
      */
-    fun hasNoExpressionBody(): Boolean
+    val hasNoExpressionBody: Boolean
 
     /**
      * Whether the declaration has a body (expression or block).
      */
-    fun hasBody(): Boolean
+    val hasBody: Boolean
 }
 
 interface KotlinFunctionStub : KotlinCallableStubBase<KtNamedFunction>, KotlinDeclarationWithBodyStub<KtNamedFunction> {
-    fun hasTypeParameterListBeforeFunctionName(): Boolean
+    val hasTypeParameterListBeforeFunctionName: Boolean
 }
 
-interface KotlinConstructorStub<T : KtConstructor<T>> :
-    KotlinCallableStubBase<T>, KotlinDeclarationWithBodyStub<T> {
-    fun isDelegatedCallToThis(): Boolean
-    fun isExplicitDelegationCall(): Boolean
+interface KotlinConstructorStub<T : KtConstructor<T>> : KotlinCallableStubBase<T>, KotlinDeclarationWithBodyStub<T> {
+    val isDelegatedCallToThis: Boolean
+    val isExplicitDelegationCall: Boolean
 }
 
-interface KotlinImportAliasStub : StubElement<KtImportAlias> {
-    fun getName(): String?
-}
+interface KotlinImportAliasStub : NamedStub<KtImportAlias>
 
 interface KotlinImportDirectiveStub : StubElement<KtImportDirective> {
-    fun isAllUnder(): Boolean
-    fun getImportedFqName(): FqName?
-    fun isValid(): Boolean
+    val isAllUnder: Boolean
+    val importedFqName: FqName?
+    val isValid: Boolean
 }
 
 interface KotlinModifierListStub : StubElement<KtDeclarationModifierList> {
@@ -154,33 +150,33 @@ interface KotlinModifierListStub : StubElement<KtDeclarationModifierList> {
 }
 
 interface KotlinNameReferenceExpressionStub : StubElement<KtNameReferenceExpression> {
-    fun getReferencedName(): String
+    val referencedName: String
 }
 
 interface KotlinEnumEntrySuperclassReferenceExpressionStub : StubElement<KtEnumEntrySuperclassReferenceExpression> {
-    fun getReferencedName(): String
+    val referencedName: String
 }
 
 interface KotlinParameterStub : KotlinStubWithFqName<KtParameter> {
-    fun isMutable(): Boolean
-    fun hasValOrVar(): Boolean
-    fun hasDefaultValue(): Boolean
+    val isMutable: Boolean
+    val hasValOrVar: Boolean
+    val hasDefaultValue: Boolean
 }
 
 interface KotlinPropertyAccessorStub : KotlinDeclarationWithBodyStub<KtPropertyAccessor> {
-    fun isGetter(): Boolean
+    val isGetter: Boolean
 }
 
 interface KotlinBackingFieldStub : StubElement<KtBackingField> {
-    fun hasInitializer(): Boolean
+    val hasInitializer: Boolean
 }
 
 interface KotlinPropertyStub : KotlinCallableStubBase<KtProperty> {
-    fun isVar(): Boolean
-    fun hasDelegate(): Boolean
-    fun hasDelegateExpression(): Boolean
-    fun hasInitializer(): Boolean
-    fun hasReturnTypeRef(): Boolean
+    val isVar: Boolean
+    val hasDelegate: Boolean
+    val hasDelegateExpression: Boolean
+    val hasInitializer: Boolean
+    val hasReturnTypeRef: Boolean
 
     /**
      * Whether the property has a backing field.
@@ -192,14 +188,11 @@ interface KotlinPropertyStub : KotlinCallableStubBase<KtProperty> {
 }
 
 interface KotlinCallableStubBase<TDeclaration : KtCallableDeclaration> : KotlinStubWithFqName<TDeclaration> {
-    fun isTopLevel(): Boolean
-    fun isExtension(): Boolean
+    val isTopLevel: Boolean
+    val isExtension: Boolean
 }
 
-interface KotlinTypeParameterStub : KotlinStubWithFqName<KtTypeParameter> {
-    fun isInVariance(): Boolean
-    fun isOutVariance(): Boolean
-}
+interface KotlinTypeParameterStub : KotlinStubWithFqName<KtTypeParameter>
 
 enum class ConstantValueKind {
     NULL,
@@ -210,8 +203,8 @@ enum class ConstantValueKind {
 }
 
 interface KotlinConstantExpressionStub : StubElement<KtConstantExpression> {
-    fun kind(): ConstantValueKind
-    fun value(): String
+    val kind: ConstantValueKind
+    val value: String
 }
 
 interface KotlinClassLiteralExpressionStub : StubElement<KtClassLiteralExpression>
@@ -227,7 +220,7 @@ interface KotlinCollectionLiteralExpressionStub : StubElement<KtCollectionLitera
 }
 
 interface KotlinTypeProjectionStub : StubElement<KtTypeProjection> {
-    fun getProjectionKind(): KtProjectionKind
+    val projectionKind: KtProjectionKind
 }
 
 interface KotlinUserTypeStub : StubElement<KtUserType>
@@ -235,11 +228,11 @@ interface KotlinUserTypeStub : StubElement<KtUserType>
 interface KotlinFunctionTypeStub : StubElement<KtFunctionType>
 
 interface KotlinScriptStub : KotlinStubWithFqName<KtScript> {
-    override fun getFqName(): FqName
+    override val fqName: FqName
 }
 
 interface KotlinContextReceiverStub : StubElement<KtContextReceiver> {
-    fun getLabel(): String?
+    val label: String?
 }
 
 interface KotlinStringInterpolationPrefixStub : StubElement<KtStringInterpolationPrefix> {

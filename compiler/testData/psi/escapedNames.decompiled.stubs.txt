@@ -90,7 +90,7 @@ EscapedNamesKt.class:
     TYPEALIAS[classId=one two/three four/Top Level TypeAlias, fqName=one two.three four.Top Level TypeAlias, isTopLevel=true, name=Top Level TypeAlias]
       MODIFIER_LIST[public]
       TYPE_PARAMETER_LIST
-        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=Type Parameter]
+        TYPE_PARAMETER[fqName=null, name=Type Parameter]
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE
@@ -124,7 +124,7 @@ Top Level Class.class:
                   REFERENCE_EXPRESSION[referencedName=three four]
                 REFERENCE_EXPRESSION[referencedName=Annotation Class]
       TYPE_PARAMETER_LIST
-        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=Type Parameter]
+        TYPE_PARAMETER[fqName=null, name=Type Parameter]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
@@ -249,7 +249,7 @@ Top Level Class.class:
                       REFERENCE_EXPRESSION[referencedName=three four]
                     REFERENCE_EXPRESSION[referencedName=Annotation Class]
           TYPE_PARAMETER_LIST
-            TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+            TYPE_PARAMETER[fqName=null, name=T]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
@@ -283,7 +283,7 @@ Top Level Object.class:
         REFERENCE_EXPRESSION[referencedName=one two]
         REFERENCE_EXPRESSION[referencedName=three four]
     IMPORT_LIST
-    OBJECT_DECLARATION[classId=one two/three four/Top Level Object, fqName=one two.three four.Top Level Object, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=Top Level Object, superNames=[Top Level Interface]]
+    OBJECT_DECLARATION[classId=one two/three four/Top Level Object, fqName=one two.three four.Top Level Object, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=Top Level Object, superNames=[Top Level Interface]]
       MODIFIER_LIST[public]
       SUPER_TYPE_LIST
         SUPER_TYPE_ENTRY

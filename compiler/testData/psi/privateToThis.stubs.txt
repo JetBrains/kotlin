@@ -4,7 +4,7 @@ FILE[kind=File[packageFqName=p]]
   IMPORT_LIST
   CLASS[classId=p/PrivateToThis, fqName=p.PrivateToThis, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=PrivateToThis, superNames=[]]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=true, isOutVariance=false, name=I]
+      TYPE_PARAMETER[fqName=null, name=I]
         MODIFIER_LIST[in]
     CLASS_BODY
       PROPERTY[fqName=p.PrivateToThis.foo, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=foo]

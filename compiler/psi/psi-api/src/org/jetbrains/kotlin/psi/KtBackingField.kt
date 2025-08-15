@@ -30,16 +30,18 @@ class KtBackingField : KtDeclarationStub<KotlinBackingFieldStub>, KtModifierList
 
     override fun getInitializer(): KtExpression? {
         val stub = greenStub
-        if (stub != null && !stub.hasInitializer()) {
+        if (stub != null && !stub.hasInitializer) {
             return null
         }
+
         return PsiTreeUtil.getNextSiblingOfType(equalsToken, KtExpression::class.java)
     }
 
     override fun hasInitializer(): Boolean {
         greenStub?.let {
-            return it.hasInitializer()
+            return it.hasInitializer
         }
+
         return getInitializer() != null
     }
 

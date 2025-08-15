@@ -5,7 +5,7 @@ FILE[kind=File[packageFqName=<root>]]
     CLASS_BODY
       CLASS[classId=/foo.foo, fqName=foo.foo, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=foo, superNames=[]]
         CLASS_BODY
-          OBJECT_DECLARATION[classId=/foo.foo.foo, fqName=foo.foo.foo, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=foo, superNames=[]]
+          OBJECT_DECLARATION[classId=/foo.foo.foo, fqName=foo.foo.foo, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=foo, superNames=[]]
             CLASS_BODY
           CLASS[classId=/foo.foo.Bar, fqName=foo.foo.Bar, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Bar, superNames=[]]
             CLASS_BODY
@@ -19,15 +19,15 @@ FILE[kind=File[packageFqName=<root>]]
                 REFERENCE_EXPRESSION[referencedName=bar]
       CLASS[classId=/foo.Bar, fqName=foo.Bar, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Bar, superNames=[]]
         CLASS_BODY
-          OBJECT_DECLARATION[classId=/foo.Bar.foo, fqName=foo.Bar.foo, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=foo, superNames=[]]
+          OBJECT_DECLARATION[classId=/foo.Bar.foo, fqName=foo.Bar.foo, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=foo, superNames=[]]
             CLASS_BODY
-              OBJECT_DECLARATION[classId=/foo.Bar.foo.Companion, fqName=foo.Bar.foo.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+              OBJECT_DECLARATION[classId=/foo.Bar.foo.Companion, fqName=foo.Bar.foo.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
                 MODIFIER_LIST[companion]
                 CLASS_BODY
-              OBJECT_DECLARATION[classId=/foo.Bar.foo.Companion, fqName=foo.Bar.foo.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+              OBJECT_DECLARATION[classId=/foo.Bar.foo.Companion, fqName=foo.Bar.foo.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
                 MODIFIER_LIST[private companion]
                 CLASS_BODY
-              OBJECT_DECLARATION[classId=/foo.Bar.foo.Companion, fqName=foo.Bar.foo.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[Fooo]]
+              OBJECT_DECLARATION[classId=/foo.Bar.foo.Companion, fqName=foo.Bar.foo.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[Fooo]]
                 MODIFIER_LIST[private companion]
                 SUPER_TYPE_LIST
                   SUPER_TYPE_ENTRY
@@ -35,7 +35,7 @@ FILE[kind=File[packageFqName=<root>]]
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=Fooo]
                 CLASS_BODY
-              OBJECT_DECLARATION[classId=/foo.Bar.foo.Companion, fqName=foo.Bar.foo.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[Fooo, Bar]]
+              OBJECT_DECLARATION[classId=/foo.Bar.foo.Companion, fqName=foo.Bar.foo.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[Fooo, Bar]]
                 MODIFIER_LIST[private companion]
                 SUPER_TYPE_LIST
                   SUPER_TYPE_ENTRY
@@ -48,7 +48,7 @@ FILE[kind=File[packageFqName=<root>]]
                         REFERENCE_EXPRESSION[referencedName=Bar]
                     REFERENCE_EXPRESSION[referencedName=foo]
                 CLASS_BODY
-              OBJECT_DECLARATION[classId=/foo.Bar.foo.Companion, fqName=foo.Bar.foo.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[Fooo, Bar, Goo]]
+              OBJECT_DECLARATION[classId=/foo.Bar.foo.Companion, fqName=foo.Bar.foo.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[Fooo, Bar, Goo]]
                 MODIFIER_LIST[private companion]
                 SUPER_TYPE_LIST
                   SUPER_TYPE_ENTRY
@@ -83,13 +83,13 @@ FILE[kind=File[packageFqName=<root>]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=bar]
-      OBJECT_DECLARATION[classId=/foo.Companion, fqName=foo.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=/foo.Companion, fqName=foo.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[companion]
         CLASS_BODY
-      OBJECT_DECLARATION[classId=/foo.Companion, fqName=foo.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=/foo.Companion, fqName=foo.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[private companion]
         CLASS_BODY
-      OBJECT_DECLARATION[classId=/foo.Companion, fqName=foo.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[Fooo]]
+      OBJECT_DECLARATION[classId=/foo.Companion, fqName=foo.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[Fooo]]
         MODIFIER_LIST[private companion]
         SUPER_TYPE_LIST
           SUPER_TYPE_ENTRY
@@ -97,7 +97,7 @@ FILE[kind=File[packageFqName=<root>]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Fooo]
         CLASS_BODY
-      OBJECT_DECLARATION[classId=/foo.Companion, fqName=foo.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[Fooo, Bar]]
+      OBJECT_DECLARATION[classId=/foo.Companion, fqName=foo.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[Fooo, Bar]]
         MODIFIER_LIST[private companion]
         SUPER_TYPE_LIST
           SUPER_TYPE_ENTRY
@@ -110,7 +110,7 @@ FILE[kind=File[packageFqName=<root>]]
                 REFERENCE_EXPRESSION[referencedName=Bar]
             REFERENCE_EXPRESSION[referencedName=foo]
         CLASS_BODY
-      OBJECT_DECLARATION[classId=/foo.Companion, fqName=foo.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[Fooo, Bar, Goo]]
+      OBJECT_DECLARATION[classId=/foo.Companion, fqName=foo.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[Fooo, Bar, Goo]]
         MODIFIER_LIST[private companion]
         SUPER_TYPE_LIST
           SUPER_TYPE_ENTRY

@@ -13,7 +13,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=UpdateOperationKt]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Int]
     CLASS_BODY
-      OBJECT_DECLARATION[classId=/Pair.Companion, fqName=Pair.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=/Pair.Companion, fqName=Pair.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[companion]
         CLASS_BODY
           FUN[fqName=Pair.Companion.copy, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=copy]

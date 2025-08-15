@@ -62,7 +62,7 @@ FILE[kind=File[packageFqName=a]]
                 REFERENCE_EXPRESSION[referencedName=Int]
       CLASS[classId=a/InheritingClasses.D, fqName=a.InheritingClasses.D, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=false, name=D, superNames=[C]]
         TYPE_PARAMETER_LIST
-          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+          TYPE_PARAMETER[fqName=null, name=T]
         SUPER_TYPE_LIST
           SUPER_TYPE_ENTRY
             TYPE_REFERENCE

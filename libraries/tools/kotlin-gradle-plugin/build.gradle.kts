@@ -108,18 +108,6 @@ dependencies {
     commonApi(project(":kotlin-gradle-plugin-model"))
     commonApi(project(":libraries:tools:gradle:fus-statistics-gradle-plugin"))
 
-    // Following two dependencies is a workaround for IDEA import to pick-up them correctly
-    commonCompileOnly(project(":kotlin-gradle-plugin-api")) {
-        capabilities {
-            requireCapability("org.jetbrains.kotlin:kotlin-gradle-plugin-api-common")
-        }
-    }
-    commonCompileOnly(project(":kotlin-gradle-plugin-model")) {
-        capabilities {
-            requireCapability("org.jetbrains.kotlin:kotlin-gradle-plugin-model-common")
-        }
-    }
-
     for (compilerRuntimeDependency in unpublishedCompilerRuntimeDependencies) {
         commonCompileOnly(project(compilerRuntimeDependency)) { isTransitive = false }
     }
@@ -638,8 +626,3 @@ fun avoidPublishingTestFixtures() {
     javaComponent.withVariantsFromConfiguration(configurations["testFixturesRuntimeElements"]) { skip() }
 }
 avoidPublishingTestFixtures()
-
-registerKotlinSourceForVersionRange(
-    GradlePluginVariant.GRADLE_MIN,
-    GradlePluginVariant.GRADLE_88,
-)

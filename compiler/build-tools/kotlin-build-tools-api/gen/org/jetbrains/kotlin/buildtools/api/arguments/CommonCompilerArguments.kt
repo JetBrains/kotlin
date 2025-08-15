@@ -515,6 +515,16 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_DATA_FLOW_BASED_EXHAUSTIVENESS")
 
     /**
+     * Enable experimental language support for explicit backing fields.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_EXPLICIT_BACKING_FIELDS: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_EXPLICIT_BACKING_FIELDS")
+
+    /**
      * Enable experimental multi-dollar interpolation.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.

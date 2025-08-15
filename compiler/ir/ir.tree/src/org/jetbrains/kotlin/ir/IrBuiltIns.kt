@@ -177,6 +177,7 @@ abstract class IrBuiltIns {
     abstract val intPlusSymbol: IrSimpleFunctionSymbol
     abstract val intTimesSymbol: IrSimpleFunctionSymbol
     abstract val intXorSymbol: IrSimpleFunctionSymbol
+    abstract val intAndSymbol: IrSimpleFunctionSymbol
 
     abstract val extensionToString: IrSimpleFunctionSymbol
     abstract val memberToString: IrSimpleFunctionSymbol
@@ -203,9 +204,6 @@ abstract class IrBuiltIns {
     abstract fun getNonBuiltinFunctionsByReturnType(
         name: Name, vararg packageNameSegments: String
     ): Map<IrClassifierSymbol, IrSimpleFunctionSymbol>
-
-    abstract fun getBinaryOperator(name: Name, lhsType: IrType, rhsType: IrType): IrSimpleFunctionSymbol
-    abstract fun getUnaryOperator(name: Name, receiverType: IrType): IrSimpleFunctionSymbol
 
     abstract val operatorsPackageFragment: IrExternalPackageFragment
     abstract val kotlinInternalPackageFragment: IrExternalPackageFragment

@@ -29,12 +29,12 @@ class KtContextReceiver : KtElementImplStub<KotlinContextReceiverStub> {
             ?.findChildByType(KtNodeTypes.LABEL)
 
     fun labelName(): String? {
-        stub?.let { return it.getLabel() }
+        stub?.let { return it.label }
         return targetLabel()?.getReferencedName()
     }
 
     fun labelNameAsName(): Name? {
-        stub?.let { stub -> return stub.getLabel()?.let { Name.identifier(it) } }
+        stub?.let { stub -> return stub.label?.let { Name.identifier(it) } }
         return targetLabel()?.getReferencedNameAsName()
     }
 

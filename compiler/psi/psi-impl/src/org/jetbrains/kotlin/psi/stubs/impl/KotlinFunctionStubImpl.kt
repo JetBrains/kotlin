@@ -20,13 +20,13 @@ import java.io.IOException
 class KotlinFunctionStubImpl(
     parent: StubElement<out PsiElement>?,
     private val nameRef: StringRef?,
-    private val isTopLevel: Boolean,
-    private val fqName: FqName?,
-    private val isExtension: Boolean,
-    private val hasNoExpressionBody: Boolean,
-    private val hasBody: Boolean,
-    private val hasTypeParameterListBeforeFunctionName: Boolean,
-    private val mayHaveContract: Boolean,
+    override val isTopLevel: Boolean,
+    override val fqName: FqName?,
+    override val isExtension: Boolean,
+    override val hasNoExpressionBody: Boolean,
+    override val hasBody: Boolean,
+    override val hasTypeParameterListBeforeFunctionName: Boolean,
+    override val mayHaveContract: Boolean,
     val contract: List<KtContractDescriptionElement<KotlinTypeBean, Nothing?>>?,
     val origin: KotlinStubOrigin?
 ) : KotlinStubBaseImpl<KtNamedFunction>(parent, KtStubElementTypes.FUNCTION), KotlinFunctionStub {
@@ -36,15 +36,7 @@ class KotlinFunctionStubImpl(
         }
     }
 
-    override fun getFqName() = fqName
-
     override fun getName() = StringRef.toString(nameRef)
-    override fun isTopLevel() = isTopLevel
-    override fun isExtension() = isExtension
-    override fun hasNoExpressionBody(): Boolean = hasNoExpressionBody
-    override fun hasBody() = hasBody
-    override fun hasTypeParameterListBeforeFunctionName() = hasTypeParameterListBeforeFunctionName
-    override fun mayHaveContract(): Boolean = mayHaveContract
 
     @Throws(IOException::class)
     fun serializeContract(dataStream: StubOutputStream) {

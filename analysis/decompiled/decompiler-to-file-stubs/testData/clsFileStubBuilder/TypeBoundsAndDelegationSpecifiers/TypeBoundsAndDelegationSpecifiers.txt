@@ -5,14 +5,14 @@ FILE[kind=File[packageFqName=test]]
   CLASS[classId=test/TypeBoundsAndDelegationSpecifiers, fqName=test.TypeBoundsAndDelegationSpecifiers, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=TypeBoundsAndDelegationSpecifiers, superNames=[A, T]]
     MODIFIER_LIST[public final]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=H]
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=G]
+      TYPE_PARAMETER[fqName=null, name=H]
+      TYPE_PARAMETER[fqName=null, name=G]
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Any]
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=C]
+      TYPE_PARAMETER[fqName=null, name=C]
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE

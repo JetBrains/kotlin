@@ -1,3 +1,4 @@
+import gradle.GradlePluginVariant
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -50,46 +51,14 @@ dependencies {
     testImplementation(testFixtures(project(":kotlin-gradle-plugin"))) {
         (this as ModuleDependency).isTransitive = false
     }
-    testImplementation(project(":kotlin-gradle-plugin")) {
-        capabilities {
-            requireCapability("org.jetbrains.kotlin:kotlin-gradle-plugin-common")
-        }
-    }
-    testImplementation(project(":kotlin-allopen")) {
-        capabilities {
-            requireCapability("org.jetbrains.kotlin:kotlin-allopen-common")
-        }
-    }
-    testImplementation(project(":kotlin-noarg")) {
-        capabilities {
-            requireCapability("org.jetbrains.kotlin:kotlin-noarg-common")
-        }
-    }
-    testImplementation(project(":kotlin-lombok")) {
-        capabilities {
-            requireCapability("org.jetbrains.kotlin:kotlin-lombok-common")
-        }
-    }
-    testImplementation(project(":kotlin-power-assert")) {
-        capabilities {
-            requireCapability("org.jetbrains.kotlin:kotlin-power-assert-common")
-        }
-    }
-    testImplementation(project(":kotlin-sam-with-receiver")) {
-        capabilities {
-            requireCapability("org.jetbrains.kotlin:kotlin-sam-with-receiver-common")
-        }
-    }
-    testImplementation(project(":kotlin-assignment")) {
-        capabilities {
-            requireCapability("org.jetbrains.kotlin:kotlin-assignment-common")
-        }
-    }
-    testImplementation(project(":atomicfu")) {
-        capabilities {
-            requireCapability("org.jetbrains.kotlin:atomicfu-common")
-        }
-    }
+    testImplementation(project(":kotlin-gradle-plugin"))
+    testImplementation(project(":kotlin-allopen"))
+    testImplementation(project(":kotlin-noarg"))
+    testImplementation(project(":kotlin-lombok"))
+    testImplementation(project(":kotlin-power-assert"))
+    testImplementation(project(":kotlin-sam-with-receiver"))
+    testImplementation(project(":kotlin-assignment"))
+    testImplementation(project(":atomicfu"))
 
     testImplementation(project(":kotlin-gradle-compiler-types"))
     testImplementation(project(":kotlin-gradle-plugin-idea"))
@@ -454,6 +423,11 @@ tasks.withType<Test>().configureEach {
     if (installCocoapods != null) {
         systemProperty("installCocoapods", installCocoapods)
     }
+
+    systemProperty(
+        "kotlin.gradle.maximumSupportedGradleVariant.artifactSuffix",
+        GradlePluginVariant.MAXIMUM_SUPPORTED_GRADLE_VARIANT.sourceSetName,
+    )
 
     // Gradle 8.10 requires running on at least JDK 17
     javaLauncher.value(project.getToolchainLauncherFor(JdkMajorVersion.JDK_17_0)).disallowChanges()

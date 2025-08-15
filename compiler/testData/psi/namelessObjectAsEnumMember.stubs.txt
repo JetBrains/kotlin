@@ -6,5 +6,5 @@ FILE[kind=File[packageFqName=<root>]]
     CLASS_BODY
       ENUM_ENTRY[classId=null, fqName=A.A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=A, superNames=[]]
       ENUM_ENTRY[classId=null, fqName=A.B, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[]]
-      OBJECT_DECLARATION[classId=/A.<no name provided>, fqName=A.<no name provided>, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=null, superNames=[]]
+      OBJECT_DECLARATION[classId=/A.<no name provided>, fqName=A.<no name provided>, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=null, superNames=[]]
         MODIFIER_LIST[inner]

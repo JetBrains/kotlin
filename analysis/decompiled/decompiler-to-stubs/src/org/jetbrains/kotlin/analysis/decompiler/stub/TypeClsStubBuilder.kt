@@ -317,7 +317,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
 
             val parameter = KotlinParameterStubImpl(
                 parameterList,
-                fqName = null,
+                fqNameRef = null,
                 name = null,
                 isMutable = false,
                 hasValOrVar = false,
@@ -351,7 +351,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             val parameterStub = KotlinParameterStubImpl(
                 parameterListStub,
                 name = parameterName.ref(),
-                fqName = null,
+                fqNameRef = null,
                 hasDefaultValue = hasDefaultValue,
                 hasValOrVar = false,
                 isMutable = false
@@ -405,9 +405,8 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             val typeParameterStub = KotlinTypeParameterStubImpl(
                 typeParameterListStub,
                 name = name.ref(),
-                isInVariance = proto.variance == Variance.IN,
-                isOutVariance = proto.variance == Variance.OUT
             )
+
             createTypeParameterModifierListStub(typeParameterStub, proto)
             val upperBoundProtos = proto.upperBounds(c.typeTable)
             if (upperBoundProtos.isNotEmpty()) {
@@ -480,7 +479,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             KotlinPlaceHolderStubImpl<KtContextReceiverList>(parent, KtStubElementTypes.CONTEXT_RECEIVER_LIST)
         for (contextReceiverType in contextReceiverTypes) {
             val contextReceiverStub =
-                KotlinContextReceiverStubImpl(contextReceiverListStub, KtStubElementTypes.CONTEXT_RECEIVER, label = null)
+                KotlinContextReceiverStubImpl(contextReceiverListStub, KtStubElementTypes.CONTEXT_RECEIVER, labelRef = null)
             createTypeReferenceStub(contextReceiverStub, contextReceiverType)
         }
     }

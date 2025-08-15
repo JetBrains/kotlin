@@ -546,7 +546,7 @@ TypeAliasExpansionKt.class:
     TYPEALIAS[classId=test/ParameterizedListAlias, fqName=test.ParameterizedListAlias, isTopLevel=true, name=ParameterizedListAlias]
       MODIFIER_LIST[public]
       TYPE_PARAMETER_LIST
-        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=A]
+        TYPE_PARAMETER[fqName=null, name=A]
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE
@@ -604,7 +604,7 @@ TypeAliasExpansionKt.class:
     TYPEALIAS[classId=test/NestedParameterizedListAlias, fqName=test.NestedParameterizedListAlias, isTopLevel=true, name=NestedParameterizedListAlias]
       MODIFIER_LIST[public]
       TYPE_PARAMETER_LIST
-        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=A]
+        TYPE_PARAMETER[fqName=null, name=A]
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE

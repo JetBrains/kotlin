@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.dsl.DependencyCollector
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinDependencies
-import org.jetbrains.kotlin.gradle.dsl.KotlinDependenciesImpl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
@@ -31,6 +31,12 @@ internal val MinSupportedGradleVersionWithDependencyCollectors = GradleVersion.v
 internal sealed class KotlinTopLevelDependenciesBlock {
     class Dependencies(val block: KotlinDependencies) : KotlinTopLevelDependenciesBlock()
     object UnavailableInCurrentGradleVersion : KotlinTopLevelDependenciesBlock()
+}
+
+internal abstract class KotlinDependenciesImpl : KotlinDependencies {
+    override fun kotlin(module: String) = kotlin(module, null)
+    override fun kotlin(module: String, version: String?): Dependency = project.dependencyFactory
+        .create("org.jetbrains.kotlin", "kotlin-$module", version)
 }
 
 internal val KotlinMultiplatformExtension.dependencies: KotlinTopLevelDependenciesBlock by extrasStoredProperty {

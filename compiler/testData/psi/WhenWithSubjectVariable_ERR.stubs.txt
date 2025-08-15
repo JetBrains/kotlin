@@ -9,5 +9,5 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=WhenWithSubjectVariable_ERRK
       CLASS_BODY
     CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=true, isTopLevel=false, name=I, superNames=[]]
       CLASS_BODY
-    OBJECT_DECLARATION[classId=null, fqName=null, isCompanion=false, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[]]
+    OBJECT_DECLARATION[classId=null, fqName=null, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[]]
       CLASS_BODY

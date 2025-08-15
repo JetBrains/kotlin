@@ -196,7 +196,7 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
     }
 
     fun <S : StubElement<P>, P : KtElementImplStub<S>> findChildByTypeOrClass(
-        elementType: KtStubElementType<S, P>,
+        elementType: KtStubElementType<out S, P>,
         elementClass: Class<P>
     ): P? {
         val stub = greenStub

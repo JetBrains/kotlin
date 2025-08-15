@@ -204,10 +204,10 @@ FILE[kind=File[packageFqName=test]]
       FUN[fqName=test.Types.extOnFunctionType, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, mayHaveContract=false, name=extOnFunctionType]
         MODIFIER_LIST[public]
         TYPE_PARAMETER_LIST
-          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=P1]
-          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=P2]
-          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=P3]
-          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=R]
+          TYPE_PARAMETER[fqName=null, name=P1]
+          TYPE_PARAMETER[fqName=null, name=P2]
+          TYPE_PARAMETER[fqName=null, name=P3]
+          TYPE_PARAMETER[fqName=null, name=R]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Function3]

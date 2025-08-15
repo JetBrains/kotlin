@@ -5,8 +5,8 @@ KotlinStub$IMPORT_LIST
 KotlinStub$CLASS[classId=test/TypeParametersInFlexibleTypes, fqName=test.TypeParametersInFlexibleTypes, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=TypeParametersInFlexibleTypes, superNames=[]]
   KotlinStub$MODIFIER_LIST[public final]
   KotlinStub$TYPE_PARAMETER_LIST
-    KotlinStub$TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=A]
-    KotlinStub$TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=D]
+    KotlinStub$TYPE_PARAMETER[fqName=null, name=A]
+    KotlinStub$TYPE_PARAMETER[fqName=null, name=D]
   KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=TypeParametersInFlexibleTypes]
     KotlinStub$MODIFIER_LIST[public]
     KotlinStub$VALUE_PARAMETER_LIST

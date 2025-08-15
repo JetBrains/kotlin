@@ -2850,6 +2850,8 @@ private object TestIrBuiltins : IrBuiltIns() {
         get() = missingBuiltIn()
     override val intXorSymbol: IrSimpleFunctionSymbol
         get() = missingBuiltIn()
+    override val intAndSymbol: IrSimpleFunctionSymbol
+        get() = missingBuiltIn()
     override val extensionToString: IrSimpleFunctionSymbol
         get() = missingBuiltIn()
     override val memberToString: IrSimpleFunctionSymbol
@@ -2896,14 +2898,6 @@ private object TestIrBuiltins : IrBuiltIns() {
         name: Name,
         vararg packageNameSegments: String,
     ): Map<IrClassifierSymbol, IrSimpleFunctionSymbol> {
-        missingBuiltIn()
-    }
-
-    override fun getBinaryOperator(name: Name, lhsType: IrType, rhsType: IrType): IrSimpleFunctionSymbol {
-        missingBuiltIn()
-    }
-
-    override fun getUnaryOperator(name: Name, receiverType: IrType): IrSimpleFunctionSymbol {
         missingBuiltIn()
     }
 

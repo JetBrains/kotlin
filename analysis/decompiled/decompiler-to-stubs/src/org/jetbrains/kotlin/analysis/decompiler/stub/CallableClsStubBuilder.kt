@@ -316,7 +316,7 @@ private class PropertyClsStubBuilder(
     }
 
     override fun createCallableSpecialParts() {
-        if ((callableStub as KotlinPropertyStub).hasInitializer()) {
+        if ((callableStub as KotlinPropertyStub).hasInitializer) {
             KotlinNameReferenceExpressionStubImpl(callableStub, StringRef.fromString(COMPILED_DEFAULT_INITIALIZER))
         }
 

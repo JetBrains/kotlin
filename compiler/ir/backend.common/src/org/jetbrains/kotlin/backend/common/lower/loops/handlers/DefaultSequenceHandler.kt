@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.loops.HeaderInfo
 import org.jetbrains.kotlin.backend.common.lower.loops.HeaderInfoHandler
 import org.jetbrains.kotlin.backend.common.lower.loops.IterableHeaderInfo
-import org.jetbrains.kotlin.ir.builders.createTmpVariable
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -30,7 +29,11 @@ internal class DefaultSequenceHandler(private val context: CommonBackendContext)
             val iteratorFun =
                 sequenceClassSymbol!!.getSimpleFunction(OperatorNameConventions.ITERATOR.asString())!!.owner
             IterableHeaderInfo(
-                scope.createTmpVariable(irCall(iteratorFun).apply { dispatchReceiver = expression }, nameHint = "iterator")
+                scope.createTemporaryVariable(
+                    irCall(iteratorFun).apply { dispatchReceiver = expression },
+                    nameHint = "iterator",
+                    inventUniqueName = false,
+                )
             )
         }
 }

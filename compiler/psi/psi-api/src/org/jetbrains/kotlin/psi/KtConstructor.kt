@@ -18,7 +18,10 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 
 abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinConstructorStub<T>>, KtFunction {
     protected constructor(node: ASTNode) : super(node)
-    protected constructor(stub: KotlinConstructorStub<T>, nodeType: KtStubElementType<KotlinConstructorStub<T>, T>) : super(stub, nodeType)
+    protected constructor(
+        stub: KotlinConstructorStub<T>,
+        nodeType: KtStubElementType<out KotlinConstructorStub<T>, T>,
+    ) : super(stub, nodeType)
 
     abstract fun getContainingClassOrObject(): KtClassOrObject
 
@@ -44,7 +47,7 @@ abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinCon
     override fun hasBlockBody() = hasBody()
 
     fun isDelegatedCallToThis(): Boolean {
-        greenStub?.let { return it.isDelegatedCallToThis() }
+        greenStub?.let { return it.isDelegatedCallToThis }
         return when (this) {
             is KtPrimaryConstructor -> false
             is KtSecondaryConstructor -> getDelegationCallOrNull()?.isCallToThis() ?: true
@@ -53,7 +56,7 @@ abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinCon
     }
 
     fun isExplicitDelegationCall(): Boolean {
-        greenStub?.let { return it.isExplicitDelegationCall() }
+        greenStub?.let { return it.isExplicitDelegationCall }
         return when (this) {
             is KtPrimaryConstructor -> false
             is KtSecondaryConstructor -> getDelegationCallOrNull()?.isImplicit == false
@@ -62,7 +65,7 @@ abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinCon
     }
 
     override fun hasBody(): Boolean {
-        greenStub?.let { return it.hasBody() }
+        greenStub?.let { return it.hasBody }
         return bodyExpression != null
     }
 
@@ -100,7 +103,7 @@ abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinCon
     override fun mayHaveContract(): Boolean {
         val stub = greenStub
         if (stub != null) {
-            return stub.mayHaveContract()
+            return stub.mayHaveContract
         }
 
         @OptIn(KtImplementationDetail::class)

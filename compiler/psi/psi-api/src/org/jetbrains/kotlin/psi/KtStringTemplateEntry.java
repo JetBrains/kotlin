@@ -57,7 +57,7 @@ public abstract class KtStringTemplateEntry extends KtElementImplStub<KotlinPlac
     public String getText() {
         KotlinPlaceHolderWithTextStub<?> stub = getGreenStub();
         if (stub != null) {
-            return stub.text();
+            return stub.getText();
         }
 
         return super.getText();

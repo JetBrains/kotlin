@@ -24,230 +24,230 @@ internal object KtStubBasedElementTypes {
     // Classifiers
 
     @JvmField
-    val CLASS: KtStubElementType<KotlinClassStub, KtClass> =
+    val CLASS: KtStubElementType<out KotlinClassStub, KtClass> =
         provider.classType
 
     @JvmField
-    val OBJECT_DECLARATION: KtStubElementType<KotlinObjectStub, KtObjectDeclaration> =
+    val OBJECT_DECLARATION: KtStubElementType<out KotlinObjectStub, KtObjectDeclaration> =
         provider.objectType
 
     @JvmField
-    val TYPEALIAS: KtStubElementType<KotlinTypeAliasStub, KtTypeAlias> =
+    val TYPEALIAS: KtStubElementType<out KotlinTypeAliasStub, KtTypeAlias> =
         provider.typeAliasType
 
     @JvmField
-    val CLASS_BODY: KtStubElementType<KotlinPlaceHolderStub<KtClassBody>, KtClassBody> =
+    val CLASS_BODY: KtStubElementType<out KotlinPlaceHolderStub<KtClassBody>, KtClassBody> =
         provider.classBodyType
 
 
     // Initializers
 
     @JvmField
-    val CLASS_INITIALIZER: KtStubElementType<KotlinPlaceHolderStub<KtClassInitializer>, KtClassInitializer> =
+    val CLASS_INITIALIZER: KtStubElementType<out KotlinPlaceHolderStub<KtClassInitializer>, KtClassInitializer> =
         provider.classInitializerType
 
     @JvmField
-    val SCRIPT_INITIALIZER: KtStubElementType<KotlinPlaceHolderStub<KtScriptInitializer>, KtScriptInitializer> =
+    val SCRIPT_INITIALIZER: KtStubElementType<out KotlinPlaceHolderStub<KtScriptInitializer>, KtScriptInitializer> =
         provider.scriptInitializerType
 
 
     // Callables
 
     @JvmField
-    val FUNCTION: KtStubElementType<KotlinFunctionStub, KtNamedFunction> =
+    val FUNCTION: KtStubElementType<out KotlinFunctionStub, KtNamedFunction> =
         provider.functionType
 
     @JvmField
-    val PROPERTY: KtStubElementType<KotlinPropertyStub, KtProperty> =
+    val PROPERTY: KtStubElementType<out KotlinPropertyStub, KtProperty> =
         provider.propertyType
 
     @JvmField
-    val ENUM_ENTRY: KtStubElementType<KotlinClassStub, KtClass> =
+    val ENUM_ENTRY: KtStubElementType<out KotlinClassStub, KtClass> =
         provider.enumEntryType
 
     @JvmField
-    val PRIMARY_CONSTRUCTOR: KtStubElementType<KotlinConstructorStub<KtPrimaryConstructor>, KtPrimaryConstructor> =
+    val PRIMARY_CONSTRUCTOR: KtStubElementType<out KotlinConstructorStub<KtPrimaryConstructor>, KtPrimaryConstructor> =
         provider.primaryConstructorType
 
     @JvmField
-    val SECONDARY_CONSTRUCTOR: KtStubElementType<KotlinConstructorStub<KtSecondaryConstructor>, KtSecondaryConstructor> =
+    val SECONDARY_CONSTRUCTOR: KtStubElementType<out KotlinConstructorStub<KtSecondaryConstructor>, KtSecondaryConstructor> =
         provider.secondaryConstructorType
 
     @JvmField
-    val CONSTRUCTOR_CALLEE: KtStubElementType<KotlinPlaceHolderStub<KtConstructorCalleeExpression>, KtConstructorCalleeExpression> =
+    val CONSTRUCTOR_CALLEE: KtStubElementType<out KotlinPlaceHolderStub<KtConstructorCalleeExpression>, KtConstructorCalleeExpression> =
         provider.constructorCalleeType
 
     @JvmField
-    val PROPERTY_ACCESSOR: KtStubElementType<KotlinPropertyAccessorStub, KtPropertyAccessor> =
+    val PROPERTY_ACCESSOR: KtStubElementType<out KotlinPropertyAccessorStub, KtPropertyAccessor> =
         provider.propertyAccessorType
 
     @JvmField
-    val BACKING_FIELD: KtStubElementType<KotlinBackingFieldStub, KtBackingField> =
+    val BACKING_FIELD: KtStubElementType<out KotlinBackingFieldStub, KtBackingField> =
         provider.backingFieldType
 
     @JvmField
-    val INITIALIZER_LIST: KtStubElementType<KotlinPlaceHolderStub<KtInitializerList>, KtInitializerList> =
+    val INITIALIZER_LIST: KtStubElementType<out KotlinPlaceHolderStub<KtInitializerList>, KtInitializerList> =
         provider.initializerListType
 
 
     // Value parameters
 
     @JvmField
-    val VALUE_PARAMETER_LIST: KtStubElementType<KotlinPlaceHolderStub<KtParameterList>, KtParameterList> =
+    val VALUE_PARAMETER_LIST: KtStubElementType<out KotlinPlaceHolderStub<KtParameterList>, KtParameterList> =
         provider.valueParameterListType
 
     @JvmField
-    val VALUE_PARAMETER: KtStubElementType<KotlinParameterStub, KtParameter> =
+    val VALUE_PARAMETER: KtStubElementType<out KotlinParameterStub, KtParameter> =
         provider.valueParameterType
 
     @JvmField
-    val CONTEXT_RECEIVER_LIST: KtStubElementType<KotlinPlaceHolderStub<KtContextReceiverList>, KtContextReceiverList> =
+    val CONTEXT_RECEIVER_LIST: KtStubElementType<out KotlinPlaceHolderStub<KtContextReceiverList>, KtContextReceiverList> =
         provider.contextReceiverListType
 
     @JvmField
-    val CONTEXT_RECEIVER: KtStubElementType<KotlinContextReceiverStub, KtContextReceiver> =
+    val CONTEXT_RECEIVER: KtStubElementType<out KotlinContextReceiverStub, KtContextReceiver> =
         provider.contextReceiverType
 
 
     // Type parameters
 
     @JvmField
-    val TYPE_PARAMETER_LIST: KtStubElementType<KotlinPlaceHolderStub<KtTypeParameterList>, KtTypeParameterList> =
+    val TYPE_PARAMETER_LIST: KtStubElementType<out KotlinPlaceHolderStub<KtTypeParameterList>, KtTypeParameterList> =
         provider.typeParameterListType
 
     @JvmField
-    val TYPE_PARAMETER: KtStubElementType<KotlinTypeParameterStub, KtTypeParameter> =
+    val TYPE_PARAMETER: KtStubElementType<out KotlinTypeParameterStub, KtTypeParameter> =
         provider.typeParameterType
 
     @JvmField
-    val TYPE_CONSTRAINT_LIST: KtStubElementType<KotlinPlaceHolderStub<KtTypeConstraintList>, KtTypeConstraintList> =
+    val TYPE_CONSTRAINT_LIST: KtStubElementType<out KotlinPlaceHolderStub<KtTypeConstraintList>, KtTypeConstraintList> =
         provider.typeConstraintListType
 
     @JvmField
-    val TYPE_CONSTRAINT: KtStubElementType<KotlinPlaceHolderStub<KtTypeConstraint>, KtTypeConstraint> =
+    val TYPE_CONSTRAINT: KtStubElementType<out KotlinPlaceHolderStub<KtTypeConstraint>, KtTypeConstraint> =
         provider.typeConstraintType
 
 
     // Supertypes
 
     @JvmField
-    val SUPER_TYPE_LIST: KtStubElementType<KotlinPlaceHolderStub<KtSuperTypeList>, KtSuperTypeList> =
+    val SUPER_TYPE_LIST: KtStubElementType<out KotlinPlaceHolderStub<KtSuperTypeList>, KtSuperTypeList> =
         provider.superTypeListType
 
     @JvmField
-    val DELEGATED_SUPER_TYPE_ENTRY: KtStubElementType<KotlinPlaceHolderStub<KtDelegatedSuperTypeEntry>, KtDelegatedSuperTypeEntry> =
+    val DELEGATED_SUPER_TYPE_ENTRY: KtStubElementType<out KotlinPlaceHolderStub<KtDelegatedSuperTypeEntry>, KtDelegatedSuperTypeEntry> =
         provider.delegatedSuperTypeEntryType
 
     @JvmField
-    val SUPER_TYPE_CALL_ENTRY: KtStubElementType<KotlinPlaceHolderStub<KtSuperTypeCallEntry>, KtSuperTypeCallEntry> =
+    val SUPER_TYPE_CALL_ENTRY: KtStubElementType<out KotlinPlaceHolderStub<KtSuperTypeCallEntry>, KtSuperTypeCallEntry> =
         provider.superTypeCallEntryType
 
     @JvmField
-    val SUPER_TYPE_ENTRY: KtStubElementType<KotlinPlaceHolderStub<KtSuperTypeEntry>, KtSuperTypeEntry> =
+    val SUPER_TYPE_ENTRY: KtStubElementType<out KotlinPlaceHolderStub<KtSuperTypeEntry>, KtSuperTypeEntry> =
         provider.superTypeEntryType
 
 
     // Modifiers and annotations
 
     @JvmField
-    val MODIFIER_LIST: KtStubElementType<KotlinModifierListStub, KtDeclarationModifierList> =
+    val MODIFIER_LIST: KtStubElementType<out KotlinModifierListStub, KtDeclarationModifierList> =
         provider.modifierListType
 
     @JvmField
-    val ANNOTATION: KtStubElementType<KotlinPlaceHolderStub<KtAnnotation>, KtAnnotation> =
+    val ANNOTATION: KtStubElementType<out KotlinPlaceHolderStub<KtAnnotation>, KtAnnotation> =
         provider.annotationType
 
     @JvmField
-    val ANNOTATION_ENTRY: KtStubElementType<KotlinAnnotationEntryStub, KtAnnotationEntry> =
+    val ANNOTATION_ENTRY: KtStubElementType<out KotlinAnnotationEntryStub, KtAnnotationEntry> =
         provider.annotationEntryType
 
     @JvmField
-    val ANNOTATION_TARGET: KtStubElementType<KotlinAnnotationUseSiteTargetStub, KtAnnotationUseSiteTarget> =
+    val ANNOTATION_TARGET: KtStubElementType<out KotlinAnnotationUseSiteTargetStub, KtAnnotationUseSiteTarget> =
         provider.annotationTargetType
 
 
     // Type references
 
     @JvmField
-    val TYPE_REFERENCE: KtStubElementType<KotlinPlaceHolderStub<KtTypeReference>, KtTypeReference> =
+    val TYPE_REFERENCE: KtStubElementType<out KotlinPlaceHolderStub<KtTypeReference>, KtTypeReference> =
         provider.typeReferenceType
 
     @JvmField
-    val USER_TYPE: KtStubElementType<KotlinUserTypeStub, KtUserType> =
+    val USER_TYPE: KtStubElementType<out KotlinUserTypeStub, KtUserType> =
         provider.userTypeType
 
     @JvmField
-    val DYNAMIC_TYPE: KtStubElementType<KotlinPlaceHolderStub<KtDynamicType>, KtDynamicType> =
+    val DYNAMIC_TYPE: KtStubElementType<out KotlinPlaceHolderStub<KtDynamicType>, KtDynamicType> =
         provider.dynamicTypeType
 
     @JvmField
-    val FUNCTION_TYPE: KtStubElementType<KotlinFunctionTypeStub, KtFunctionType> =
+    val FUNCTION_TYPE: KtStubElementType<out KotlinFunctionTypeStub, KtFunctionType> =
         provider.functionTypeType
 
     @JvmField
-    val FUNCTION_TYPE_RECEIVER: KtStubElementType<KotlinPlaceHolderStub<KtFunctionTypeReceiver>, KtFunctionTypeReceiver> =
+    val FUNCTION_TYPE_RECEIVER: KtStubElementType<out KotlinPlaceHolderStub<KtFunctionTypeReceiver>, KtFunctionTypeReceiver> =
         provider.functionTypeReceiverType
 
     @JvmField
-    val NULLABLE_TYPE: KtStubElementType<KotlinPlaceHolderStub<KtNullableType>, KtNullableType> =
+    val NULLABLE_TYPE: KtStubElementType<out KotlinPlaceHolderStub<KtNullableType>, KtNullableType> =
         provider.nullableTypeType
 
     @JvmField
-    val INTERSECTION_TYPE: KtStubElementType<KotlinPlaceHolderStub<KtIntersectionType>, KtIntersectionType> =
+    val INTERSECTION_TYPE: KtStubElementType<out KotlinPlaceHolderStub<KtIntersectionType>, KtIntersectionType> =
         provider.intersectionTypeType
 
     @JvmField
-    val TYPE_PROJECTION: KtStubElementType<KotlinTypeProjectionStub, KtTypeProjection> =
+    val TYPE_PROJECTION: KtStubElementType<out KotlinTypeProjectionStub, KtTypeProjection> =
         provider.typeProjectionType
 
 
     // Constants
 
     @JvmField
-    val NULL: KtStubElementType<KotlinConstantExpressionStub, KtConstantExpression> =
+    val NULL: KtStubElementType<out KotlinConstantExpressionStub, KtConstantExpression> =
         provider.nullType
 
     @JvmField
-    val BOOLEAN_CONSTANT: KtStubElementType<KotlinConstantExpressionStub, KtConstantExpression> =
+    val BOOLEAN_CONSTANT: KtStubElementType<out KotlinConstantExpressionStub, KtConstantExpression> =
         provider.booleanConstantType
 
     @JvmField
-    val FLOAT_CONSTANT: KtStubElementType<KotlinConstantExpressionStub, KtConstantExpression> =
+    val FLOAT_CONSTANT: KtStubElementType<out KotlinConstantExpressionStub, KtConstantExpression> =
         provider.floatConstantType
 
     @JvmField
-    val CHARACTER_CONSTANT: KtStubElementType<KotlinConstantExpressionStub, KtConstantExpression> =
+    val CHARACTER_CONSTANT: KtStubElementType<out KotlinConstantExpressionStub, KtConstantExpression> =
         provider.characterConstantType
 
     @JvmField
-    val INTEGER_CONSTANT: KtStubElementType<KotlinConstantExpressionStub, KtConstantExpression> =
+    val INTEGER_CONSTANT: KtStubElementType<out KotlinConstantExpressionStub, KtConstantExpression> =
         provider.integerConstantType
 
 
     // String templates
 
     @JvmField
-    val STRING_TEMPLATE: KtStubElementType<KotlinPlaceHolderStub<KtStringTemplateExpression>, KtStringTemplateExpression> =
+    val STRING_TEMPLATE: KtStubElementType<out KotlinPlaceHolderStub<KtStringTemplateExpression>, KtStringTemplateExpression> =
         provider.stringTemplateType
 
     @JvmField
-    val LONG_STRING_TEMPLATE_ENTRY: KtStubElementType<KotlinBlockStringTemplateEntryStub, KtBlockStringTemplateEntry> =
+    val LONG_STRING_TEMPLATE_ENTRY: KtStubElementType<out KotlinBlockStringTemplateEntryStub, KtBlockStringTemplateEntry> =
         provider.longStringTemplateEntryType
 
     @JvmField
-    val SHORT_STRING_TEMPLATE_ENTRY: KtStubElementType<KotlinPlaceHolderWithTextStub<KtSimpleNameStringTemplateEntry>, KtSimpleNameStringTemplateEntry> =
+    val SHORT_STRING_TEMPLATE_ENTRY: KtStubElementType<out KotlinPlaceHolderWithTextStub<KtSimpleNameStringTemplateEntry>, KtSimpleNameStringTemplateEntry> =
         provider.shortStringTemplateEntryType
 
     @JvmField
-    val LITERAL_STRING_TEMPLATE_ENTRY: KtStubElementType<KotlinPlaceHolderWithTextStub<KtLiteralStringTemplateEntry>, KtLiteralStringTemplateEntry> =
+    val LITERAL_STRING_TEMPLATE_ENTRY: KtStubElementType<out KotlinPlaceHolderWithTextStub<KtLiteralStringTemplateEntry>, KtLiteralStringTemplateEntry> =
         provider.literalStringTemplateEntryType
 
     @JvmField
-    val ESCAPE_STRING_TEMPLATE_ENTRY: KtStubElementType<KotlinPlaceHolderWithTextStub<KtEscapeStringTemplateEntry>, KtEscapeStringTemplateEntry> =
+    val ESCAPE_STRING_TEMPLATE_ENTRY: KtStubElementType<out KotlinPlaceHolderWithTextStub<KtEscapeStringTemplateEntry>, KtEscapeStringTemplateEntry> =
         provider.escapeStringTemplateEntryType
 
     @JvmField
-    val STRING_INTERPOLATION_PREFIX: KtStubElementType<KotlinStringInterpolationPrefixStub, KtStringInterpolationPrefix> =
+    val STRING_INTERPOLATION_PREFIX: KtStubElementType<out KotlinStringInterpolationPrefixStub, KtStringInterpolationPrefix> =
         provider.stringInterpolationPrefixType
 
 
@@ -262,85 +262,85 @@ internal object KtStubBasedElementTypes {
         provider.lambdaExpressionType
 
     @JvmField
-    val REFERENCE_EXPRESSION: KtStubElementType<KotlinNameReferenceExpressionStub, KtNameReferenceExpression> =
+    val REFERENCE_EXPRESSION: KtStubElementType<out KotlinNameReferenceExpressionStub, KtNameReferenceExpression> =
         provider.referenceExpressionType
 
     @JvmField
-    val ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION: KtStubElementType<KotlinEnumEntrySuperclassReferenceExpressionStub, KtEnumEntrySuperclassReferenceExpression> =
+    val ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION: KtStubElementType<out KotlinEnumEntrySuperclassReferenceExpressionStub, KtEnumEntrySuperclassReferenceExpression> =
         provider.enumEntrySuperclassReferenceExpressionType
 
     @JvmField
-    val DOT_QUALIFIED_EXPRESSION: KtStubElementType<KotlinPlaceHolderStub<KtDotQualifiedExpression>, KtDotQualifiedExpression> =
+    val DOT_QUALIFIED_EXPRESSION: KtStubElementType<out KotlinPlaceHolderStub<KtDotQualifiedExpression>, KtDotQualifiedExpression> =
         provider.dotQualifiedExpressionType
 
     @JvmField
-    val CALL_EXPRESSION: KtStubElementType<KotlinPlaceHolderStub<KtCallExpression>, KtCallExpression> =
+    val CALL_EXPRESSION: KtStubElementType<out KotlinPlaceHolderStub<KtCallExpression>, KtCallExpression> =
         provider.callExpressionType
 
     @JvmField
-    val CLASS_LITERAL_EXPRESSION: KtStubElementType<KotlinClassLiteralExpressionStub, KtClassLiteralExpression> =
+    val CLASS_LITERAL_EXPRESSION: KtStubElementType<out KotlinClassLiteralExpressionStub, KtClassLiteralExpression> =
         provider.classLiteralExpressionType
 
     @JvmField
-    val COLLECTION_LITERAL_EXPRESSION: KtStubElementType<KotlinCollectionLiteralExpressionStub, KtCollectionLiteralExpression> =
+    val COLLECTION_LITERAL_EXPRESSION: KtStubElementType<out KotlinCollectionLiteralExpressionStub, KtCollectionLiteralExpression> =
         provider.collectionLiteralExpressionType
 
 
     // Arguments
 
     @JvmField
-    val TYPE_ARGUMENT_LIST: KtStubElementType<KotlinPlaceHolderStub<KtTypeArgumentList>, KtTypeArgumentList> =
+    val TYPE_ARGUMENT_LIST: KtStubElementType<out KotlinPlaceHolderStub<KtTypeArgumentList>, KtTypeArgumentList> =
         provider.typeArgumentListType
 
     @JvmField
-    val VALUE_ARGUMENT_LIST: KtStubElementType<KotlinPlaceHolderStub<KtValueArgumentList>, KtValueArgumentList> =
+    val VALUE_ARGUMENT_LIST: KtStubElementType<out KotlinPlaceHolderStub<KtValueArgumentList>, KtValueArgumentList> =
         provider.valueArgumentListType
 
     @JvmField
-    val VALUE_ARGUMENT: KtStubElementType<KotlinValueArgumentStub<KtValueArgument>, KtValueArgument> =
+    val VALUE_ARGUMENT: KtStubElementType<out KotlinValueArgumentStub<KtValueArgument>, KtValueArgument> =
         provider.valueArgumentType
 
     @JvmField
-    val CONTRACT_EFFECT_LIST: KtStubElementType<KotlinPlaceHolderStub<KtContractEffectList>, KtContractEffectList> =
+    val CONTRACT_EFFECT_LIST: KtStubElementType<out KotlinPlaceHolderStub<KtContractEffectList>, KtContractEffectList> =
         provider.contractEffectListType
 
     @JvmField
-    val CONTRACT_EFFECT: KtStubElementType<KotlinContractEffectStub, KtContractEffect> =
+    val CONTRACT_EFFECT: KtStubElementType<out KotlinContractEffectStub, KtContractEffect> =
         provider.contractEffectType
 
     @JvmField
-    val LAMBDA_ARGUMENT: KtStubElementType<KotlinValueArgumentStub<KtLambdaArgument>, KtLambdaArgument> =
+    val LAMBDA_ARGUMENT: KtStubElementType<out KotlinValueArgumentStub<KtLambdaArgument>, KtLambdaArgument> =
         provider.lambdaArgumentType
 
     @JvmField
-    val VALUE_ARGUMENT_NAME: KtStubElementType<KotlinPlaceHolderStub<KtValueArgumentName>, KtValueArgumentName> =
+    val VALUE_ARGUMENT_NAME: KtStubElementType<out KotlinPlaceHolderStub<KtValueArgumentName>, KtValueArgumentName> =
         provider.valueArgumentNameType
 
 
     // Special
 
     @JvmField
-    val PACKAGE_DIRECTIVE: KtStubElementType<KotlinPlaceHolderStub<KtPackageDirective>, KtPackageDirective> =
+    val PACKAGE_DIRECTIVE: KtStubElementType<out KotlinPlaceHolderStub<KtPackageDirective>, KtPackageDirective> =
         provider.packageDirectiveType
 
     @JvmField
-    val FILE_ANNOTATION_LIST: KtStubElementType<KotlinPlaceHolderStub<KtFileAnnotationList>, KtFileAnnotationList> =
+    val FILE_ANNOTATION_LIST: KtStubElementType<out KotlinPlaceHolderStub<KtFileAnnotationList>, KtFileAnnotationList> =
         provider.fileAnnotationListType
 
     @JvmField
-    val IMPORT_LIST: KtStubElementType<KotlinPlaceHolderStub<KtImportList>, KtImportList> =
+    val IMPORT_LIST: KtStubElementType<out KotlinPlaceHolderStub<KtImportList>, KtImportList> =
         provider.importListType
 
     @JvmField
-    val IMPORT_DIRECTIVE: KtStubElementType<KotlinImportDirectiveStub, KtImportDirective> =
+    val IMPORT_DIRECTIVE: KtStubElementType<out KotlinImportDirectiveStub, KtImportDirective> =
         provider.importDirectiveType
 
     @JvmField
-    val IMPORT_ALIAS: KtStubElementType<KotlinImportAliasStub, KtImportAlias> =
+    val IMPORT_ALIAS: KtStubElementType<out KotlinImportAliasStub, KtImportAlias> =
         provider.importAliasType
 
     @JvmField
-    val SCRIPT: KtStubElementType<KotlinScriptStub, KtScript> =
+    val SCRIPT: KtStubElementType<out KotlinScriptStub, KtScript> =
         provider.scriptType
 
 

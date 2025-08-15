@@ -12,7 +12,7 @@ FILE[kind=File[packageFqName=test]]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Sealed]
-      OBJECT_DECLARATION[classId=test/Sealed.Top, fqName=test.Sealed.Top, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Top, superNames=[Sealed]]
+      OBJECT_DECLARATION[classId=test/Sealed.Top, fqName=test.Sealed.Top, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Top, superNames=[Sealed]]
         SUPER_TYPE_LIST
           SUPER_TYPE_CALL_ENTRY
             CONSTRUCTOR_CALLEE

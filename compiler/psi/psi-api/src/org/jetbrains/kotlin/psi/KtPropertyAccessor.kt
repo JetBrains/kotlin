@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.psiUtil.isLegacyContractPresentPsiCheck
 import org.jetbrains.kotlin.psi.stubs.KotlinPropertyAccessorStub
 
-class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub?>, KtDeclarationWithBody, KtModifierListOwner,
+class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub>, KtDeclarationWithBody, KtModifierListOwner,
     KtDeclarationWithInitializer, KtDeclarationWithReturnType {
     constructor(node: ASTNode) : super(node)
     constructor(stub: KotlinPropertyAccessorStub) : super(stub, KtStubBasedElementTypes.PROPERTY_ACCESSOR)
@@ -23,7 +23,7 @@ class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub?>, KtDec
     val isGetter: Boolean
         get() {
             greenStub?.let {
-                return it.isGetter()
+                return it.isGetter
             }
             return findChildByType<PsiElement>(KtTokens.GET_KEYWORD) != null
         }
@@ -31,7 +31,7 @@ class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub?>, KtDec
     val isSetter: Boolean
         get() {
             greenStub?.let {
-                return !it.isGetter()
+                return !it.isGetter
             }
             return findChildByType<PsiElement>(KtTokens.SET_KEYWORD) != null
         }
@@ -47,7 +47,7 @@ class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub?>, KtDec
 
     override fun getBodyExpression(): KtExpression? {
         stub?.let {
-            if (!it.hasBody()) return null
+            if (!it.hasBody) return null
             if (containingKtFile.isCompiled) return null
         }
         return findChildByClass(KtExpression::class.java)
@@ -55,7 +55,7 @@ class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub?>, KtDec
 
     override fun getBodyBlockExpression(): KtBlockExpression? {
         stub?.let {
-            if (!(it.hasNoExpressionBody() && it.hasBody())) return null
+            if (!(it.hasNoExpressionBody && it.hasBody)) return null
             if (containingKtFile.isCompiled) return null
         }
         return findChildByClass(KtExpression::class.java) as? KtBlockExpression
@@ -63,14 +63,14 @@ class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub?>, KtDec
 
     override fun hasBlockBody(): Boolean {
         greenStub?.let {
-            return it.hasNoExpressionBody()
+            return it.hasNoExpressionBody
         }
         return equalsToken == null
     }
 
     override fun hasBody(): Boolean {
         greenStub?.let {
-            return it.hasBody()
+            return it.hasBody
         }
         return getBodyExpression() != null
     }
@@ -104,7 +104,7 @@ class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub?>, KtDec
     @OptIn(KtImplementationDetail::class)
     override fun mayHaveContract(): Boolean {
         greenStub?.let {
-            return it.mayHaveContract()
+            return it.mayHaveContract
         }
         return isLegacyContractPresentPsiCheck()
     }

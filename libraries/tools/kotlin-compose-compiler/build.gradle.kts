@@ -24,12 +24,15 @@ gradlePlugin {
 }
 
 pluginApiReference {
-    enableForGradlePluginVariants(GradlePluginVariant.values().toSet())
+    enableForAllGradlePluginVariants()
     enableKotlinlangDocumentation()
 
     failOnWarning = true
 
+    moduleName("The Compose compiler Gradle plugin")
+
     additionalDokkaConfiguration {
+        includes.from("api-reference-description.md")
         reportUndocumented.set(true)
         perPackageOption {
             matchingRegex.set("org\\.jetbrains\\.kotlin\\.compose\\.compiler\\.gradle\\.model(\$|\\.).*")
@@ -67,6 +70,17 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
                         }
                     }
                 }
+            }
+
+            val functionalTests = sourceSets.getByName("functionalTest")
+            listOf(
+                functionalTests.compileClasspathConfigurationName,
+                functionalTests.runtimeClasspathConfigurationName,
+            ).forEach {
+                configurations.getByName(it).useDependenciesCompiledForGradle(
+                    GradlePluginVariant.MAXIMUM_SUPPORTED_GRADLE_VARIANT,
+                    objects,
+                )
             }
         }
     }

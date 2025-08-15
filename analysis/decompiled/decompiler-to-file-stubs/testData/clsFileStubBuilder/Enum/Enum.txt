@@ -44,7 +44,7 @@ FILE[kind=File[packageFqName=a.b.c.test.enum]]
       ENUM_ENTRY[classId=null, fqName=a.b.c.test.enum.Enum.D, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=D, superNames=[]]
       ENUM_ENTRY[classId=null, fqName=a.b.c.test.enum.Enum.E, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=E, superNames=[]]
       ENUM_ENTRY[classId=null, fqName=a.b.c.test.enum.Enum.F, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=F, superNames=[]]
-      OBJECT_DECLARATION[classId=a/b/c/test/enum/Enum.Companion, fqName=a.b.c.test.enum.Enum.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=a/b/c/test/enum/Enum.Companion, fqName=a.b.c.test.enum.Enum.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
           PROPERTY[fqName=a.b.c.test.enum.Enum.Companion.c, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]

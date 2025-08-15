@@ -443,6 +443,14 @@ class ComposeIT : KGPBaseTest() {
                 |       return value
                 |    }
                 |}
+                |
+                |interface TestInterface {
+                |    @Composable fun Content()
+                |}
+                |
+                |class OtherModuleImpl : TestInterface {
+                |    @Composable override fun Content() {}
+                |}
                 """.trimMargin()
             )
             build("publishToMavenLocal") {
@@ -485,11 +493,13 @@ class ComposeIT : KGPBaseTest() {
                 |    @Test
                 |    fun test() = compositionTest {
                 |       val testImpl = TestImpl()
+                |       val otherModuleImpl = OtherModuleImpl()
                 |       compose {
                 |           testImpl.UnitFun(1)
                 |           testImpl.UnitFun()
                 |           Text("${'$'}{testImpl.openFun(1)}")
                 |           Text("${'$'}{testImpl.openFun()}")
+                |           otherModuleImpl.Content() // Just executing this successfully is enough
                 |       }
                 |       
                 |       validate {

@@ -36,101 +36,101 @@ interface KotlinElementTypeProvider {
     val fileType: IFileElementType
 
     // Classifiers
-    val classType: KtStubElementType<KotlinClassStub, KtClass>
-    val objectType: KtStubElementType<KotlinObjectStub, KtObjectDeclaration>
-    val typeAliasType: KtStubElementType<KotlinTypeAliasStub, KtTypeAlias>
-    val classBodyType: KtStubElementType<KotlinPlaceHolderStub<KtClassBody>, KtClassBody>
+    val classType: KtStubElementType<out KotlinClassStub, KtClass>
+    val objectType: KtStubElementType<out KotlinObjectStub, KtObjectDeclaration>
+    val typeAliasType: KtStubElementType<out KotlinTypeAliasStub, KtTypeAlias>
+    val classBodyType: KtStubElementType<out KotlinPlaceHolderStub<KtClassBody>, KtClassBody>
 
     // Initializers
-    val classInitializerType: KtStubElementType<KotlinPlaceHolderStub<KtClassInitializer>, KtClassInitializer>
-    val scriptInitializerType: KtStubElementType<KotlinPlaceHolderStub<KtScriptInitializer>, KtScriptInitializer>
+    val classInitializerType: KtStubElementType<out KotlinPlaceHolderStub<KtClassInitializer>, KtClassInitializer>
+    val scriptInitializerType: KtStubElementType<out KotlinPlaceHolderStub<KtScriptInitializer>, KtScriptInitializer>
 
     // Callables
-    val functionType: KtStubElementType<KotlinFunctionStub, KtNamedFunction>
-    val propertyType: KtStubElementType<KotlinPropertyStub, KtProperty>
-    val enumEntryType: KtStubElementType<KotlinClassStub, KtClass>
-    val primaryConstructorType: KtStubElementType<KotlinConstructorStub<KtPrimaryConstructor>, KtPrimaryConstructor>
-    val secondaryConstructorType: KtStubElementType<KotlinConstructorStub<KtSecondaryConstructor>, KtSecondaryConstructor>
-    val constructorCalleeType: KtStubElementType<KotlinPlaceHolderStub<KtConstructorCalleeExpression>, KtConstructorCalleeExpression>
-    val propertyAccessorType: KtStubElementType<KotlinPropertyAccessorStub, KtPropertyAccessor>
-    val backingFieldType: KtStubElementType<KotlinBackingFieldStub, KtBackingField>
-    val initializerListType: KtStubElementType<KotlinPlaceHolderStub<KtInitializerList>, KtInitializerList>
+    val functionType: KtStubElementType<out KotlinFunctionStub, KtNamedFunction>
+    val propertyType: KtStubElementType<out KotlinPropertyStub, KtProperty>
+    val enumEntryType: KtStubElementType<out KotlinClassStub, KtClass>
+    val primaryConstructorType: KtStubElementType<out KotlinConstructorStub<KtPrimaryConstructor>, KtPrimaryConstructor>
+    val secondaryConstructorType: KtStubElementType<out KotlinConstructorStub<KtSecondaryConstructor>, KtSecondaryConstructor>
+    val constructorCalleeType: KtStubElementType<out KotlinPlaceHolderStub<KtConstructorCalleeExpression>, KtConstructorCalleeExpression>
+    val propertyAccessorType: KtStubElementType<out KotlinPropertyAccessorStub, KtPropertyAccessor>
+    val backingFieldType: KtStubElementType<out KotlinBackingFieldStub, KtBackingField>
+    val initializerListType: KtStubElementType<out KotlinPlaceHolderStub<KtInitializerList>, KtInitializerList>
 
     // Value parameters
-    val valueParameterListType: KtStubElementType<KotlinPlaceHolderStub<KtParameterList>, KtParameterList>
-    val valueParameterType: KtStubElementType<KotlinParameterStub, KtParameter>
-    val contextReceiverListType: KtStubElementType<KotlinPlaceHolderStub<KtContextReceiverList>, KtContextReceiverList>
-    val contextReceiverType: KtStubElementType<KotlinContextReceiverStub, KtContextReceiver>
+    val valueParameterListType: KtStubElementType<out KotlinPlaceHolderStub<KtParameterList>, KtParameterList>
+    val valueParameterType: KtStubElementType<out KotlinParameterStub, KtParameter>
+    val contextReceiverListType: KtStubElementType<out KotlinPlaceHolderStub<KtContextReceiverList>, KtContextReceiverList>
+    val contextReceiverType: KtStubElementType<out KotlinContextReceiverStub, KtContextReceiver>
 
     // Type parameters
-    val typeParameterListType: KtStubElementType<KotlinPlaceHolderStub<KtTypeParameterList>, KtTypeParameterList>
-    val typeParameterType: KtStubElementType<KotlinTypeParameterStub, KtTypeParameter>
-    val typeConstraintListType: KtStubElementType<KotlinPlaceHolderStub<KtTypeConstraintList>, KtTypeConstraintList>
-    val typeConstraintType: KtStubElementType<KotlinPlaceHolderStub<KtTypeConstraint>, KtTypeConstraint>
+    val typeParameterListType: KtStubElementType<out KotlinPlaceHolderStub<KtTypeParameterList>, KtTypeParameterList>
+    val typeParameterType: KtStubElementType<out KotlinTypeParameterStub, KtTypeParameter>
+    val typeConstraintListType: KtStubElementType<out KotlinPlaceHolderStub<KtTypeConstraintList>, KtTypeConstraintList>
+    val typeConstraintType: KtStubElementType<out KotlinPlaceHolderStub<KtTypeConstraint>, KtTypeConstraint>
 
     // Supertypes
-    val superTypeListType: KtStubElementType<KotlinPlaceHolderStub<KtSuperTypeList>, KtSuperTypeList>
-    val delegatedSuperTypeEntryType: KtStubElementType<KotlinPlaceHolderStub<KtDelegatedSuperTypeEntry>, KtDelegatedSuperTypeEntry>
-    val superTypeCallEntryType: KtStubElementType<KotlinPlaceHolderStub<KtSuperTypeCallEntry>, KtSuperTypeCallEntry>
-    val superTypeEntryType: KtStubElementType<KotlinPlaceHolderStub<KtSuperTypeEntry>, KtSuperTypeEntry>
+    val superTypeListType: KtStubElementType<out KotlinPlaceHolderStub<KtSuperTypeList>, KtSuperTypeList>
+    val delegatedSuperTypeEntryType: KtStubElementType<out KotlinPlaceHolderStub<KtDelegatedSuperTypeEntry>, KtDelegatedSuperTypeEntry>
+    val superTypeCallEntryType: KtStubElementType<out KotlinPlaceHolderStub<KtSuperTypeCallEntry>, KtSuperTypeCallEntry>
+    val superTypeEntryType: KtStubElementType<out KotlinPlaceHolderStub<KtSuperTypeEntry>, KtSuperTypeEntry>
 
     // Modifiers and annotations
-    val modifierListType: KtStubElementType<KotlinModifierListStub, KtDeclarationModifierList>
-    val annotationType: KtStubElementType<KotlinPlaceHolderStub<KtAnnotation>, KtAnnotation>
-    val annotationEntryType: KtStubElementType<KotlinAnnotationEntryStub, KtAnnotationEntry>
-    val annotationTargetType: KtStubElementType<KotlinAnnotationUseSiteTargetStub, KtAnnotationUseSiteTarget>
+    val modifierListType: KtStubElementType<out KotlinModifierListStub, KtDeclarationModifierList>
+    val annotationType: KtStubElementType<out KotlinPlaceHolderStub<KtAnnotation>, KtAnnotation>
+    val annotationEntryType: KtStubElementType<out KotlinAnnotationEntryStub, KtAnnotationEntry>
+    val annotationTargetType: KtStubElementType<out KotlinAnnotationUseSiteTargetStub, KtAnnotationUseSiteTarget>
 
     // Type references
-    val typeReferenceType: KtStubElementType<KotlinPlaceHolderStub<KtTypeReference>, KtTypeReference>
-    val userTypeType: KtStubElementType<KotlinUserTypeStub, KtUserType>
-    val dynamicTypeType: KtStubElementType<KotlinPlaceHolderStub<KtDynamicType>, KtDynamicType>
-    val functionTypeType: KtStubElementType<KotlinFunctionTypeStub, KtFunctionType>
-    val functionTypeReceiverType: KtStubElementType<KotlinPlaceHolderStub<KtFunctionTypeReceiver>, KtFunctionTypeReceiver>
-    val nullableTypeType: KtStubElementType<KotlinPlaceHolderStub<KtNullableType>, KtNullableType>
-    val intersectionTypeType: KtStubElementType<KotlinPlaceHolderStub<KtIntersectionType>, KtIntersectionType>
-    val typeProjectionType: KtStubElementType<KotlinTypeProjectionStub, KtTypeProjection>
+    val typeReferenceType: KtStubElementType<out KotlinPlaceHolderStub<KtTypeReference>, KtTypeReference>
+    val userTypeType: KtStubElementType<out KotlinUserTypeStub, KtUserType>
+    val dynamicTypeType: KtStubElementType<out KotlinPlaceHolderStub<KtDynamicType>, KtDynamicType>
+    val functionTypeType: KtStubElementType<out KotlinFunctionTypeStub, KtFunctionType>
+    val functionTypeReceiverType: KtStubElementType<out KotlinPlaceHolderStub<KtFunctionTypeReceiver>, KtFunctionTypeReceiver>
+    val nullableTypeType: KtStubElementType<out KotlinPlaceHolderStub<KtNullableType>, KtNullableType>
+    val intersectionTypeType: KtStubElementType<out KotlinPlaceHolderStub<KtIntersectionType>, KtIntersectionType>
+    val typeProjectionType: KtStubElementType<out KotlinTypeProjectionStub, KtTypeProjection>
 
     // Constants
-    val nullType: KtStubElementType<KotlinConstantExpressionStub, KtConstantExpression>
-    val booleanConstantType: KtStubElementType<KotlinConstantExpressionStub, KtConstantExpression>
-    val floatConstantType: KtStubElementType<KotlinConstantExpressionStub, KtConstantExpression>
-    val characterConstantType: KtStubElementType<KotlinConstantExpressionStub, KtConstantExpression>
-    val integerConstantType: KtStubElementType<KotlinConstantExpressionStub, KtConstantExpression>
+    val nullType: KtStubElementType<out KotlinConstantExpressionStub, KtConstantExpression>
+    val booleanConstantType: KtStubElementType<out KotlinConstantExpressionStub, KtConstantExpression>
+    val floatConstantType: KtStubElementType<out KotlinConstantExpressionStub, KtConstantExpression>
+    val characterConstantType: KtStubElementType<out KotlinConstantExpressionStub, KtConstantExpression>
+    val integerConstantType: KtStubElementType<out KotlinConstantExpressionStub, KtConstantExpression>
 
     // String templates
-    val stringTemplateType: KtStubElementType<KotlinPlaceHolderStub<KtStringTemplateExpression>, KtStringTemplateExpression>
-    val longStringTemplateEntryType: KtStubElementType<KotlinBlockStringTemplateEntryStub, KtBlockStringTemplateEntry>
-    val shortStringTemplateEntryType: KtStubElementType<KotlinPlaceHolderWithTextStub<KtSimpleNameStringTemplateEntry>, KtSimpleNameStringTemplateEntry>
-    val literalStringTemplateEntryType: KtStubElementType<KotlinPlaceHolderWithTextStub<KtLiteralStringTemplateEntry>, KtLiteralStringTemplateEntry>
-    val escapeStringTemplateEntryType: KtStubElementType<KotlinPlaceHolderWithTextStub<KtEscapeStringTemplateEntry>, KtEscapeStringTemplateEntry>
-    val stringInterpolationPrefixType: KtStubElementType<KotlinStringInterpolationPrefixStub, KtStringInterpolationPrefix>
+    val stringTemplateType: KtStubElementType<out KotlinPlaceHolderStub<KtStringTemplateExpression>, KtStringTemplateExpression>
+    val longStringTemplateEntryType: KtStubElementType<out KotlinBlockStringTemplateEntryStub, KtBlockStringTemplateEntry>
+    val shortStringTemplateEntryType: KtStubElementType<out KotlinPlaceHolderWithTextStub<KtSimpleNameStringTemplateEntry>, KtSimpleNameStringTemplateEntry>
+    val literalStringTemplateEntryType: KtStubElementType<out KotlinPlaceHolderWithTextStub<KtLiteralStringTemplateEntry>, KtLiteralStringTemplateEntry>
+    val escapeStringTemplateEntryType: KtStubElementType<out KotlinPlaceHolderWithTextStub<KtEscapeStringTemplateEntry>, KtEscapeStringTemplateEntry>
+    val stringInterpolationPrefixType: KtStubElementType<out KotlinStringInterpolationPrefixStub, KtStringInterpolationPrefix>
 
     // Expressions
     val blockExpressionType: IElementType
     val lambdaExpressionType: IElementType
-    val referenceExpressionType: KtStubElementType<KotlinNameReferenceExpressionStub, KtNameReferenceExpression>
-    val enumEntrySuperclassReferenceExpressionType: KtStubElementType<KotlinEnumEntrySuperclassReferenceExpressionStub, KtEnumEntrySuperclassReferenceExpression>
-    val dotQualifiedExpressionType: KtStubElementType<KotlinPlaceHolderStub<KtDotQualifiedExpression>, KtDotQualifiedExpression>
-    val callExpressionType: KtStubElementType<KotlinPlaceHolderStub<KtCallExpression>, KtCallExpression>
-    val classLiteralExpressionType: KtStubElementType<KotlinClassLiteralExpressionStub, KtClassLiteralExpression>
-    val collectionLiteralExpressionType: KtStubElementType<KotlinCollectionLiteralExpressionStub, KtCollectionLiteralExpression>
+    val referenceExpressionType: KtStubElementType<out KotlinNameReferenceExpressionStub, KtNameReferenceExpression>
+    val enumEntrySuperclassReferenceExpressionType: KtStubElementType<out KotlinEnumEntrySuperclassReferenceExpressionStub, KtEnumEntrySuperclassReferenceExpression>
+    val dotQualifiedExpressionType: KtStubElementType<out KotlinPlaceHolderStub<KtDotQualifiedExpression>, KtDotQualifiedExpression>
+    val callExpressionType: KtStubElementType<out KotlinPlaceHolderStub<KtCallExpression>, KtCallExpression>
+    val classLiteralExpressionType: KtStubElementType<out KotlinClassLiteralExpressionStub, KtClassLiteralExpression>
+    val collectionLiteralExpressionType: KtStubElementType<out KotlinCollectionLiteralExpressionStub, KtCollectionLiteralExpression>
 
     // Arguments
-    val typeArgumentListType: KtStubElementType<KotlinPlaceHolderStub<KtTypeArgumentList>, KtTypeArgumentList>
-    val valueArgumentListType: KtStubElementType<KotlinPlaceHolderStub<KtValueArgumentList>, KtValueArgumentList>
-    val valueArgumentType: KtStubElementType<KotlinValueArgumentStub<KtValueArgument>, KtValueArgument>
-    val contractEffectListType: KtStubElementType<KotlinPlaceHolderStub<KtContractEffectList>, KtContractEffectList>
-    val contractEffectType: KtStubElementType<KotlinContractEffectStub, KtContractEffect>
-    val lambdaArgumentType: KtStubElementType<KotlinValueArgumentStub<KtLambdaArgument>, KtLambdaArgument>
-    val valueArgumentNameType: KtStubElementType<KotlinPlaceHolderStub<KtValueArgumentName>, KtValueArgumentName>
+    val typeArgumentListType: KtStubElementType<out KotlinPlaceHolderStub<KtTypeArgumentList>, KtTypeArgumentList>
+    val valueArgumentListType: KtStubElementType<out KotlinPlaceHolderStub<KtValueArgumentList>, KtValueArgumentList>
+    val valueArgumentType: KtStubElementType<out KotlinValueArgumentStub<KtValueArgument>, KtValueArgument>
+    val contractEffectListType: KtStubElementType<out KotlinPlaceHolderStub<KtContractEffectList>, KtContractEffectList>
+    val contractEffectType: KtStubElementType<out KotlinContractEffectStub, KtContractEffect>
+    val lambdaArgumentType: KtStubElementType<out KotlinValueArgumentStub<KtLambdaArgument>, KtLambdaArgument>
+    val valueArgumentNameType: KtStubElementType<out KotlinPlaceHolderStub<KtValueArgumentName>, KtValueArgumentName>
 
     // Special
-    val packageDirectiveType: KtStubElementType<KotlinPlaceHolderStub<KtPackageDirective>, KtPackageDirective>
-    val fileAnnotationListType: KtStubElementType<KotlinPlaceHolderStub<KtFileAnnotationList>, KtFileAnnotationList>
-    val importListType: KtStubElementType<KotlinPlaceHolderStub<KtImportList>, KtImportList>
-    val importDirectiveType: KtStubElementType<KotlinImportDirectiveStub, KtImportDirective>
-    val importAliasType: KtStubElementType<KotlinImportAliasStub, KtImportAlias>
-    val scriptType: KtStubElementType<KotlinScriptStub, KtScript>
+    val packageDirectiveType: KtStubElementType<out KotlinPlaceHolderStub<KtPackageDirective>, KtPackageDirective>
+    val fileAnnotationListType: KtStubElementType<out KotlinPlaceHolderStub<KtFileAnnotationList>, KtFileAnnotationList>
+    val importListType: KtStubElementType<out KotlinPlaceHolderStub<KtImportList>, KtImportList>
+    val importDirectiveType: KtStubElementType<out KotlinImportDirectiveStub, KtImportDirective>
+    val importAliasType: KtStubElementType<out KotlinImportAliasStub, KtImportAlias>
+    val scriptType: KtStubElementType<out KotlinScriptStub, KtScript>
 
     // Code fragments
     val expressionCodeFragmentType: ICodeFragmentElementType

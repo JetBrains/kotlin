@@ -16,22 +16,18 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 class KotlinSecondaryConstructorStubImpl(
     parent: StubElement<out PsiElement>?,
     private val containingClassName: StringRef?,
-    private val hasBody: Boolean,
-    private val isDelegatedCallToThis: Boolean,
-    private val isExplicitDelegationCall: Boolean,
-    private val mayHaveContract: Boolean,
+    override val hasBody: Boolean,
+    override val isDelegatedCallToThis: Boolean,
+    override val isExplicitDelegationCall: Boolean,
+    override val mayHaveContract: Boolean,
 ) : KotlinStubBaseImpl<KtSecondaryConstructor>(parent, KtStubElementTypes.SECONDARY_CONSTRUCTOR),
     KotlinConstructorStub<KtSecondaryConstructor> {
-    override fun getFqName(): FqName? = null
+    override val fqName: FqName? get() = null
     override fun getName(): String? = StringRef.toString(containingClassName)
-    override fun isTopLevel(): Boolean = false
-    override fun isExtension(): Boolean = false
-    override fun mayHaveContract(): Boolean = mayHaveContract
+    override val isTopLevel: Boolean get() = false
+    override val isExtension: Boolean get() = false
 
     // It cannot have expression body
-    override fun hasNoExpressionBody(): Boolean = true
-
-    override fun hasBody(): Boolean = hasBody
-    override fun isDelegatedCallToThis(): Boolean = isDelegatedCallToThis
-    override fun isExplicitDelegationCall(): Boolean = isExplicitDelegationCall
+    override val hasNoExpressionBody: Boolean
+        get() = true
 }

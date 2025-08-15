@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
@@ -534,6 +533,11 @@ class IrBuiltInsOverDescriptors(
             KotlinTypeChecker.DEFAULT.equalTypes(it.valueParameters[0].type, int)
         }.toIrSymbol()
 
+    override val intAndSymbol: IrSimpleFunctionSymbol =
+        builtIns.int.unsubstitutedMemberScope.findFirstFunction("and") {
+            KotlinTypeChecker.DEFAULT.equalTypes(it.valueParameters[0].type, int)
+        }.toIrSymbol()
+
     override val arrayOf = symbolFinder.findFunctions(Name.identifier("arrayOf")).first {
         it.descriptor.extensionReceiverParameter == null && it.descriptor.dispatchReceiverParameter == null &&
                 it.descriptor.valueParameters.size == 1 && it.descriptor.valueParameters[0].varargElementType != null
@@ -547,44 +551,6 @@ class IrBuiltInsOverDescriptors(
     override val linkageErrorSymbol: IrSimpleFunctionSymbol = defineOperator("linkageError", nothingType, listOf(stringType))
 
     override val enumClass = builtIns.enum.toIrSymbol()
-
-    private val binaryOperatorCache = mutableMapOf<Triple<Name, IrType, IrType>, IrSimpleFunctionSymbol>()
-
-    override fun getBinaryOperator(name: Name, lhsType: IrType, rhsType: IrType): IrSimpleFunctionSymbol {
-        require(lhsType is IrSimpleType) { "Expected IrSimpleType in getBinaryOperator, got $lhsType" }
-        val classifier = lhsType.classifier
-        require(classifier is IrClassSymbol && classifier.isBound) {
-            "Expected a bound IrClassSymbol for lhsType in getBinaryOperator, got $classifier"
-        }
-        val key = Triple(name, lhsType, rhsType)
-        return binaryOperatorCache.getOrPut(key) {
-            classifier.functions.single {
-                val function = it.owner
-                function.name == name && function.hasShape(
-                    dispatchReceiver = true,
-                    regularParameters = 1,
-                    parameterTypes = listOf(null, rhsType)
-                )
-            }
-        }
-    }
-
-    private val unaryOperatorCache = mutableMapOf<Pair<Name, IrType>, IrSimpleFunctionSymbol>()
-
-    override fun getUnaryOperator(name: Name, receiverType: IrType): IrSimpleFunctionSymbol {
-        require(receiverType is IrSimpleType) { "Expected IrSimpleType in getBinaryOperator, got $receiverType" }
-        val classifier = receiverType.classifier
-        require(classifier is IrClassSymbol && classifier.isBound) {
-            "Expected a bound IrClassSymbol for receiverType in getBinaryOperator, got $classifier"
-        }
-        val key = Pair(name, receiverType)
-        return unaryOperatorCache.getOrPut(key) {
-            classifier.functions.single {
-                val function = it.owner
-                function.name == name && function.hasShape(dispatchReceiver = true)
-            }
-        }
-    }
 
     private fun <T : Any> getFunctionsByKey(
         name: Name,

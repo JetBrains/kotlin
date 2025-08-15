@@ -9,7 +9,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DoubleColonKt]]
     VALUE_PARAMETER_LIST
   FUN[fqName=classLiteral, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=classLiteral]
     VALUE_PARAMETER_LIST
-    OBJECT_DECLARATION[classId=null, fqName=null, isCompanion=false, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[]]
+    OBJECT_DECLARATION[classId=null, fqName=null, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[]]
       CLASS_BODY
   FUN[fqName=expressions, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=expressions]
     VALUE_PARAMETER_LIST

@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.fir.resolve.tryAccessExplicitFieldSymbol
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.chain
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.unwrapAtoms
@@ -307,7 +308,7 @@ abstract class FirDataFlowAnalyzer(
     }
 
     private fun inferLowerTypesFromSymbol(symbol: FirEnumEntrySymbol): Set<DfaType>? =
-        with(components) { symbol.getComplementary() }
+        with(components) { symbol.getComplementarySymbols() }
             ?.takeIf { it.isNotEmpty() }
             ?.mapTo(mutableSetOf(), DfaType::Symbol)
 
@@ -549,6 +550,8 @@ abstract class FirDataFlowAnalyzer(
     private fun addTypeOperatorStatements(flow: MutableFlow, typeOperatorCall: FirTypeOperatorCall) {
         val type = typeOperatorCall.conversionTypeRef.coneType
         val operandVariable = flow.getVariableIfUsedOrReal(typeOperatorCall.argument) ?: return
+        val complementarySymbols = typeOperatorCall.conversionTypeRef.coneType
+            .toRegularClassSymbol(session)?.getComplementarySymbols()?.takeIf { it.isNotEmpty() }
         when (val operation = typeOperatorCall.operation) {
             FirOperation.IS, FirOperation.NOT_IS -> {
                 val isType = operation == FirOperation.IS
@@ -562,6 +565,10 @@ abstract class FirDataFlowAnalyzer(
                         if (operandVariable.isReal()) {
                             flow.addImplication((expressionVariable eq isType) implies (operandVariable typeEq type))
                             flow.addImplication((expressionVariable eq !isType) implies (operandVariable typeNotEq type))
+
+                            if (complementarySymbols != null) {
+                                flow.addImplication((expressionVariable eq isType) implies (operandVariable valueNotEq complementarySymbols))
+                            }
                         }
                         if (!type.canBeNull(components.session)) {
                             // x is (T & Any) => x != null
@@ -577,6 +584,10 @@ abstract class FirDataFlowAnalyzer(
             FirOperation.AS -> {
                 if (operandVariable.isReal()) {
                     flow.addTypeStatement(operandVariable typeEq type)
+
+                    if (complementarySymbols != null) {
+                        flow.addTypeStatement(operandVariable valueNotEq complementarySymbols)
+                    }
                 }
                 if (!type.canBeNull(components.session)) {
                     flow.commitOperationStatement(operandVariable notEq null)
@@ -592,6 +603,10 @@ abstract class FirDataFlowAnalyzer(
                 flow.addImplication((expressionVariable notEq null) implies (operandVariable notEq null))
                 if (operandVariable.isReal()) {
                     flow.addImplication((expressionVariable notEq null) implies (operandVariable typeEq type))
+
+                    if (complementarySymbols != null) {
+                        flow.addImplication((expressionVariable notEq null) implies (operandVariable valueNotEq complementarySymbols))
+                    }
                 }
             }
 
@@ -753,11 +768,13 @@ abstract class FirDataFlowAnalyzer(
             if (symbol != null) {
                 flow.addImplication((expressionVariable eq !isEq) implies (variable valueNotEq symbol))
             }
-            if (symbol is FirEnumEntrySymbol) {
-                val complementary = with(components) { symbol.getComplementary() }?.takeIf { it.isNotEmpty() }
-                if (complementary != null) {
-                    flow.addImplication((expressionVariable eq isEq) implies (variable valueNotEq complementary))
-                }
+            val complementarySymbols = when (symbol) {
+                is FirEnumEntrySymbol -> with(components) { symbol.getComplementarySymbols() }
+                is FirRegularClassSymbol if symbol.classKind.isObject -> with(components) { symbol.getComplementarySymbols() }
+                else -> null
+            }
+            if (complementarySymbols != null && complementarySymbols.isNotEmpty()) {
+                flow.addImplication((expressionVariable eq isEq) implies (variable valueNotEq complementarySymbols))
             }
         }
 

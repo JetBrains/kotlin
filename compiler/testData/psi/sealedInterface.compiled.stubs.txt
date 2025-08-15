@@ -18,7 +18,7 @@ FILE[kind=File[packageFqName=test]]
                   REFERENCE_EXPRESSION[referencedName=test]
                 REFERENCE_EXPRESSION[referencedName=SealedInterface]
         CLASS_BODY
-      OBJECT_DECLARATION[classId=test/SealedInterface.Top, fqName=test.SealedInterface.Top, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Top, superNames=[SealedInterface]]
+      OBJECT_DECLARATION[classId=test/SealedInterface.Top, fqName=test.SealedInterface.Top, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Top, superNames=[SealedInterface]]
         MODIFIER_LIST[public]
         SUPER_TYPE_LIST
           SUPER_TYPE_ENTRY

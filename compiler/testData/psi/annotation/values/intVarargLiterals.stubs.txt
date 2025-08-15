@@ -90,7 +90,7 @@ VarArg.kt:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Int]
       CLASS_BODY
-        OBJECT_DECLARATION[classId=/VarArg.Companion, fqName=VarArg.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+        OBJECT_DECLARATION[classId=/VarArg.Companion, fqName=VarArg.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
           MODIFIER_LIST[companion]
           CLASS_BODY
             PROPERTY[fqName=VarArg.Companion.CONSTANT, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=CONSTANT]

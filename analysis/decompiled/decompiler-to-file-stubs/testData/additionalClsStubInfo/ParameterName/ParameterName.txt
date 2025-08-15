@@ -11,8 +11,8 @@ KotlinStub$CLASS[classId=test/ParameterName, fqName=test.ParameterName, isClsStu
     KotlinStub$FUN[fqName=test.ParameterName.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
       KotlinStub$MODIFIER_LIST[public final inline]
       KotlinStub$TYPE_PARAMETER_LIST
-        KotlinStub$TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=A]
-        KotlinStub$TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=B]
+        KotlinStub$TYPE_PARAMETER[fqName=null, name=A]
+        KotlinStub$TYPE_PARAMETER[fqName=null, name=B]
       KotlinStub$VALUE_PARAMETER_LIST
         KotlinStub$VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=block]
           KotlinStub$MODIFIER_LIST[crossinline]

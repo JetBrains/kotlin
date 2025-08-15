@@ -1,10 +1,10 @@
 FILE[kind=File[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  OBJECT_DECLARATION[classId=/Foo, fqName=Foo, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=Foo, superNames=[]]
+  OBJECT_DECLARATION[classId=/Foo, fqName=Foo, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=Foo, superNames=[]]
   CLASS[classId=/Bar, fqName=Bar, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Bar, superNames=[]]
     MODIFIER_LIST[public]
-  OBJECT_DECLARATION[classId=/Foo, fqName=Foo, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=Foo, superNames=[]]
+  OBJECT_DECLARATION[classId=/Foo, fqName=Foo, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=Foo, superNames=[]]
   CLASS[classId=/Bar, fqName=Bar, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Bar, superNames=[]]
     MODIFIER_LIST[]
       ANNOTATION

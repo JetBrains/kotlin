@@ -51,7 +51,18 @@ abstract class AbstractFirForeignAnnotationsTestBase(
 }
 
 abstract class AbstractFirPsiForeignAnnotationsSourceJavaTest :
-    AbstractFirForeignAnnotationsTestBase(ForeignAnnotationsTestKind.SOURCE, FirParser.Psi)
+    AbstractFirForeignAnnotationsTestBase(ForeignAnnotationsTestKind.SOURCE, FirParser.Psi) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+
+        with(builder) {
+            firHandlersStep {
+                // Can only be applied to either SOURCE of COMPILED as parameter names are not preserved when compiled.
+                useHandlers(::FirScopeDumpHandler)
+            }
+        }
+    }
+}
 
 abstract class AbstractFirPsiForeignAnnotationsCompiledJavaTest :
     AbstractFirForeignAnnotationsTestBase(ForeignAnnotationsTestKind.COMPILED_JAVA, FirParser.Psi)

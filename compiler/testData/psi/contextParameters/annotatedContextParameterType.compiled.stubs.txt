@@ -105,5 +105,5 @@ ParameterizedInterface.class:
     CLASS[classId=/ParameterizedInterface, fqName=ParameterizedInterface, isClsStubCompiledToJvmDefaultImplementation=true, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=ParameterizedInterface, superNames=[]]
       MODIFIER_LIST[public]
       TYPE_PARAMETER_LIST
-        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+        TYPE_PARAMETER[fqName=null, name=T]
       CLASS_BODY

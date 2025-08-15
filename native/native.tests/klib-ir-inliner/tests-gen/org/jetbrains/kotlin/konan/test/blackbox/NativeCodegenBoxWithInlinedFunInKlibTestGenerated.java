@@ -14875,6 +14875,12 @@ public class NativeCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractN
         }
 
         @Test
+        @TestMetadata("kt79979_memberExtension.kt")
+        public void testKt79979_memberExtension() {
+          runTest("compiler/testData/codegen/box/delegatedProperty/delegateToAnother/kt79979_memberExtension.kt");
+        }
+
+        @Test
         @TestMetadata("mutable.kt")
         public void testMutable() {
           runTest("compiler/testData/codegen/box/delegatedProperty/delegateToAnother/mutable.kt");
@@ -33030,6 +33036,12 @@ public class NativeCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractN
           @TestMetadata("arrayDeque.kt")
           public void testArrayDeque() {
             runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/arrayDeque.kt");
+          }
+
+          @Test
+          @TestMetadata("differentDependenciesWithTheSameName.kt")
+          public void testDifferentDependenciesWithTheSameName() {
+            runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/differentDependenciesWithTheSameName.kt");
           }
 
           @Test
