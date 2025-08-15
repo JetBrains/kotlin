@@ -271,6 +271,7 @@ class BuildReportsIT : KGPBaseTest() {
         "ValidateIrBeforeLowering:",
         "ValidateIrAfterLowering:",
         "Compiler backend:",
+        "llvm-default.AlwaysInlinerPass:",
         "Size metrics:",
     )
 
