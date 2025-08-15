@@ -322,6 +322,7 @@ kotlin {
                     "-nostdlib",
                 )
             )
+            addReturnValueCheckerInfo()
         }
     }
 
