@@ -47,7 +47,8 @@ sealed class FirExtensionShadowedByMemberChecker(kind: MppCheckerKind) : FirCall
             declaration.receiverParameter.let { it == null || it.typeRef.coneType.canBeNull(context.session) } ||
             declaration.nameOrSpecialName == NO_NAME_PROVIDED ||
             // A common pattern, KT-70012
-            declaration.isActual
+            declaration.isActual ||
+            declaration.isOverride
         ) {
             return
         }
