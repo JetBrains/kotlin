@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.backend.konan.llvm.BasicLlvmHelpers
 import org.jetbrains.kotlin.backend.konan.llvm.getName
 import org.jetbrains.kotlin.backend.konan.llvm.llvmLinkModules2
 import org.jetbrains.kotlin.backend.konan.optimizations.handlePerformanceInlineAnnotation
-import org.jetbrains.kotlin.cli.common.perfManager
 import kotlin.collections.forEach
 
 internal fun linkRuntimeModules(generationState: NativeGenerationState, runtimeNativeLibraries: List<LLVMModuleRef>): List<LLVMModuleRef> {
@@ -41,10 +40,10 @@ internal fun linkRuntimeModules(generationState: NativeGenerationState, runtimeN
     }
     val config = createLTOPipelineConfigForRuntime(generationState)
 
-    MandatoryOptimizationPipeline(config, generationState.context.configuration.perfManager, generationState).use {
+    MandatoryOptimizationPipeline(config, generationState.performanceManager, generationState).use {
         it.execute(runtimeModule)
     }
-    ModuleOptimizationPipeline(config, generationState.context.configuration.perfManager, generationState).use {
+    ModuleOptimizationPipeline(config, generationState.performanceManager, generationState).use {
         it.execute(runtimeModule)
     }
 

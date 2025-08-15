@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.SerializedClassFields
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedEagerInitializedFile
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedInlineFunctionReference
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.util.PerformanceManager
 
 internal class FileLowerState {
     private var functionReferenceCount = 0
@@ -59,6 +60,7 @@ internal class NativeGenerationState(
     val llvmModuleSpecification: LlvmModuleSpecification,
     val outputFiles: OutputFiles,
     val llvmModuleName: String,
+    override val performanceManager: PerformanceManager?,
 ) : BasicPhaseContext(config), BackendContextHolder, LlvmIrHolder, BitcodePostProcessingContext {
     val outputFile = outputFiles.mainFileName
 

@@ -95,7 +95,8 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
             val outputFiles = OutputFiles(outputPath, config.target, config.produce)
             val generationState = NativeGenerationState(context.config, backendContext,
                     fragment.cacheDeserializationStrategy, fragment.dependenciesTracker, fragment.llvmModuleSpecification, outputFiles,
-                    llvmModuleName = "out" // TODO: Currently, all llvm modules are named as "out" which might lead to collisions.
+                    llvmModuleName = "out", // TODO: Currently, all llvm modules are named as "out" which might lead to collisions.
+                    fragment.performanceManager
             )
             try {
                 val module = fragment.irModule
