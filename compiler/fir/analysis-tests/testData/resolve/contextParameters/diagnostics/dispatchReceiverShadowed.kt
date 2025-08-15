@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ContextParameters
 // ISSUE: KT-79770
 class Foo {
@@ -6,13 +6,13 @@ class Foo {
 
     fun usage() {
         context(Foo()) {
-            foo()
+            <!RECEIVER_SHADOWED_BY_CONTEXT_PARAMETER!>foo<!>()
         }
     }
 
     context(_: Foo)
     fun usage2() {
-        foo()
+        <!RECEIVER_SHADOWED_BY_CONTEXT_PARAMETER!>foo<!>()
     }
 }
 
