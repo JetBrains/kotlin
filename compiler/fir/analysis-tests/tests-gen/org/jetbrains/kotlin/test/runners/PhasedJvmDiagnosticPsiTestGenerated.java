@@ -53731,21 +53731,9 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Test
-      @TestMetadata("receiverShadowed.kt")
-      public void testReceiverShadowed() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/receiverShadowed.kt");
-      }
-
-      @Test
       @TestMetadata("receiverShadowed2.kt")
       public void testReceiverShadowed2() {
         runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/receiverShadowed2.kt");
-      }
-
-      @Test
-      @TestMetadata("receiverShadowedSubtype.kt")
-      public void testReceiverShadowedSubtype() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/receiverShadowedSubtype.kt");
       }
 
       @Test
@@ -54097,6 +54085,18 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
         @TestMetadata("noContextArgument.kt")
         public void testNoContextArgument() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/noContextArgument.kt");
+        }
+
+        @Test
+        @TestMetadata("receiverShadowed.kt")
+        public void testReceiverShadowed() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/receiverShadowed.kt");
+        }
+
+        @Test
+        @TestMetadata("receiverShadowedSubtype.kt")
+        public void testReceiverShadowedSubtype() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/receiverShadowedSubtype.kt");
         }
 
         @Test
