@@ -25990,6 +25990,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
         }
 
         @Test
+        @TestMetadata("samVsGenericOverloads.kt")
+        public void testSamVsGenericOverloads() {
+          runTest("compiler/testData/diagnostics/tests/j+k/sam/samVsGenericOverloads.kt");
+        }
+
+        @Test
         @TestMetadata("staticSamFromImportWithStar.kt")
         public void testStaticSamFromImportWithStar() {
           runTest("compiler/testData/diagnostics/tests/j+k/sam/staticSamFromImportWithStar.kt");

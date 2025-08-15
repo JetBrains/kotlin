@@ -21,14 +21,20 @@ class ClassicUnstableAndK2LanguageFeaturesSkipConfigurator(testServices: TestSer
             LanguageFeature.ExplicitBackingFields,
             LanguageFeature.AnnotationAllUseSiteTarget,
         )
+
+        private val featuresRelevantToK1 = setOf(
+            LanguageFeature.DisableCompatibilityModeForNewInference,
+        )
     }
 
     override fun shouldSkipTest(): Boolean {
         val settings = testServices.moduleStructure.modules.first().languageVersionSettings
         if (settings.languageVersion.usesK2) return false
         return settings.getCustomizedEffectivelyEnabledLanguageFeatures().any { feature ->
-            when (val sinceVersion = feature.sinceVersion) {
-                null -> feature in unscheduledK2OnlyFeatures
+            val sinceVersion = feature.sinceVersion
+            when {
+                feature in featuresRelevantToK1 -> false
+                sinceVersion == null -> feature in unscheduledK2OnlyFeatures
                 else -> sinceVersion.usesK2
             }
         }
