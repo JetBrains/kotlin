@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
 import org.jetbrains.kotlin.backend.common.lower.ClosureAnnotator.ClosureBuilder
-import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering.ScopeWithCounter
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
@@ -54,6 +53,8 @@ interface VisibilityPolicy {
 val BOUND_VALUE_PARAMETER by IrDeclarationOriginImpl.Synthetic
 
 val BOUND_RECEIVER_PARAMETER by IrDeclarationOriginImpl.Synthetic
+
+private class ScopeWithCounter(val irElement: IrElement)
 
 private var IrSymbolOwner.scopeWithCounter: ScopeWithCounter? by irAttribute(copyByDefault = false)
 
@@ -125,7 +126,7 @@ open class LocalDeclarationsLowering(
     val newParameterToOld: MutableMap<IrValueParameter, IrValueParameter> = mutableMapOf(),
     val oldParameterToNew: MutableMap<IrValueParameter, IrValueParameter> = mutableMapOf(),
 ) : BodyLoweringPass {
-    internal val declarationScopesWithCounter: MutableMap<IrClass, MutableMap<Name, ScopeWithCounter>> = mutableMapOf()
+    private val declarationScopesWithCounter: MutableMap<IrClass, MutableMap<Name, ScopeWithCounter>> = mutableMapOf()
 
     open val invalidChars: Set<Char>
         get() = emptySet()
@@ -169,12 +170,6 @@ open class LocalDeclarationsLowering(
 
     protected open fun IrClass.getConstructorsThatCouldCaptureParamsWithoutFieldCreating(): Iterable<IrConstructor> =
         listOfNotNull(primaryConstructor)
-
-    internal class ScopeWithCounter(val irElement: IrElement) {
-        // Continuous numbering across all declarations in the container.
-        var counter: Int = 0
-        val usedLocalFunctionNames: MutableSet<Name> = hashSetOf()
-    }
 
     // Need to keep LocalFunctionContext.index
     private fun IrSymbolOwner.getOrCreateScopeWithCounter(): ScopeWithCounter =
@@ -252,7 +247,6 @@ open class LocalDeclarationsLowering(
 
     class LocalFunctionContext(
         override val declaration: IrSimpleFunction,
-        val index: Int,
         val ownerForLoweredDeclaration: OwnerForLoweredDeclaration,
         sourceFileWhenInlined: IrFileEntry?,
     ) :
@@ -1200,10 +1194,6 @@ open class LocalDeclarationsLowering(
                             ?: enclosingClass?.getOrCreateScopeWithCounter()
                             // File is required for K/N because file declarations are not split by classes.
                             ?: enclosingPackageFragment.getOrCreateScopeWithCounter()
-                        val index =
-                            if (declaration.name.isSpecial || declaration.name in enclosingScope.usedLocalFunctionNames)
-                                enclosingScope.counter++
-                            else -1
                         val ownerForLoweredDeclaration =
                             data.currentScope?.let {
                                 when (it.irElement) {
@@ -1223,12 +1213,9 @@ open class LocalDeclarationsLowering(
                                 ?: OwnerForLoweredDeclaration.DeclarationContainer(enclosingScope.irElement as IrDeclarationContainer)
                         localFunctions[declaration] = LocalFunctionContext(
                             declaration,
-                            index,
                             ownerForLoweredDeclaration,
                             data.sourceFileWhenInlined,
                         )
-
-                        enclosingScope.usedLocalFunctionNames.add(declaration.name)
                     }
 
                     val newData = data.withInline(declaration.isInline, data.sourceFileWhenInlined)
