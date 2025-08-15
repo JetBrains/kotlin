@@ -27,7 +27,7 @@ internal abstract class KotlinOnlyTargetPreset<R : KotlinOnlyTarget<T>, T : Kotl
             targetPreset = this@KotlinOnlyTargetPreset
 
             val compilationFactory = createCompilationFactory(this)
-            compilations = project.container(compilationFactory.itemClass, compilationFactory)
+            compilations = project.objects.domainObjectContainer(compilationFactory.itemClass, compilationFactory)
         }
 
         createKotlinTargetConfigurator().configureTarget(result)

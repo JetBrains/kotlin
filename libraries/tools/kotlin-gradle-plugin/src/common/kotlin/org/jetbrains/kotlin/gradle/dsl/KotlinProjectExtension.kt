@@ -297,7 +297,7 @@ abstract class KotlinJsProjectExtension(project: Project) :
     )
     fun getTargets(): NamedDomainObjectContainer<KotlinTarget>? =
         targetFuture.lenient.getOrNull()?.let { target ->
-            target.project.container(KotlinTarget::class.java)
+            target.project.objects.domainObjectContainer(KotlinTarget::class.java)
                 .apply { add(target) }
         }
 }
