@@ -74,7 +74,7 @@ public class AtomicInt(@Volatile public var value: Int) {
      */
     @Deprecated("Use incrementAndGet() or getAndIncrement() instead.", ReplaceWith("this.incrementAndGet()"), DeprecationLevel.ERROR)
     public fun increment(): Unit {
-        addAndGet(1)
+        val _ = addAndGet(1)
     }
 
     /**
@@ -82,7 +82,7 @@ public class AtomicInt(@Volatile public var value: Int) {
      */
     @Deprecated("Use decrementAndGet() or getAndDecrement() instead.", ReplaceWith("this.decrementAndGet()"), DeprecationLevel.ERROR)
     public fun decrement(): Unit {
-        addAndGet(-1)
+        val _ = addAndGet(-1)
     }
 
     /**
@@ -159,7 +159,7 @@ public class AtomicLong(@Volatile public var value: Long = 0L)  {
      */
     @Deprecated("Use incrementAndGet() or getAndIncrement() instead.", ReplaceWith("this.incrementAndGet()"), DeprecationLevel.ERROR)
     public fun increment(): Unit {
-        addAndGet(1L)
+        val _ = addAndGet(1L)
     }
 
     /**
@@ -167,7 +167,7 @@ public class AtomicLong(@Volatile public var value: Long = 0L)  {
      */
     @Deprecated("Use decrementAndGet() or getAndDecrement() instead.", ReplaceWith("this.decrementAndGet()"), DeprecationLevel.ERROR)
     public fun decrement(): Unit {
-        addAndGet(-1L)
+        val _ = addAndGet(-1L)
     }
 
     /**

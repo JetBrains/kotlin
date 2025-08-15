@@ -26,7 +26,7 @@ internal class AtomicLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
                 // We execute exclusively here.
                 val ctor = initializer_.load()
                 if (ctor != null && initializer_.compareAndSet(ctor, null)) {
-                    value_.compareAndSet(INITIALIZING, ctor())
+                    val _ = value_.compareAndSet(INITIALIZING, ctor())
                 } else {
                     // Something wrong.
                     assert(false)

@@ -85,11 +85,11 @@ public actual constructor(
         }
 
         private fun Throwable.dumpFullTrace(indent: String, qualifier: String) {
-            this.dumpSelfTrace(indent, qualifier) || return
+            if (!this.dumpSelfTrace(indent, qualifier)) return
 
             var cause = this.cause
             while (cause != null) {
-                cause.dumpSelfTrace(indent, "Caused by: ")
+                val _ = cause.dumpSelfTrace(indent, "Caused by: ")
                 cause = cause.cause
             }
         }

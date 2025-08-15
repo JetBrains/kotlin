@@ -51,6 +51,7 @@ public typealias ReportUnhandledExceptionHook = Function1<Throwable, Unit>
  * Set or default hook is also invoked by [processUnhandledException].
  */
 @ExperimentalNativeApi
+@IgnorableReturnValue
 public fun setUnhandledExceptionHook(hook: ReportUnhandledExceptionHook?): ReportUnhandledExceptionHook? {
     return UnhandledExceptionHookHolder.hook.exchange(hook)
 }
