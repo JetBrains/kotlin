@@ -5,23 +5,49 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.projectStructure
 
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.util.Disposer
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinContentScopeRefiner
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtension
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider
 
 @KaImplementationDetail
 class KaResolveExtensionToContentScopeRefinerBridge : KotlinContentScopeRefiner {
     override fun getEnlargementScopes(module: KaModule): List<GlobalSearchScope> =
-        buildList {
-            if (KaResolveExtensionProvider.provideExtensionsFor(module).isNotEmpty()) {
-                add(KaBaseResolveExtensionGeneratedFilesScope(listOf(module)))
+        withResolveExtensionsFor(module) { extensions ->
+            if (extensions.isNotEmpty()) {
+                listOf(KaBaseResolveExtensionGeneratedFilesScope(listOf(module)))
+            } else {
+                listOf()
             }
         }
 
     override fun getRestrictionScopes(module: KaModule): List<GlobalSearchScope> =
-        KaResolveExtensionProvider.provideExtensionsFor(module).map { resolveExtension ->
-            GlobalSearchScope.notScope(resolveExtension.getShadowedScope())
+        withResolveExtensionsFor(module) { extensions ->
+            extensions.map { GlobalSearchScope.notScope(it.getShadowedScope()) }
         }
+
+    companion object {
+        private inline fun <T> withResolveExtensionsFor(
+            module: KaModule,
+            block: (List<KaResolveExtension>) -> T,
+        ): T {
+            var disposable: Disposable? = null
+            try {
+                val extensions =
+                    KaResolveExtensionProvider.provideExtensionsFor(module) {
+                        Disposer.newDisposable("KaResolveExtensionToContentScopeRefinerBridge")
+                            .also { disposable = it }
+                    }
+                return block(extensions)
+            } finally {
+                if (disposable != null) {
+                    Disposer.dispose(disposable)
+                }
+            }
+        }
+    }
 }
