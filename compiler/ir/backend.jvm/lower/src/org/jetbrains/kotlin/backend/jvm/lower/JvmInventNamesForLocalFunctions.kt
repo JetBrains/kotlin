@@ -12,7 +12,11 @@ import org.jetbrains.kotlin.name.NameUtils.sanitizeAsJavaIdentifier
 
 @PhaseDescription(
     name = "InventNamesForLocalClasses",
-    prerequisite = [FunctionReferenceLowering::class],
+    prerequisite = [
+        // The tailrec lowering copies the default arguments into the lowered function body.
+        // If such an argument is a lambda, a new local function will appear in the lowered body, which needs a new name.
+        JvmTailrecLowering::class,
+    ],
 )
 internal class JvmInventNamesForLocalFunctions(
     private val context: JvmBackendContext
