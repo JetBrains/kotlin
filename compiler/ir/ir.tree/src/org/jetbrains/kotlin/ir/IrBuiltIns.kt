@@ -251,9 +251,6 @@ abstract class SymbolFinder {
     // TODO: replace this with lazy get
     abstract fun findGetter(property: IrPropertySymbol): IrSimpleFunctionSymbol?
 
-    // TODO: replace this with get by CallableId
-    abstract fun findBuiltInClassMemberFunctions(builtInClass: IrClassSymbol, name: Name): Iterable<IrSimpleFunctionSymbol>
-
     fun findFunctions(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): Iterable<IrSimpleFunctionSymbol> {
         return findFunctions(CallableId(FqName.fromSegments(listOf(*packageNameSegments)), name))
     }

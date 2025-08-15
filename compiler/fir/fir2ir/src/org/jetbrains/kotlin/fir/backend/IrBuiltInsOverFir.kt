@@ -623,8 +623,4 @@ class SymbolFinderOverFir(private val fir2irBuiltins: Fir2IrBuiltinSymbolsContai
 
     override fun findGetter(property: IrPropertySymbol): IrSimpleFunctionSymbol? =
         property.owner.getter?.symbol
-
-    override fun findBuiltInClassMemberFunctions(builtInClass: IrClassSymbol, name: Name): Iterable<IrSimpleFunctionSymbol> {
-        return builtInClass.functions.filter { it.owner.name == name }.asIterable()
-    }
 }
