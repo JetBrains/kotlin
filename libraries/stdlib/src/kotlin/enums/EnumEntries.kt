@@ -19,7 +19,7 @@ import kotlin.internal.throwReadObjectNotSupported
  * An instance of this interface can be obtained from `EnumClass.entries` property or with [enumEntries] function.
  *
  * #### Implementation note
- * All basic operations, such as `contains` and `indexOf`, are executed in constant time and are likely to be
+ * All basic operations, such as `get`, `contains` and `indexOf`, are executed in constant time and are likely to be
  * faster than regular `ArrayList<E>` counterparts.
  */
 @SinceKotlin("1.9")
@@ -46,7 +46,7 @@ internal fun <E : Enum<E>> enumEntries(entriesProvider: () -> Array<E>): EnumEnt
 internal fun <E : Enum<E>> enumEntries(entries: Array<E>): EnumEntries<E> = EnumEntriesList(entries)
 
 @SinceKotlin("1.8")
-private class EnumEntriesList<T : Enum<T>>(private val entries: Array<T>) : EnumEntries<T>, AbstractList<T>(), Serializable {
+private class EnumEntriesList<T : Enum<T>>(private val entries: Array<T>) : EnumEntries<T>, AbstractList<T>(), RandomAccess, Serializable {
 // WA for JS IR bug:
 //  class type parameter name MUST be different from E (AbstractList<E> type parameter),
 //  otherwise the bridge names for contains() and indexOf() will be clashed with the original method names,
