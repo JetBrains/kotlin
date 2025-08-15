@@ -910,7 +910,7 @@ class DurationTest {
             "P1Y", "P1M", "P1S", "PT1D", "PT1Y",
             "PT1S2S", "PT1S2H",
             "P9999999999999DT-9999999999999H",
-            "PT1.5H", "PT0.5D", "PT.5S", "PT0.25.25S"
+            "PT1.5H", "PT0.5D", "PT.5S", "PT0.25.25S",
         )) {
             assertNull(Duration.parseOrNull(invalidValue), invalidValue)
             assertFailsWith<IllegalArgumentException>(invalidValue) { Duration.parse(invalidValue) }.let { e ->
