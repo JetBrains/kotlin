@@ -34,12 +34,12 @@ interface I {
 }
 
 interface J : I {
-    override fun String.<!EXTENSION_SHADOWED_BY_MEMBER!>hashCode<!>(): Int = 1
+    override fun String.hashCode(): Int = 1
 
     context(string: String)
     override fun hashCode(): Int = 1
 
-    override fun String.<!EXTENSION_SHADOWED_BY_MEMBER!>toString<!>(): String = ""
+    override fun String.toString(): String = ""
 
     context(string: String)
     override fun toString(): String = ""

@@ -9,7 +9,7 @@ interface Extension<T> {
 }
 
 class FooExtension : Extension<Foo> {
-    override fun Foo.<!EXTENSION_SHADOWED_BY_MEMBER!>bar<!>() {}
+    override fun Foo.bar() {}
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, interfaceDeclaration,
