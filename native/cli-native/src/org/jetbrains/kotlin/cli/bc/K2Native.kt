@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.cli.bc
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.util.Disposer
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
@@ -107,6 +108,10 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
         // Values for keys for non-nullable arguments below must be also copied during 1st stage preparation within `KonanDriver.splitOntoTwoStages()`
         configuration.setupCommonKlibArguments(arguments, canBeMetadataKlibCompilation = true)
+        val zipAccessor = configuration.zipFileSystemAccessor
+        if (zipAccessor is Disposable) {
+            Disposer.register(rootDisposable, zipAccessor)
+        }
 
         return environment
     }

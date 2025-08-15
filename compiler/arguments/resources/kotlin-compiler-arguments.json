@@ -6391,6 +6391,37 @@
                                     "deprecatedVersion": null,
                                     "removedVersion": null
                                 }
+                            },
+                            {
+                                "name": "Xklib-zip-file-accessor-cache-limit",
+                                "shortName": null,
+                                "deprecatedName": null,
+                                "description": {
+                                    "current": "Maximum number of klibs that can be cached during compilation. Default is 64.",
+                                    "valueInVersions": []
+                                },
+                                "delimiter": null,
+                                "valueType": {
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.IntType",
+                                    "isNullable": {
+                                        "current": false,
+                                        "valueInVersions": []
+                                    },
+                                    "defaultValue": {
+                                        "current": 64,
+                                        "valueInVersions": []
+                                    }
+                                },
+                                "valueDescription": {
+                                    "current": null,
+                                    "valueInVersions": []
+                                },
+                                "releaseVersionsMetadata": {
+                                    "introducedVersion": "2.3.0",
+                                    "stabilizedVersion": null,
+                                    "deprecatedVersion": null,
+                                    "removedVersion": null
+                                }
                             }
                         ],
                         "nestedLevels": [

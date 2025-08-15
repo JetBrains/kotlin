@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.cli.pipeline.web
 
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.cli.common.allowKotlinPackage
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.js.config.*
+import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
@@ -85,9 +87,10 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
         arguments.main?.let { configuration.callMainMode = it }
         configuration.dce = arguments.irDce
 
-        val zipAccessor = DisposableZipFileSystemAccessor(64)
-        Disposer.register(rootDisposable, zipAccessor)
-        configuration.zipFileSystemAccessor = zipAccessor
+        val zipAccessor = configuration.zipFileSystemAccessor
+        if (zipAccessor is Disposable) {
+            Disposer.register(rootDisposable, zipAccessor)
+        }
         configuration.perModuleOutputName = arguments.irPerModuleOutputName
         configuration.icCacheDirectory = arguments.cacheDirectory
         configuration.icCacheReadOnly = arguments.icCacheReadonly
