@@ -43,11 +43,11 @@ public value class Future<T> @PublishedApi internal constructor(public val id: I
             FutureState.INVALID ->
                 throw IllegalStateException("Future is in an invalid state")
             FutureState.CANCELLED -> {
-                consumeFuture(id)
+                val _ = consumeFuture(id)
                 throw IllegalStateException("Future is cancelled")
             }
             FutureState.THROWN -> {
-                consumeFuture(id)
+                val _ = consumeFuture(id)
                 throw IllegalStateException("Job has thrown an exception")
             }
         }

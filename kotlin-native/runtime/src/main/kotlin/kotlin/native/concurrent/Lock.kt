@@ -32,7 +32,7 @@ internal class Lock {
             when (old) {
                 lockData -> {
                     // Was locked by us already.
-                    reenterCount_.incrementAndFetch()
+                    val _ = reenterCount_.incrementAndFetch()
                     break@loop
                 }
                 0 -> {
@@ -47,7 +47,7 @@ internal class Lock {
     @OptIn(ExperimentalStdlibApi::class)
     fun unlock() {
         if (reenterCount_.load() > 0) {
-            reenterCount_.decrementAndFetch()
+            val _ = reenterCount_.decrementAndFetch()
         } else {
             val lockData = CurrentThread.id.hashCode()
             val old = locker_.compareAndExchange(lockData, 0)

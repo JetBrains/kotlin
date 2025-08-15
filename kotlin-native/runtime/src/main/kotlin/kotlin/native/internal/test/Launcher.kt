@@ -20,7 +20,7 @@ import kotlin.native.concurrent.*
 @ThreadLocal
 public object GeneratedSuites {
    public val suites: MutableList<TestSuite> = mutableListOf<TestSuite>()
-   public fun add(suite: TestSuite): Boolean = suites.add(suite)
+   @IgnorableReturnValue public fun add(suite: TestSuite): Boolean = suites.add(suite)
 }
 
 @ExperimentalNativeApi
@@ -56,5 +56,5 @@ public fun worker(args: Array<String>) {
 
 @ExperimentalNativeApi
 public fun mainNoExit(args: Array<String>) {
-    testLauncherEntryPoint(args)
+    val _ = testLauncherEntryPoint(args) // Return exit code from mainNoExit as well?
 }

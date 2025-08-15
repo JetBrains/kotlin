@@ -144,6 +144,7 @@ public value class Worker @PublishedApi internal constructor(public val id: Int)
      * @throws [IllegalStateException] if this request is executed on non-current [Worker].
      * @return `true` if request(s) was processed and `false` otherwise.
      */
+    @IgnorableReturnValue
     public fun processQueue(): Boolean = processQueueInternal(id)
 
     /**
@@ -158,6 +159,7 @@ public value class Worker @PublishedApi internal constructor(public val id: Int)
      * @throws [IllegalStateException] if this request is executed on non-current [Worker].
      * @throws [IllegalArgumentException] if timeout value is incorrect.
      */
+    @IgnorableReturnValue
     public fun park(timeoutMicroseconds: Long, process: Boolean = false): Boolean {
         if (timeoutMicroseconds < -1) throw IllegalArgumentException()
         return parkInternal(id, timeoutMicroseconds, process)

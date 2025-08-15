@@ -330,6 +330,9 @@ kotlin {
                 )
             )
         }
+        nativeTarget.compilations["main"].compileTaskProvider.configure {
+            compilerOptions.addReturnValueCheckerInfo()
+        }
     }
 
     sourceSets {
