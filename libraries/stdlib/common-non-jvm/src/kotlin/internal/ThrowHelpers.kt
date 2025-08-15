@@ -7,9 +7,11 @@ package kotlin.internal
 
 @Suppress("DEPRECATION_ERROR")
 @PublishedApi
+@SinceKotlin("2.3")
 internal fun throwUninitializedPropertyAccessException(name: String): Nothing =
     throw UninitializedPropertyAccessException("lateinit property $name has not been initialized")
 
 @PublishedApi
+@SinceKotlin("2.3")
 internal fun throwUnsupportedOperationException(message: String): Nothing =
     throw UnsupportedOperationException(message)
