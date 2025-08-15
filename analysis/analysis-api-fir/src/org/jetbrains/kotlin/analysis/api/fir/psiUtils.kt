@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypes2
 import org.jetbrains.kotlin.resolve.calls.util.isSingleUnderscore
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -93,13 +94,22 @@ internal fun FirDeclaration.findReferencePsi(scope: GlobalSearchScope): PsiEleme
 }
 
 internal val KtNamedFunction.kaSymbolModality: KaSymbolModality?
-    get() = kaSymbolModalityByModifiers ?: when {
-        isTopLevel || isLocal -> KaSymbolModality.FINAL
+    get() {
+        val modalityByModifiers = kaSymbolModalityByModifiers
+        return when {
+            modalityByModifiers != null -> when (val parent = containingClassOrObject) {
+                // KT-80178
+                is KtClass if (parent.isInterface() && !this.hasBody()) -> KaSymbolModality.ABSTRACT
+                else -> modalityByModifiers
+            }
 
-        // Green code cannot have those modifiers with other modalities
-        hasModifier(KtTokens.INLINE_KEYWORD) || hasModifier(KtTokens.TAILREC_KEYWORD) -> KaSymbolModality.FINAL
+            isTopLevel || isLocal -> KaSymbolModality.FINAL
 
-        else -> null
+            // Green code cannot have those modifiers with other modalities
+            hasModifier(KtTokens.INLINE_KEYWORD) || hasModifier(KtTokens.TAILREC_KEYWORD) -> KaSymbolModality.FINAL
+
+            else -> null
+        }
     }
 
 internal val KtDestructuringDeclarationEntry.entryName: Name

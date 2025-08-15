@@ -1,0 +1,7 @@
+interface Foo {
+  fun fooDefault()
+
+  fun fooWithOpen()
+
+  fun fooWithOpenAndBody()
+}

@@ -42,6 +42,12 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByPsiTestGenerated extends Ab
   }
 
   @Test
+  @TestMetadata("abstractFunctionWithRedundantOpen.kt")
+  public void testAbstractFunctionWithRedundantOpen() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByPsi/abstractFunctionWithRedundantOpen.kt");
+  }
+
+  @Test
   public void testAllFilesPresentInSymbolByPsi() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByPsi"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
