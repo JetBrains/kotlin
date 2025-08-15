@@ -1193,7 +1193,7 @@ private inline fun parseDefaultStringFormat(
         index += unit.length
 
         if (hasFractionalPart) {
-            totalNanos += if ((unit == DurationUnit.HOURS || unit == DurationUnit.DAYS) && index - fractionStartIndex > FRACTION_LIMIT)
+            totalNanos += if (unit >= DurationUnit.MINUTES && index - fractionStartIndex > FRACTION_LIMIT)
                 value.parseFractionFallback(fractionStartIndex, index - unit.length).toNanos(unit)
             else
                 fractionValue.toNanos(unit)
