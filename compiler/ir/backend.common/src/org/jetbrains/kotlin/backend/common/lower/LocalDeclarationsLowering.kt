@@ -54,9 +54,9 @@ val BOUND_VALUE_PARAMETER by IrDeclarationOriginImpl.Synthetic
 
 val BOUND_RECEIVER_PARAMETER by IrDeclarationOriginImpl.Synthetic
 
-private class ScopeWithCounter(val irElement: IrElement)
+private class Scope(val irElement: IrElement)
 
-private var IrSymbolOwner.scopeWithCounter: ScopeWithCounter? by irAttribute(copyByDefault = false)
+private var IrSymbolOwner.scope: Scope? by irAttribute(copyByDefault = false)
 
 /**
  * Prepares local declarations like classes and functions for being lifted into the nearest declaration container, adding explicit
@@ -126,7 +126,7 @@ open class LocalDeclarationsLowering(
     val newParameterToOld: MutableMap<IrValueParameter, IrValueParameter> = mutableMapOf(),
     val oldParameterToNew: MutableMap<IrValueParameter, IrValueParameter> = mutableMapOf(),
 ) : BodyLoweringPass {
-    private val declarationScopesWithCounter: MutableMap<IrClass, MutableMap<Name, ScopeWithCounter>> = mutableMapOf()
+    private val declarationScopesWithCounter: MutableMap<IrClass, MutableMap<Name, Scope>> = mutableMapOf()
 
     open val invalidChars: Set<Char>
         get() = emptySet()
@@ -172,19 +172,19 @@ open class LocalDeclarationsLowering(
         listOfNotNull(primaryConstructor)
 
     // Need to keep LocalFunctionContext.index
-    private fun IrSymbolOwner.getOrCreateScopeWithCounter(): ScopeWithCounter =
-        scopeWithCounter ?: ScopeWithCounter(this).also { scopeWithCounter = it }
+    private fun IrSymbolOwner.getOrCreateScope(): Scope =
+        scope ?: Scope(this).also { scope = it }
 
-    private fun IrField.getOrCreateScopeWithCounter(): ScopeWithCounter? {
+    private fun IrField.getOrCreateScope(): Scope? {
         val klass = parentClassOrNull ?: return null
         return declarationScopesWithCounter.getOrPut(klass, ::mutableMapOf)
-            .getOrPut(this.name) { ScopeWithCounter(this) }
+            .getOrPut(this.name) { Scope(this) }
     }
 
-    private fun IrFunction.getOrCreateScopeWithCounter(): ScopeWithCounter? {
+    private fun IrFunction.getOrCreateScope(): Scope? {
         val klass = parentClassOrNull ?: return null
         return declarationScopesWithCounter.getOrPut(klass, ::mutableMapOf)
-            .getOrPut(this.name) { ScopeWithCounter(this) }
+            .getOrPut(this.name) { Scope(this) }
     }
 
     abstract class LocalContext {
@@ -1135,16 +1135,16 @@ open class LocalDeclarationsLowering(
             }
 
             class Data(
-                val currentScope: ScopeWithCounter?,
+                val currentScope: Scope?,
                 val isInInlineFunction: Boolean,
                 val sourceFileWhenInlined: IrFileEntry? = null,
             ) {
                 fun withCurrentClass(currentClass: IrClass): Data =
                     // Don't cache local declarations
-                    Data(ScopeWithCounter(currentClass), isInInlineFunction, sourceFileWhenInlined)
+                    Data(Scope(currentClass), isInInlineFunction, sourceFileWhenInlined)
 
                 fun withCurrentFunction(currentFunction: IrFunction): Data =
-                    Data(ScopeWithCounter(currentFunction), isInInlineFunction, sourceFileWhenInlined)
+                    Data(Scope(currentFunction), isInInlineFunction, sourceFileWhenInlined)
 
                 fun withInline(isInline: Boolean, sourceFileWhenInlined: IrFileEntry?): Data =
                     if (isInline && !isInInlineFunction) Data(currentScope, true, sourceFileWhenInlined) else this
@@ -1189,11 +1189,11 @@ open class LocalDeclarationsLowering(
                 override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Data) {
                     if (declaration.visibility == DescriptorVisibilities.LOCAL) {
                         val enclosingScope = data.currentScope
-                            ?: enclosingField?.getOrCreateScopeWithCounter()
-                            ?: enclosingFunction?.getOrCreateScopeWithCounter()
-                            ?: enclosingClass?.getOrCreateScopeWithCounter()
+                            ?: enclosingField?.getOrCreateScope()
+                            ?: enclosingFunction?.getOrCreateScope()
+                            ?: enclosingClass?.getOrCreateScope()
                             // File is required for K/N because file declarations are not split by classes.
-                            ?: enclosingPackageFragment.getOrCreateScopeWithCounter()
+                            ?: enclosingPackageFragment.getOrCreateScope()
                         val ownerForLoweredDeclaration =
                             data.currentScope?.let {
                                 when (it.irElement) {
