@@ -67,12 +67,12 @@ constructor(
     private val propertiesProvider = PropertiesProvider(project)
     internal val shouldGenerateTypeScriptDefinitions: Property<Boolean> = project.objects.property<Boolean>(false)
 
-    override val subTargets: NamedDomainObjectContainer<KotlinJsIrSubTargetWithBinary> = project.container(
+    override val subTargets: NamedDomainObjectContainer<KotlinJsIrSubTargetWithBinary> = project.objects.domainObjectContainer(
         KotlinJsIrSubTargetWithBinary::class.java
     )
 
     override val testRuns: NamedDomainObjectContainer<KotlinJsReportAggregatingTestRun> by lazy {
-        project.container(KotlinJsReportAggregatingTestRun::class.java, KotlinJsTestRunFactory(this))
+        project.objects.domainObjectContainer(KotlinJsReportAggregatingTestRun::class.java, KotlinJsTestRunFactory(this))
     }
 
     override var wasmTargetType: KotlinWasmTargetType? = null

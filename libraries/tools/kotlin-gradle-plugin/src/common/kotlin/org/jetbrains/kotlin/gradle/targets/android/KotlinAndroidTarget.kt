@@ -48,7 +48,7 @@ abstract class KotlinAndroidTarget @Inject constructor(
         get() = KotlinPlatformType.androidJvm
 
     override val compilations: NamedDomainObjectContainer<out KotlinJvmAndroidCompilation> =
-        project.container(KotlinJvmAndroidCompilation::class.java)
+        project.objects.domainObjectContainer(KotlinJvmAndroidCompilation::class.java)
 
 
     @ExperimentalKotlinGradlePluginApi

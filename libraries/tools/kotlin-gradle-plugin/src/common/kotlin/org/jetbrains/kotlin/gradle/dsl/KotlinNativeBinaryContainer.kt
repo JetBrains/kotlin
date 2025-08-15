@@ -39,7 +39,7 @@ abstract class KotlinNativeBinaryContainer @Inject constructor(
         get() = target.compilations.getByName(KotlinCompilation.TEST_COMPILATION_NAME)
 
     private val nameToBinary = mutableMapOf<String, NativeBinary>()
-    internal val prefixGroups: NamedDomainObjectSet<PrefixGroup> = project.container(PrefixGroup::class.java)
+    internal val prefixGroups: NamedDomainObjectSet<PrefixGroup> = project.objects.domainObjectContainer(PrefixGroup::class.java)
 
     // region DSL getters.
     private inline fun <reified T : NativeBinary> getBinary(
@@ -159,7 +159,7 @@ abstract class KotlinNativeBinaryContainer @Inject constructor(
     }
     // endregion.
 
-    internal inner class PrefixGroup(
+    internal open inner class PrefixGroup @Inject constructor(
         private val name: String
     ) : Named {
         override fun getName(): String = name
