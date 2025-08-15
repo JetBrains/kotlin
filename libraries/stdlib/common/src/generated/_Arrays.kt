@@ -12464,7 +12464,7 @@ public inline fun <K> CharArray.distinctBy(selector: (Char) -> K): List<Char> {
 }
 
 /**
- * Returns a set containing all elements that are contained by both this array and the specified collection.
+ * Returns a set containing elements of this array that are also contained in the specified [other] array.
  * 
  * The returned set preserves the element iteration order of the original array.
  * 
@@ -12485,7 +12485,7 @@ public infix fun <T> Array<out T>.intersect(other: Iterable<T>): Set<T> {
 }
 
 /**
- * Returns a set containing all elements that are contained by both this array and the specified collection.
+ * Returns a set containing elements of this array that are also contained in the specified [other] array.
  * 
  * The returned set preserves the element iteration order of the original array.
  * 
@@ -12501,7 +12501,7 @@ public infix fun ByteArray.intersect(other: Iterable<Byte>): Set<Byte> {
 }
 
 /**
- * Returns a set containing all elements that are contained by both this array and the specified collection.
+ * Returns a set containing elements of this array that are also contained in the specified [other] array.
  * 
  * The returned set preserves the element iteration order of the original array.
  * 
@@ -12517,7 +12517,7 @@ public infix fun ShortArray.intersect(other: Iterable<Short>): Set<Short> {
 }
 
 /**
- * Returns a set containing all elements that are contained by both this array and the specified collection.
+ * Returns a set containing elements of this array that are also contained in the specified [other] array.
  * 
  * The returned set preserves the element iteration order of the original array.
  * 
@@ -12533,7 +12533,7 @@ public infix fun IntArray.intersect(other: Iterable<Int>): Set<Int> {
 }
 
 /**
- * Returns a set containing all elements that are contained by both this array and the specified collection.
+ * Returns a set containing elements of this array that are also contained in the specified [other] array.
  * 
  * The returned set preserves the element iteration order of the original array.
  * 
@@ -12549,7 +12549,7 @@ public infix fun LongArray.intersect(other: Iterable<Long>): Set<Long> {
 }
 
 /**
- * Returns a set containing all elements that are contained by both this array and the specified collection.
+ * Returns a set containing elements of this array that are also contained in the specified [other] array.
  * 
  * The returned set preserves the element iteration order of the original array.
  * 
@@ -12565,7 +12565,7 @@ public infix fun FloatArray.intersect(other: Iterable<Float>): Set<Float> {
 }
 
 /**
- * Returns a set containing all elements that are contained by both this array and the specified collection.
+ * Returns a set containing elements of this array that are also contained in the specified [other] array.
  * 
  * The returned set preserves the element iteration order of the original array.
  * 
@@ -12581,7 +12581,7 @@ public infix fun DoubleArray.intersect(other: Iterable<Double>): Set<Double> {
 }
 
 /**
- * Returns a set containing all elements that are contained by both this array and the specified collection.
+ * Returns a set containing elements of this array that are also contained in the specified [other] array.
  * 
  * The returned set preserves the element iteration order of the original array.
  * 
@@ -12597,7 +12597,7 @@ public infix fun BooleanArray.intersect(other: Iterable<Boolean>): Set<Boolean> 
 }
 
 /**
- * Returns a set containing all elements that are contained by both this array and the specified collection.
+ * Returns a set containing elements of this array that are also contained in the specified [other] array.
  * 
  * The returned set preserves the element iteration order of the original array.
  * 

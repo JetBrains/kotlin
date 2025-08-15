@@ -1697,17 +1697,12 @@ public inline fun <T, K> Iterable<T>.distinctBy(selector: (T) -> K): List<T> {
 }
 
 /**
- * Returns a set containing all elements that are contained by both this collection and the specified collection.
+ * Returns a set containing elements of this collection that are also contained in the specified [other] collection.
  * 
  * The returned set preserves the element iteration order of the original collection.
  * 
  * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
  * structurally equal, but otherwise different elements in it.
- * 
- * If either [this], [other], or both implement [Collection] and use a criterion other than structural equality (`==`)
- * to check if they contain an element, a set representing the intersection of [this] and [other] may contain different
- * elements compared to a set representing intersection of [other] and [this]
- * (in other words, the following may be true: `this intersect other != other intersect this`).
  * 
  * To get a set containing all elements that are contained at least in one of these collections use [union].
  */
