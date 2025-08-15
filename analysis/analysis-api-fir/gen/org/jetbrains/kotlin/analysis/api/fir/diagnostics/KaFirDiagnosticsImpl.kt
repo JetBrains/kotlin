@@ -4666,6 +4666,7 @@ internal class DslScopeViolationImpl(
 
 internal class ReceiverShadowedByContextParameterImpl(
     override val calleeSymbol: KaSymbol,
+    override val isDispatchOfMemberExtension: Boolean,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ReceiverShadowedByContextParameter

@@ -608,7 +608,8 @@ private object CheckReceiverShadowedByContextParameter {
         if (closerOrOnTheSameLevelContextParameters.any { implicitValue ->
                 candidate.system.isSubtypeConstraintCompatible(implicitValue.type, potentialReceiverType)
             }) {
-            sink.reportDiagnostic(ReceiverShadowedByContextParameter(candidate.symbol))
+            val isDispatchOfMemberExtension = kind == ImplicitKind.DispatchReceiver && (candidate.symbol as? FirCallableSymbol)?.receiverParameterSymbol != null
+            sink.reportDiagnostic(ReceiverShadowedByContextParameter(candidate.symbol, isDispatchOfMemberExtension))
         }
     }
 

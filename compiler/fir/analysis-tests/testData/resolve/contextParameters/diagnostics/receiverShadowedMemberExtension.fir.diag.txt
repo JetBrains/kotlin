@@ -1,3 +1,3 @@
-/receiverShadowedMemberExtension.kt:(215,218): error: 'fun Bar.baz(): Unit' uses an implicit receiver shadowed by a context parameter. Make the receiver explicit using 'this' or 'contextOf'.
+/receiverShadowedMemberExtension.kt:(215,218): error: Call to 'fun Bar.baz(): Unit' defined in 'Foo' uses an implicit receiver shadowed by a context parameter. Disambiguate the receiver by wrapping the call in 'with(this) { ... }' or 'with(contextOf<...>()) { ... }'.
 
-/receiverShadowedMemberExtension.kt:(323,326): error: 'fun Bar.baz(): Unit' uses an implicit receiver shadowed by a context parameter. Make the receiver explicit using 'this' or 'contextOf'.
+/receiverShadowedMemberExtension.kt:(323,326): error: Call to 'fun Bar.baz(): Unit' defined in 'Foo' uses an implicit receiver shadowed by a context parameter. Make the receiver explicit using 'this' or 'contextOf'.

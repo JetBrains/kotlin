@@ -3892,6 +3892,7 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
     interface ReceiverShadowedByContextParameter : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = ReceiverShadowedByContextParameter::class
         val calleeSymbol: KaSymbol
+        val isDispatchOfMemberExtension: Boolean
     }
 
     interface ToplevelTypealiasesOnly : KaFirDiagnostic<KtTypeAlias> {

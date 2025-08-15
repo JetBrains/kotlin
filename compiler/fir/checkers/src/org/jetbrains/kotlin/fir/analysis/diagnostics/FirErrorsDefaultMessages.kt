@@ -3240,8 +3240,15 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             RECEIVER_SHADOWED_BY_CONTEXT_PARAMETER,
-            "''{0}'' uses an implicit receiver shadowed by a context parameter. Make the receiver explicit using ''this'' or ''contextOf''.",
-            SYMBOL
+            "Call to {0} uses an implicit receiver shadowed by a context parameter. {1}",
+            SYMBOL_WITH_CONTAINING_DECLARATION,
+            Renderer { isDispatchOfMemberExtension ->
+                if (isDispatchOfMemberExtension) {
+                    "Disambiguate the receiver by wrapping the call in 'with(this) { ... }' or 'with(contextOf<...>()) { ... }'."
+                } else {
+                    "Make the receiver explicit using 'this' or 'contextOf'."
+                }
+            }
         )
 
         // Type alias
