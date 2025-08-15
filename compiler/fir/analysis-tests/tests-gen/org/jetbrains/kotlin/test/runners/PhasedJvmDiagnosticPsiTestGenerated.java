@@ -54094,6 +54094,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
         }
 
         @Test
+        @TestMetadata("dispatchReceiverShadowed.kt")
+        public void testDispatchReceiverShadowed() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/dispatchReceiverShadowed.kt");
+        }
+
+        @Test
         @TestMetadata("extensionShadowedWithContextParameters.kt")
         public void testExtensionShadowedWithContextParameters() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/extensionShadowedWithContextParameters.kt");
