@@ -166,14 +166,15 @@ abstract class InventNamesForLocalFunctions : BodyLoweringPass {
         }
 
         private fun suggestLocalName(declaration: IrDeclarationWithName): String {
-            val declarationName = sanitizeNameIfNeeded(declaration.name.asString())
+            val functionContext = localFunctions[declaration]
+                ?: return sanitizeNameIfNeeded(declaration.name.asString())
 
-            val functionContext = localFunctions[declaration] ?: return declarationName
-            if (functionContext.index < 0) return declarationName
+            if (functionContext.index < 0)
+                return sanitizeNameIfNeeded(functionContext.originalName.asString())
 
             val baseName = when {
                 functionContext.originalName.isSpecial -> if (functionContext.isNestedInLambda) "" else "lambda"
-                else -> declarationName
+                else -> sanitizeNameIfNeeded(functionContext.originalName.asString())
             }
 
             if (!suggestUniqueNames) return baseName
