@@ -58,6 +58,7 @@ abstract class InventNamesForLocalFunctions : BodyLoweringPass {
     private val declarationScopesWithCounter: MutableMap<IrClass, MutableMap<Name, ScopeWithCounter>> = mutableMapOf()
 
     private class LocalFunctionContext(
+        val originalName: Name,
         val index: Int,
         val newOwnerForLiftedUpFunction: IrDeclarationContainer,
         val isNestedInLambda: Boolean,
@@ -123,6 +124,7 @@ abstract class InventNamesForLocalFunctions : BodyLoweringPass {
                         ?: enclosingScope.irElement as IrDeclarationContainer
 
                 val functionContext = LocalFunctionContext(
+                    originalName = declaration.name,
                     index = index,
                     newOwnerForLiftedUpFunction = newOwnerForLiftedUpFunction,
                     isNestedInLambda = data.isInLambdaFunction,
@@ -170,7 +172,7 @@ abstract class InventNamesForLocalFunctions : BodyLoweringPass {
             if (functionContext.index < 0) return declarationName
 
             val baseName = when {
-                declaration.name.isSpecial -> if (functionContext.isNestedInLambda) "" else "lambda"
+                functionContext.originalName.isSpecial -> if (functionContext.isNestedInLambda) "" else "lambda"
                 else -> declarationName
             }
 
