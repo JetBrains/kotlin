@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.backend.konan.llvm.name
 import org.jetbrains.kotlin.backend.konan.llvm.verifyModule
 import org.jetbrains.kotlin.backend.konan.optimizations.RemoveRedundantSafepointsPass
 import org.jetbrains.kotlin.backend.konan.optimizations.removeMultipleThreadDataLoads
-import org.jetbrains.kotlin.cli.common.perfManager
 import org.jetbrains.kotlin.config.nativeBinaryOptions.SanitizerKind
 import org.jetbrains.kotlin.util.PerformanceManager
 import java.io.File
@@ -70,7 +69,8 @@ internal val RewriteExternalCallsCheckerGlobals = createSimpleNamedCompilerPhase
 
 internal class OptimizationState(
         konanConfig: KonanConfig,
-        val llvmConfig: LlvmPipelineConfig
+        val llvmConfig: LlvmPipelineConfig,
+        override val performanceManager: PerformanceManager?,
 ) : BasicPhaseContext(konanConfig)
 
 internal fun optimizationPipelinePass(name: String, pipeline: (LlvmPipelineConfig, PerformanceManager?, LoggingContext) -> LlvmOptimizationPipeline) =
@@ -78,7 +78,7 @@ internal fun optimizationPipelinePass(name: String, pipeline: (LlvmPipelineConfi
                 name = name,
                 postactions = getDefaultLlvmModuleActions(),
         ) { context, module ->
-            pipeline(context.llvmConfig, context.config.configuration.perfManager, context).use {
+            pipeline(context.llvmConfig, context.performanceManager, context).use {
                 it.execute(module)
             }
         }
@@ -167,7 +167,7 @@ internal fun <T : BitcodePostProcessingContext> PhaseEngine<T>.runBitcodePostPro
             closedWorld = context.config.isFinalBinary,
             timePasses = context.config.phaseConfig.needProfiling,
     )
-    useContext(OptimizationState(context.config, optimizationConfig)) {
+    useContext(OptimizationState(context.config, optimizationConfig, context.performanceManager)) {
         val module = this@runBitcodePostProcessing.context.llvmModule
         it.runPhase(StackProtectorPhase, module)
         it.runPhase(MandatoryBitcodeLLVMPostprocessingPhase, module)

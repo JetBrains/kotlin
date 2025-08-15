@@ -15,7 +15,13 @@ import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.ConfigChecks
 import org.jetbrains.kotlin.backend.konan.KonanConfig
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.perfManager
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.util.PerformanceManager
+
+internal interface PerformanceManagerContext {
+    val performanceManager: PerformanceManager?
+}
 
 /**
  * Context is a set of resources that is shared between different phases. PhaseContext is a "minimal context",
@@ -35,7 +41,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
  * * On the other hand, middle- and bitcode phases are hard to decouple due to the way the code was written many years ago.
  * It will take some time to rewrite it properly.
  */
-internal interface PhaseContext : LoggingContext, ConfigChecks, ErrorReportingContext, DisposableContext
+internal interface PhaseContext : LoggingContext, ConfigChecks, ErrorReportingContext, DisposableContext, PerformanceManagerContext
 
 internal open class BasicPhaseContext(
         override val config: KonanConfig,
@@ -48,6 +54,9 @@ internal open class BasicPhaseContext(
     override fun dispose() {
 
     }
+
+    override val performanceManager: PerformanceManager?
+        get() = config.configuration.perfManager
 }
 
 internal fun PhaseEngine.Companion.startTopLevel(config: KonanConfig, body: (PhaseEngine<PhaseContext>) -> Unit) {
