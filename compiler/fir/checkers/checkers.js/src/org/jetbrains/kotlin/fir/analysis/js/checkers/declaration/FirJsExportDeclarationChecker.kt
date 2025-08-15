@@ -261,11 +261,7 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
 
         val expandedType = fullyExpandedType(session, FirTypeAlias::expandedConeTypeWithEnsuredPhase)
 
-        val isExportableFunctionType = expandedType.isBasicFunctionType(session) || (
-                context.languageVersionSettings.supportsFeature(LanguageFeature.JsAllowExportingSuspendFunctions) &&
-                        expandedType.isBasicSuspendFunctionType(session)
-                )
-
+        val isExportableFunctionType = expandedType.isBasicFunctionType(session)
         val isExportableArgs = expandedType.isExportableTypeArguments(session, currentlyProcessed)
         currentlyProcessed.remove(this)
         if (isExportableFunctionType || !isExportableArgs) {

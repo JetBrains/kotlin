@@ -139,7 +139,7 @@ class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
 
             }
 
-        originalFun.annotations = irrelevantAnnotations + originalFun.generateJsExportIgnoreCall()
+        originalFun.annotations = irrelevantAnnotations
         defaultFunStub.annotations = exportAnnotations
         originalFun.origin = JsLoweredDeclarationOrigin.JS_SHADOWED_EXPORT
 
@@ -209,14 +209,6 @@ class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
                     )
                 }
             )
-        }
-    }
-
-    private fun IrFunction.generateJsExportIgnoreCall(): IrConstructorCall {
-        val builder = context.createIrBuilder(symbol, startOffset, endOffset)
-
-        return with(context) {
-            builder.irCall(intrinsics.jsExportIgnoreAnnotationSymbol.constructors.single())
         }
     }
 
