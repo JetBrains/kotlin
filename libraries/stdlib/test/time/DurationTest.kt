@@ -788,11 +788,11 @@ class DurationTest {
         test(0.7512.nanoseconds, "1ns")
 
         // equal to zero
+        test(Duration.ZERO, "0s", "0.4ns", "0000.0000ns")
         test(0.023.nanoseconds, "0s", "0.023ns")
         test(0.0034.nanoseconds, "0s", "0.0034ns")
         test(0.0000035.nanoseconds, "0s", "0.0000035ns")
 
-        test(Duration.ZERO, "0s", "0.4ns", "0000.0000ns")
         test(365.days * 10000, "3650000d")
         test(300.days * 100000, "30000000d")
         test(365.days * 100000, "36500000d")
