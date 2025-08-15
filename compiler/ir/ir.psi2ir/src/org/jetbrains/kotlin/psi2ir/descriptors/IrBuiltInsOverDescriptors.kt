@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.*
@@ -557,13 +558,12 @@ class IrBuiltInsOverDescriptors(
                 KotlinBuiltIns.isNullableAny(descriptor.extensionReceiverParameter!!.type) && descriptor.valueParameters.isEmpty()
     }
 
-    override val memberToString: IrSimpleFunctionSymbol = symbolFinder.findBuiltInClassMemberFunctions(
-        anyClass,
-        OperatorNameConventions.TO_STRING
-    ).single {
-        val descriptor = it.descriptor
-        descriptor is SimpleFunctionDescriptor && descriptor.valueParameters.isEmpty()
-    }
+    override val memberToString: IrSimpleFunctionSymbol = symbolFinder
+        .findFunctions(CallableId(builtIns.any.classId!!, OperatorNameConventions.TO_STRING))
+        .single {
+            val descriptor = it.descriptor
+            descriptor is SimpleFunctionDescriptor && descriptor.valueParameters.isEmpty()
+        }
 
     override val extensionStringPlus: IrSimpleFunctionSymbol = symbolFinder.findFunctions(OperatorNameConventions.PLUS, "kotlin").first {
         val descriptor = it.descriptor
@@ -574,15 +574,14 @@ class IrBuiltInsOverDescriptors(
                 KotlinBuiltIns.isNullableAny(descriptor.valueParameters.first().type)
     }
 
-    override val memberStringPlus: IrSimpleFunctionSymbol = symbolFinder.findBuiltInClassMemberFunctions(
-        stringClass,
-        OperatorNameConventions.PLUS
-    ).single {
-        val descriptor = it.descriptor
-        descriptor is SimpleFunctionDescriptor &&
-                descriptor.valueParameters.size == 1 &&
-                KotlinBuiltIns.isNullableAny(descriptor.valueParameters.first().type)
-    }
+    override val memberStringPlus: IrSimpleFunctionSymbol = symbolFinder
+        .findFunctions(CallableId(builtIns.string.classId!!, OperatorNameConventions.PLUS))
+        .single {
+            val descriptor = it.descriptor
+            descriptor is SimpleFunctionDescriptor &&
+                    descriptor.valueParameters.size == 1 &&
+                    KotlinBuiltIns.isNullableAny(descriptor.valueParameters.first().type)
+        }
 
     override fun functionN(arity: Int): IrClass = functionFactory.functionN(arity)
     override fun kFunctionN(arity: Int): IrClass = functionFactory.kFunctionN(arity)
@@ -638,11 +637,6 @@ class SymbolFinderOverDescriptors(private val builtIns: KotlinBuiltIns, private 
             .orEmpty()
             .map { it.toIrSymbol() }
     }
-
-    override fun findBuiltInClassMemberFunctions(builtInClass: IrClassSymbol, name: Name): Iterable<IrSimpleFunctionSymbol> =
-        builtInClass.descriptor.unsubstitutedMemberScope
-            .getContributedFunctions(name, NoLookupLocation.FROM_BACKEND)
-            .map { it.toIrSymbol() }
 
     private fun ClassDescriptor.toIrSymbol(): IrClassSymbol {
         return symbolTable.descriptorExtension.referenceClass(this)
