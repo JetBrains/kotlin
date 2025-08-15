@@ -31,9 +31,14 @@ private object WasmBinary {
     const val SUB_FINAL_TYPE: Byte = -0x31 // 0x4F
     const val REC_GROUP: Byte = -0x32 // 0x4E
 
+    // while it can be omitted in most cases, V8 currently requires explicit 'ref null' byte if combined with 'shared' heaptype
+    const val EXPLICIT_NULL_REF: Byte = 0x63
+    const val EXPLICIT_REF: Byte = 0x64
+
     // https://github.com/WebAssembly/shared-everything-threads/blob/main/proposals/shared-everything-threads/Overview.md#types
-    const val SHARED_COMPTYPE: Byte = 0x65 // 0x60 TODO check transformations
-    const val SHARED_HEAPTYPE: Byte = 0x65 // 0x60
+    const val SHARED_COMPTYPE: Byte = 0x65
+    const val SHARED_HEAPTYPE: Byte = 0x65
+
 
     @JvmInline
     value class Section private constructor(val id: UShort) {
@@ -658,15 +663,18 @@ class WasmIrToBinary(
 
     fun appendType(type: WasmType) {
         if (useSharedObjects && type.isShareableRefType()) {
+            b.writeByte(WasmBinary.EXPLICIT_NULL_REF)
             b.writeByte(WasmBinary.SHARED_HEAPTYPE)
-        }
-        b.writeVarInt7(type.code)
+            b.writeVarInt7(type.code)
+        } else {
+            b.writeVarInt7(type.code)
 
-        if (type is WasmRefType) {
-            appendHeapType(type.heapType)
-        }
-        if (type is WasmRefNullType) {
-            appendHeapType(type.heapType)
+            if (type is WasmRefType) {
+                appendHeapType(type.heapType)
+            }
+            if (type is WasmRefNullType) {
+                appendHeapType(type.heapType)
+            }
         }
     }
 
