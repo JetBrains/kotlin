@@ -411,23 +411,23 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
             return DependencyListForCliModule.build(mainModuleName) {
                 when {
                     targetPlatform.isCommon() || targetPlatform.isJvm() -> {
-                        dependencies(configuration.jvmModularRoots.map { it.absolutePath })
-                        dependencies(configuration.jvmClasspathRoots.map { it.absolutePath })
+                        dependencies(configuration.jvmModularRoots.map { it.path })
+                        dependencies(configuration.jvmClasspathRoots.map { it.path })
                         friendDependencies(configuration[JVMConfigurationKeys.FRIEND_PATHS] ?: emptyList())
                     }
                     targetPlatform.isJs() -> {
                         val runtimeKlibsPaths = JsEnvironmentConfigurator.getRuntimePathsForModule(mainModule, testServices)
                         val (transitiveLibraries, friendLibraries) = getTransitivesAndFriends(mainModule, testServices)
                         dependencies(runtimeKlibsPaths)
-                        dependencies(transitiveLibraries.map { it.absolutePath })
-                        friendDependencies(friendLibraries.map { it.absolutePath })
+                        dependencies(transitiveLibraries.map { it.path })
+                        friendDependencies(friendLibraries.map { it.path })
                     }
                     targetPlatform.isNative() -> {
                         val runtimeKlibsPaths = NativeEnvironmentConfigurator.getRuntimePathsForModule(mainModule, testServices)
                         val (transitiveLibraries, friendLibraries) = getTransitivesAndFriends(mainModule, testServices)
                         dependencies(runtimeKlibsPaths)
-                        dependencies(transitiveLibraries.map { it.absolutePath })
-                        friendDependencies(friendLibraries.map { it.absolutePath })
+                        dependencies(transitiveLibraries.map { it.path })
+                        friendDependencies(friendLibraries.map { it.path })
                     }
                     targetPlatform.isWasm() -> {
                         val runtimeKlibsPaths = WasmEnvironmentConfigurator.getRuntimePathsForModule(
@@ -435,8 +435,8 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                         )
                         val (transitiveLibraries, friendLibraries) = getTransitivesAndFriends(mainModule, testServices)
                         dependencies(runtimeKlibsPaths)
-                        dependencies(transitiveLibraries.map { it.absolutePath })
-                        friendDependencies(friendLibraries.map { it.absolutePath })
+                        dependencies(transitiveLibraries.map { it.path })
+                        friendDependencies(friendLibraries.map { it.path })
                     }
                     else -> error("Unsupported")
                 }
