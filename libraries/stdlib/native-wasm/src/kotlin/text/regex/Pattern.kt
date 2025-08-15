@@ -70,7 +70,7 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
 
         // Finalize compilation
         if (needsBackRefReplacement) {
-            startNode.processSecondPass()
+            val _ = startNode.processSecondPass()
         }
     }
 
@@ -873,4 +873,3 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
         }
     }
 }
-

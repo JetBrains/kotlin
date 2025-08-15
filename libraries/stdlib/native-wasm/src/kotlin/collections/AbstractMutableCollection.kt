@@ -67,7 +67,7 @@ public actual abstract class AbstractMutableCollection<E> protected actual const
     actual override fun clear(): Unit {
         val it = iterator()
         while (it.hasNext()) {
-            it.next()
+            val _ = it.next()
             it.remove()
         }
     }

@@ -73,6 +73,7 @@ internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = fa
      * We can use this method safely even if nonBitSet != null
      * due to specific of range constructions in regular expressions.
      */
+    @IgnorableReturnValue
     @OptIn(ExperimentalNativeApi::class)
     fun add(ch: Int): CharClass {
         var character = ch
@@ -93,6 +94,7 @@ internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = fa
         return this
     }
 
+    @IgnorableReturnValue
     fun add(ch: Char): CharClass = add(ch.toInt())
 
     /*
@@ -102,6 +104,7 @@ internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = fa
      * while union is used for constructions like "[^abc[\\d]]"
      * (this pattern matches "1").
      */
+    @IgnorableReturnValue
     fun add(another: AbstractCharClass): CharClass {
 
         if (!mayContainSupplCodepoints && another.mayContainSupplCodepoints) {
@@ -218,6 +221,7 @@ internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = fa
     }
 
     @OptIn(ExperimentalNativeApi::class)
+    @IgnorableReturnValue
     fun add(start: Int, end: Int): CharClass {
         if (start > end)
             throw IllegalArgumentException("Incorrect range of symbols (start > end)")
@@ -553,4 +557,3 @@ internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = fa
         return temp.toString()
     }
 }
-

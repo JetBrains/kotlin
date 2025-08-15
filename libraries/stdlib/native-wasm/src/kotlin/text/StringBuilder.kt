@@ -164,6 +164,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
      * and then that string was appended to this string builder.
      */
+    @IgnorableReturnValue
     public fun append(value: Byte): StringBuilder = append(value.toString())
 
     /**
@@ -172,6 +173,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
      * and then that string was appended to this string builder.
      */
+    @IgnorableReturnValue
     public fun append(value: Short): StringBuilder = append(value.toString())
 
     /**
@@ -325,6 +327,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      *
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
+    @IgnorableReturnValue
     public fun insert(index: Int, value: Byte): StringBuilder = insert(index, value.toString())
 
     /**
@@ -335,6 +338,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      *
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
+    @IgnorableReturnValue
     public fun insert(index: Int, value: Short): StringBuilder = insert(index, value.toString())
 
     /**
@@ -540,6 +544,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * @throws IndexOutOfBoundsException or [IllegalArgumentException] if [startIndex] is less than zero, greater than the length of this string builder, or `startIndex > endIndex`.
      */
     @SinceKotlin("1.4")
+    @IgnorableReturnValue
     public fun setRange(startIndex: Int, endIndex: Int, value: String): StringBuilder {
         checkReplaceRange(startIndex, endIndex, _length)
 
@@ -564,6 +569,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * @throws IndexOutOfBoundsException if [index] is out of bounds of this string builder.
      */
     @SinceKotlin("1.4")
+    @IgnorableReturnValue
     public fun deleteAt(index: Int): StringBuilder {
         AbstractList.checkElementIndex(index, _length)
         array.copyInto(array, startIndex = index + 1, endIndex = _length, destinationOffset = index)
@@ -580,6 +586,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] is out of range of this string builder indices or when `startIndex > endIndex`.
      */
     @SinceKotlin("1.4")
+    @IgnorableReturnValue
     public fun deleteRange(startIndex: Int, endIndex: Int): StringBuilder {
         checkReplaceRange(startIndex, endIndex, _length)
 
@@ -621,6 +628,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of the [value] array indices or when `startIndex > endIndex`.
      */
     @SinceKotlin("1.4")
+    @IgnorableReturnValue
     public fun appendRange(value: CharArray, startIndex: Int, endIndex: Int): StringBuilder {
         AbstractList.checkBoundsIndexes(startIndex, endIndex, value.size)
         val extraLength = endIndex - startIndex
@@ -640,6 +648,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of the [value] character sequence indices or when `startIndex > endIndex`.
      */
     @SinceKotlin("1.4")
+    @IgnorableReturnValue
     public fun appendRange(value: CharSequence, startIndex: Int, endIndex: Int): StringBuilder {
         AbstractList.checkBoundsIndexes(startIndex, endIndex, value.length)
         val extraLength = endIndex - startIndex
@@ -668,6 +677,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
     @SinceKotlin("1.4")
+    @IgnorableReturnValue
     public fun insertRange(index: Int, value: CharSequence, startIndex: Int, endIndex: Int): StringBuilder {
         AbstractList.checkBoundsIndexes(startIndex, endIndex, value.length)
         AbstractList.checkPositionIndex(index, _length)
@@ -699,6 +709,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
     @SinceKotlin("1.4")
+    @IgnorableReturnValue
     public fun insertRange(index: Int, value: CharArray, startIndex: Int, endIndex: Int): StringBuilder {
         AbstractList.checkPositionIndex(index, _length)
         AbstractList.checkBoundsIndexes(startIndex, endIndex, value.size)
