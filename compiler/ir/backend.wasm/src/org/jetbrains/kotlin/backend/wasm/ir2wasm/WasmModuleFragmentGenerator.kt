@@ -22,7 +22,7 @@ class WasmModuleFragmentGenerator(
     private val skipCommentInstructions: Boolean,
 ) {
     fun generateModuleAsSingleFileFragment(irModuleFragment: IrModuleFragment): WasmCompiledFileFragment {
-        val wasmFileFragment = WasmCompiledFileFragment(fragmentTag = null)
+        val wasmFileFragment = WasmCompiledFileFragment(fragmentTag = null,)
         val wasmFileCodegenContext = WasmFileCodegenContext(wasmFileFragment, idSignatureRetriever)
         val wasmModuleTypeTransformer = WasmModuleTypeTransformer(backendContext, wasmFileCodegenContext)
 
@@ -50,7 +50,7 @@ internal fun compileIrFile(
     fragmentTag: String?,
     skipCommentInstructions: Boolean,
 ): WasmCompiledFileFragment {
-    val wasmFileFragment = WasmCompiledFileFragment(fragmentTag)
+    val wasmFileFragment = WasmCompiledFileFragment(fragmentTag,)
     val wasmFileCodegenContext = WasmFileCodegenContext(wasmFileFragment, idSignatureRetriever)
     val wasmModuleTypeTransformer = WasmModuleTypeTransformer(backendContext, wasmFileCodegenContext)
     compileIrFile(

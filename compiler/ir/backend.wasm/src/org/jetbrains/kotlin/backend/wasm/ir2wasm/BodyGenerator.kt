@@ -47,6 +47,8 @@ class BodyGenerator(
     private val unitGetInstance by lazy { backendContext.findUnitGetInstanceFunction() }
     private val unitInstanceField by lazy { backendContext.findUnitInstanceField() }
 
+    private val useIndirectVirtualCalls = backendContext.configuration.getBoolean(WasmConfigurationKeys.WASM_USE_SHARED_OBJECTS)
+
     fun WasmExpressionBuilder.buildGetUnit() {
         buildGetGlobal(
             wasmFileCodegenContext.referenceGlobalField(unitInstanceField.symbol),
@@ -720,6 +722,20 @@ class BodyGenerator(
         body.commentPreviousInstr { "box" }
     }
 
+    private fun WasmExpressionBuilder.buildInstrCallRefOrIndirect(
+        functionTypeReference: WasmSymbol<WasmFunctionType>,
+        location: SourceLocation
+    ) = if (useIndirectVirtualCalls) {
+        buildInstr(
+            WasmOp.CALL_INDIRECT,
+            location,
+            WasmImmediate.TypeIdx(functionTypeReference),
+            WasmImmediate.TableIdx(FUNCTIONS_TABLE)
+        )
+    } else {
+        buildInstr(WasmOp.CALL_REF, location, WasmImmediate.TypeIdx(functionTypeReference))
+    }
+
     private fun generateCall(call: IrFunctionAccessExpression) {
         val location = if (call.origin === IrStatementOrigin.DEFAULT_DISPATCH_CALL)
             SourceLocation.NoLocation("Default dispatch")
@@ -811,7 +827,7 @@ class BodyGenerator(
                 body.buildStructGet(wasmFileCodegenContext.referenceGcType(klassSymbol), anyVtableFieldId, location)
                 val vTableSlotId = WasmSymbol(vfSlot + 1) //First element is always contains Special ITable
                 body.buildStructGet(vTableGcTypeReference, vTableSlotId, location)
-                body.buildInstr(WasmOp.CALL_REF, location, WasmImmediate.TypeIdx(functionTypeReference))
+                body.buildInstrCallRefOrIndirect(functionTypeReference, location)
             } else {
                 generateExpression(call.dispatchReceiver!!)
 
@@ -851,11 +867,7 @@ class BodyGenerator(
                     .indexOfFirst { it.function == function }
                 body.buildStructGet(vTableGcTypeReference, WasmSymbol(vfSlot), location)
 
-                body.buildInstr(
-                    WasmOp.CALL_REF,
-                    location,
-                    WasmImmediate.TypeIdx(functionTypeReference)
-                )
+                body.buildInstrCallRefOrIndirect(functionTypeReference, location)
             }
             body.commentGroupEnd()
         } else {

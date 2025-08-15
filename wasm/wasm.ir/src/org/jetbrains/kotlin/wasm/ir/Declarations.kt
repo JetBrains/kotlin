@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.wasm.ir
 
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
+const val NO_FUNC_IDX = -1
+const val FUNCTIONS_TABLE = 0
 
 class WasmModule(
     val recGroups: List<List<WasmTypeDeclaration>> = emptyList(),
@@ -54,6 +56,10 @@ sealed class WasmFunction(
         type: WasmSymbolReadOnly<WasmFunctionType>,
         val importPair: WasmImportDescriptor,
     ) : WasmFunction(name, type)
+
+    override fun toString(): String {
+        return name
+    }
 }
 
 class WasmMemory(
@@ -102,7 +108,11 @@ class WasmElement(
 ) : WasmNamedModuleField() {
     sealed class Mode {
         object Passive : Mode()
-        class Active(val table: WasmTable, val offset: List<WasmInstr>) : Mode()
+        class Active(val table: WasmTable, val offset: List<WasmInstr>) : Mode() {
+            constructor(table: WasmTable, offset: Int) : this(table, mutableListOf<WasmInstr>().also<MutableList<WasmInstr>> {
+                WasmExpressionBuilder(it).buildConstI32(offset, SourceLocation.NoLocation("Offset value for WasmElement.Mode.Active"))
+            })
+        }
         object Declarative : Mode()
     }
 }
@@ -123,13 +133,73 @@ class WasmLocal(
     val isParameter: Boolean
 )
 
-class WasmGlobal(
+sealed class AbstractWasmGlobal(
     override val name: String,
     val type: WasmType,
     val isMutable: Boolean,
-    val init: List<WasmInstr>,
-    val importPair: WasmImportDescriptor? = null
+    val importPair: WasmImportDescriptor? = null,
+    protected var _init: List<WasmInstr>? = null,
 ) : WasmNamedModuleField()
+{
+    val init: List<WasmInstr>
+        get() = _init ?: error("Init is not materialized for deferred global $this")
+
+    val isDeferred = _init == null
+}
+
+open class WasmGlobal protected constructor(
+    name: String,
+    type: WasmType,
+    isMutable: Boolean,
+    importPair: WasmImportDescriptor? = null,
+    _init: List<WasmInstr>? = null,
+) : AbstractWasmGlobal(name, type, isMutable, importPair, _init) {
+
+    constructor(
+        name: String,
+        type: WasmType,
+        isMutable: Boolean,
+        init: List<WasmInstr>,
+        importPair: WasmImportDescriptor? = null
+    ) : this(name, type, isMutable, _init = init, importPair = importPair)
+}
+
+// Global with incomplete initializer. It must be "materialized" by replacing each func ref to the corresponding index in the function table
+class DeferredWasmGlobal(name: String, type: WasmType, isMutable: Boolean, val initTemplate: List<WasmInstr>) :
+    WasmGlobal(name, type, isMutable)
+{
+    fun materialize(moduleTableMethodsMap: Map<WasmSymbol<WasmFunction>, Int>) {
+        fun WasmInstr.isRefNullNoFunc() : Boolean {
+            if (operator != WasmOp.REF_NULL) return false
+            if (immediates.size != 1) return false
+            val immediate = immediates[0]
+            if (immediate !is WasmImmediate.HeapType) return false
+            return immediate.value == WasmHeapType.Simple.NoFunc
+        }
+
+        fun WasmInstr.refFuncValue(): WasmSymbol<WasmFunction> {
+            check (operator == WasmOp.REF_FUNC)
+            check (immediates.size == 1)
+            val immediate = immediates[0]
+            check (immediate is WasmImmediate.FuncIdx)
+            return immediate.value
+        }
+
+        fun getRefFuncTableIndex(refFuncInstr: WasmInstr): Int =
+            refFuncInstr.refFuncValue().let { moduleTableMethodsMap[it] ?: error("Module table shall contain method ${it}") }
+
+        _init = buildWasmExpression {
+            for (instr in initTemplate) {
+                val location = instr.location ?: SourceLocation.NoLocation("DeferredVTableWasmGlobal")
+                when (instr.operator) {
+                    WasmOp.REF_FUNC -> buildInstr(WasmOp.I32_CONST, location, WasmImmediate.ConstI32(getRefFuncTableIndex(instr)))
+                    WasmOp.REF_NULL if instr.isRefNullNoFunc() -> buildInstr(WasmOp.I32_CONST, location, WasmImmediate.ConstI32(NO_FUNC_IDX))
+                    else -> buildInstr(instr.operator, location, *instr.immediates.toTypedArray())
+                }
+            }
+        }
+    }
+}
 
 sealed class WasmExport<T : WasmNamedModuleField>(
     val name: String,

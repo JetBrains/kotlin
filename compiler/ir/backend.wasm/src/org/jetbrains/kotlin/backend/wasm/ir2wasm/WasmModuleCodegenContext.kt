@@ -47,6 +47,10 @@ class WasmFileCodegenContext(
         wasmFileFragment.globalVTables.define(irClass.getReferenceKey(), wasmGlobal)
     }
 
+    fun addTableFunction(function: WasmSymbol<WasmFunction>) {
+        wasmFileFragment.tableFunctions.add(function)
+    }
+
     fun defineGlobalClassITable(irClass: IrClassSymbol, wasmGlobal: WasmGlobal) {
         wasmFileFragment.globalClassITables.define(irClass.getReferenceKey(), wasmGlobal)
     }
