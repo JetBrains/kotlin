@@ -396,7 +396,7 @@ private val localDelegatedPropertiesLoweringPhase = makeIrModulePhase<JsIrBacken
 )
 
 private val localDeclarationsLoweringPhase = makeIrModulePhase(
-    { context -> LocalDeclarationsLowering(context, suggestUniqueNames = false) },
+    ::LocalDeclarationsLowering,
     name = "LocalDeclarationsLowering",
     prerequisite = setOf(sharedVariablesLoweringPhase, localDelegatedPropertiesLoweringPhase)
 )
