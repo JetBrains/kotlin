@@ -242,7 +242,7 @@ public class K1WasmJsTranslatorTestGenerated extends AbstractK1WasmJsTranslatorT
   public class EsModules {
     @Test
     public void testAllFilesPresentInEsModules() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true, "jsExport", "native", "export", "crossModuleRef", "crossModuleRefPerFile", "crossModuleRefPerModule");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true, "jsExport", "native", "export", "escapedIdentifiers", "crossModuleRef", "crossModuleRefPerFile", "crossModuleRefPerModule");
     }
 
     @Nested

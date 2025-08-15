@@ -2337,6 +2337,47 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     }
 
     @Nested
+    @TestMetadata("js/js.translator/testData/box/esModules/escapedIdentifiers")
+    @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
+    public class EscapedIdentifiers {
+      @Test
+      public void testAllFilesPresentInEscapedIdentifiers() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/escapedIdentifiers"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+
+      @Test
+      @TestMetadata("externalEscapedTopLevel.kt")
+      public void testExternalEscapedTopLevel() {
+        runTest("js/js.translator/testData/box/esModules/escapedIdentifiers/externalEscapedTopLevel.kt");
+      }
+
+      @Test
+      @TestMetadata("topLevelExportedClass.kt")
+      public void testTopLevelExportedClass() {
+        runTest("js/js.translator/testData/box/esModules/escapedIdentifiers/topLevelExportedClass.kt");
+      }
+
+      @Test
+      @TestMetadata("topLevelExportedCompanion.kt")
+      public void testTopLevelExportedCompanion() {
+        runTest("js/js.translator/testData/box/esModules/escapedIdentifiers/topLevelExportedCompanion.kt");
+      }
+
+      @Test
+      @TestMetadata("topLevelExportedFunction.kt")
+      public void testTopLevelExportedFunction() {
+        runTest("js/js.translator/testData/box/esModules/escapedIdentifiers/topLevelExportedFunction.kt");
+      }
+
+      @Test
+      @TestMetadata("topLevelExportedVariable.kt")
+      public void testTopLevelExportedVariable() {
+        runTest("js/js.translator/testData/box/esModules/escapedIdentifiers/topLevelExportedVariable.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("js/js.translator/testData/box/esModules/export")
     @TestDataPath("$PROJECT_ROOT")
     @Tag("legacy-frontend")
@@ -2978,12 +3019,6 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @TestMetadata("externalEscapedTopLevel.kt")
     public void testExternalEscapedTopLevel() {
       runTest("js/js.translator/testData/box/escapedIdentifiers/externalEscapedTopLevel.kt");
-    }
-
-    @Test
-    @TestMetadata("externalEscapedTopLevelEsm.kt")
-    public void testExternalEscapedTopLevelEsm() {
-      runTest("js/js.translator/testData/box/escapedIdentifiers/externalEscapedTopLevelEsm.kt");
     }
 
     @Test
