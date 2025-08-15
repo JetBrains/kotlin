@@ -187,11 +187,12 @@ class ExportModelToJsStatements(
     }
 
     private fun ExportedProperty.generateTopLevelGetters(): JsVars.JsVar {
+        val sanitizedName = sanitizeName(name)
         val getter = irGetter?.let { staticContext.getNameForStaticDeclaration(it) }
         val setter = irSetter?.let { staticContext.getNameForStaticDeclaration(it) }
 
         return JsVars.JsVar(
-            JsName(name, false),
+            JsName(sanitizedName, false),
             JsObjectLiteral(false).apply {
                 getter?.let {
                     val fieldName = when (irGetter.origin) {
@@ -257,7 +258,7 @@ class ExportModelToJsStatements(
         return when (val classRef = ir.getClassRef(staticContext)) {
             is JsNameRef -> classRef.name!! to null
             else -> {
-                val stableName = JsName(name, true)
+                val stableName = JsName(sanitizeName(name), true)
                 stableName to JsVars(JsVars.JsVar(stableName, classRef))
             }
         }
