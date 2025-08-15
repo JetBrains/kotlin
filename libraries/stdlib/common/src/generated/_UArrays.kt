@@ -737,6 +737,8 @@ public inline fun UShortArray.firstOrNull(predicate: (UShort) -> Boolean): UShor
 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Arrays.Usage.getOrElse
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -750,6 +752,8 @@ public inline fun UIntArray.getOrElse(index: Int, defaultValue: (Int) -> UInt): 
 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Arrays.Usage.getOrElse
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -763,6 +767,8 @@ public inline fun ULongArray.getOrElse(index: Int, defaultValue: (Int) -> ULong)
 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Arrays.Usage.getOrElse
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -776,6 +782,8 @@ public inline fun UByteArray.getOrElse(index: Int, defaultValue: (Int) -> UByte)
 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Arrays.Usage.getOrElse
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes

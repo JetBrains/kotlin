@@ -298,6 +298,8 @@ public inline fun <T> Iterable<T>.firstOrNull(predicate: (T) -> Boolean): T? {
 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this list.
+ * 
+ * @sample samples.collections.Collections.Elements.getOrElse
  */
 @kotlin.internal.InlineOnly
 public inline fun <T> List<T>.getOrElse(index: Int, defaultValue: (Int) -> T): T {
