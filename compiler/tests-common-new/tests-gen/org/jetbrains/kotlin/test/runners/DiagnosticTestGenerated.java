@@ -9325,6 +9325,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("loopFunctionAmbiguity.kt")
+      public void testLoopFunctionAmbiguity() {
+        runTest("compiler/testData/diagnostics/tests/controlStructures/loopFunctionAmbiguity.kt");
+      }
+
+      @Test
       @TestMetadata("nestedLoopsWithMultipleLabels.kt")
       public void testNestedLoopsWithMultipleLabels() {
         runTest("compiler/testData/diagnostics/tests/controlStructures/nestedLoopsWithMultipleLabels.kt");
