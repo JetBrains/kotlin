@@ -49,6 +49,7 @@ extern "C" LLVMErrorRef LLVMKotlinRunPasses(
         int InlinerThreshold,
         LLVMKotlinPassesProfileRef* Profile
 ) {
+    // Implementation is taken from https://github.com/Kotlin/llvm-project/blob/0fa53d5183ec3c0654631d719dd6dfa7a270ca98/llvm/lib/Passes/PassBuilderBindings.cpp#L47
     TargetMachine *Machine = unwrap(TM);
     Module *Mod = unwrap(M);
 
