@@ -26,7 +26,7 @@ fun main(args: Array<String>) {
     val jsTranslatorReflectionPattern = "^(findAssociatedObject(InSeparatedFile)?(Lazyness)?(AndDCE)?)\\.kt$"
     val jsTranslatorEsModulesExcludedDirs = listOf(
         // JsExport is not supported for classes
-        "jsExport", "native", "export",
+        "jsExport", "native", "export", "escapedIdentifiers",
         // Multimodal infra is not supported. Also, we don't use ES modules for cross-module refs in Wasm
         "crossModuleRef", "crossModuleRefPerFile", "crossModuleRefPerModule"
     )
