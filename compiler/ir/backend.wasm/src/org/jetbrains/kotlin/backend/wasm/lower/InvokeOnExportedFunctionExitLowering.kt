@@ -49,7 +49,7 @@ import org.jetbrains.kotlin.name.Name
  */
 internal class InvokeOnExportedFunctionExitLowering(val context: WasmBackendContext) : FileLoweringPass {
     private val invokeOnExportedFunctionExit get() = context.wasmSymbols.invokeOnExportedFunctionExit
-    private val irBooleanType = context.wasmSymbols.irBuiltIns.booleanType
+    private val irBooleanType = context.irBuiltIns.booleanType
     private val isNotFirstWasmExportCallGetter = context.wasmSymbols.isNotFirstWasmExportCall.owner.getter!!.symbol
     private val isNotFirstWasmExportCallSetter = context.wasmSymbols.isNotFirstWasmExportCall.owner.setter!!.symbol
 

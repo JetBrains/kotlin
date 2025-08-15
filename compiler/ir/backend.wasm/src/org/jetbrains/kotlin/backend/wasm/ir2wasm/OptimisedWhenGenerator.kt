@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
 import org.jetbrains.kotlin.backend.common.IrWhenUtils
 import org.jetbrains.kotlin.backend.wasm.WasmSymbols
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isUnit
@@ -22,6 +23,7 @@ private class ExtractedWhenBranchWithIntConditions(val intConditions: List<Int>,
 
 internal fun BodyGenerator.tryGenerateOptimisedWhen(
     expression: IrWhen,
+    irBuiltIns: IrBuiltIns,
     symbols: WasmSymbols,
     functionContext: WasmFunctionCodegenContext,
     wasmModuleTypeTransformer: WasmModuleTypeTransformer
@@ -38,7 +40,7 @@ internal fun BodyGenerator.tryGenerateOptimisedWhen(
         if (isElseBranch(branch)) {
             elseExpression = branch.result
         } else {
-            val conditions = IrWhenUtils.matchConditions<IrCall>(symbols.irBuiltIns.ororSymbol, branch.condition) ?: return false
+            val conditions = IrWhenUtils.matchConditions<IrCall>(irBuiltIns.ororSymbol, branch.condition) ?: return false
             val extractedConditions = tryExtractEqEqNumberConditions(symbols, conditions) ?: return false
             val filteredExtractedConditions = extractedConditions.filter { it.const.value !in seenConditions }
             seenConditions.addAll(extractedConditions.map { it.const.value!! })

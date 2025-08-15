@@ -31,14 +31,12 @@ private val OPTIMISED_WHEN_SUBJECT by IrDeclarationOriginImpl
 class WasmStringSwitchOptimizerLowering(
     private val context: WasmBackendContext
 ) : FileLoweringPass, IrElementTransformerVoidWithContext() {
-    private val symbols = context.wasmSymbols
-
     private val stringHashCode by lazy {
-        symbols.irBuiltIns.stringClass.getSimpleFunction("hashCode")!!
+        context.irBuiltIns.stringClass.getSimpleFunction("hashCode")!!
     }
 
-    private val intType: IrType = symbols.irBuiltIns.intType
-    private val booleanType: IrType = symbols.irBuiltIns.booleanType
+    private val intType: IrType = context.irBuiltIns.intType
+    private val booleanType: IrType = context.irBuiltIns.booleanType
 
     private fun IrBlockBuilder.createEqEqForIntVariable(tempIntVariable: IrVariable, value: Int) =
         irCall(context.irBuiltIns.eqeqSymbol, booleanType).also {

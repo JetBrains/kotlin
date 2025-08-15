@@ -254,7 +254,7 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
     }
 
     inner class PrimitiveArrayHandle(primitiveType: PrimitiveType)
-        : ArrayHandle(symbols.irBuiltIns.primitiveTypesToPrimitiveArrays[primitiveType]!!) {
+        : ArrayHandle(context.irBuiltIns.primitiveTypesToPrimitiveArrays[primitiveType]!!) {
 
         override fun createArray(builder: IrBuilderWithScope, elementType: IrType, size: IrExpression): IrExpression {
             return builder.irCall(singleParameterConstructor).apply {
