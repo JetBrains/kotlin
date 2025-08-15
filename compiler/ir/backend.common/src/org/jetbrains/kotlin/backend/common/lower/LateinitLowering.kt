@@ -16,23 +16,24 @@
 
 package org.jetbrains.kotlin.backend.common.lower
 
-import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.ir.PreSerializationSymbols
-import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.types.isMarkedNullable
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.isMarkedNullable
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.makeNullable
-import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.ir.util.resolveFakeOverride
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.utils.atMostOne
@@ -129,7 +130,7 @@ open class LateinitLowering(
     override fun visitCall(expression: IrCall): IrExpression {
         expression.transformChildrenVoid()
 
-        if (!PreSerializationSymbols.isLateinitIsInitializedPropertyGetter(expression.symbol)) return expression
+        if (!isLateinitIsInitializedPropertyGetter(expression.symbol)) return expression
 
         return expression.arguments[0]!!.replaceTailExpression {
             val (property, dispatchReceiver) = when (it) {
@@ -188,6 +189,16 @@ open class LateinitLowering(
 
     private fun IrBuilderWithScope.throwUninitializedPropertyAccessException(name: String) =
         uninitializedPropertyAccessExceptionThrower.build(this, name)
+
+    private fun isLateinitIsInitializedPropertyGetter(symbol: IrFunctionSymbol): Boolean =
+        symbol is IrSimpleFunctionSymbol && symbol.owner.let { function ->
+            function.name.asString() == "<get-isInitialized>" &&
+                    function.isTopLevel &&
+                    function.getPackageFragment().packageFqName.asString() == "kotlin" &&
+                    function.hasShape(extensionReceiver = true) &&
+                    function.parameters[0].type.classOrNull?.owner?.fqNameWhenAvailable?.toUnsafe() == StandardNames.FqNames.kProperty0
+        }
+
 }
 
 private inline fun IrExpression.replaceTailExpression(crossinline transform: (IrExpression) -> IrExpression): IrExpression {
