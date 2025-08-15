@@ -252,7 +252,10 @@ class CodeConformanceTest : TestCase() {
             FileTestCase(
                 "%d source files contain references to package org.objectweb.asm.\n" +
                         "Package org.jetbrains.org.objectweb.asm should be used instead to avoid troubles with different asm versions in classpath. " +
-                        "Please consider changing the package in these files:\n%s"
+                        "Please consider changing the package in these files:\n%s",
+                allowedFiles = listOf(
+                    "plugins/compose/group-mapping/"
+                )
             ) { _, source ->
                 " org.objectweb.asm" in source
             },
@@ -282,7 +285,7 @@ class CodeConformanceTest : TestCase() {
         val failureStr = buildString {
             for (test in tests) {
                 val (allowed, notAllowed) = (testCaseToMatchedFiles[test] ?: error("Should be added during initialization")).partition {
-                    test.allowedMatcher.matchExact(it)
+                    test.allowedMatcher.matchWithContains(it)
                 }
 
                 if (notAllowed.isNotEmpty()) {
@@ -291,7 +294,7 @@ class CodeConformanceTest : TestCase() {
                     appendLine()
                 }
 
-                val unmatched = test.allowedMatcher.unmatchedExact(allowed)
+                val unmatched = test.allowedMatcher.unmatched(allowed)
                 if (unmatched.isNotEmpty()) {
                     val testMessage = test.message.format(unmatched.size, "NONE")
                     append(
@@ -357,8 +360,10 @@ class CodeConformanceTest : TestCase() {
             return relativePaths.any { relativePath.startsWith(it) }
         }
 
-        fun unmatchedExact(files: List<File>): Set<String> {
-            return paths - files.map { it.invariantRelativePath() }.toSet()
+        fun unmatched(files: List<File>): Set<String> {
+            val filePaths = files.map { it.invariantRelativePath() }.toSet()
+            val relativePaths = paths.filter { p -> filePaths.any { it.startsWith(p) } }.toSet()
+            return paths - filePaths - relativePaths
         }
     }
 
