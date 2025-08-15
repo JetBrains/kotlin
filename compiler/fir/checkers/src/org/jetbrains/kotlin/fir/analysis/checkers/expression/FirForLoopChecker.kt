@@ -37,6 +37,8 @@ import org.jetbrains.kotlin.fir.resolve.calls.InapplicableNullableReceiver
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
+import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object FirForLoopChecker : FirBlockChecker(MppCheckerKind.Common) {
@@ -53,8 +55,8 @@ object FirForLoopChecker : FirBlockChecker(MppCheckerKind.Common) {
         if (checkSpecialFunctionCall(
                 iteratorCall,
                 source,
-                ITERATOR_AMBIGUITY,
-                ITERATOR_MISSING,
+                ambiguityFactory = ITERATOR_AMBIGUITY,
+                missingFactory = ITERATOR_MISSING,
                 nullableReceiverFactory = ITERATOR_ON_NULLABLE
             )
         ) {
@@ -65,8 +67,8 @@ object FirForLoopChecker : FirBlockChecker(MppCheckerKind.Common) {
         checkSpecialFunctionCall(
             hasNextCall,
             source,
-            HAS_NEXT_FUNCTION_AMBIGUITY,
-            HAS_NEXT_MISSING,
+            ambiguityFactory = HAS_NEXT_FUNCTION_AMBIGUITY,
+            missingFactory = HAS_NEXT_MISSING,
             noneApplicableFactory = HAS_NEXT_FUNCTION_NONE_APPLICABLE
         )
 
@@ -76,8 +78,8 @@ object FirForLoopChecker : FirBlockChecker(MppCheckerKind.Common) {
         checkSpecialFunctionCall(
             nextCall,
             source,
-            NEXT_AMBIGUITY,
-            NEXT_MISSING,
+            ambiguityFactory = NEXT_AMBIGUITY,
+            missingFactory = NEXT_MISSING,
             noneApplicableFactory = NEXT_NONE_APPLICABLE
         )
 
@@ -99,11 +101,12 @@ object FirForLoopChecker : FirBlockChecker(MppCheckerKind.Common) {
         val calleeReference = call.calleeReference
         when {
             calleeReference.isError() -> {
+                @OptIn(ApplicabilityDetail::class)
                 when (val diagnostic = calleeReference.diagnostic) {
                     is ConeAmbiguityError -> {
                         reporter.reportOn(
                             reportSource,
-                            noneApplicableFactory ?: ambiguityFactory,
+                            if (diagnostic.applicability.isSuccess || noneApplicableFactory == null) ambiguityFactory else noneApplicableFactory,
                             diagnostic.candidates.map { it.symbol })
                     }
                     is ConeUnresolvedNameError -> {
