@@ -375,11 +375,11 @@ public interface JavaScriptParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitFormalParameterArg(JavaScriptParser.FormalParameterArgContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link JavaScriptParser#lastFormalParameterArg}.
+	 * Visit a parse tree produced by {@link JavaScriptParser#restParameterArg}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitLastFormalParameterArg(JavaScriptParser.LastFormalParameterArgContext ctx);
+	T visitRestParameterArg(JavaScriptParser.RestParameterArgContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link JavaScriptParser#functionBody}.
 	 * @param ctx the parse tree

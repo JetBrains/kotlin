@@ -615,15 +615,15 @@ public interface JavaScriptParserListener extends ParseTreeListener {
 	 */
 	void exitFormalParameterArg(JavaScriptParser.FormalParameterArgContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link JavaScriptParser#lastFormalParameterArg}.
+	 * Enter a parse tree produced by {@link JavaScriptParser#restParameterArg}.
 	 * @param ctx the parse tree
 	 */
-	void enterLastFormalParameterArg(JavaScriptParser.LastFormalParameterArgContext ctx);
+	void enterRestParameterArg(JavaScriptParser.RestParameterArgContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link JavaScriptParser#lastFormalParameterArg}.
+	 * Exit a parse tree produced by {@link JavaScriptParser#restParameterArg}.
 	 * @param ctx the parse tree
 	 */
-	void exitLastFormalParameterArg(JavaScriptParser.LastFormalParameterArgContext ctx);
+	void exitRestParameterArg(JavaScriptParser.RestParameterArgContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link JavaScriptParser#functionBody}.
 	 * @param ctx the parse tree

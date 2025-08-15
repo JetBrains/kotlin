@@ -292,15 +292,15 @@ privateIdentifier
     ;
 
 formalParameterList
-    : formalParameterArg (',' formalParameterArg)* (',' lastFormalParameterArg)?
-    | lastFormalParameterArg
+    : formalParameterArg (',' formalParameterArg)* (',' restParameterArg)?
+    | restParameterArg
     ;
 
 formalParameterArg
     : assignable ('=' singleExpression)? // ECMAScript 6: Initialization
     ;
 
-lastFormalParameterArg // ECMAScript 6: Rest Parameter
+restParameterArg // ECMAScript 6: Rest Parameter
     : Ellipsis singleExpression
     ;
 

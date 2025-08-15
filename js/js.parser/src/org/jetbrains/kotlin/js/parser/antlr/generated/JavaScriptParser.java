@@ -63,7 +63,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		RULE_functionDeclaration = 44, RULE_classDeclaration = 45, RULE_classTail = 46, 
 		RULE_classElement = 47, RULE_methodDefinition = 48, RULE_fieldDefinition = 49, 
 		RULE_classElementName = 50, RULE_privateIdentifier = 51, RULE_formalParameterList = 52, 
-		RULE_formalParameterArg = 53, RULE_lastFormalParameterArg = 54, RULE_functionBody = 55, 
+		RULE_formalParameterArg = 53, RULE_restParameterArg = 54, RULE_functionBody = 55, 
 		RULE_sourceElements = 56, RULE_arrayLiteral = 57, RULE_elementList = 58, 
 		RULE_arrayElement = 59, RULE_propertyAssignment = 60, RULE_propertyName = 61, 
 		RULE_arguments = 62, RULE_argument = 63, RULE_expressionSequence = 64, 
@@ -88,7 +88,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 			"throwStatement", "tryStatement", "catchProduction", "finallyProduction", 
 			"debuggerStatement", "functionDeclaration", "classDeclaration", "classTail", 
 			"classElement", "methodDefinition", "fieldDefinition", "classElementName", 
-			"privateIdentifier", "formalParameterList", "formalParameterArg", "lastFormalParameterArg", 
+			"privateIdentifier", "formalParameterList", "formalParameterArg", "restParameterArg", 
 			"functionBody", "sourceElements", "arrayLiteral", "elementList", "arrayElement", 
 			"propertyAssignment", "propertyName", "arguments", "argument", "expressionSequence", 
 			"singleExpression", "initializer", "assignable", "objectLiteral", "anonymousFunction", 
@@ -4628,8 +4628,8 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		public TerminalNode Comma(int i) {
 			return getToken(JavaScriptParser.Comma, i);
 		}
-		public LastFormalParameterArgContext lastFormalParameterArg() {
-			return getRuleContext(LastFormalParameterArgContext.class,0);
+		public RestParameterArgContext restParameterArg() {
+			return getRuleContext(RestParameterArgContext.class,0);
 		}
 		public FormalParameterListContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -4741,7 +4741,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 					setState(639);
 					match(Comma);
 					setState(640);
-					lastFormalParameterArg();
+					restParameterArg();
 					}
 				}
 
@@ -4751,7 +4751,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(643);
-				lastFormalParameterArg();
+				restParameterArg();
 				}
 				break;
 			default:
@@ -4832,33 +4832,33 @@ public class JavaScriptParser extends JavaScriptParserBase {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class LastFormalParameterArgContext extends ParserRuleContext {
+	public static class RestParameterArgContext extends ParserRuleContext {
 		public TerminalNode Ellipsis() { return getToken(JavaScriptParser.Ellipsis, 0); }
 		public SingleExpressionContext singleExpression() {
 			return getRuleContext(SingleExpressionContext.class,0);
 		}
-		public LastFormalParameterArgContext(ParserRuleContext parent, int invokingState) {
+		public RestParameterArgContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_lastFormalParameterArg; }
+		@Override public int getRuleIndex() { return RULE_restParameterArg; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterLastFormalParameterArg(this);
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).enterRestParameterArg(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitLastFormalParameterArg(this);
+			if ( listener instanceof JavaScriptParserListener ) ((JavaScriptParserListener)listener).exitRestParameterArg(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitLastFormalParameterArg(this);
+			if ( visitor instanceof JavaScriptParserVisitor ) return ((JavaScriptParserVisitor<? extends T>)visitor).visitRestParameterArg(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final LastFormalParameterArgContext lastFormalParameterArg() throws RecognitionException {
-		LastFormalParameterArgContext _localctx = new LastFormalParameterArgContext(_ctx, getState());
-		enterRule(_localctx, 108, RULE_lastFormalParameterArg);
+	public final RestParameterArgContext restParameterArg() throws RecognitionException {
+		RestParameterArgContext _localctx = new RestParameterArgContext(_ctx, getState());
+		enterRule(_localctx, 108, RULE_restParameterArg);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{

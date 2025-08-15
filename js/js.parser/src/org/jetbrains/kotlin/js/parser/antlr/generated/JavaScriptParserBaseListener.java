@@ -728,13 +728,13 @@ public class JavaScriptParserBaseListener implements JavaScriptParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLastFormalParameterArg(JavaScriptParser.LastFormalParameterArgContext ctx) { }
+	@Override public void enterRestParameterArg(JavaScriptParser.RestParameterArgContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLastFormalParameterArg(JavaScriptParser.LastFormalParameterArgContext ctx) { }
+	@Override public void exitRestParameterArg(JavaScriptParser.RestParameterArgContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

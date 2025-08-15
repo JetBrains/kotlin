@@ -257,7 +257,7 @@ class JsAstMapperVisitor(private val fileName: String, private val scopeContext:
         TODO("Not yet implemented")
     }
 
-    override fun visitLastFormalParameterArg(ctx: JavaScriptParser.LastFormalParameterArgContext?): JsNode? {
+    override fun visitRestParameterArg(ctx: JavaScriptParser.RestParameterArgContext?): JsNode? {
         TODO("Not yet implemented")
     }
 

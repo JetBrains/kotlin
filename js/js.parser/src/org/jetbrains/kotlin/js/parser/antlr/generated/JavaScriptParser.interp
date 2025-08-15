@@ -321,7 +321,7 @@ classElementName
 privateIdentifier
 formalParameterList
 formalParameterArg
-lastFormalParameterArg
+restParameterArg
 functionBody
 sourceElements
 arrayLiteral
