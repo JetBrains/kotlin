@@ -11,9 +11,11 @@ import org.jetbrains.kotlin.arguments.dsl.defaultNull
 import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
 import org.jetbrains.kotlin.arguments.dsl.types.StringType
 import org.jetbrains.kotlin.cli.common.arguments.DefaultValue
+import org.jetbrains.kotlin.cli.common.arguments.Enables
 import org.jetbrains.kotlin.cli.common.arguments.GradleDeprecatedOption
 import org.jetbrains.kotlin.cli.common.arguments.GradleInputTypes
 import org.jetbrains.kotlin.cli.common.arguments.GradleOption
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 
 val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsArguments) {
@@ -593,6 +595,7 @@ It is deprecated and will be removed in a future release.""".asReleaseDependent(
         compilerName = "extensionFunctionsInExternals"
         description = "Enable extension function members in external interfaces.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
+        additionalAnnotations(Enables(LanguageFeature.JsEnableExtensionFunctionInExternals))
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_32,

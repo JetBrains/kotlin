@@ -331,6 +331,7 @@ enum class LanguageFeature(
     DfaBooleanVariables(KOTLIN_2_0, "KT-25747"),
     LightweightLambdas(KOTLIN_2_0, "KT-45375"),
     ObjCSignatureOverrideAnnotation(KOTLIN_2_0, sinceApiVersion = ApiVersion.KOTLIN_2_0, "KT-61323"),
+    JsAllowValueClassesInExternals(sinceVersion = KOTLIN_2_0, NO_ISSUE_SPECIFIED),
 
     // 2.1
 
@@ -444,7 +445,6 @@ enum class LanguageFeature(
     JsAllowLongInExportedDeclarations(sinceVersion = KOTLIN_2_3, "KT-79222"),
 
     IrRichCallableReferencesInKlibs(sinceVersion = KOTLIN_2_3, "KT-72734"), // KT-72734, KT-74384, KT-74392
-    JsAllowValueClassesInExternals(sinceVersion = KOTLIN_2_3, NO_ISSUE_SPECIFIED),
 
     // 2.4
 
