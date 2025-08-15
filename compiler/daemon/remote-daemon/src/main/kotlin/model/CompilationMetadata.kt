@@ -15,16 +15,9 @@ data class CompilationMetadata(
     val compilationOptions: CompilationOptions
 ) : CompileRequest
 
-
 fun CompilationMetadata.toGrpc(): CompilationMetadataGrpc {
-
-    val builder = CompilationMetadataGrpc.newBuilder()
-
-    compilerArguments.forEachIndexed { i, arg ->
-        builder.setCompilerArguments(i, arg)
-    }
-
-    return builder
+    return CompilationMetadataGrpc.newBuilder()
+        .addAllCompilerArguments(compilerArguments)
         .setFileCount(fileCount)
         .setProjectName(projectName)
         .setCompilationOptions(compilationOptions.toGrpc())

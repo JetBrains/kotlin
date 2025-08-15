@@ -5,7 +5,6 @@
 
 package model
 
-import org.jetbrains.kotlin.server.FileTransferReplyGrpc
 import org.jetbrains.kotlin.server.FileTransferRequestGrpc
 
 data class FileTransferRequest(
