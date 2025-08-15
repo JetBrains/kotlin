@@ -1193,14 +1193,14 @@ private inline fun parseDefaultStringFormat(
         index += unit.length
 
         if (hasFractionalPart) {
+            if (index < length) {
+                return throwExceptionOrInvalid(throwException, "Fractional component must be last")
+            }
+
             totalNanos += if (unit >= DurationUnit.MINUTES && index - fractionStartIndex > FRACTION_LIMIT)
                 value.parseFractionFallback(fractionStartIndex, index - unit.length).toNanos(unit)
             else
                 fractionValue.toNanos(unit)
-
-            if (index < length) {
-                return throwExceptionOrInvalid(throwException, "Fractional component must be last")
-            }
         }
     }
 
