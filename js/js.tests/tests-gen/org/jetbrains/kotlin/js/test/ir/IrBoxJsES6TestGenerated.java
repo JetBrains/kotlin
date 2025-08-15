@@ -3124,6 +3124,12 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     }
 
     @Test
+    @TestMetadata("externalEscapedTopLevelEsm.kt")
+    public void testExternalEscapedTopLevelEsm() {
+      runTest("js/js.translator/testData/box/escapedIdentifiers/externalEscapedTopLevelEsm.kt");
+    }
+
+    @Test
     @TestMetadata("topLevelExportedClass.kt")
     public void testTopLevelExportedClass() {
       runTest("js/js.translator/testData/box/escapedIdentifiers/topLevelExportedClass.kt");
