@@ -863,6 +863,8 @@ class DurationTest {
             test(1.minutes, "1m", "0.9999999999916666104660123437${i + 5}m")
             test(1.seconds - 1.nanoseconds, "999.999999ms", "0.999999999${i}s")
             test(1.seconds, "1s", "0.999999999${i + 5}s")
+            test(1.milliseconds - 1.nanoseconds, "999.999us", "0.999999${i}ms")
+            test(1.milliseconds, "1ms", "0.999999${i + 5}ms")
         }
         for (i in 0..5) {
             test(Duration.ZERO, "0s", "0.00000000000000${i}d")
