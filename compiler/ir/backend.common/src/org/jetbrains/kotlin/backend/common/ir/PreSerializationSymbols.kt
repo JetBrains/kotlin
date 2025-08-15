@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds.BASE_KOTLIN_PACKAGE
 import org.jetbrains.kotlin.types.Variance
 
-abstract class BaseSymbolsImpl(val irBuiltIns: IrBuiltIns) {
+abstract class BaseSymbolsImpl(protected val irBuiltIns: IrBuiltIns) {
     protected val symbolFinder = irBuiltIns.symbolFinder
 
     // TODO KT-79436 unify backend specific functions and remove the old ones

@@ -1413,6 +1413,7 @@ class BodyGenerator(
     override fun visitWhen(expression: IrWhen) {
         if (!backendContext.isDebugFriendlyCompilation && tryGenerateOptimisedWhen(
                 expression,
+                backendContext.irBuiltIns,
                 backendContext.wasmSymbols,
                 functionContext,
                 wasmModuleTypeTransformer

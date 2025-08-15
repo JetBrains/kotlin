@@ -61,7 +61,7 @@ internal fun Context.getBoxFunction(inlinedClass: IrClass): IrSimpleFunction = i
 
     val isNullable = inlinedClass.inlinedClassIsNullable()
     val unboxedType = inlinedClass.defaultOrNullableType(isNullable)
-    val boxedType = if (isNullable) symbols.irBuiltIns.anyNType else symbols.irBuiltIns.anyType
+    val boxedType = if (isNullable) irBuiltIns.anyNType else irBuiltIns.anyType
 
     irFactory.buildFun {
         startOffset = inlinedClass.startOffset
@@ -93,7 +93,7 @@ internal fun Context.getUnboxFunction(inlinedClass: IrClass): IrSimpleFunction =
 
     val isNullable = inlinedClass.inlinedClassIsNullable()
     val unboxedType = inlinedClass.defaultOrNullableType(isNullable)
-    val boxedType = if (isNullable) symbols.irBuiltIns.anyNType else symbols.irBuiltIns.anyType
+    val boxedType = if (isNullable) irBuiltIns.anyNType else irBuiltIns.anyType
 
     irFactory.buildFun {
         startOffset = inlinedClass.startOffset

@@ -79,7 +79,7 @@ internal class NativeRuntimeReflectionIrBuilder(
     override fun irConstantBoolean(boolean: Boolean) = irBoolean(boolean)
 
     override fun irCreateArray(elementType: IrType, values: List<IrExpression>): IrExpression {
-        val arrayType = symbols.irBuiltIns.primitiveArrayForType[elementType]?.defaultType ?: symbols.array.typeWith(elementType)
+        val arrayType = context.irBuiltIns.primitiveArrayForType[elementType]?.defaultType ?: context.irBuiltIns.arrayClass.typeWith(elementType)
         return IrVarargImpl(startOffset, endOffset, arrayType, elementType, values)
     }
 }
@@ -138,7 +138,7 @@ internal class NativeConstantReflectionIrBuilder(
     }
 
     override fun irCreateArray(elementType: IrType, values: List<IrConstantValue>): IrConstantValue {
-        val arrayType = symbols.irBuiltIns.primitiveArrayForType[elementType]?.defaultType ?: symbols.array.typeWith(elementType)
+        val arrayType = context.irBuiltIns.primitiveArrayForType[elementType]?.defaultType ?: context.irBuiltIns.arrayClass.typeWith(elementType)
         return irConstantArray(arrayType, values)
     }
 }
@@ -239,7 +239,7 @@ internal abstract class NativeReflectionIrBuilderBase<E : IrExpression>(
             irTypeArguments: List<Pair<Variance, E>?>,
     ): E {
         val variance = irCreateArray(
-                symbols.irBuiltIns.intType,
+                context.irBuiltIns.intType,
                 irTypeArguments.map { irConstantInt(mapVariance(it?.first)) }
         )
         val type = irCreateArray(
