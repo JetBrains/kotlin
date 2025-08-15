@@ -206,7 +206,7 @@ class BuildReportsIT : KGPBaseTest() {
     )
     @GradleTest
     @TestMetadata("native-incremental-simple")
-    @JvmGradlePluginTests
+    @NativeGradlePluginTests
     fun testLoweringsBuildMetricsForNativeProject(gradleVersion: GradleVersion) {
         testNativeBuildReportInFile(
             "native-incremental-simple",
@@ -957,6 +957,12 @@ class BuildReportsIT : KGPBaseTest() {
                 assertTrue {
                     jsonReport.aggregatedMetrics.buildTimes.dynamicBuildTimesMapMs().keys.contains(
                         DynamicBuildTimeKey("AvoidLocalFOsInInlineFunctionsLowering", GradleBuildTime.IR_PRE_LOWERING)
+                    )
+                }
+                assertTrue {
+                    // LLVM passes must have been reported
+                    jsonReport.aggregatedMetrics.buildTimes.dynamicBuildTimesMapMs().keys.contains(
+                        DynamicBuildTimeKey("llvm-default.AlwaysInlinerPass", GradleBuildTime.BACKEND)
                     )
                 }
             }
