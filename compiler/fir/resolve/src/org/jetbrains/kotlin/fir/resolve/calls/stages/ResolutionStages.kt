@@ -606,7 +606,7 @@ object CheckReceiverShadowedByContextParameter : CheckShadowedImplicitsStage() {
         val closerOrOnTheSameLevelContextParameters =
             closerOrOnTheSameLevelImplicitValues.filterIsInstance<ImplicitContextParameterValue>().ifEmpty { return }
         val potentialReceiverTypes =
-            computePotentialReceiverTypes(candidate, boundSymbolOfReceiverToCheck) ?: return
+            computePotentialReceiverTypes(candidate, receiverValueExpression.resolvedType) ?: return
 
         if (closerOrOnTheSameLevelContextParameters.any { implicitValue ->
                 !implicitValue.isSameImplicitReceiverInstance(receiverValueExpression) &&
@@ -617,12 +617,7 @@ object CheckReceiverShadowedByContextParameter : CheckShadowedImplicitsStage() {
     }
 
     context(context: ResolutionContext)
-    fun computePotentialReceiverTypes(candidate: Candidate, boundSymbolOfReceiverToCheck: FirBasedSymbol<*>): List<ConeClassLikeType>? {
-        val boundReceiverType = when (boundSymbolOfReceiverToCheck) {
-            is FirReceiverParameterSymbol -> boundSymbolOfReceiverToCheck.resolvedType
-            is FirValueParameterSymbol -> boundSymbolOfReceiverToCheck.resolvedReturnType
-            else -> return null
-        }
+    fun computePotentialReceiverTypes(candidate: Candidate, boundReceiverType: ConeKotlinType): List<ConeClassLikeType>? {
         val original = (candidate.symbol as? FirCallableSymbol<*>)?.originalOrSelf() ?: return null
         return listOfNotNull(original.dispatchReceiverType, original.resolvedReceiverType)
             .mapNotNull { it.upperBoundIfFlexible().toClassSymbol(context.session)?.constructStarProjectedType() }

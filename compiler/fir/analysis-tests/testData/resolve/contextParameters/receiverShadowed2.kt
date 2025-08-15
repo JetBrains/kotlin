@@ -30,7 +30,7 @@ class A(val a: String = "d ") {
     fun usageWithContextAndExtensionInsideClass(): String {
         var temp = ""
         context(A("c ")) {
-            temp = A("e ").funMember() + A("e ").propertyMember
+            temp = A("e ").<!RECEIVER_SHADOWED_BY_CONTEXT_PARAMETER!>funMember<!>() + A("e ").<!RECEIVER_SHADOWED_BY_CONTEXT_PARAMETER!>propertyMember<!>
         }
         return temp
     }

@@ -30,6 +30,7 @@ class A(val a: String = "d ") {
     fun usageWithContextAndExtensionInsideClass(): String {
         var temp = ""
         context(A("c ")) {
+            @Suppress("RECEIVER_SHADOWED_BY_CONTEXT_PARAMETER")
             temp = A("e ").funMember() + A("e ").propertyMember
         }
         return temp
