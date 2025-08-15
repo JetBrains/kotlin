@@ -101,6 +101,13 @@ internal val DurationUnit.fractionMultiplier: Double
         else -> error("Unknown unit: $this")
     }
 
+internal val DurationUnit.fallbackFractionMultiplier: Long
+    get() = when (this) {
+        DurationUnit.HOURS -> 3_600_000_000_000L
+        DurationUnit.DAYS -> 86_400_000_000_000L
+        else -> error("Invalid unit: $this for fallback fraction multiplier")
+    }
+
 internal val DurationUnit.millisMultiplier: Long
     get() = when (this) {
         DurationUnit.DAYS -> MILLIS_IN_DAY

@@ -1028,11 +1028,12 @@ private inline fun parseDefaultStringFormat(
         index = longEndIndex
 
         val hasFractionalPart = value[index] == '.'
+        var fractionStartIndex = -1
         val fractionValue = if (hasFractionalPart) {
+            fractionStartIndex = index
             index++
-            val fractionStartIndex = index
             val (fraction, fractionEndIndex) = value.parseFraction(index)
-            if (fractionEndIndex == fractionStartIndex || fractionEndIndex == length) {
+            if (fractionEndIndex == index || fractionEndIndex == length) {
                 return throwExceptionOrInvalid(throwException)
             }
             index = fractionEndIndex
@@ -1062,10 +1063,17 @@ private inline fun parseDefaultStringFormat(
             }
         }
 
-        totalNanos += fractionValue.toNanos(unit)
         index += unit.length
-        if (hasFractionalPart && index < length) {
-            return throwExceptionOrInvalid(throwException, "Fractional component must be last")
+
+        if (hasFractionalPart) {
+            totalNanos += if ((unit == DurationUnit.HOURS || unit == DurationUnit.DAYS) && index - fractionStartIndex > FRACTION_LIMIT)
+                value.parseFractionFallback(fractionStartIndex, index - unit.length).toNanos(unit)
+            else
+                fractionValue.toNanos(unit)
+
+            if (index < length) {
+                return throwExceptionOrInvalid(throwException, "Fractional component must be last")
+            }
         }
     }
 
@@ -1152,7 +1160,15 @@ private inline fun String.parseFraction(startIndex: Int): NumericParseData {
 }
 
 @kotlin.internal.InlineOnly
+private inline fun String.parseFractionFallback(startIndex: Int, endIndex: Int): Double {
+    return substring(startIndex, endIndex).toDouble()
+}
+
+@kotlin.internal.InlineOnly
 private inline fun Long.toNanos(unit: DurationUnit): Long = (this * unit.fractionMultiplier).roundToLong()
+
+@kotlin.internal.InlineOnly
+private inline fun Double.toNanos(unit: DurationUnit): Long = (this * unit.fallbackFractionMultiplier).roundToLong()
 
 @kotlin.internal.InlineOnly
 private inline fun throwExceptionOrInvalid(throwException: Boolean, message: String = ""): Duration {
@@ -1193,6 +1209,8 @@ internal const val MILLIS_IN_HOUR = MILLIS_IN_MINUTE * 60L
 internal const val MILLIS_IN_DAY = MILLIS_IN_HOUR * 24L
 
 private const val INFINITY_STRING = "Infinity"
+
+private const val FRACTION_LIMIT = 15
 
 private fun nanosToMillis(nanos: Long): Long = nanos / NANOS_IN_MILLIS
 private fun millisToNanos(millis: Long): Long = millis * NANOS_IN_MILLIS
