@@ -440,19 +440,21 @@ internal object KDocReferenceResolver {
 
         val actualTypeParameters = actualReceiverType.symbol?.typeParameters ?: emptyList()
 
-        // Contains type parameters from both actual and expected receiver types
+        /**
+         * Contains all type parameters from the candidate extension function and from the actual receiver.
+         * We cannot consider just type parameters from the expected receiver type,
+         * as these type parameters might depend on other type parameters of the extension.
+         */
         val typeParametersList =
             (extensionFunctionSymbol.typeParameters + actualTypeParameters).map { kaTypeParameter ->
                 require(kaTypeParameter is KaFirTypeParameterSymbol)
                 ConeTypeParameterLookupTag(kaTypeParameter.firSymbol)
             }
 
-        // Creating a constraint system and a type substitutor from type parameter used in receiver types
         val constraintSystem = ConeSimpleConstraintSystemImpl(firSession.inferenceComponents.createConstraintSystem(), firSession)
         val typeSubstitutor = constraintSystem.registerTypeVariables(typeParametersList)
 
         with(constraintSystem.context) {
-            // Substituting type parameters into receiver types
             val actual = AbstractTypeChecker.prepareType(
                 constraintSystem.context,
                 typeSubstitutor.safeSubstitute(actualReceiverType.coneType)
@@ -475,7 +477,6 @@ internal object KDocReferenceResolver {
             constraintSystem.addSubtypeConstraint(actual, expected)
         }
 
-        // Checking that there are no contradictions in the constraint system
         return !constraintSystem.hasContradiction()
     }
 
