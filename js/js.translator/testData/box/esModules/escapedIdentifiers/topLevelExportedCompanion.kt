@@ -1,5 +1,3 @@
-// See KT-79066
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6
 // ES_MODULES
 // LANGUAGE: +JsAllowInvalidCharsIdentifiersEscaping
 

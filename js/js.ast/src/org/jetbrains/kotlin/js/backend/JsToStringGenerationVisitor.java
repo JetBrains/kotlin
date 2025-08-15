@@ -1408,7 +1408,11 @@ public class JsToStringGenerationVisitor extends JsVisitor {
                 JsName alias = element.getAlias();
                 if (alias != null) {
                     p.print(" as ");
-                    nameDef(alias);
+                    if (IdentifierPolicyKt.isValidES5Identifier(alias.getIdent())) {
+                        nameDef(alias);
+                    } else {
+                        p.print(javaScriptString(alias.getIdent()));
+                    }
                 }
                 p.print(',');
                 p.newline();
