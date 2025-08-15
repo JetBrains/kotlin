@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.kotlinPackageFqn
+import org.jetbrains.kotlin.name.StandardClassIds.BASE_JS_PACKAGE
 
 // TODO KT-77388 rename to `BackendWebSymbolsImpl`
 abstract class JsCommonSymbols(

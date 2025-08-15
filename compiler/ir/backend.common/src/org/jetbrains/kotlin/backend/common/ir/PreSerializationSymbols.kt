@@ -23,14 +23,9 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrDynamicType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.impl.IrDynamicTypeImpl
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.name.StandardClassIds.BASE_KOTLIN_PACKAGE
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
@@ -42,42 +37,9 @@ abstract class BaseSymbolsImpl(protected val irBuiltIns: IrBuiltIns) {
     protected fun findSharedVariableBoxClass(primitiveType: PrimitiveType?): PreSerializationKlibSymbols.SharedVariableBoxClassInfo {
         val suffix = primitiveType?.typeName?.asString() ?: ""
         val classId = ClassId(StandardNames.KOTLIN_INTERNAL_FQ_NAME, Name.identifier("SharedVariableBox$suffix"))
-        val boxClass = symbolFinder.findClass(classId)
-            ?: error("Could not find class $classId")
+        val boxClass = classId.classSymbol()
         return PreSerializationKlibSymbols.SharedVariableBoxClassInfo(boxClass)
     }
-
-    // JS
-    companion object {
-        val BASE_JS_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("js"))
-    }
-
-    protected fun getInternalJsFunction(name: String): IrSimpleFunctionSymbol =
-        symbolFinder.findFunctions(Name.identifier(name), BASE_JS_PACKAGE).single()
-
-    // WASM
-    protected val enumsInternalPackageFqName = FqName("kotlin.enums")
-    protected val wasmInternalFqName = FqName("kotlin.wasm.internal")
-    protected fun getFunction(name: String, ownerPackage: FqName): IrSimpleFunctionSymbol {
-        return maybeGetFunction(name, ownerPackage) ?: throw IllegalArgumentException("Function $name not found")
-    }
-
-    protected fun maybeGetFunction(name: String, ownerPackage: FqName): IrSimpleFunctionSymbol? {
-        return symbolFinder.topLevelFunctions(ownerPackage, name).singleOrNull()
-    }
-
-    protected fun getInternalWasmFunction(name: String): IrSimpleFunctionSymbol = getFunction(name, wasmInternalFqName)
-
-    protected fun getEnumsFunction(name: String): IrSimpleFunctionSymbol = getFunction(name, enumsInternalPackageFqName)
-
-    protected fun getIrClassOrNull(fqName: FqName): IrClassSymbol? = symbolFinder.findClass(fqName.shortName(), fqName.parent())
-
-    protected fun getIrClass(fqName: FqName): IrClassSymbol =
-        getIrClassOrNull(fqName)
-            ?: error("Class \"${fqName.asString()}\" not found! Please make sure that your stdlib version is the same as the compiler.")
-
-    protected fun getIrType(fqName: String): IrType = getIrClass(FqName(fqName)).defaultType
-    protected fun getInternalWasmClass(name: String): IrClassSymbol = getIrClass(wasmInternalFqName.child(Name.identifier(name)))
 
     // Native
     protected fun ClassId.classSymbol(): IrClassSymbol = symbolFinder.findClass(this) ?: error("Class $this is not found")
@@ -170,7 +132,7 @@ interface PreSerializationSymbols {
     }
 
     abstract class Impl(irBuiltIns: IrBuiltIns) : PreSerializationSymbols, BaseSymbolsImpl(irBuiltIns) {
-        override val asserts: Iterable<IrSimpleFunctionSymbol> = symbolFinder.findFunctions(CallableIds.asserts.callableName, CallableIds.asserts.packageName)
+        override val asserts: Iterable<IrSimpleFunctionSymbol> = CallableIds.asserts.functionSymbols()
 
         override val arrays: List<IrClassSymbol>
             get() = irBuiltIns.primitiveTypesToPrimitiveArrays.values + irBuiltIns.unsignedTypesToUnsignedArrays.values + irBuiltIns.arrayClass
@@ -209,8 +171,7 @@ interface PreSerializationKlibSymbols : PreSerializationSymbols {
 
 interface PreSerializationWebSymbols : PreSerializationKlibSymbols {
     abstract class Impl(irBuiltIns: IrBuiltIns) : PreSerializationWebSymbols, PreSerializationKlibSymbols.Impl(irBuiltIns) {
-        override val coroutineContextGetter: IrSimpleFunctionSymbol =
-            symbolFinder.findTopLevelPropertyGetter(CallableIds.coroutineContextGetter.packageName, CallableIds.coroutineContextGetter.callableName.asString())
+        override val coroutineContextGetter: IrSimpleFunctionSymbol by CallableIds.coroutineContextGetter.getterSymbol()
 
         companion object {
             private object CallableIds {
@@ -230,21 +191,18 @@ interface PreSerializationJsSymbols : PreSerializationWebSymbols {
 
     open class Impl(irBuiltIns: IrBuiltIns) : PreSerializationJsSymbols, PreSerializationWebSymbols.Impl(irBuiltIns) {
         override val throwUninitializedPropertyAccessException: IrSimpleFunctionSymbol =
-            symbolFinder.topLevelFunction(CallableIds.throwUninitializedPropertyAccessException.packageName, CallableIds.throwUninitializedPropertyAccessException.callableName.asString())
-
+            CallableIds.throwUninitializedPropertyAccessException.functionSymbol()
         override val throwUnsupportedOperationException: IrSimpleFunctionSymbol =
-            symbolFinder.topLevelFunction(CallableIds.throwUnsupportedOperationException.packageName, CallableIds.throwUnsupportedOperationException.callableName.asString())
+            CallableIds.throwUnsupportedOperationException.functionSymbol()
 
-        override val defaultConstructorMarker: IrClassSymbol =
-            symbolFinder.topLevelClass(ClassIds.defaultConstructorMarker.packageFqName, ClassIds.defaultConstructorMarker.relativeClassName.asString())
+        override val defaultConstructorMarker: IrClassSymbol = ClassIds.defaultConstructorMarker.classSymbol()
 
         override val suspendCoroutineUninterceptedOrReturn: IrSimpleFunctionSymbol =
-            symbolFinder.topLevelFunction(CallableIds.suspendCoroutineUninterceptedOrReturn.packageName, CallableIds.suspendCoroutineUninterceptedOrReturn.callableName.asString())
-        override val coroutineGetContext: IrSimpleFunctionSymbol =
-            symbolFinder.topLevelFunction(CallableIds.coroutineGetContext.packageName, CallableIds.coroutineGetContext.callableName.asString())
+            CallableIds.suspendCoroutineUninterceptedOrReturn.functionSymbol()
+        override val coroutineGetContext: IrSimpleFunctionSymbol = CallableIds.coroutineGetContext.functionSymbol()
 
-        override val jsCode: IrSimpleFunctionSymbol = getInternalJsFunction(CallableIds.jsCall.callableName.asString())
-        override val jsOutlinedFunctionAnnotationSymbol: IrClassSymbol = symbolFinder.topLevelClass(ClassIds.JsOutlinedFunction)
+        override val jsCode: IrSimpleFunctionSymbol = CallableIds.jsCall.functionSymbol()
+        override val jsOutlinedFunctionAnnotationSymbol: IrClassSymbol = ClassIds.JsOutlinedFunction.classSymbol()
 
         companion object {
             private const val COROUTINE_SUSPEND_OR_RETURN_JS_NAME = "suspendCoroutineUninterceptedOrReturnJS"
@@ -277,18 +235,15 @@ interface PreSerializationJsSymbols : PreSerializationWebSymbols {
 interface PreSerializationWasmSymbols : PreSerializationWebSymbols {
     open class Impl(irBuiltIns: IrBuiltIns) : PreSerializationWasmSymbols, PreSerializationWebSymbols.Impl(irBuiltIns) {
         override val throwUninitializedPropertyAccessException: IrSimpleFunctionSymbol =
-            getInternalWasmFunction(CallableIds.throwUninitializedPropertyAccessException.callableName.asString())
-
+            CallableIds.throwUninitializedPropertyAccessException.functionSymbol()
         override val throwUnsupportedOperationException: IrSimpleFunctionSymbol =
-            getInternalWasmFunction(CallableIds.throwUnsupportedOperationException.callableName.asString())
+            CallableIds.throwUnsupportedOperationException.functionSymbol()
 
-        override val defaultConstructorMarker: IrClassSymbol =
-            getIrClass(FqName("kotlin.wasm.internal.${ClassIds.defaultConstructorMarker.relativeClassName.asString()}"))
+        override val defaultConstructorMarker: IrClassSymbol = ClassIds.defaultConstructorMarker.classSymbol()
 
         override val suspendCoroutineUninterceptedOrReturn: IrSimpleFunctionSymbol =
-            getInternalWasmFunction(CallableIds.suspendCoroutineUninterceptedOrReturn.callableName.asString())
-        override val coroutineGetContext: IrSimpleFunctionSymbol =
-            getInternalWasmFunction(CallableIds.coroutineGetContext.callableName.asString())
+            CallableIds.suspendCoroutineUninterceptedOrReturn.functionSymbol()
+        override val coroutineGetContext: IrSimpleFunctionSymbol = CallableIds.coroutineGetContext.functionSymbol()
 
         companion object {
             val wasmInternalFqName = FqName.fromSegments(listOf("kotlin", "wasm", "internal"))
@@ -330,8 +285,7 @@ interface PreSerializationNativeSymbols : PreSerializationKlibSymbols {
         override val coroutineContextGetter: IrSimpleFunctionSymbol by CallableIds.coroutineContext.getterSymbol()
         override val suspendCoroutineUninterceptedOrReturn: IrSimpleFunctionSymbol =
             CallableIds.suspendCoroutineUninterceptedOrReturn.functionSymbol()
-        override val coroutineGetContext: IrSimpleFunctionSymbol =
-            CallableIds.getCoroutineContext.functionSymbol()
+        override val coroutineGetContext: IrSimpleFunctionSymbol = CallableIds.getCoroutineContext.functionSymbol()
 
         companion object {
             private const val COROUTINE_SUSPEND_OR_RETURN_NAME = "suspendCoroutineUninterceptedOrReturn"
