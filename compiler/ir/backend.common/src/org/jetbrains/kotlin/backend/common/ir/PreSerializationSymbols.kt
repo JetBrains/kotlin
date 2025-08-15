@@ -151,15 +151,6 @@ interface PreSerializationSymbols {
     val coroutineGetContext: IrSimpleFunctionSymbol
 
     companion object {
-        fun isLateinitIsInitializedPropertyGetter(symbol: IrFunctionSymbol): Boolean =
-            symbol is IrSimpleFunctionSymbol && symbol.owner.let { function ->
-                function.name.asString() == "<get-isInitialized>" &&
-                        function.isTopLevel &&
-                        function.getPackageFragment().packageFqName.asString() == "kotlin" &&
-                        function.hasShape(extensionReceiver = true) &&
-                        function.parameters[0].type.classOrNull?.owner?.fqNameWhenAvailable?.toUnsafe() == StandardNames.FqNames.kProperty0
-            }
-
         fun isTypeOfIntrinsic(symbol: IrFunctionSymbol): Boolean {
             return if (symbol.isBound) {
                 symbol is IrSimpleFunctionSymbol && symbol.owner.let { function ->
