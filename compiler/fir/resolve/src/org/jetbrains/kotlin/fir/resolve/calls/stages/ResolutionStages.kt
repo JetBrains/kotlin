@@ -22,9 +22,7 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
 import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
-import org.jetbrains.kotlin.fir.resolve.calls.candidate.CheckerSink
 import org.jetbrains.kotlin.fir.resolve.inference.csBuilder
 import org.jetbrains.kotlin.fir.resolve.inference.isAnyOfDelegateOperators
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExplicitTypeParameterConstraintPosition
@@ -753,6 +751,8 @@ internal val Candidate.isInvokeFromExtensionFunctionType: Boolean
 
 internal fun Candidate.shouldHaveLowPriorityDueToSAM(bodyResolveComponents: BodyResolveComponents): Boolean {
     if (!usesSamConversion || isJavaApplicableCandidate()) return false
+    if (LanguageFeature.NoLowerPriorityForSamConversionOnJavaInterfaces.isEnabled(callInfo.session)) return false
+
     return argumentMapping.values.any {
         val coneType = it.returnTypeRef.coneType
         bodyResolveComponents.samResolver.isSamType(coneType) &&

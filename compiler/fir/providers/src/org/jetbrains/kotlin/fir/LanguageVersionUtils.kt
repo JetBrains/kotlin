@@ -9,5 +9,9 @@ import org.jetbrains.kotlin.config.LanguageFeature
 
 context(c: SessionHolder)
 fun LanguageFeature.isEnabled(): Boolean {
-    return c.session.languageVersionSettings.supportsFeature(this)
+    return this.isEnabled(c.session)
+}
+
+fun LanguageFeature.isEnabled(session: FirSession): Boolean {
+    return session.languageVersionSettings.supportsFeature(this)
 }

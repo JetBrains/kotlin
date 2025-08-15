@@ -412,6 +412,8 @@ enum class LanguageFeature(
     // Even though this LF is not expected to be necessarily released via 2.2.x.
     CapturedTypeApproximationReworked(KOTLIN_2_2, "KT-79451"),
 
+    NoLowerPriorityForSamConversionOnJavaInterfaces(KOTLIN_2_2, "KT-78832"),
+
     // 2.3
 
     ForbidCompanionInLocalInnerClass(KOTLIN_2_3, enabledInProgressiveMode = true, "KT-47289"),

@@ -1,5 +1,6 @@
+// FIR_IDENTICAL
 // LANGUAGE: +DisableCompatibilityModeForNewInference
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-78832
 // FILE: JavaTransformer.java
 

@@ -14,10 +14,10 @@ fun interface Tom {
 fun foo(m: Tom) = 1
 fun foo(j: Jerry) = "2"
 fun test() {
-    val result = foo { i ->
+    val result = <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!> { <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>i<!> ->
         val j = i + 1
     }
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>result<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Ambiguity: foo, [/foo, /foo]")!>result<!>
 }
 
 /* GENERATED_FIR_TAGS: additiveExpression, funInterface, functionDeclaration, integerLiteral, interfaceDeclaration,
