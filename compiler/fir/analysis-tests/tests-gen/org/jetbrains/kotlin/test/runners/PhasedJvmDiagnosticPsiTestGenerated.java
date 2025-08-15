@@ -636,6 +636,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
     }
 
     @Test
+    @TestMetadata("extensionShadowedByMemberOverride.kt")
+    public void testExtensionShadowedByMemberOverride() {
+      runTest("compiler/testData/diagnostics/tests/extensionShadowedByMemberOverride.kt");
+    }
+
+    @Test
     @TestMetadata("extensionShadowedByMemberWithMpp.kt")
     public void testExtensionShadowedByMemberWithMpp() {
       runTest("compiler/testData/diagnostics/tests/extensionShadowedByMemberWithMpp.kt");
