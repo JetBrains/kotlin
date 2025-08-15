@@ -608,14 +608,20 @@ private object CheckReceiverShadowedByContextParameter {
         if (closerOrOnTheSameLevelContextParameters.any { implicitValue ->
                 candidate.system.isSubtypeConstraintCompatible(implicitValue.type, potentialReceiverType)
             }) {
-            sink.reportDiagnostic(ReceiverShadowedByContextParameter(candidate.symbol))
+            val isDispatchOfMemberExtension = kind == ImplicitKind.DispatchReceiver &&
+                    (candidate.symbol as? FirCallableSymbol)?.receiverParameterSymbol != null
+            sink.reportDiagnostic(ReceiverShadowedByContextParameter(candidate.symbol, isDispatchOfMemberExtension))
         }
     }
 
     context(context: ResolutionContext)
     fun starProjectedReceiverType(candidate: Candidate, kind: ImplicitKind): ConeKotlinType? {
         val originalCallableSymbol = (candidate.symbol as? FirCallableSymbol<*>)?.originalOrSelf() ?: return null
-        val receiverType = if (kind == ImplicitKind.DispatchReceiver) originalCallableSymbol.dispatchReceiverType else originalCallableSymbol.resolvedReceiverType
+        val receiverType = if (kind == ImplicitKind.DispatchReceiver) {
+            originalCallableSymbol.dispatchReceiverType
+        } else {
+            originalCallableSymbol.resolvedReceiverType
+        }
         return receiverType?.upperBoundIfFlexible()?.fullyExpandedType()?.toClassSymbol(context.session)?.constructStarProjectedType()
             ?: receiverType
     }
