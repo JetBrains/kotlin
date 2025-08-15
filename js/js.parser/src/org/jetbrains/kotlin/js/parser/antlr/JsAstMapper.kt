@@ -43,6 +43,4 @@ class JsAstMapper(private val scope: JsScope, private val fileName: String) {
         val visitor = JsAstMapperVisitor(fileName, scopeContext)
         return node.accept(visitor)!!
     }
-
-    private
 }

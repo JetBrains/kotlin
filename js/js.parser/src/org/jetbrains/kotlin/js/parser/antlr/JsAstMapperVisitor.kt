@@ -13,247 +13,246 @@ import org.antlr.v4.runtime.tree.TerminalNode
 import org.jetbrains.kotlin.js.backend.ast.JsBlock
 import org.jetbrains.kotlin.js.backend.ast.JsBreak
 import org.jetbrains.kotlin.js.backend.ast.JsFunction
-import org.jetbrains.kotlin.js.backend.ast.JsName
 import org.jetbrains.kotlin.js.backend.ast.JsNode
 import org.jetbrains.kotlin.js.backend.ast.JsParameter
 import org.jetbrains.kotlin.js.parser.antlr.generated.JavaScriptParser
 import org.jetbrains.kotlin.js.parser.antlr.generated.JavaScriptParserVisitor
 
 class JsAstMapperVisitor(private val fileName: String, private val scopeContext: ScopeContext) : JavaScriptParserVisitor<JsNode?> {
-    override fun visitProgram(ctx: JavaScriptParser.ProgramContext?): JsNode? {
+    override fun visitProgram(ctx: JavaScriptParser.ProgramContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitSourceElement(ctx: JavaScriptParser.SourceElementContext?): JsNode? {
+    override fun visitSourceElement(ctx: JavaScriptParser.SourceElementContext): JsNode? {
         TODO("Not yet implemented")
     }
 
     // ENTRY POINT
-    override fun visitStatement(ctx: JavaScriptParser.StatementContext?): JsNode? {
+    override fun visitStatement(ctx: JavaScriptParser.StatementContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitBlock(ctx: JavaScriptParser.BlockContext?): JsNode? {
+    override fun visitBlock(ctx: JavaScriptParser.BlockContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitStatementList(ctx: JavaScriptParser.StatementListContext?): JsNode? {
+    override fun visitStatementList(ctx: JavaScriptParser.StatementListContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitImportStatement(ctx: JavaScriptParser.ImportStatementContext?): JsNode? {
+    override fun visitImportStatement(ctx: JavaScriptParser.ImportStatementContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitImportFromBlock(ctx: JavaScriptParser.ImportFromBlockContext?): JsNode? {
+    override fun visitImportFromBlock(ctx: JavaScriptParser.ImportFromBlockContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitImportModuleItems(ctx: JavaScriptParser.ImportModuleItemsContext?): JsNode? {
+    override fun visitImportModuleItems(ctx: JavaScriptParser.ImportModuleItemsContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitImportAliasName(ctx: JavaScriptParser.ImportAliasNameContext?): JsNode? {
+    override fun visitImportAliasName(ctx: JavaScriptParser.ImportAliasNameContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitModuleExportName(ctx: JavaScriptParser.ModuleExportNameContext?): JsNode? {
+    override fun visitModuleExportName(ctx: JavaScriptParser.ModuleExportNameContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitImportedBinding(ctx: JavaScriptParser.ImportedBindingContext?): JsNode? {
+    override fun visitImportedBinding(ctx: JavaScriptParser.ImportedBindingContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitImportDefault(ctx: JavaScriptParser.ImportDefaultContext?): JsNode? {
+    override fun visitImportDefault(ctx: JavaScriptParser.ImportDefaultContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitImportNamespace(ctx: JavaScriptParser.ImportNamespaceContext?): JsNode? {
+    override fun visitImportNamespace(ctx: JavaScriptParser.ImportNamespaceContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitImportFrom(ctx: JavaScriptParser.ImportFromContext?): JsNode? {
+    override fun visitImportFrom(ctx: JavaScriptParser.ImportFromContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitAliasName(ctx: JavaScriptParser.AliasNameContext?): JsNode? {
+    override fun visitAliasName(ctx: JavaScriptParser.AliasNameContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitExportDeclaration(ctx: JavaScriptParser.ExportDeclarationContext?): JsNode? {
+    override fun visitExportDeclaration(ctx: JavaScriptParser.ExportDeclarationContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitExportDefaultDeclaration(ctx: JavaScriptParser.ExportDefaultDeclarationContext?): JsNode? {
+    override fun visitExportDefaultDeclaration(ctx: JavaScriptParser.ExportDefaultDeclarationContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitExportFromBlock(ctx: JavaScriptParser.ExportFromBlockContext?): JsNode? {
+    override fun visitExportFromBlock(ctx: JavaScriptParser.ExportFromBlockContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitExportModuleItems(ctx: JavaScriptParser.ExportModuleItemsContext?): JsNode? {
+    override fun visitExportModuleItems(ctx: JavaScriptParser.ExportModuleItemsContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitExportAliasName(ctx: JavaScriptParser.ExportAliasNameContext?): JsNode? {
+    override fun visitExportAliasName(ctx: JavaScriptParser.ExportAliasNameContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitDeclaration(ctx: JavaScriptParser.DeclarationContext?): JsNode? {
+    override fun visitDeclaration(ctx: JavaScriptParser.DeclarationContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitVariableStatement(ctx: JavaScriptParser.VariableStatementContext?): JsNode? {
+    override fun visitVariableStatement(ctx: JavaScriptParser.VariableStatementContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitVariableDeclarationList(ctx: JavaScriptParser.VariableDeclarationListContext?): JsNode? {
+    override fun visitVariableDeclarationList(ctx: JavaScriptParser.VariableDeclarationListContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitVariableDeclaration(ctx: JavaScriptParser.VariableDeclarationContext?): JsNode? {
+    override fun visitVariableDeclaration(ctx: JavaScriptParser.VariableDeclarationContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitEmptyStatement_(ctx: JavaScriptParser.EmptyStatement_Context?): JsNode? {
+    override fun visitEmptyStatement_(ctx: JavaScriptParser.EmptyStatement_Context): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitExpressionStatement(ctx: JavaScriptParser.ExpressionStatementContext?): JsNode? {
+    override fun visitExpressionStatement(ctx: JavaScriptParser.ExpressionStatementContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitIfStatement(ctx: JavaScriptParser.IfStatementContext?): JsNode? {
+    override fun visitIfStatement(ctx: JavaScriptParser.IfStatementContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitDoStatement(ctx: JavaScriptParser.DoStatementContext?): JsNode? {
+    override fun visitDoStatement(ctx: JavaScriptParser.DoStatementContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitWhileStatement(ctx: JavaScriptParser.WhileStatementContext?): JsNode? {
+    override fun visitWhileStatement(ctx: JavaScriptParser.WhileStatementContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitForStatement(ctx: JavaScriptParser.ForStatementContext?): JsNode? {
+    override fun visitForStatement(ctx: JavaScriptParser.ForStatementContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitForInStatement(ctx: JavaScriptParser.ForInStatementContext?): JsNode? {
+    override fun visitForInStatement(ctx: JavaScriptParser.ForInStatementContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitForOfStatement(ctx: JavaScriptParser.ForOfStatementContext?): JsNode? {
+    override fun visitForOfStatement(ctx: JavaScriptParser.ForOfStatementContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitVarModifier(ctx: JavaScriptParser.VarModifierContext?): JsNode? {
+    override fun visitVarModifier(ctx: JavaScriptParser.VarModifierContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitContinueStatement(ctx: JavaScriptParser.ContinueStatementContext?): JsNode? {
+    override fun visitContinueStatement(ctx: JavaScriptParser.ContinueStatementContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitBreakStatement(ctx: JavaScriptParser.BreakStatementContext?): JsNode? {
+    override fun visitBreakStatement(ctx: JavaScriptParser.BreakStatementContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitReturnStatement(ctx: JavaScriptParser.ReturnStatementContext?): JsNode? {
+    override fun visitReturnStatement(ctx: JavaScriptParser.ReturnStatementContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitYieldStatement(ctx: JavaScriptParser.YieldStatementContext?): JsNode? {
+    override fun visitYieldStatement(ctx: JavaScriptParser.YieldStatementContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitWithStatement(ctx: JavaScriptParser.WithStatementContext?): JsNode? {
+    override fun visitWithStatement(ctx: JavaScriptParser.WithStatementContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitSwitchStatement(ctx: JavaScriptParser.SwitchStatementContext?): JsNode? {
+    override fun visitSwitchStatement(ctx: JavaScriptParser.SwitchStatementContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitCaseBlock(ctx: JavaScriptParser.CaseBlockContext?): JsNode? {
+    override fun visitCaseBlock(ctx: JavaScriptParser.CaseBlockContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitCaseClauses(ctx: JavaScriptParser.CaseClausesContext?): JsNode? {
+    override fun visitCaseClauses(ctx: JavaScriptParser.CaseClausesContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitCaseClause(ctx: JavaScriptParser.CaseClauseContext?): JsNode? {
+    override fun visitCaseClause(ctx: JavaScriptParser.CaseClauseContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitDefaultClause(ctx: JavaScriptParser.DefaultClauseContext?): JsNode? {
+    override fun visitDefaultClause(ctx: JavaScriptParser.DefaultClauseContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitLabelledStatement(ctx: JavaScriptParser.LabelledStatementContext?): JsNode? {
+    override fun visitLabelledStatement(ctx: JavaScriptParser.LabelledStatementContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitThrowStatement(ctx: JavaScriptParser.ThrowStatementContext?): JsNode? {
+    override fun visitThrowStatement(ctx: JavaScriptParser.ThrowStatementContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitTryStatement(ctx: JavaScriptParser.TryStatementContext?): JsNode? {
+    override fun visitTryStatement(ctx: JavaScriptParser.TryStatementContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitCatchProduction(ctx: JavaScriptParser.CatchProductionContext?): JsNode? {
+    override fun visitCatchProduction(ctx: JavaScriptParser.CatchProductionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitFinallyProduction(ctx: JavaScriptParser.FinallyProductionContext?): JsNode? {
+    override fun visitFinallyProduction(ctx: JavaScriptParser.FinallyProductionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitDebuggerStatement(ctx: JavaScriptParser.DebuggerStatementContext?): JsNode? {
+    override fun visitDebuggerStatement(ctx: JavaScriptParser.DebuggerStatementContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitFunctionDeclaration(ctx: JavaScriptParser.FunctionDeclarationContext?): JsNode? {
+    override fun visitFunctionDeclaration(ctx: JavaScriptParser.FunctionDeclarationContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitClassDeclaration(ctx: JavaScriptParser.ClassDeclarationContext?): JsNode? {
+    override fun visitClassDeclaration(ctx: JavaScriptParser.ClassDeclarationContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitClassTail(ctx: JavaScriptParser.ClassTailContext?): JsNode? {
+    override fun visitClassTail(ctx: JavaScriptParser.ClassTailContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitClassElement(ctx: JavaScriptParser.ClassElementContext?): JsNode? {
+    override fun visitClassElement(ctx: JavaScriptParser.ClassElementContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitMethodDefinition(ctx: JavaScriptParser.MethodDefinitionContext?): JsNode? {
+    override fun visitMethodDefinition(ctx: JavaScriptParser.MethodDefinitionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitFieldDefinition(ctx: JavaScriptParser.FieldDefinitionContext?): JsNode? {
+    override fun visitFieldDefinition(ctx: JavaScriptParser.FieldDefinitionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitClassElementName(ctx: JavaScriptParser.ClassElementNameContext?): JsNode? {
+    override fun visitClassElementName(ctx: JavaScriptParser.ClassElementNameContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitPrivateIdentifier(ctx: JavaScriptParser.PrivateIdentifierContext?): JsNode? {
+    override fun visitPrivateIdentifier(ctx: JavaScriptParser.PrivateIdentifierContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitFormalParameterList(ctx: JavaScriptParser.FormalParameterListContext?): JsNode? {
+    override fun visitFormalParameterList(ctx: JavaScriptParser.FormalParameterListContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitFormalParameterArg(ctx: JavaScriptParser.FormalParameterArgContext?): JsNode? {
+    override fun visitFormalParameterArg(ctx: JavaScriptParser.FormalParameterArgContext): JsNode? {
         TODO("Not yet implemented")
     }
 
@@ -261,127 +260,127 @@ class JsAstMapperVisitor(private val fileName: String, private val scopeContext:
         TODO("Not yet implemented")
     }
 
-    override fun visitFunctionBody(ctx: JavaScriptParser.FunctionBodyContext?): JsNode? {
+    override fun visitFunctionBody(ctx: JavaScriptParser.FunctionBodyContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitSourceElements(ctx: JavaScriptParser.SourceElementsContext?): JsNode? {
+    override fun visitSourceElements(ctx: JavaScriptParser.SourceElementsContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitArrayLiteral(ctx: JavaScriptParser.ArrayLiteralContext?): JsNode? {
+    override fun visitArrayLiteral(ctx: JavaScriptParser.ArrayLiteralContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitElementList(ctx: JavaScriptParser.ElementListContext?): JsNode? {
+    override fun visitElementList(ctx: JavaScriptParser.ElementListContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitArrayElement(ctx: JavaScriptParser.ArrayElementContext?): JsNode? {
+    override fun visitArrayElement(ctx: JavaScriptParser.ArrayElementContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitPropertyExpressionAssignment(ctx: JavaScriptParser.PropertyExpressionAssignmentContext?): JsNode? {
+    override fun visitPropertyExpressionAssignment(ctx: JavaScriptParser.PropertyExpressionAssignmentContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitComputedPropertyExpressionAssignment(ctx: JavaScriptParser.ComputedPropertyExpressionAssignmentContext?): JsNode? {
+    override fun visitComputedPropertyExpressionAssignment(ctx: JavaScriptParser.ComputedPropertyExpressionAssignmentContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitFunctionProperty(ctx: JavaScriptParser.FunctionPropertyContext?): JsNode? {
+    override fun visitFunctionProperty(ctx: JavaScriptParser.FunctionPropertyContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitPropertyGetter(ctx: JavaScriptParser.PropertyGetterContext?): JsNode? {
+    override fun visitPropertyGetter(ctx: JavaScriptParser.PropertyGetterContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitPropertySetter(ctx: JavaScriptParser.PropertySetterContext?): JsNode? {
+    override fun visitPropertySetter(ctx: JavaScriptParser.PropertySetterContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitPropertyShorthand(ctx: JavaScriptParser.PropertyShorthandContext?): JsNode? {
+    override fun visitPropertyShorthand(ctx: JavaScriptParser.PropertyShorthandContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitPropertyName(ctx: JavaScriptParser.PropertyNameContext?): JsNode? {
+    override fun visitPropertyName(ctx: JavaScriptParser.PropertyNameContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitArguments(ctx: JavaScriptParser.ArgumentsContext?): JsNode? {
+    override fun visitArguments(ctx: JavaScriptParser.ArgumentsContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitArgument(ctx: JavaScriptParser.ArgumentContext?): JsNode? {
+    override fun visitArgument(ctx: JavaScriptParser.ArgumentContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitExpressionSequence(ctx: JavaScriptParser.ExpressionSequenceContext?): JsNode? {
+    override fun visitExpressionSequence(ctx: JavaScriptParser.ExpressionSequenceContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitTemplateStringExpression(ctx: JavaScriptParser.TemplateStringExpressionContext?): JsNode? {
+    override fun visitTemplateStringExpression(ctx: JavaScriptParser.TemplateStringExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitTernaryExpression(ctx: JavaScriptParser.TernaryExpressionContext?): JsNode? {
+    override fun visitTernaryExpression(ctx: JavaScriptParser.TernaryExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitLogicalAndExpression(ctx: JavaScriptParser.LogicalAndExpressionContext?): JsNode? {
+    override fun visitLogicalAndExpression(ctx: JavaScriptParser.LogicalAndExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitPowerExpression(ctx: JavaScriptParser.PowerExpressionContext?): JsNode? {
+    override fun visitPowerExpression(ctx: JavaScriptParser.PowerExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitPreIncrementExpression(ctx: JavaScriptParser.PreIncrementExpressionContext?): JsNode? {
+    override fun visitPreIncrementExpression(ctx: JavaScriptParser.PreIncrementExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitObjectLiteralExpression(ctx: JavaScriptParser.ObjectLiteralExpressionContext?): JsNode? {
+    override fun visitObjectLiteralExpression(ctx: JavaScriptParser.ObjectLiteralExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitMetaExpression(ctx: JavaScriptParser.MetaExpressionContext?): JsNode? {
+    override fun visitMetaExpression(ctx: JavaScriptParser.MetaExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitInExpression(ctx: JavaScriptParser.InExpressionContext?): JsNode? {
+    override fun visitInExpression(ctx: JavaScriptParser.InExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitLogicalOrExpression(ctx: JavaScriptParser.LogicalOrExpressionContext?): JsNode? {
+    override fun visitLogicalOrExpression(ctx: JavaScriptParser.LogicalOrExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitOptionalChainExpression(ctx: JavaScriptParser.OptionalChainExpressionContext?): JsNode? {
+    override fun visitOptionalChainExpression(ctx: JavaScriptParser.OptionalChainExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitNotExpression(ctx: JavaScriptParser.NotExpressionContext?): JsNode? {
+    override fun visitNotExpression(ctx: JavaScriptParser.NotExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitPreDecreaseExpression(ctx: JavaScriptParser.PreDecreaseExpressionContext?): JsNode? {
+    override fun visitPreDecreaseExpression(ctx: JavaScriptParser.PreDecreaseExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitArgumentsExpression(ctx: JavaScriptParser.ArgumentsExpressionContext?): JsNode? {
+    override fun visitArgumentsExpression(ctx: JavaScriptParser.ArgumentsExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitAwaitExpression(ctx: JavaScriptParser.AwaitExpressionContext?): JsNode? {
+    override fun visitAwaitExpression(ctx: JavaScriptParser.AwaitExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitThisExpression(ctx: JavaScriptParser.ThisExpressionContext?): JsNode? {
+    override fun visitThisExpression(ctx: JavaScriptParser.ThisExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitFunctionExpression(ctx: JavaScriptParser.FunctionExpressionContext?): JsNode? {
+    override fun visitFunctionExpression(ctx: JavaScriptParser.FunctionExpressionContext): JsNode? {
         val anonymousFunction = ctx?.anonymousFunction() ?: return null
 
         return when (anonymousFunction) {
@@ -392,226 +391,218 @@ class JsAstMapperVisitor(private val fileName: String, private val scopeContext:
         }
     }
 
-    override fun visitUnaryMinusExpression(ctx: JavaScriptParser.UnaryMinusExpressionContext?): JsNode? {
+    override fun visitUnaryMinusExpression(ctx: JavaScriptParser.UnaryMinusExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitAssignmentExpression(ctx: JavaScriptParser.AssignmentExpressionContext?): JsNode? {
+    override fun visitAssignmentExpression(ctx: JavaScriptParser.AssignmentExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitPostDecreaseExpression(ctx: JavaScriptParser.PostDecreaseExpressionContext?): JsNode? {
+    override fun visitPostDecreaseExpression(ctx: JavaScriptParser.PostDecreaseExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitTypeofExpression(ctx: JavaScriptParser.TypeofExpressionContext?): JsNode? {
+    override fun visitTypeofExpression(ctx: JavaScriptParser.TypeofExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitInstanceofExpression(ctx: JavaScriptParser.InstanceofExpressionContext?): JsNode? {
+    override fun visitInstanceofExpression(ctx: JavaScriptParser.InstanceofExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitUnaryPlusExpression(ctx: JavaScriptParser.UnaryPlusExpressionContext?): JsNode? {
+    override fun visitUnaryPlusExpression(ctx: JavaScriptParser.UnaryPlusExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitDeleteExpression(ctx: JavaScriptParser.DeleteExpressionContext?): JsNode? {
+    override fun visitDeleteExpression(ctx: JavaScriptParser.DeleteExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitImportExpression(ctx: JavaScriptParser.ImportExpressionContext?): JsNode? {
+    override fun visitImportExpression(ctx: JavaScriptParser.ImportExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitEqualityExpression(ctx: JavaScriptParser.EqualityExpressionContext?): JsNode? {
+    override fun visitEqualityExpression(ctx: JavaScriptParser.EqualityExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitBitXOrExpression(ctx: JavaScriptParser.BitXOrExpressionContext?): JsNode? {
+    override fun visitBitXOrExpression(ctx: JavaScriptParser.BitXOrExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitSuperExpression(ctx: JavaScriptParser.SuperExpressionContext?): JsNode? {
+    override fun visitSuperExpression(ctx: JavaScriptParser.SuperExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitMultiplicativeExpression(ctx: JavaScriptParser.MultiplicativeExpressionContext?): JsNode? {
+    override fun visitMultiplicativeExpression(ctx: JavaScriptParser.MultiplicativeExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitBitShiftExpression(ctx: JavaScriptParser.BitShiftExpressionContext?): JsNode? {
+    override fun visitBitShiftExpression(ctx: JavaScriptParser.BitShiftExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitParenthesizedExpression(ctx: JavaScriptParser.ParenthesizedExpressionContext?): JsNode? {
+    override fun visitParenthesizedExpression(ctx: JavaScriptParser.ParenthesizedExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitAdditiveExpression(ctx: JavaScriptParser.AdditiveExpressionContext?): JsNode? {
+    override fun visitAdditiveExpression(ctx: JavaScriptParser.AdditiveExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitRelationalExpression(ctx: JavaScriptParser.RelationalExpressionContext?): JsNode? {
+    override fun visitRelationalExpression(ctx: JavaScriptParser.RelationalExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitPostIncrementExpression(ctx: JavaScriptParser.PostIncrementExpressionContext?): JsNode? {
+    override fun visitPostIncrementExpression(ctx: JavaScriptParser.PostIncrementExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitYieldExpression(ctx: JavaScriptParser.YieldExpressionContext?): JsNode? {
+    override fun visitYieldExpression(ctx: JavaScriptParser.YieldExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitBitNotExpression(ctx: JavaScriptParser.BitNotExpressionContext?): JsNode? {
+    override fun visitBitNotExpression(ctx: JavaScriptParser.BitNotExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitNewExpression(ctx: JavaScriptParser.NewExpressionContext?): JsNode? {
+    override fun visitNewExpression(ctx: JavaScriptParser.NewExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitLiteralExpression(ctx: JavaScriptParser.LiteralExpressionContext?): JsNode? {
+    override fun visitLiteralExpression(ctx: JavaScriptParser.LiteralExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitArrayLiteralExpression(ctx: JavaScriptParser.ArrayLiteralExpressionContext?): JsNode? {
+    override fun visitArrayLiteralExpression(ctx: JavaScriptParser.ArrayLiteralExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitMemberDotExpression(ctx: JavaScriptParser.MemberDotExpressionContext?): JsNode? {
+    override fun visitMemberDotExpression(ctx: JavaScriptParser.MemberDotExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitClassExpression(ctx: JavaScriptParser.ClassExpressionContext?): JsNode? {
+    override fun visitClassExpression(ctx: JavaScriptParser.ClassExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitMemberIndexExpression(ctx: JavaScriptParser.MemberIndexExpressionContext?): JsNode? {
+    override fun visitMemberIndexExpression(ctx: JavaScriptParser.MemberIndexExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitIdentifierExpression(ctx: JavaScriptParser.IdentifierExpressionContext?): JsNode? {
+    override fun visitIdentifierExpression(ctx: JavaScriptParser.IdentifierExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitBitAndExpression(ctx: JavaScriptParser.BitAndExpressionContext?): JsNode? {
+    override fun visitBitAndExpression(ctx: JavaScriptParser.BitAndExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitBitOrExpression(ctx: JavaScriptParser.BitOrExpressionContext?): JsNode? {
+    override fun visitBitOrExpression(ctx: JavaScriptParser.BitOrExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitAssignmentOperatorExpression(ctx: JavaScriptParser.AssignmentOperatorExpressionContext?): JsNode? {
+    override fun visitAssignmentOperatorExpression(ctx: JavaScriptParser.AssignmentOperatorExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitVoidExpression(ctx: JavaScriptParser.VoidExpressionContext?): JsNode? {
+    override fun visitVoidExpression(ctx: JavaScriptParser.VoidExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitCoalesceExpression(ctx: JavaScriptParser.CoalesceExpressionContext?): JsNode? {
+    override fun visitCoalesceExpression(ctx: JavaScriptParser.CoalesceExpressionContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitInitializer(ctx: JavaScriptParser.InitializerContext?): JsNode? {
+    override fun visitInitializer(ctx: JavaScriptParser.InitializerContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitAssignable(ctx: JavaScriptParser.AssignableContext?): JsNode? {
+    override fun visitAssignable(ctx: JavaScriptParser.AssignableContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitObjectLiteral(ctx: JavaScriptParser.ObjectLiteralContext?): JsNode? {
+    override fun visitObjectLiteral(ctx: JavaScriptParser.ObjectLiteralContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitNamedFunction(ctx: JavaScriptParser.NamedFunctionContext?): JsNode? {
+    override fun visitNamedFunction(ctx: JavaScriptParser.NamedFunctionContext): JsNode? {
+        val declaration = ctx.functionDeclaration()
+        assert(declaration.Async() == null) { "Async functions are not supported yet"}
+        val isGenerator = declaration.Multiply() != null
+
+        return mapFunction(null, declaration.functionBody(), declaration.formalParameterList().formalParameterArg(), isGenerator)
+    }
+
+    override fun visitAnonymousFunctionDecl(ctx: JavaScriptParser.AnonymousFunctionDeclContext): JsNode? {
+        val isGenerator = ctx.Multiply() != null
+        val paramList = ctx.formalParameterList()
+        assert(paramList.restParameterArg() == null) { "Rest parameters are not supported yet" }
+
+        return mapFunction(null, ctx.functionBody(), paramList.formalParameterArg(), isGenerator)
+    }
+
+    override fun visitArrowFunction(ctx: JavaScriptParser.ArrowFunctionContext): JsNode? {
+        assert(ctx.Async() == null) { "Async arrow functions are not supported yet"}
+        val parameters = ctx.arrowFunctionParameters()
+
+        return mapFunction(null, ctx.arrowFunctionBody().functionBody(), parameters.formalParameterList().formalParameterArg(), false)
+    }
+
+    override fun visitArrowFunctionParameters(ctx: JavaScriptParser.ArrowFunctionParametersContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitAnonymousFunctionDecl(ctx: JavaScriptParser.AnonymousFunctionDeclContext?): JsNode? {
-        val function = scopeContext.enterFunction()
-
-        // Function is generator
-        if (ctx?.Multiply() != null)
-            function.modifiers.add(JsFunction.Modifier.GENERATOR)
-
-        ctx?.formalParameterList()?.formalParameterArg()?.forEach { paramNode ->
-            val identifier = paramNode.assignable().identifier()
-                ?: TODO("Only identifier parameters are supported yet")
-
-            val paramName = scopeContext.localNameFor(identifier.text)
-            function.parameters.add(JsParameter(paramName).applyLocation(fileName,paramNode))
-        }
-
-        val block = visitFunctionBody(ctx?.functionBody()) ?: TODO("Block is missing")
-        function.body = block as JsBlock
-
-        return function.also {
-            scopeContext.exitFunction()
-        }
-    }
-
-    override fun visitArrowFunction(ctx: JavaScriptParser.ArrowFunctionContext?): JsNode? {
+    override fun visitArrowFunctionBody(ctx: JavaScriptParser.ArrowFunctionBodyContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitArrowFunctionParameters(ctx: JavaScriptParser.ArrowFunctionParametersContext?): JsNode? {
+    override fun visitAssignmentOperator(ctx: JavaScriptParser.AssignmentOperatorContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitArrowFunctionBody(ctx: JavaScriptParser.ArrowFunctionBodyContext?): JsNode? {
+    override fun visitLiteral(ctx: JavaScriptParser.LiteralContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitAssignmentOperator(ctx: JavaScriptParser.AssignmentOperatorContext?): JsNode? {
+    override fun visitTemplateStringLiteral(ctx: JavaScriptParser.TemplateStringLiteralContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitLiteral(ctx: JavaScriptParser.LiteralContext?): JsNode? {
+    override fun visitTemplateStringAtom(ctx: JavaScriptParser.TemplateStringAtomContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitTemplateStringLiteral(ctx: JavaScriptParser.TemplateStringLiteralContext?): JsNode? {
+    override fun visitNumericLiteral(ctx: JavaScriptParser.NumericLiteralContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitTemplateStringAtom(ctx: JavaScriptParser.TemplateStringAtomContext?): JsNode? {
+    override fun visitBigintLiteral(ctx: JavaScriptParser.BigintLiteralContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitNumericLiteral(ctx: JavaScriptParser.NumericLiteralContext?): JsNode? {
+    override fun visitGetter(ctx: JavaScriptParser.GetterContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitBigintLiteral(ctx: JavaScriptParser.BigintLiteralContext?): JsNode? {
+    override fun visitSetter(ctx: JavaScriptParser.SetterContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitGetter(ctx: JavaScriptParser.GetterContext?): JsNode? {
+    override fun visitIdentifierName(ctx: JavaScriptParser.IdentifierNameContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitSetter(ctx: JavaScriptParser.SetterContext?): JsNode? {
+    override fun visitIdentifier(ctx: JavaScriptParser.IdentifierContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitIdentifierName(ctx: JavaScriptParser.IdentifierNameContext?): JsNode? {
+    override fun visitReservedWord(ctx: JavaScriptParser.ReservedWordContext): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitIdentifier(ctx: JavaScriptParser.IdentifierContext?): JsNode? {
-        TODO("Not yet implemented")
-    }
-
-    override fun visitReservedWord(ctx: JavaScriptParser.ReservedWordContext?): JsNode? {
-        TODO("Not yet implemented")
-    }
-
-    override fun visitKeyword(ctx: JavaScriptParser.KeywordContext?): JsNode? {
+    override fun visitKeyword(ctx: JavaScriptParser.KeywordContext): JsNode? {
         when (ctx?.start?.type) {
             JavaScriptParser.Break -> return JsBreak()
             JavaScriptParser.Do -> return JsBreak()
@@ -667,11 +658,11 @@ class JsAstMapperVisitor(private val fileName: String, private val scopeContext:
         }
     }
 
-    override fun visitLet_(ctx: JavaScriptParser.Let_Context?): JsNode? {
+    override fun visitLet_(ctx: JavaScriptParser.Let_Context): JsNode? {
         TODO("Not yet implemented")
     }
 
-    override fun visitEos(ctx: JavaScriptParser.EosContext?): JsNode? {
+    override fun visitEos(ctx: JavaScriptParser.EosContext): JsNode? {
         TODO("Not yet implemented")
     }
 
@@ -689,5 +680,38 @@ class JsAstMapperVisitor(private val fileName: String, private val scopeContext:
 
     override fun visitErrorNode(node: ErrorNode?): JsNode? {
         TODO("Not yet implemented")
+    }
+
+    private fun mapFunction(
+        name: String?,
+        body: JavaScriptParser.FunctionBodyContext,
+        params: List<JavaScriptParser.FormalParameterArgContext>,
+        isGenerator: Boolean
+    ): JsFunction {
+        val functionName = when {
+            name.isNullOrEmpty() -> null
+            else -> scopeContext.localNameFor(name)
+        }
+
+        val function = scopeContext.enterFunction()
+        function.name = functionName
+
+        if (isGenerator)
+            function.modifiers.add(JsFunction.Modifier.GENERATOR)
+
+        params.forEach { paramNode ->
+            val identifier = paramNode.assignable().identifier()
+                ?: TODO("Only identifier parameters are supported yet")
+
+            val paramName = scopeContext.localNameFor(identifier.text)
+            function.parameters.add(JsParameter(paramName).applyLocation(fileName,paramNode))
+        }
+
+        val block = visitFunctionBody(body) ?: TODO("Block is missing")
+        function.body = block as JsBlock
+
+        return function.also {
+            scopeContext.exitFunction()
+        }
     }
 }

@@ -21,10 +21,8 @@ object JsAntlrParser {
         reporter: ErrorReporter,
         scope: JsScope,
         fileName: String
-    ): List<JsStatement>? {
-        val parser = createJsParser(fileName, code, 0, CodePosition(0, 0)).apply {
-            addErrorListener(reporter)
-        }
+    ): List<JsStatement> {
+        val parser = initializeParser(fileName, code, 0, CodePosition(0, 0), reporter)
         val mapper = JsAstMapper(scope, fileName)
         val statements = parser.statementList()
         val jsStatements = statements.statement().map {
@@ -53,23 +51,34 @@ object JsAntlrParser {
         reporter: ErrorReporter,
         scope: JsScope
     ): JsFunction? {
-        val parser = createJsParser(fileName, code, offset, position).apply {
-            addErrorListener(reporter)
-        }
+        val parser = initializeParser(fileName, code, offset, position, reporter)
         val mapper = JsAstMapper(scope, fileName)
         val function = parser.functionDeclaration()
         return mapper.mapFunction(function)
     }
 
-    private fun createJsParser(file: String, code: String, offset: Int, startPosition: CodePosition): JavaScriptParser {
+    private fun initializeParser(
+        file: String,
+        code: String,
+        offset: Int,
+        startPosition: CodePosition,
+        errorReporter: ErrorReporter
+    ): JavaScriptParser {
         val inputStream = CharStreams.fromString(code, file)
         inputStream.seek(offset)
         val offsetStream = OffsetCharStream(
             inputStream,
             startPosition.line,
             startPosition.offset)
-        val lexer = JavaScriptLexer(offsetStream)
+        val lexer = JavaScriptLexer(offsetStream).apply {
+            removeErrorListeners()
+            addErrorListener(errorReporter)
+        }
+
         val tokenStream = CommonTokenStream(lexer)
-        return JavaScriptParser(tokenStream)
+        return JavaScriptParser(tokenStream).apply {
+            removeErrorListeners()
+            addErrorListener(errorReporter)
+        }
     }
 }

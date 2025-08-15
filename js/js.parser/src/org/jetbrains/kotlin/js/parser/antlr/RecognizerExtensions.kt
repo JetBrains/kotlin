@@ -10,9 +10,8 @@ import com.google.gwt.dev.js.rhino.ErrorReporter
 import org.antlr.v4.runtime.BaseErrorListener
 import org.antlr.v4.runtime.RecognitionException
 import org.antlr.v4.runtime.Recognizer
-import org.jetbrains.kotlin.js.parser.antlr.generated.JavaScriptParser
 
-fun JavaScriptParser.addErrorListener(reporter: ErrorReporter) {
+fun Recognizer<*, *>.addErrorListener(reporter: ErrorReporter) {
     addErrorListener(object : BaseErrorListener() {
         override fun syntaxError(
             recognizer: Recognizer<*, *>?,
