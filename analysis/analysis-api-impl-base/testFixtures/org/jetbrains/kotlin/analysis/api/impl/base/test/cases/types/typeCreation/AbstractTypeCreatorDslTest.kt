@@ -131,6 +131,7 @@ abstract class AbstractTypeCreatorDslTest : AbstractAnalysisApiBasedTest() {
             private val testClassesMapping: Map<String, KClass<out TestCases>> = mapOf(
                 "ClassType" to ClassTypeCreatorDslTestCases::class,
                 "DynamicType" to DynamicTypeCreatorDslTestCases::class,
+                "StarTypeProjection" to StarTypeProjectionCreatorDslTestCases::class,
             )
         }
 

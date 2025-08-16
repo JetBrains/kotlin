@@ -149,4 +149,20 @@ public class FirStandaloneNormalAnalysisSourceModuleTypeCreatorDslTestGenerated 
       runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/dynamicType/withAnnotations.kt");
     }
   }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/types/typeCreation/byDsl/starTypeProjection")
+  @TestDataPath("$PROJECT_ROOT")
+  public class StarTypeProjection {
+    @Test
+    public void testAllFilesPresentInStarTypeProjection() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/starTypeProjection"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("starTypeProjection.kt")
+    public void testStarTypeProjection() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/starTypeProjection/starTypeProjection.kt");
+    }
+  }
 }
