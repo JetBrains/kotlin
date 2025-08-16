@@ -20,24 +20,14 @@ import org.jetbrains.kotlin.test.services.temporaryDirectoryManager
 
 open class MainFunctionForBlackBoxTestsSourceProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
     companion object {
-        private val PACKAGE_REGEXP = """package ([\w.]+)""".toRegex()
-        private val START_BOX_METHOD_REGEX = """^fun box\(\)""".toRegex()
-        private val MIDDLE_BOX_METHOD_REGEX = """\nfun box\(\)""".toRegex()
-        private val START_SUSPEND_BOX_METHOD_REGEX = """^suspend fun box\(\)""".toRegex()
-        private val MIDDLE_SUSPEND_BOX_METHOD_REGEX = """\nsuspend fun box\(\)""".toRegex()
+        private val PACKAGE_REGEX = """(^|\n)package ([\w.]+)""".toRegex()
+        private val BOX_METHOD_REGEX = """(^|\n)fun box\(\)""".toRegex()
+        private val SUSPEND_BOX_METHOD_REGEX = """(^|\n)suspend fun box\(\)""".toRegex()
 
         const val BOX_MAIN_FILE_NAME = "Generated_Box_Main.kt"
 
         fun detectPackage(file: TestFile): String? {
-            return PACKAGE_REGEXP.find(file.originalContent)?.groups?.get(1)?.value
-        }
-
-        fun containsBoxMethod(file: TestFile): Boolean {
-            return containsBoxMethod(file.originalContent)
-        }
-
-        fun containsSuspendBoxMethod(file: TestFile): Boolean {
-            return containsBoxMethod(file.originalContent)
+            return PACKAGE_REGEX.find(file.originalContent)?.groups?.get(2)?.value
         }
 
         fun fileContainsBoxMethod(sourceFile: KtSourceFile): Boolean =
@@ -48,15 +38,12 @@ open class MainFunctionForBlackBoxTestsSourceProvider(testServices: TestServices
                 }
             }
 
-        fun containsBoxMethod(fileContent: String): Boolean {
-            return START_BOX_METHOD_REGEX.containsMatchIn(fileContent) ||
-                    MIDDLE_BOX_METHOD_REGEX.containsMatchIn(fileContent) ||
-                    containsSuspendBoxMethod(fileContent)
+        private fun containsBoxMethod(fileContent: String): Boolean {
+            return BOX_METHOD_REGEX.containsMatchIn(fileContent) || containsSuspendBoxMethod(fileContent)
         }
 
-        fun containsSuspendBoxMethod(fileContent: String): Boolean {
-            return START_SUSPEND_BOX_METHOD_REGEX.containsMatchIn(fileContent) ||
-                    MIDDLE_SUSPEND_BOX_METHOD_REGEX.containsMatchIn(fileContent)
+        private fun containsSuspendBoxMethod(fileContent: String): Boolean {
+            return SUSPEND_BOX_METHOD_REGEX.containsMatchIn(fileContent)
         }
     }
 
@@ -76,8 +63,8 @@ open class MainFunctionForBlackBoxTestsSourceProvider(testServices: TestServices
             return emptyList()
         }
 
-        val fileWithBox = module.files.firstOrNull { containsBoxMethod(it) } ?: return emptyList()
-        val suspendModifier = if (containsSuspendBoxMethod(fileWithBox)) "suspend " else ""
+        val fileWithBox = module.files.firstOrNull { containsBoxMethod(it.originalContent) } ?: return emptyList()
+        val suspendModifier = if (containsSuspendBoxMethod(fileWithBox.originalContent)) "suspend " else ""
         val mainBody = generateMainBody()
 
         val code = buildString {
