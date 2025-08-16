@@ -31,7 +31,7 @@ class NativeWithConfigurationCacheIT : KGPBaseTest() {
                 // We need to download compiler on the first build, that is why we are setting custom konan home dir without any compiler inside
                 konanDataDir = workingDir.resolve(".konan"),
                 nativeOptions = defaultBuildOptions.nativeOptions.copy(
-                    version = null,
+                    version = "2.1.21", // an arbitrary release version
                     distributionDownloadFromMaven = false, // please, remove the whole test, when this flag will be removed
                 ),
             ),

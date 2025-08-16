@@ -13,9 +13,16 @@ import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeNativeStdlibDependencyResolver
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
+import org.jetbrains.kotlin.gradle.util.provisionKotlinNativeDistribution
+import org.junit.Before
 import org.junit.Test
 
 class IdeNativeStdlibResolverTest {
+    // workaround for tests that don't unpack Kotlin Native when using local repo: KT-77580
+    @Before
+    fun setUp() {
+        provisionKotlinNativeDistribution()
+    }
 
 
     @Test
