@@ -219,5 +219,23 @@ abstract class AbstractTypeCreatorDslTest : AbstractAnalysisApiBasedTest() {
                 }
             }
         }
+
+        inner class DynamicType {
+            fun testDynamicType(): KaType {
+                return session.typeCreator.dynamicType()
+            }
+
+            fun testWithAnnotations(): KaType {
+                val annotationClassId1 = ClassId.fromString("MyAnno1")
+                val annotationClassId2 = ClassId.fromString("MyAnno2")
+                val annotationClassId3 = ClassId.fromString("MyAnno3")
+
+                return session.typeCreator.dynamicType {
+                    annotation(annotationClassId1)
+                    annotation(annotationClassId2)
+                    annotation(annotationClassId3)
+                }
+            }
+        }
     }
 }
