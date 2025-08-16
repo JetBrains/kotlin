@@ -138,5 +138,11 @@ abstract class AbstractTypeCreatorDslTest : AbstractAnalysisApiBasedTest() {
         protected fun getTypeParameterSymbolByCaret(label: String): KaTypeParameterSymbol {
             return (caretToType[label] as? KaTypeParameterType)?.symbol ?: error("Type under `$label` is not a type parameter type")
         }
+
+        inner class StarTypeProjection {
+            fun testStarTypeProjection(): KaTypeProjection {
+                return session.typeCreator.starTypeProjection()
+            }
+        }
     }
 }
