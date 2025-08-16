@@ -45,6 +45,10 @@ fun main(args: Array<String>) {
                 model("codegen/boxModernJdk")
             }
 
+            testClass<AbstractReflectionLegacyImplementationTest> {
+                model("codegen/box/reflection")
+            }
+
             testClass<AbstractFirPsiBlackBoxInlineCodegenTest> {
                 model("codegen/boxInline")
             }
