@@ -127,4 +127,26 @@ public class FirIdeNormalAnalysisSourceModuleTypeCreatorDslTestGenerated extends
       runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/classType/withGenericAnnotation.kt");
     }
   }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/types/typeCreation/byDsl/dynamicType")
+  @TestDataPath("$PROJECT_ROOT")
+  public class DynamicType {
+    @Test
+    public void testAllFilesPresentInDynamicType() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/dynamicType"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("dynamicType.kt")
+    public void testDynamicType() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/dynamicType/dynamicType.kt");
+    }
+
+    @Test
+    @TestMetadata("withAnnotations.kt")
+    public void testWithAnnotations() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/dynamicType/withAnnotations.kt");
+    }
+  }
 }

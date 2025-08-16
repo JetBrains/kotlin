@@ -55,4 +55,14 @@ public class FirIdeNormalAnalysisScriptSourceModuleTypeCreatorDslTestGenerated e
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/classType"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
   }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/types/typeCreation/byDsl/dynamicType")
+  @TestDataPath("$PROJECT_ROOT")
+  public class DynamicType {
+    @Test
+    public void testAllFilesPresentInDynamicType() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/dynamicType"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+  }
 }
