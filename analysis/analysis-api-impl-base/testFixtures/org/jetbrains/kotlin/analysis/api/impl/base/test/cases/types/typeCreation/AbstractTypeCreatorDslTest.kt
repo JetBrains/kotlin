@@ -237,5 +237,11 @@ abstract class AbstractTypeCreatorDslTest : AbstractAnalysisApiBasedTest() {
                 }
             }
         }
+
+        inner class StarTypeProjection {
+            fun testStarTypeProjection(): KaTypeProjection {
+                return session.typeCreator.starTypeProjection()
+            }
+        }
     }
 }
