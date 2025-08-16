@@ -1,5 +1,5 @@
 FILE fqName:<root> fileName:/Generated_Box_Main.kt
-  FUN name:main visibility:public modality:FINAL returnType:kotlin.Unit [suspend]
+  FUN name:main visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:res type:kotlin.String [val]
         CALL 'public final fun box (): kotlin.String declared in <root>' type=kotlin.String origin=null
