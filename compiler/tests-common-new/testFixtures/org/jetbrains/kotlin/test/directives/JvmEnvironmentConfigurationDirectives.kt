@@ -82,4 +82,6 @@ object JvmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         description = "Configure generation scheme of type-checking 'when' expressions",
         additionalParser = JvmWhenGenerationScheme.Companion::fromString
     )
+
+    val USE_LEGACY_REFLECTION_IMPLEMENTATION by directive("Use legacy reflection implementation")
 }

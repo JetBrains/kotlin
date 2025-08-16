@@ -21,7 +21,6 @@ data class U(val s: S) {
     fun bar(u: S): U = this
 }
 
-@kotlin.ExperimentalStdlibApi
 fun box(): String {
     assertEquals(listOf(Int::class.java, String::class.java), ::S.parameters.map { it.type.javaType })
     assertEquals(S::class.java, ::S.returnType.javaType)

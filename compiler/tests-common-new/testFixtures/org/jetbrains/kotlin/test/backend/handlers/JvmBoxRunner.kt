@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.test.clientserver.TestProxy
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.ATTACH_DEBUGGER
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.REQUIRES_SEPARATE_PROCESS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_LEGACY_REFLECTION_IMPLEMENTATION
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ENABLE_JVM_PREVIEW
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.PREFER_IN_TEST_OVER_STDLIB
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
@@ -248,6 +249,7 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
             runIf(ATTACH_DEBUGGER in module.directives) { "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005" },
             "-ea",
             runIf(ENABLE_JVM_PREVIEW in module.directives) { "--enable-preview" },
+            runIf(USE_LEGACY_REFLECTION_IMPLEMENTATION in module.directives) { "-Dkotlin.reflect.jvm.useK1Implementation=true" },
             "-classpath",
             classPath.joinToString(File.pathSeparator, transform = { File(it.toURI()).absolutePath }),
         ) + mainClassAndArguments
