@@ -1,3 +1,54 @@
+## 2.2.20-RC
+
+### Backend. Wasm
+
+- [`KT-80018`](https://youtrack.jetbrains.com/issue/KT-80018) K/Wasm: exceptions don't work properly in JavaScriptCore (vm inside Safari, WebKit)
+
+### Compiler
+
+- [`KT-79979`](https://youtrack.jetbrains.com/issue/KT-79979) K2: ClassCastException when overriding extension property with delegation
+- [`KT-79866`](https://youtrack.jetbrains.com/issue/KT-79866) kotlinc 2.2.0 silently emits 'NonExistentClass' instead of reporting an error
+- [`KT-79276`](https://youtrack.jetbrains.com/issue/KT-79276) Dexing fails with "Cannot read field X because <local0> is null" with 2.2.0
+- [`KT-79781`](https://youtrack.jetbrains.com/issue/KT-79781) Missing MISSING_DEPENDENCY_CLASS when using type alias with inaccessible RHS
+- [`KT-79547`](https://youtrack.jetbrains.com/issue/KT-79547) "UnsupportedOperationException: Not supported" with inlining and value classes
+- [`KT-79519`](https://youtrack.jetbrains.com/issue/KT-79519) Nested type alias is unreachable from another module
+
+### Compose compiler
+
+- [`b/432262806`](https://issuetracker.google.com/issues/432262806) Fix target description lookup
+- [`b/436870733`](https://issuetracker.google.com/issues/436870733) Prevent lambda memoization in local classes inside a composable
+- [`b/432485982`](https://issuetracker.google.com/issues/432485982) Fix AbstractMethodError when overriding function with default parameters
+
+### JavaScript
+
+- [`KT-79916`](https://youtrack.jetbrains.com/issue/KT-79916) K/JS: "Uncaught TypeError" when using 'Xes-long-as-bigint' in compose-html
+- [`KT-79977`](https://youtrack.jetbrains.com/issue/KT-79977) KJS: Long.rotateLeft returns incorrect result when BigInts are enabled
+- [`KT-79644`](https://youtrack.jetbrains.com/issue/KT-79644) BigInt enabled for ES 2015 despite being an ES 2020 feature
+- [`KT-79089`](https://youtrack.jetbrains.com/issue/KT-79089) KJS: Could not load reporter / Cannot find module 'mocha' when running jsNode tests
+
+### Native
+
+- [`KT-79075`](https://youtrack.jetbrains.com/issue/KT-79075) Stuck on Kotlin_getSourceInfo_core_symbolication
+
+### Tools. Compiler plugins. Serialization
+
+- [`KT-79695`](https://youtrack.jetbrains.com/issue/KT-79695) Serialization does not exclude field-less properties in 2.2.20-Beta2
+
+### Tools. Gradle. JS
+
+- [`KT-79921`](https://youtrack.jetbrains.com/issue/KT-79921) Web Tooling Gradle API does not respect webpack reconfiguration
+- [`KT-76996`](https://youtrack.jetbrains.com/issue/KT-76996) Wasm: js tasks triggers wasm subtasks
+
+### Tools. Gradle. Swift Export
+
+- [`KT-79554`](https://youtrack.jetbrains.com/issue/KT-79554) Swift Export status diagnostic is produced even if swift export is not configured
+
+### Tools. Kapt
+
+- [`KT-79641`](https://youtrack.jetbrains.com/issue/KT-79641) Kapt: too much information is printed in verbose mode
+- [`KT-79136`](https://youtrack.jetbrains.com/issue/KT-79136) K2 kapt: unresolved nested class references in annotation arguments are generated without outer class names
+
+
 ## 2.2.20-Beta2
 
 ### Analysis API. Code Compilation
