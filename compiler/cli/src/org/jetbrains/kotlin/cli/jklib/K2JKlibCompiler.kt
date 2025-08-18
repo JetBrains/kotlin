@@ -364,14 +364,14 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
 //                require(!it.exists) { "Collision writing intermediate KLib $it" }
 //                it.deleteOnExit()
 //            }
-        // DEBUG
-        // val klibDestination = File(System.getProperty("java.io.tmpdir"), "test.klib")
+//         DEBUG
+//         val klibDestination = File(System.getProperty("java.io.tmpdir"), "test.klib")
         val klibDestination = destination
         println(destination)
         val exitCodeKlib = compileLibrary(arguments, rootDisposable, paths, klibDestination)
         if (outputKind == OutputKind.LIBRARY || exitCodeKlib != ExitCode.OK) return exitCodeKlib
-        // DEBUG
-        // compileIr(arguments, rootDisposable, klibDestination);
+//        DEBUG
+//        compileIr(arguments, rootDisposable, klibDestination)
         return ExitCode.OK
     }
 
@@ -441,17 +441,17 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
         paths: KotlinPaths?
     ): CompilationResult {
         this.configuration = configuration
-        val klibDestination =  File(System.getProperty("java.io.tmpdir"), "${UUID.randomUUID()}.klib").also {
+        val klibDestination = File(System.getProperty("java.io.tmpdir"), "${UUID.randomUUID()}.klib").also {
             require(!it.exists) { "Collision writing intermediate KLib $it" }
             it.deleteOnExit()
         }
-        // DEBUG
-		// val klibDestination = File(System.getProperty("java.io.tmpdir"), "test.klib")
+//         DEBUG
+//		 val klibDestination = File(System.getProperty("java.io.tmpdir"), "test.klib")
         compileLibrary(arguments, rootDisposable, paths, klibDestination)
-        // DEBUG
-        // if (!klibDestination.exists) {
-        //     error("Failed to compile KLIB $klibDestination")
-        // }
+//         DEBUG
+//         if (!klibDestination.exists) {
+//             error("Failed to compile KLIB $klibDestination")
+//         }
         return compileIr(arguments, rootDisposable, klibDestination)
     }
 
@@ -571,19 +571,22 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
         )
 
         // Deserialize modules
+        // We explicitly use the DeserializationStrategy.ALL to deserialize the whole world,
+        // so that we don't rely on linker side effects for proper deserialization.
         linker.deserializeIrModuleHeader(
             jarDepsModuleDescriptor,
             null,
             { DeserializationStrategy.ALL },
             jarDepsModuleDescriptor.name.asString()
         )
+        lateinit var mainModuleFragment: IrModuleFragment
         for (dep in sortedDependencies) {
             val descriptor = getModuleDescriptor(dep)
             when {
                 descriptor == mainModule -> {
-                    linker.deserializeIrModuleHeader(descriptor, dep, { DeserializationStrategy.ALL })
+                    mainModuleFragment = linker.deserializeIrModuleHeader(descriptor, dep, { DeserializationStrategy.ALL })
                 }
-                else -> linker.deserializeIrModuleHeader(descriptor, dep, { DeserializationStrategy.EXPLICITLY_EXPORTED })
+                else -> linker.deserializeIrModuleHeader(descriptor, dep, { DeserializationStrategy.ALL })
             }
         }
 
@@ -595,14 +598,13 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
             true
         )
 
-
-        val generatorContext = translator.createGeneratorContext(mainModule, trace.bindingContext, symbolTable)
-//        linker.init(null)
-        val mainModuleFragment = translator.generateModuleFragment(generatorContext, emptyList(), listOf(linker))
+        linker.init(null)
         ExternalDependenciesGenerator(symbolTable, listOf(linker)).generateUnboundSymbolsAsDependencies()
-
         linker.postProcess(inOrAfterLinkageStep = true)
 
+//        DEBUG
+//        error("DON'T REACH")
+        println("Files in deserialized module: ${mainModuleFragment.files.size}")
         return CompilationResult(pluginContext, mainModuleFragment)
     }
 
@@ -635,7 +637,6 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
         paths: KotlinPaths?,
         destination: File,
     ): ExitCode {
-
         val collector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         val performanceManager = configuration.getNotNull(CLIConfigurationKeys.PERF_MANAGER)
 
