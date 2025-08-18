@@ -214,7 +214,11 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
         }
 
         val process = launchSeparateJvmProcess(javaExe, module, classPath, mainClassAndArguments)
-        process.waitFor(3, TimeUnit.MINUTES)
+        if (ATTACH_DEBUGGER in module.directives) {
+            process.waitFor()
+        } else {
+            process.waitFor(3, TimeUnit.MINUTES)
+        }
         return try {
             when (process.exitValue()) {
                 0 -> "OK"
