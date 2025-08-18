@@ -67,6 +67,16 @@ public class FirIdeNormalAnalysisScriptSourceModuleTypeCreatorDslTestGenerated e
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/types/typeCreation/byDsl/functionValueParameter")
+  @TestDataPath("$PROJECT_ROOT")
+  public class FunctionValueParameter {
+    @Test
+    public void testAllFilesPresentInFunctionValueParameter() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/functionValueParameter"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/types/typeCreation/byDsl/starTypeProjection")
   @TestDataPath("$PROJECT_ROOT")
   public class StarTypeProjection {

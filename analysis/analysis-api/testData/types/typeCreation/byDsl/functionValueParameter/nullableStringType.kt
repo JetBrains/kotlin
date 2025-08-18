@@ -1,0 +1,1 @@
+val x = "puea<caret_type>oueao"

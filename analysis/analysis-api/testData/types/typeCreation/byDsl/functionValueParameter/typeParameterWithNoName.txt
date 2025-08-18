@@ -1,0 +1,25 @@
+KaFunctionValueParameter
+Name: null
+Type: KaTypeParameterType:
+  abbreviation: null
+  annotations: []
+  name: T
+  symbol: KaTypeParameterSymbol:
+    annotations: []
+    compilerVisibility: Local
+    isActual: false
+    isExpect: false
+    isReified: true
+    location: LOCAL
+    modality: FINAL
+    name: T
+    origin: SOURCE
+    upperBounds: []
+    variance: INVARIANT
+    visibility: LOCAL
+  isMarkedNullable: false
+  isNullable: true
+  hasFlexibleNullability: false
+
+Rendered function value parameter:
+null: T

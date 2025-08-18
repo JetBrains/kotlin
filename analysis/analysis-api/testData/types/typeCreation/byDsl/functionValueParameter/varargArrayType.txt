@@ -1,0 +1,20 @@
+KaFunctionValueParameter
+Name: myName
+Type: KaUsualClassType:
+  abbreviation: null
+  annotations: []
+  classId: kotlin/IntArray
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: IntArray
+      symbol: KaNamedClassSymbol(kotlin/IntArray)
+      typeArguments: []
+  ]
+  symbol: KaNamedClassSymbol(kotlin/IntArray)
+  typeArguments: []
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
+
+Rendered function value parameter:
+myName: kotlin.IntArray

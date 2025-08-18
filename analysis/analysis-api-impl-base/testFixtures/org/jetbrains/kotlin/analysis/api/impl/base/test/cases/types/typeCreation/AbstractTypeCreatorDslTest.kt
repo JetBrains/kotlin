@@ -322,5 +322,35 @@ abstract class AbstractTypeCreatorDslTest : AbstractAnalysisApiBasedTest() {
                 }
             }
         }
+
+        inner class FunctionValueParameter {
+            fun testNamedIntParameter(): KaFunctionValueParameter {
+                val type = getTypeByCaret("type")
+                return session.typeCreator.functionValueParameter(Name.identifier("myName")) {
+                    type
+                }
+            }
+
+            fun testNullableStringType(): KaFunctionValueParameter {
+                val symbol = getClassLikeSymbolByCaret("type")
+                return session.typeCreator.functionValueParameter(Name.identifier("myName")) {
+                    classType(symbol) {
+                        isMarkedNullable = true
+                    }
+                }
+            }
+
+            fun testTypeParameterWithNoName(): KaFunctionValueParameter {
+                val type = getTypeByCaret("type")
+                return session.typeCreator.functionValueParameter(null, type)
+            }
+
+            fun testVarargArrayType(): KaFunctionValueParameter {
+                val type = getTypeByCaret("type")
+                return session.typeCreator.functionValueParameter(Name.identifier("myName")) {
+                    varargArrayType(type)
+                }
+            }
+        }
     }
 }

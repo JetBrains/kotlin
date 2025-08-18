@@ -139,6 +139,40 @@ public class FirIdeNormalAnalysisSourceModuleTypeCreatorDslTestGenerated extends
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/types/typeCreation/byDsl/functionValueParameter")
+  @TestDataPath("$PROJECT_ROOT")
+  public class FunctionValueParameter {
+    @Test
+    public void testAllFilesPresentInFunctionValueParameter() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/functionValueParameter"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("namedIntParameter.kt")
+    public void testNamedIntParameter() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/functionValueParameter/namedIntParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("nullableStringType.kt")
+    public void testNullableStringType() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/functionValueParameter/nullableStringType.kt");
+    }
+
+    @Test
+    @TestMetadata("typeParameterWithNoName.kt")
+    public void testTypeParameterWithNoName() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/functionValueParameter/typeParameterWithNoName.kt");
+    }
+
+    @Test
+    @TestMetadata("varargArrayType.kt")
+    public void testVarargArrayType() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/functionValueParameter/varargArrayType.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/types/typeCreation/byDsl/starTypeProjection")
   @TestDataPath("$PROJECT_ROOT")
   public class StarTypeProjection {
