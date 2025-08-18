@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -82,10 +83,16 @@ class IrImportedSchemaGenerator(
         return super.visitFunction(declaration)
     }
 
-
-    val typeOf = context.referenceFunctions(CallableId(FqName("kotlin.reflect"), Name.identifier("typeOf"))).single()
-
     override fun visitProperty(declaration: IrProperty): IrStatement {
+        val typeOf = context.referenceFunctions(CallableId(FqName("kotlin.reflect"), Name.identifier("typeOf")))
+            .firstOrNull {
+                it.owner.hasShape(
+                    dispatchReceiver = false,
+                    extensionReceiver = false,
+                    contextParameters = 0,
+                    regularParameters = 0,
+                )
+            } ?: error("kotlin.reflect.typeOf function not found")
         val getter = declaration.getter ?: return declaration
         val schemaType = declaration.parentClassOrNull?.parentClassOrNull?.defaultType ?: return declaration
         if (declaration.origin.isFromDataSchemaSource() && declaration.name == Names.SCHEMA_KTYPE) {
