@@ -77,6 +77,16 @@ public class FirIdeNormalAnalysisScriptSourceModuleTypeCreatorDslTestGenerated e
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/types/typeCreation/byDsl/typeParameterType")
+  @TestDataPath("$PROJECT_ROOT")
+  public class TypeParameterType {
+    @Test
+    public void testAllFilesPresentInTypeParameterType() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/typeParameterType"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/types/typeCreation/byDsl/varargArrayType")
   @TestDataPath("$PROJECT_ROOT")
   public class VarargArrayType {
