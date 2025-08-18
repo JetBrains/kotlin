@@ -55664,6 +55664,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
       }
 
       @Test
+      @TestMetadata("rawTypeToString.kt")
+      public void testRawTypeToString() {
+        runTest("compiler/testData/codegen/box/reflection/methodsFromAny/rawTypeToString.kt");
+      }
+
+      @Test
       @TestMetadata("typeEqualsHashCode.kt")
       public void testTypeEqualsHashCode() {
         runTest("compiler/testData/codegen/box/reflection/methodsFromAny/typeEqualsHashCode.kt");

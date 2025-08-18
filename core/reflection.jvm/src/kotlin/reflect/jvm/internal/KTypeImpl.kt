@@ -165,6 +165,9 @@ internal class KTypeImpl(
     override val isSuspendFunctionType: Boolean
         get() = type.isSuspendFunctionType
 
+    override val isRawType: Boolean
+        get() = type is RawType
+
     override fun lowerBoundIfFlexible(): AbstractKType? =
         when (val unwrapped = type.unwrap()) {
             is FlexibleType -> KTypeImpl(unwrapped.lowerBound)

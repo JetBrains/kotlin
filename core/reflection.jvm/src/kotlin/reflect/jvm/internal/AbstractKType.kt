@@ -22,6 +22,7 @@ internal abstract class AbstractKType : KTypeBase {
     abstract val isNothingType: Boolean
     abstract val isMutableCollectionType: Boolean
     abstract val isSuspendFunctionType: Boolean
+    abstract val isRawType: Boolean
     abstract fun lowerBoundIfFlexible(): AbstractKType?
     abstract fun upperBoundIfFlexible(): AbstractKType?
 }
