@@ -133,6 +133,7 @@ abstract class AbstractTypeCreatorDslTest : AbstractAnalysisApiBasedTest() {
                 "StarTypeProjection" to StarTypeProjectionCreatorDslTestCases::class,
                 "VarargArrayType" to VarargArrayTypeCreatorDslTestCases::class,
                 "TypeParameterType" to TypeParameterTypeCreatorDslTestCases::class,
+                "TypeProjection" to TypeProjectionCreatorDslTestCases::class,
             )
         }
 

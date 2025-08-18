@@ -201,6 +201,28 @@ public class FirStandaloneNormalAnalysisSourceModuleTypeCreatorDslTestGenerated 
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/types/typeCreation/byDsl/typeProjection")
+  @TestDataPath("$PROJECT_ROOT")
+  public class TypeProjection {
+    @Test
+    public void testAllFilesPresentInTypeProjection() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/typeProjection"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("intWithInVariance.kt")
+    public void testIntWithInVariance() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/typeProjection/intWithInVariance.kt");
+    }
+
+    @Test
+    @TestMetadata("invariantStringTypeMarkedNullable.kt")
+    public void testInvariantStringTypeMarkedNullable() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/typeProjection/invariantStringTypeMarkedNullable.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/types/typeCreation/byDsl/varargArrayType")
   @TestDataPath("$PROJECT_ROOT")
   public class VarargArrayType {
