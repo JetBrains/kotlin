@@ -330,6 +330,12 @@ public class FirJsKlibSyntheticAccessorsBoxTestGenerated extends AbstractFirJsCo
       }
 
       @Test
+      @TestMetadata("leakingPrivateConstructorThroughObjectInInternalInlineFun.kt")
+      public void testLeakingPrivateConstructorThroughObjectInInternalInlineFun() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateConstructorThroughObjectInInternalInlineFun.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateConstructorThroughReferenceInInternalInlineFun.kt")
       public void testLeakingPrivateConstructorThroughReferenceInInternalInlineFun() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateConstructorThroughReferenceInInternalInlineFun.kt");
@@ -682,6 +688,12 @@ public class FirJsKlibSyntheticAccessorsBoxTestGenerated extends AbstractFirJsCo
       }
 
       @Test
+      @TestMetadata("leakingPrivateConstructorThroughObjectInInternalInlineFun.kt")
+      public void testLeakingPrivateConstructorThroughObjectInInternalInlineFun() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateConstructorThroughObjectInInternalInlineFun.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateConstructorThroughReferenceInInternalInlineFun.kt")
       public void testLeakingPrivateConstructorThroughReferenceInInternalInlineFun() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateConstructorThroughReferenceInInternalInlineFun.kt");
@@ -989,6 +1001,12 @@ public class FirJsKlibSyntheticAccessorsBoxTestGenerated extends AbstractFirJsCo
       @Test
       public void testAllFilesPresentInSingleFile() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/privateMember/singleFile"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+
+      @Test
+      @TestMetadata("leakingPrivateConstructorThroughObjectInInternalInlineFun.kt")
+      public void testLeakingPrivateConstructorThroughObjectInInternalInlineFun() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/leakingPrivateConstructorThroughObjectInInternalInlineFun.kt");
       }
 
       @Test
