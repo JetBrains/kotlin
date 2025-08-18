@@ -13,6 +13,9 @@ dependencies {
     implementation(project(":kotlin-metadata"))
 
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
+    constraints {
+        api(libs.apache.commons.lang)
+    }
 }
 
 runtimeJar {

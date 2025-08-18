@@ -12,6 +12,10 @@ dependencies {
     implementation(libs.gson)
     implementation("org.apache.velocity:velocity-engine-core:2.3")
     implementation(libs.kotlinx.serialization.core)
+
+    constraints {
+        api(libs.apache.commons.lang)
+    }
 }
 
 node {

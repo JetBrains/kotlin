@@ -144,7 +144,7 @@ val intransitiveTestDependenciesJars = configurations.detachedConfiguration().ap
     isTransitive = false
     // gson is actually also shadowed and embedded in KGP. In these tests it is used in XcRunRuntimeUtils
     dependencies.add(project.dependencies.create(commonDependency("com.google.code.gson:gson")))
-    dependencies.add(project.dependencies.create(commonDependency("commons-lang:commons-lang")))
+    dependencies.add(project.dependencies.create(commonDependency("org.apache.commons:commons-lang3")))
     dependencies.add(project.dependencies.project(":native:executors"))
     dependencies.add(project.dependencies.project(":kotlin-compiler-runner-unshaded"))
     dependencies.add(project.dependencies.project(":kotlin-test"))

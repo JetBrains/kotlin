@@ -109,7 +109,7 @@ dependencies {
     // todo: remove unnecessary dependencies
     testImplementation(project(":kotlin-compiler-runner-unshaded"))
 
-    testImplementation(commonDependency("commons-lang:commons-lang"))
+    testImplementation(commonDependency("org.apache.commons:commons-lang3"))
     testApi(testFixtures(project(":compiler:tests-common")))
     testApi(testFixtures(project(":compiler:tests-common-new")))
     testApi(testFixtures(project(":compiler:test-infrastructure")))

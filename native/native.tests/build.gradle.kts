@@ -10,7 +10,7 @@ dependencies {
     testFixturesApi(kotlinStdlib())
     testFixturesApi(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testFixturesApi(intellijCore())
-    testFixturesApi(commonDependency("commons-lang:commons-lang"))
+    testFixturesApi(commonDependency("org.apache.commons:commons-lang3"))
     testFixturesApi(commonDependency("org.jetbrains.teamcity:serviceMessages"))
     testFixturesApi(project(":kotlin-compiler-runner-unshaded"))
     testFixturesApi(testFixtures(project(":compiler:tests-common")))

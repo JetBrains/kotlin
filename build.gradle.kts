@@ -17,7 +17,8 @@ buildscript {
      * Affected Libraries:
      * └── org.apache.commons
      *     ├── commons-compress:* → 1.27.1
-     *     └── commons-io:* → 2.18.0
+     *     ├── commons-io:* → 2.18.0
+     *     └── commons-lang3:* → 3.18.0
      *
      * Mitigated Vulnerabilities:
      * 1. Commons Compress
@@ -28,6 +29,9 @@ buildscript {
      * 2. Commons IO
      *    - CVE-2024-26308: Security vulnerability
      *    - CVE-2023-42503: Input processing risk
+     *
+     * 3. Commons Lang
+     *    - CVE-2025-48924: Uncontrolled Recursion vulnerability
      */
     configurations.all {
         resolutionStrategy.eachDependency {
@@ -39,6 +43,10 @@ buildscript {
             if (requested.group == "commons-io" && requested.name == "commons-io") {
                 useVersion(libs.versions.commons.io.get())
                 because("CVE-2024-26308, CVE-2023-42503")
+            }
+            if (requested.group == "org.apache.commons" && requested.name == "commons-lang3") {
+                useVersion(libs.versions.commons.lang.get())
+                because("CVE-2025-48924")
             }
         }
     }

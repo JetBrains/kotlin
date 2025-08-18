@@ -61,6 +61,7 @@ dataframe = "1.0.0-Beta2"
 commons-beanutils = "1.11.0"
 commons-compress = "1.27.1"
 commons-io = "2.18.0"
+commons-lang = "3.18.0"
 dataframe-dev = "1.0.0-dev-8218"
 org-jetbrains-syntax-api = "0.3.340"
 org-jetbrains-annotations = "26.0.2"
@@ -98,6 +99,7 @@ dataframe-csv-dev = { module = "org.jetbrains.kotlinx:dataframe-csv", version.re
 apache-commons-beanutils = { module = "commons-beanutils:commons-beanutils", version.ref = "commons-beanutils" }
 apache-commons-compress = { module = "org.apache.commons:commons-compress", version.ref = "commons-compress" }
 apache-commons-io = { module = "commons-io:commons-io", version.ref = "commons-io" }
+apache-commons-lang = { module = "org.apache.commons:commons-lang3", version.ref = "commons-lang" }
 
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
