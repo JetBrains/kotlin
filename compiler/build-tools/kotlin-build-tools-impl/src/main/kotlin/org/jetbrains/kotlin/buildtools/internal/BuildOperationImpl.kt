@@ -13,6 +13,9 @@ import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.ProjectId
 import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
+import java.io.DataInputStream
+import java.io.DataOutputStream
+import java.io.ObjectOutputStream
 
 internal abstract class BuildOperationImpl<R> : BuildOperation<R> {
     private val options: Options = Options(BuildOperation::class)
@@ -41,7 +44,9 @@ internal abstract class BuildOperationImpl<R> : BuildOperation<R> {
 
     companion object {
         val METRICS_COLLECTOR: Option<BuildMetricsCollector?> = Option("METRICS_COLLECTOR", default = null)
-        val XX_KGP_METRICS_COLLECTOR: Option<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>?> =
-            Option("XX_KGP_METRICS_COLLECTOR", default = null)
+        val XX_KGP_METRICS_COLLECTOR: Option<Boolean> =
+            Option("XX_KGP_METRICS_COLLECTOR", default = false)
+        val XX_KGP_METRICS_COLLECTOR_OUT: Option<ByteArray?> =
+            Option("XX_KGP_METRICS_COLLECTOR_OUT")
     }
 }

@@ -105,5 +105,8 @@ private fun ValueType.toMetricsReporterType(): BuildMetricsCollector.ValueType {
 }
 
 internal fun BuildOperationImpl<*>.getMetricsReporter(): BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric> =
-    this[METRICS_COLLECTOR]?.let { BuildMetricsReporterAdapter(it) } ?: this[BuildOperationImpl.Companion.XX_KGP_METRICS_COLLECTOR]
-    ?: DoNothingBuildMetricsReporter
+    this[METRICS_COLLECTOR]?.let { BuildMetricsReporterAdapter(it) } ?: if (this[BuildOperationImpl.XX_KGP_METRICS_COLLECTOR]) {
+        BuildMetricsReporterImpl()
+    } else {
+        DoNothingBuildMetricsReporter
+    }
