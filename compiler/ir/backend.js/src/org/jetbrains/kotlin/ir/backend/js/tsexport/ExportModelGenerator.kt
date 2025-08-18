@@ -608,11 +608,13 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
             nonNullType.isIntArray() -> ExportedType.Primitive.IntArray
             nonNullType.isFloatArray() -> ExportedType.Primitive.FloatArray
             nonNullType.isDoubleArray() -> ExportedType.Primitive.DoubleArray
+            nonNullType.isLongArray() -> when {
+                context.configuration.compileLongAsBigint -> ExportedType.Primitive.LongArray
+                else -> ExportedType.ErrorType("LongArray")
+            }
 
             // TODO: Cover these in frontend
             nonNullType.isBooleanArray() -> ExportedType.ErrorType("BooleanArray")
-            // TODO: Add BigInt64Array usage (KT-79284)
-            nonNullType.isLongArray() -> ExportedType.ErrorType("LongArray")
             nonNullType.isCharArray() -> ExportedType.ErrorType("CharArray")
 
             nonNullType.isString() -> ExportedType.Primitive.String
