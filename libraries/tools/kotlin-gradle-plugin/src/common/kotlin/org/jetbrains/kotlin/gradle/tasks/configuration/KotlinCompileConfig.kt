@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.gradle.tasks.DefaultKotlinJavaToolchain
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.utils.detachedResolvable
 import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
+import org.jetbrains.kotlin.gradle.utils.registerTransformForArtifactType
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import java.io.File
 
@@ -189,9 +190,11 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
         val classLoadersCachingService = ClassLoadersCachingBuildService.registerIfAbsent(project)
         val classpath = project.configurations.named(BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME)
         val kgpVersion = project.getKotlinPluginVersion()
-        project.dependencies.registerTransform(BuildToolsApiClasspathEntrySnapshotTransform::class.java) {
-            it.from.attributes.attribute(ARTIFACT_TYPE_ATTRIBUTE, JAR_ARTIFACT_TYPE)
-            it.to.attributes.attribute(ARTIFACT_TYPE_ATTRIBUTE, CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE)
+        project.dependencies.registerTransformForArtifactType(
+            BuildToolsApiClasspathEntrySnapshotTransform::class.java,
+            fromArtifactType = JAR_ARTIFACT_TYPE,
+            toArtifactType = CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE
+        ) {
             it.configureCommonParameters(
                 kgpVersion,
                 classLoadersCachingService,
@@ -201,9 +204,11 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
             )
             it.parameters.setupKotlinToolingDiagnosticsParameters(project)
         }
-        project.dependencies.registerTransform(BuildToolsApiClasspathEntrySnapshotTransform::class.java) {
-            it.from.attributes.attribute(ARTIFACT_TYPE_ATTRIBUTE, DIRECTORY_ARTIFACT_TYPE)
-            it.to.attributes.attribute(ARTIFACT_TYPE_ATTRIBUTE, CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE)
+        project.dependencies.registerTransformForArtifactType(
+            BuildToolsApiClasspathEntrySnapshotTransform::class.java,
+            fromArtifactType = DIRECTORY_ARTIFACT_TYPE,
+            toArtifactType = CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE
+        ) {
             it.configureCommonParameters(
                 kgpVersion,
                 classLoadersCachingService,

@@ -9,6 +9,7 @@ import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.attributes.*
 import org.gradle.api.attributes.Usage.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.uklibFragmentPlatformAttribute
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.targets.native.resolvableApiConfiguration
 import org.jetbrains.kotlin.gradle.utils.javaSourceSets
+import org.jetbrains.kotlin.gradle.utils.registerTransformForArtifactType
 
 internal val UklibConsumptionSetupAction = KotlinProjectSetupAction {
     when (project.kotlinPropertiesProvider.kmpResolutionStrategy) {
@@ -77,7 +79,11 @@ private fun Project.allowPlatformCompilationsToResolvePlatformCompilationArtifac
                 -> return@configureEach
         }
 
-        dependencies.registerTransform(UnzippedUklibToPlatformCompilationTransform::class.java) {
+        dependencies.registerTransformForArtifactType(
+            UnzippedUklibToPlatformCompilationTransform::class.java,
+            fromArtifactType = uklibArtifactType,
+            toArtifactType = uklibArtifactType,
+        ) {
             with(it.from) {
                 attribute(uklibStateAttribute, uklibStateDecompressed)
                 attribute(uklibViewAttribute, uklibViewAttributeWholeUklib)
@@ -107,7 +113,7 @@ private fun Project.allowPlatformCompilationsToResolvePlatformCompilationArtifac
             compilation as InternalKotlinCompilation
             listOfNotNull<Pair<Configuration, Usage>>(
                 compilation.internal.configurations.compileDependencyConfiguration to usageByName(KOTLIN_UKLIB_API),
-                compilation.internal.configurations.runtimeDependencyConfiguration?.let { it to usageByName(KOTLIN_UKLIB_RUNTIME)},
+                compilation.internal.configurations.runtimeDependencyConfiguration?.let { it to usageByName(KOTLIN_UKLIB_RUNTIME) },
             ).forEach {
                 it.first.applyUklibAttributes(it.second, uklibFragmentPlatformAttribute)
             }
@@ -181,7 +187,11 @@ private fun Project.registerCompressedUklibArtifact() {
 }
 
 private fun Project.allowUklibsToDecompress() {
-    dependencies.registerTransform(UnzipUklibTransform::class.java) {
+    dependencies.registerTransformForArtifactType(
+        UnzipUklibTransform::class.java,
+        fromArtifactType = uklibArtifactType,
+        toArtifactType = uklibArtifactType,
+    ) {
         it.from.attribute(uklibStateAttribute, uklibStateCompressed)
         it.to.attribute(uklibStateAttribute, uklibStateDecompressed)
     }
@@ -216,7 +226,11 @@ private fun Project.allowPSMBasedKMPToResolveLenientlyAndSelectBestMatchingVaria
     with(dependencies.artifactTypes.getByName("jar").attributes) {
         attribute(isMetadataJar, isMetadataJarUnknown)
     }
-    dependencies.registerTransform(ThrowAwayMetadataJarsTransform::class.java) {
+    dependencies.registerTransformForArtifactType(
+        ThrowAwayMetadataJarsTransform::class.java,
+        fromArtifactType = ArtifactTypeDefinition.JAR_TYPE,
+        toArtifactType = ArtifactTypeDefinition.JAR_TYPE,
+    ) {
         it.from.attribute(isMetadataJar, isMetadataJarUnknown)
         it.to.attribute(isMetadataJar, notMetadataJar)
     }

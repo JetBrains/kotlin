@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.gradle.tasks.configuration
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Provider
@@ -105,15 +106,17 @@ internal open class KaptConfig<TASK : KaptTask>(
 
     private fun maybeRegisterTransform(project: Project) {
         if (!project.extensions.extraProperties.has("KaptStructureTransformAdded")) {
-            project.dependencies.registerTransform(StructureTransformAction::class.java) { transformSpec ->
-                transformSpec.from.attribute(artifactType, "jar")
-                transformSpec.to.attribute(artifactType, CLASS_STRUCTURE_ARTIFACT_TYPE)
-            }
+            project.dependencies.registerTransformForArtifactType(
+                StructureTransformAction::class.java,
+                fromArtifactType = ArtifactTypeDefinition.JAR_TYPE,
+                toArtifactType = CLASS_STRUCTURE_ARTIFACT_TYPE,
+            )
 
-            project.dependencies.registerTransform(StructureTransformAction::class.java) { transformSpec ->
-                transformSpec.from.attribute(artifactType, "directory")
-                transformSpec.to.attribute(artifactType, CLASS_STRUCTURE_ARTIFACT_TYPE)
-            }
+            project.dependencies.registerTransformForArtifactType(
+                StructureTransformAction::class.java,
+                fromArtifactType = ArtifactTypeDefinition.DIRECTORY_TYPE,
+                toArtifactType = CLASS_STRUCTURE_ARTIFACT_TYPE,
+            )
 
             project.extensions.extraProperties["KaptStructureTransformAdded"] = true
         }
