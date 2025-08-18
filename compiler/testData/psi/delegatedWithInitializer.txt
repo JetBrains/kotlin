@@ -4,6 +4,8 @@ KtFile: delegatedWithInitializer.kt
   IMPORT_LIST
     <empty list>
   PsiComment(EOL_COMMENT)('// WITH_STDLIB')
+  PsiWhiteSpace('\n')
+  PsiComment(EOL_COMMENT)('// IGNORE_FIR')
   PsiWhiteSpace('\n\n')
   CLASS
     PsiElement(class)('class')

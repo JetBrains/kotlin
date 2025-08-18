@@ -1,4 +1,5 @@
 // WITH_STDLIB
+// IGNORE_FIR
 
 class MyClass {
     companion object {

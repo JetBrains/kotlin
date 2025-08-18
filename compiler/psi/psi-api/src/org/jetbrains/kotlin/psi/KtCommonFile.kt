@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.psi
 import com.intellij.extapi.psi.PsiFileBase
 import com.intellij.lang.ASTNode
 import com.intellij.openapi.fileTypes.FileType
-import com.intellij.openapi.vfs.VirtualFileWithId
 import com.intellij.psi.*
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.util.PsiTreeUtil
@@ -241,21 +240,10 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
         return importDirectives.find { it.importedName == name }?.importedFqName?.pathSegments()?.last()
     }
 
-    override fun getStub(): KotlinFileStub? = getFileStub {
-        super.getStub()
-    }
+    override fun getStub(): KotlinFileStub? = super.getStub()?.let { it as KotlinFileStub }
 
-    protected open val greenStub: KotlinFileStub? get() = getFileStub(this::getGreenStub)
-
-    private fun getFileStub(getter: () -> StubElement<*>?): KotlinFileStub? {
-        if (virtualFile !is VirtualFileWithId) return null
-        val stub = getter()
-        if (stub is KotlinFileStub?) {
-            return stub
-        }
-
-        error("Illegal stub for KtFile: type=${this.javaClass}, stub=${stub.javaClass} name=$name")
-    }
+    protected open val greenStub: KotlinFileStub?
+        get() = super.getGreenStub()?.let { it as KotlinFileStub }
 
     override fun clearCaches() {
         @Suppress("RemoveExplicitSuperQualifier")
