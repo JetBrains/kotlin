@@ -229,7 +229,6 @@
 
 /dependencies/ @JetBrains/kotlin-build-infrastructure
 
-/docs/analysis/ @JetBrains/kotlin-analysis-api
 /docs/code_authoring_and_core_review.md vsevolod.tolstopyatov@jetbrains.com simon.ogorodnik@jetbrains.com
 /docs/changelogs/ @JetBrains/kotlin-release
 
