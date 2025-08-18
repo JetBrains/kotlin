@@ -5,6 +5,7 @@
 package org.jetbrains.kotlin.cli.common.arguments
 
 import com.intellij.util.xmlb.annotations.Transient
+import org.jetbrains.kotlin.config.LanguageFeature
 
 // This file was generated automatically. See generator in :compiler:cli:cli-arguments-generator
 // Please declare arguments in compiler/arguments/src/org/jetbrains/kotlin/arguments/description/JsCompilerArguments.kt
@@ -443,6 +444,7 @@ class K2JSCompilerArguments : K2WasmCompilerArguments() {
         value = "-Xenable-extension-functions-in-externals",
         description = "Enable extension function members in external interfaces.",
     )
+    @Enables(LanguageFeature.JsEnableExtensionFunctionInExternals)
     var extensionFunctionsInExternals: Boolean = false
         set(value) {
             checkFrozen()

@@ -38,15 +38,13 @@ class K2JSCompilerArgumentsConfigurator : CommonKlibBasedCompilerArgumentsConfig
         collector: MessageCollector,
     ): MutableMap<LanguageFeature, LanguageFeature.State> = with(arguments) {
         require(this is K2JSCompilerArguments)
-        super.configureLanguageFeatures(arguments, collector).apply {
-            if (extensionFunctionsInExternals) {
-                this[LanguageFeature.JsEnableExtensionFunctionInExternals] = LanguageFeature.State.ENABLED
-            }
-            this[LanguageFeature.JsAllowValueClassesInExternals] = LanguageFeature.State.ENABLED
-            this[LanguageFeature.AllowAnyAsAnActualTypeForExpectInterface] = LanguageFeature.State.ENABLED
-            if (wasm) {
-                this[LanguageFeature.JsAllowImplementingFunctionInterface] = LanguageFeature.State.ENABLED
-            }
+        val result = super.configureLanguageFeatures(arguments, collector)
+        result.configureJsLanguageFeatures(this)
+        // TODO: Should be removed (see KT-80182)
+        result[LanguageFeature.AllowAnyAsAnActualTypeForExpectInterface] = LanguageFeature.State.ENABLED
+        if (wasm) {
+            result[LanguageFeature.JsAllowImplementingFunctionInterface] = LanguageFeature.State.ENABLED
         }
+        return result
     }
 }

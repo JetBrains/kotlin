@@ -331,6 +331,7 @@ enum class LanguageFeature(
     DfaBooleanVariables(KOTLIN_2_0, "KT-25747"),
     LightweightLambdas(KOTLIN_2_0, "KT-45375"),
     ObjCSignatureOverrideAnnotation(KOTLIN_2_0, sinceApiVersion = ApiVersion.KOTLIN_2_0, "KT-61323"),
+    JsAllowValueClassesInExternals(sinceVersion = KOTLIN_2_0, NO_ISSUE_SPECIFIED),
 
     // 2.1
 
@@ -509,7 +510,6 @@ enum class LanguageFeature(
     ProhibitIntersectionReifiedTypeParameter(sinceVersion = null, enabledInProgressiveMode = true, "KT-71420"),
     ExplicitBackingFields(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-14663"),
     FunctionalTypeWithExtensionAsSupertype(sinceVersion = null, NO_ISSUE_SPECIFIED),
-    JsAllowValueClassesInExternals(sinceVersion = null, NO_ISSUE_SPECIFIED),
     ContextReceivers(sinceVersion = null, NO_ISSUE_SPECIFIED),
     ContextParameters(sinceVersion = null, "KT-72222"),
     ValueClasses(sinceVersion = null, forcesPreReleaseBinaries = true, issue = NO_ISSUE_SPECIFIED),

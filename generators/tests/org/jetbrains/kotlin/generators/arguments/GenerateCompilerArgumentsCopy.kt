@@ -140,6 +140,7 @@ private fun Printer.deprecatePropertyIfNecessary(property: KProperty1<*, *>) {
 fun generateConfigureLanguageFeatures(withPrinterToFile: (targetFile: File, Printer.() -> Unit) -> Unit) {
     generateConfigureLanguageFeaturesImpl(CommonCompilerArguments::class.java, "Common", withPrinterToFile)
     generateConfigureLanguageFeaturesImpl(K2JVMCompilerArguments::class.java, "Jvm", withPrinterToFile)
+    generateConfigureLanguageFeaturesImpl(K2JSCompilerArguments::class.java, "Js", withPrinterToFile)
 }
 
 private fun generateConfigureLanguageFeaturesImpl(
