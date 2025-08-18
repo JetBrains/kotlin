@@ -1,0 +1,55 @@
+KaType
+KaTypeParameterType:
+  abbreviation: null
+  annotations: []
+  name: T
+  symbol: KaTypeParameterSymbol:
+    annotations: []
+    compilerVisibility: Local
+    isActual: false
+    isExpect: false
+    isReified: false
+    location: LOCAL
+    modality: FINAL
+    name: T
+    origin: SOURCE
+    upperBounds: [
+      KaUsualClassType:
+        abbreviation: null
+        annotations: []
+        classId: kotlin/Int
+        qualifiers: [
+          KaResolvedClassTypeQualifier:
+            name: Int
+            symbol: KaNamedClassSymbol(kotlin/Int)
+            typeArguments: []
+        ]
+        symbol: KaNamedClassSymbol(kotlin/Int)
+        typeArguments: []
+        isMarkedNullable: false
+        isNullable: false
+        hasFlexibleNullability: false
+      KaUsualClassType:
+        abbreviation: null
+        annotations: []
+        classId: kotlin/Long
+        qualifiers: [
+          KaResolvedClassTypeQualifier:
+            name: Long
+            symbol: KaNamedClassSymbol(kotlin/Long)
+            typeArguments: []
+        ]
+        symbol: KaNamedClassSymbol(kotlin/Long)
+        typeArguments: []
+        isMarkedNullable: false
+        isNullable: false
+        hasFlexibleNullability: false
+    ]
+    variance: INVARIANT
+    visibility: LOCAL
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
+
+Rendered type:
+T
