@@ -1100,6 +1100,18 @@ open class PsiRawFirBuilder(
                     else -> FirImplicitTypeRefImplWithoutSource
                 }
 
+            if (container.superTypeRefs.isEmpty() && container.status.isError) {
+                val errorType = buildResolvedTypeRef {
+                    coneType = ConeErrorUnionType.create(
+                        StandardTypes.Nothing,
+                        CETopType
+                    )
+                    source = this@extractSuperTypeListEntriesTo.toFirSourceElement(KtFakeSourceElementKind.ImplicitTypeRef)
+                }
+                container.superTypeRefs += errorType
+                delegatedSuperTypeRef = errorType
+            }
+
             if (container.superTypeRefs.isEmpty() && !isKotlinAny) {
                 val classIsKotlinNothing = constructedClassId == StandardClassIds.Nothing
                 // kotlin.Nothing doesn't have `Any` supertype, but does have delegating constructor call to Any
@@ -2609,6 +2621,20 @@ open class PsiRawFirBuilder(
                     isMarkedNullable = isNullable
                     leftType = unwrappedElement.getLeftTypeRef().toFirOrErrorType()
                     rightType = unwrappedElement.getRightTypeRef().toFirOrErrorType()
+                }
+                is KtUnionType -> FirUnionTypeRefBuilder().apply {
+                    customRenderer = false
+                    this.source = source
+                    check(!isNullable)
+                    isMarkedNullable = isNullable
+                    leftType = unwrappedElement.getLeftTypeRef().toFirOrErrorType()
+                    val rightType = unwrappedElement.getRightTypeRef().toFirOrErrorType()
+                    if (rightType is FirUnionTypeRef) {
+                        rightTypes.add(rightType.leftType)
+                        rightTypes.addAll(rightType.rightTypes)
+                    } else {
+                        rightTypes.add(rightType)
+                    }
                 }
                 null -> FirErrorTypeRefBuilder().apply {
                     this.source = source

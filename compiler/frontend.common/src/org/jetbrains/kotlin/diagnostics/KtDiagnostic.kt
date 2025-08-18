@@ -109,6 +109,9 @@ data class KtPsiDiagnosticWithParameters1<A>(
 ) : KtDiagnosticWithParameters1<A>(), KtPsiDiagnostic {
     init {
         checkPsiTypeConsistency()
+        if (a.toString() == "Incomplete code") {
+            print("hi")
+        }
     }
 }
 
