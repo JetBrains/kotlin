@@ -9,19 +9,22 @@ import org.jetbrains.kotlin.server.FileTransferRequestGrpc
 
 data class FileTransferRequest(
     val filePath: String,
-    val fileFingerprint: String
+    val fileFingerprint: String,
+    val fileType: FileType
 ) : CompileRequest
 
 fun FileTransferRequest.toGrpc(): FileTransferRequestGrpc {
     return FileTransferRequestGrpc.newBuilder()
         .setFilePath(filePath)
         .setFileFingerprint(fileFingerprint)
+        .setFileType(fileType.toGrpc())
         .build()
 }
 
 fun FileTransferRequestGrpc.toDomain(): FileTransferRequest {
     return FileTransferRequest(
         filePath,
-        fileFingerprint
+        fileFingerprint,
+        fileType.toDomain()
     )
 }

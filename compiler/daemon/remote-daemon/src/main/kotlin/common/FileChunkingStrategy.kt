@@ -7,6 +7,7 @@ package common
 
 import kotlinx.coroutines.flow.Flow
 import model.FileChunk
+import model.FileType
 import java.io.File
 
 abstract class FileChunkingStrategy {
@@ -24,7 +25,7 @@ abstract class FileChunkingStrategy {
 
     fun getChunks(filePath:String): List<ByteArray> = chunks[filePath] ?: emptyList()
 
-    abstract fun chunk(file: File): Flow<FileChunk>
+    abstract fun chunk(file: File, fileType: FileType): Flow<FileChunk>
 
     fun reconstruct(fileChunks: List<ByteArray>, newFilePath: String): File {
         try {

@@ -51,9 +51,11 @@ message CompileResponseGrpc {
 
 message CompilationMetadataGrpc{
   string project_name = 1;
-  int32 file_count = 2;
-  repeated string compiler_arguments = 3;
-  CompilationOptionsGrpc compilation_options = 4;
+  int32 source_files_count = 2;
+  int32 dependency_files_count = 3;
+  int32 compiler_plugin_file_count = 4;
+  map<string, string> compiler_arguments = 5;
+  CompilationOptionsGrpc compilation_options = 6;
 }
 
 message CompilationOptionsGrpc {
@@ -74,16 +76,24 @@ message CompilationResultGrpc{
 
 message FileChunkGrpc {
   string file_path = 1;
+  FileTypeGrpc file_type = 2;
 //  google.protobuf.Timestamp modified_at = 3;
 //  google.protobuf.Timestamp created_at = 4;
-  bytes content = 2;
-  bool is_last = 3;
+  bytes content = 3;
+  bool is_last = 4;
 }
 
 message CompilerMessageGrpc{
   CompilerMessageSeverityGrpc compiler_message_severity = 1;
   string message = 2;
   optional CompilerMessageSourceLocationGrpc compiler_message_source_location = 3;
+}
+
+enum FileTypeGrpc {
+  SOURCE = 0;
+  DEPENDENCY = 1;
+  COMPILER_PLUGIN = 2;
+  RESULT = 3;
 }
 
 enum CompilerModeGrpc {
@@ -117,11 +127,13 @@ enum CompilationResultSourceGrpc {
 message FileTransferRequestGrpc{
   string file_path = 1;
   string file_fingerprint = 2;
+  FileTypeGrpc file_type = 3;
 }
 
 message FileTransferReplyGrpc{
   string file_path = 1;
   bool is_present = 2;
+  FileTypeGrpc file_type = 3;
 }
 
 message CompilerMessageSourceLocationGrpc {

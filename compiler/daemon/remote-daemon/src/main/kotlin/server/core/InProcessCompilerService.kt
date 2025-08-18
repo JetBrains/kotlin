@@ -58,26 +58,6 @@ class InProcessCompilerService(
         Files.createDirectories(File(SERVER_COMPILATION_WORKSPACE_DIR).toPath())
     }
 
-    companion object {
-
-//        fun buildCompilerArgs(sourceFiles: List<File>, outputDirectory: Path, additionalArguments: List<String>): List<String> {
-//            return buildCompilerArgsWithoutSourceFiles(outputDirectory, additionalArguments).toMutableList().apply {
-//                addAll(0, sourceFiles.map { it.path })
-//            }
-//        }
-
-        fun buildCompilerArgsWithoutSourceFiles(outputDirectory: Path, additionalArguments: List<String>): List<String> {
-            return mutableListOf<String>().apply {
-                add("-d")
-                add(outputDirectory.toString())
-                add("-cp")
-                add("/Users/michal.svec/Desktop/jars/kotlin-stdlib-2.2.0.jar") // TODO fix
-                addAll(additionalArguments)
-            }
-        }
-
-    }
-
     private val log by lazy { Logger.getLogger("compiler") }
 
     private fun getPerformanceMetrics(compiler: CLICompiler<CommonCompilerArguments>): List<BuildMetricsValue> {
@@ -88,10 +68,10 @@ class InProcessCompilerService(
             performanceMetrics.add(BuildMetricsValue(CompilationPerformanceMetrics.SOURCE_LINES_NUMBER, moduleStats.linesCount.toLong()))
         }
 
-        var codegenTime = Time.Companion.ZERO
+        var codegenTime = Time.ZERO
 
         fun reportLps(lpsMetrics: CompilationPerformanceMetrics, time: Time) {
-            if (time != Time.Companion.ZERO) {
+            if (time != Time.ZERO) {
                 performanceMetrics.add(BuildMetricsValue(lpsMetrics, moduleStats.getLinesPerSecond(time).toLong()))
             }
         }

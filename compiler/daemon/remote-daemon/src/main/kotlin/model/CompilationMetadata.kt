@@ -10,15 +10,19 @@ import org.jetbrains.kotlin.server.CompilationMetadataGrpc
 
 data class CompilationMetadata(
     val projectName: String,
-    val fileCount: Int,
-    val compilerArguments: List<String>,
+    val sourceFilesCount: Int,
+    val dependencyFilesCount: Int,
+    val compilerPluginFilesCount: Int,
+    val compilerArguments: Map<String, String>,
     val compilationOptions: CompilationOptions
 ) : CompileRequest
 
 fun CompilationMetadata.toGrpc(): CompilationMetadataGrpc {
     return CompilationMetadataGrpc.newBuilder()
-        .addAllCompilerArguments(compilerArguments)
-        .setFileCount(fileCount)
+        .setSourceFilesCount(sourceFilesCount)
+        .setDependencyFilesCount(dependencyFilesCount)
+        .setCompilerPluginFileCount(compilerPluginFilesCount)
+        .putAllCompilerArguments(compilerArguments)
         .setProjectName(projectName)
         .setCompilationOptions(compilationOptions.toGrpc())
         .build()
@@ -27,8 +31,10 @@ fun CompilationMetadata.toGrpc(): CompilationMetadataGrpc {
 fun CompilationMetadataGrpc.toDomain(): CompilationMetadata{
     return CompilationMetadata(
         projectName,
-        fileCount,
-        compilerArgumentsList,
+        sourceFilesCount,
+        dependencyFilesCount,
+        compilerPluginFileCount,
+        compilerArgumentsMap,
         compilationOptions.toDomain()
     )
 }
