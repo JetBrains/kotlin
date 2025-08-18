@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.name.NativeStandardInteropNames
 
 class KonanIrModuleSerializer(
-        settings: IrSerializationSettings,
-        diagnosticReporter: IrDiagnosticReporter,
-        irBuiltIns: IrBuiltIns,
+    settings: IrSerializationSettings,
+    diagnosticReporter: IrDiagnosticReporter,
+    irBuiltIns: IrBuiltIns,
 ) : IrModuleSerializer<KonanIrFileSerializer>(settings, diagnosticReporter) {
 
     override val globalDeclarationTable = KonanGlobalDeclarationTable(irBuiltIns)
@@ -29,6 +29,6 @@ class KonanIrModuleSerializer(
     override fun backendSpecificFileFilter(file: IrFile): Boolean =
         file.fileEntry.name != NativeStandardInteropNames.cTypeDefinitionsFileName
 
-    override fun createSerializerForFile(file: IrFile): KonanIrFileSerializer =
-            KonanIrFileSerializer(settings, KonanDeclarationTable(globalDeclarationTable))
+    override fun createFileSerializer(): KonanIrFileSerializer =
+        KonanIrFileSerializer(settings, KonanDeclarationTable(globalDeclarationTable))
 }
