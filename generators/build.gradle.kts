@@ -111,6 +111,9 @@ val generateGradleOptions by generator("org.jetbrains.kotlin.generators.argument
     dependsOn(generateGradleCompilerTypes)
     description = "Generate Gradle plugin compiler options"
 }
+val generateUnsupportedGradleLanguageVersionsMetadata by generator("org.jetbrains.kotlin.generators.arguments.GenerateUnsupportedGradleLanguageVersionsMetadataKt") {
+    description = "Generate Gradle plugin unsupported Kotlin language versions lifecycle metadata"
+}
 val generateKeywordStrings by generator("org.jetbrains.kotlin.generators.frontend.GenerateKeywordStrings")
 
 val generateBuiltins by generator("org.jetbrains.kotlin.generators.builtins.generateBuiltIns.GenerateBuiltInsKt", builtinsSourceSet)

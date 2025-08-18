@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.setupKotlinToolingDiagnosticsParameters
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
+import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
@@ -72,19 +73,25 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
                 task.project.plugins.withId("org.gradle.kotlin.kotlin-dsl") {
                     task.kotlinDslPluginIsPresent.value(true).disallowChanges()
                 }
-                task.kotlinCompilerVersion.value(providers.provider {
-                    val btaConfiguration = project.configurations.named(BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME).get()
-                    val version = btaConfiguration.findBuildToolsApiImplVersion()
-                    if (version == "null") {
-                        null
-                    } else {
-                        try {
-                            KotlinToolingVersion(version)
-                        } catch (_: IllegalArgumentException) {
-                            null
-                        }
+                task.kotlinCompilerVersion.value(
+                    task.runViaBuildToolsApi.map {
+                        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+                        if (it) {
+                            val btaConfiguration = project.configurations.named(BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME).get()
+                            val version = btaConfiguration.findBuildToolsApiImplVersion()
+                            if (version == "null") {
+                                null
+                            } else {
+                                try {
+                                    KotlinToolingVersion(version)
+                                } catch (_: IllegalArgumentException) {
+                                    null
+                                }
+                            }
+                        } else
+                            project.kotlinToolingVersion
                     }
-                })
+                )
             }
         }
     }
