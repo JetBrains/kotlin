@@ -110,6 +110,18 @@
         </dependency>
     </dependencies>
 
+    <dependencyManagement>
+      <dependencies>
+        <dependency>
+          <!-- Force commons-io to 2.18.0 because of vulnerability -->
+          <!-- KT-80213 Vulnerability in tools/kotlin-maven-plugin-test/pom.xml -->
+          <groupId>commons-io</groupId>
+          <artifactId>commons-io</artifactId>
+          <version>2.18.0</version>
+        </dependency>
+      </dependencies>
+    </dependencyManagement>
+
     <build>
         <pluginManagement>
             <plugins>
