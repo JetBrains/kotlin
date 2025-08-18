@@ -4,3 +4,5 @@ org.jetbrains.kotlin.gradle.JsSetupConfigurationCacheIT.checkNodeJsSetup,,FLAKY
 org.jetbrains.kotlin.konan.test.diagnostics.DiagnosticsNativeTestGenerated.Multiplatform.testObjCAction_expectAnnotation,,STABLE
 org.jetbrains.kotlin.konan.test.diagnostics.DiagnosticsNativeTestGenerated.Multiplatform.testObjCOutlet_expectAnnotation,,STABLE
 org.jetbrains.kotlin.konan.test.diagnostics.DiagnosticsNativeTestGenerated.Multiplatform.testOverrideInit_expectAnnotation,,STABLE
+org.jetbrains.kotlinx.serialization.runners.SerializationJdk11IrBoxTestGenerated.testSerializableOnJavaClass,KT-79735,FLAKY
+org.jetbrains.kotlinx.serialization.runners.SerializationJdk11FirLightTreeBoxTestGenerated.testSerializableOnJavaClass,KT-79735,FLAKY
