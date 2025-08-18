@@ -204,6 +204,11 @@ sealed class AnnotationStub(val classifier: Classifier) {
         class Direct(val name: String) : CCall(cCallClassifier.nested("Direct"))
     }
 
+    sealed class CGlobal(classifier: Classifier) : AnnotationStub(classifier) {
+        object Array : CGlobal(cGlobalClassifier.nested("Array"))
+        class Symbol(val name: String) : CGlobal(cGlobalClassifier)
+    }
+
     class CStruct(val struct: String) : AnnotationStub(cStructClassifier) {
         class MemberAt(val offset: Long) : AnnotationStub(cStructClassifier.nested("MemberAt"))
 
@@ -260,6 +265,8 @@ sealed class AnnotationStub(val classifier: Classifier) {
 
     private companion object {
         val cCallClassifier = Classifier.topLevel(cinteropInternalPackage, "CCall")
+
+        val cGlobalClassifier = Classifier.topLevel(cinteropInternalPackage, "CGlobal")
 
         val cStructClassifier = Classifier.topLevel(cinteropInternalPackage, "CStruct")
     }

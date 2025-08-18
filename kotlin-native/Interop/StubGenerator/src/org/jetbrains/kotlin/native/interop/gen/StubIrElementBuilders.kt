@@ -671,6 +671,11 @@ internal class GlobalStubBuilder(
 
         val kotlinType: KotlinType
         val kind: PropertyStub.Kind
+        val propertyAnnotations = mutableListOf<AnnotationStub>()
+        if (context.platform == KotlinPlatform.NATIVE && context.configuration.cCallMode != CCallMode.INDIRECT)
+            global.binaryName?.let {
+                propertyAnnotations += AnnotationStub.CGlobal.Symbol(it)
+            }
         if (unwrappedType is ArrayType) {
             kotlinType = (mirror as TypeMirror.ByValue).valueType
             val getter = when (context.platform) {
@@ -681,10 +686,13 @@ internal class GlobalStubBuilder(
                     }
                 }
                 KotlinPlatform.NATIVE -> {
+                    if (global.binaryName != null && context.configuration.cCallMode != CCallMode.INDIRECT)
+                        propertyAnnotations += AnnotationStub.CGlobal.Array
+
                     val annotation = indirectCCallOrUnavailable {
                         AnnotationStub.CCall.Symbol("${context.generateNextUniqueId("knifunptr_")}_${global.fullName}_getter")
                     }
-                    PropertyAccessor.Getter.ExternalGetter(listOf(annotation)).also {
+                    PropertyAccessor.Getter.ExternalGetter(listOfNotNull(annotation)).also {
                         context.wrapperComponentsBuilder.getterToWrapperInfo[it] = WrapperGenerationInfo(global)
                     }
                 }
@@ -705,7 +713,7 @@ internal class GlobalStubBuilder(
                             val annotation = indirectCCallOrUnavailable {
                                 AnnotationStub.CCall.Symbol("${context.generateNextUniqueId("knifunptr_")}_${global.fullName}_getter")
                             }
-                            PropertyAccessor.Getter.ExternalGetter(listOf(annotation)).also {
+                            PropertyAccessor.Getter.ExternalGetter(listOfNotNull(annotation)).also {
                                 context.wrapperComponentsBuilder.getterToWrapperInfo[it] = WrapperGenerationInfo(global)
                             }
                         }
@@ -724,7 +732,7 @@ internal class GlobalStubBuilder(
                                 val annotation = indirectCCallOrUnavailable {
                                     AnnotationStub.CCall.Symbol("${context.generateNextUniqueId("knifunptr_")}_${global.fullName}_setter")
                                 }
-                                PropertyAccessor.Setter.ExternalSetter(listOf(annotation)).also {
+                                PropertyAccessor.Setter.ExternalSetter(listOfNotNull(annotation)).also {
                                     context.wrapperComponentsBuilder.setterToWrapperInfo[it] = WrapperGenerationInfo(global)
                                 }
                             }
@@ -742,7 +750,7 @@ internal class GlobalStubBuilder(
                             val annotation = indirectCCallOrUnavailable {
                                 AnnotationStub.CCall.Symbol("${context.generateNextUniqueId("knifunptr_")}_${global.fullName}_getter")
                             }
-                            PropertyAccessor.Getter.ExternalGetter(listOf(annotation)).also {
+                            PropertyAccessor.Getter.ExternalGetter(listOfNotNull(annotation)).also {
                                 context.wrapperComponentsBuilder.getterToWrapperInfo[it] = WrapperGenerationInfo(global, passViaPointer = true)
                             }
                         }
@@ -751,18 +759,14 @@ internal class GlobalStubBuilder(
                 }
             }
         }
-        return listOf(PropertyStub(global.name, kotlinType.toStubIrType(), kind, origin = origin))
+        return listOf(PropertyStub(global.name, kotlinType.toStubIrType(), kind, annotations = propertyAnnotations, origin = origin))
     }
 
-    private fun indirectCCallOrUnavailable(indirect: () -> AnnotationStub.CCall.Symbol): AnnotationStub =
+    private fun indirectCCallOrUnavailable(indirect: () -> AnnotationStub.CCall.Symbol): AnnotationStub? =
             if (context.configuration.cCallMode != CCallMode.DIRECT) {
                 indirect()
             } else {
-                AnnotationStub.Deprecated(
-                        "Global variables are not yet supported with -$CCALL_MODE ${CCallMode.DIRECT.name.lowercase()}",
-                        replaceWith = "",
-                        level = DeprecationLevel.ERROR
-                )
+                null
             }
 }
 

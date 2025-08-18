@@ -29,6 +29,16 @@ public annotation class CStruct(val spelling: String) {
     public annotation class VarType(val size: Long, val align: Int)
 }
 
+// TODO: move it to accessors.
+@InternalForKotlinNative
+@Target(AnnotationTarget.PROPERTY)
+@Retention(AnnotationRetention.BINARY)
+public annotation class CGlobal(val name: String) {
+    @Target(AnnotationTarget.PROPERTY)
+    @Retention(AnnotationRetention.BINARY)
+    public annotation class Array
+}
+
 @Target(
         AnnotationTarget.FUNCTION,
         AnnotationTarget.PROPERTY_GETTER,
