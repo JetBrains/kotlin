@@ -249,6 +249,7 @@ public open class Base64 private constructor(
      *
      * @sample samples.io.encoding.Base64Samples.encodeToAppendableSample
      */
+    @IgnorableReturnValue
     public fun <A : Appendable> encodeToAppendable(
         source: ByteArray,
         destination: A,
