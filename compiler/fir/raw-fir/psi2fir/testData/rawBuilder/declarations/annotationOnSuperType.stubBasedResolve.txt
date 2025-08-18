@@ -12,13 +12,13 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] annotationOnSuperType.kt
         public [ResolvedTo(CONTRACTS)] get(): <implicit>
     public abstract [ResolvedTo(BODY_RESOLVE)] interface I : R|kotlin/Any| {
     }
-    public final [ResolvedTo(CONSTANT_EVALUATION)] class MyClassWithoutConstructor : R|@R|util/Anno|(<strcat>(String(MyClassWithoutConstructor super type ref ), prop#))  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  util/I>>| {
+    public final [ResolvedTo(CONSTANT_EVALUATION)] class MyClassWithoutConstructor : R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  util/I>>| {
         public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=MyClassWithoutConstructor] constructor(): R|util/MyClassWithoutConstructor| {
             LAZY_super<<implicit>>
         }
 
     }
-    public final [ResolvedTo(CONSTANT_EVALUATION)] class MyClassWithConstructor : R|@R|util/Anno|(<strcat>(String(MyClassWithConstructor super type ref ), prop#))  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  util/I>>| {
+    public final [ResolvedTo(CONSTANT_EVALUATION)] class MyClassWithConstructor : R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  util/I>>| {
         public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=MyClassWithConstructor] constructor(): R|util/MyClassWithConstructor| {
             LAZY_super<<implicit>>
         }

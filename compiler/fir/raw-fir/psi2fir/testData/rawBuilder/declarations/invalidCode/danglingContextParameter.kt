@@ -1,4 +1,3 @@
-// STUB_RESOLUTION_INCONSISTENCY: KT-78949 test infrastructure problem
 @Target(AnnotationTarget.TYPE, AnnotationTarget.VALUE_PARAMETER)
 annotation class Anno(val position: String)
 

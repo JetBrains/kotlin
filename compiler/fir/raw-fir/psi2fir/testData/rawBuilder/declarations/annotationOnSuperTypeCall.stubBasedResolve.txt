@@ -16,15 +16,15 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] annotationOnSuperTypeCall.kt
         }
 
     }
-    public final [ResolvedTo(CONSTANT_EVALUATION)] class MyClassWithoutConstructor : R|@R|util/Anno|(<strcat>(String(MyClassWithoutConstructor super type call ), prop#))  util/AbstractClass<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
+    public final [ResolvedTo(CONSTANT_EVALUATION)] class MyClassWithoutConstructor : R|@R|util/Anno|(LAZY_EXPRESSION)  util/AbstractClass<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
         public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=MyClassWithoutConstructor] constructor(): R|util/MyClassWithoutConstructor| {
-            LAZY_super<R|@R|util/Anno|(<strcat>(String(MyClassWithoutConstructor super type call ), prop#))  util/AbstractClass<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|>
+            LAZY_super<R|@R|util/Anno|(LAZY_EXPRESSION)  util/AbstractClass<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|>
         }
 
     }
-    public final [ResolvedTo(CONSTANT_EVALUATION)] class MyClassWithConstructor : R|@R|util/Anno|(<strcat>(String(MyClassWithConstructor super type call ), prop#))  util/AbstractClass<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
+    public final [ResolvedTo(CONSTANT_EVALUATION)] class MyClassWithConstructor : R|@R|util/Anno|(LAZY_EXPRESSION)  util/AbstractClass<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
         public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=MyClassWithConstructor] constructor(): R|util/MyClassWithConstructor| {
-            LAZY_super<R|@R|util/Anno|(<strcat>(String(MyClassWithConstructor super type call ), prop#))  util/AbstractClass<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|>
+            LAZY_super<R|@R|util/Anno|(LAZY_EXPRESSION)  util/AbstractClass<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|>
         }
 
     }
