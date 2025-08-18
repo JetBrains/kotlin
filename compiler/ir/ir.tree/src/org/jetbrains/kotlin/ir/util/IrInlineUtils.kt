@@ -39,6 +39,7 @@ tailrec fun IrDeclaration.getSourceFile(): IrFileEntry? {
     }
 }
 
+var IrModuleFragment.erasedTopLevelInlineFunctions: List<IrSimpleFunction>? by irAttribute(copyByDefault = true)
 var IrSimpleFunction.erasedTopLevelCopy: IrSimpleFunction? by irAttribute(copyByDefault = true)
 var IrFunction.originalOfErasedTopLevelCopy: IrFunction? by irAttribute(copyByDefault = true)
 

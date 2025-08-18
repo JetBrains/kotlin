@@ -49,4 +49,7 @@ class SerializedIrFile(
     val fileEntries: ByteArray?,
 )
 
-class SerializedIrModule(val files: Collection<SerializedIrFile>)
+class SerializedIrModule(
+    val files: Collection<SerializedIrFile>,
+    val fileWithPreparedInlinableFunctions: SerializedIrFile?,
+)

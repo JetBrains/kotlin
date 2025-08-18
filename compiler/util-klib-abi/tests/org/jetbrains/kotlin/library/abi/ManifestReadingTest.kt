@@ -105,7 +105,7 @@ class ManifestReadingTest {
             }
         )
 
-        library.addIr(SerializedIrModule(files = emptyList())) // Empty library.
+        library.addIr(SerializedIrModule(files = emptyList(), fileWithPreparedInlinableFunctions = null)) // Empty library.
         library.commit()
 
         return libraryFile

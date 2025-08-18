@@ -9,7 +9,9 @@ import org.jetbrains.kotlin.builtins.FunctionInterfacePackageFragment
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.packageFragmentDescriptor
+import org.jetbrains.kotlin.ir.util.erasedTopLevelInlineFunctions
 import org.jetbrains.kotlin.library.SerializedIrFile
 import org.jetbrains.kotlin.library.SerializedIrModule
 
@@ -34,6 +36,11 @@ abstract class IrModuleSerializer<Serializer : IrFileSerializer>(
         return fileSerializer.serializeIrFile(file)
     }
 
+    private fun serializePreparedInlinableFunctions(preparedInlineFunctionCopies: List<IrSimpleFunction>): SerializedIrFile {
+        val fileSerializer = createFileSerializer()
+        return fileSerializer.serializeIrFileWithPreparedInlineFunctions(preparedInlineFunctionCopies)
+    }
+
     fun serializedIrModule(module: IrModuleFragment): SerializedIrModule {
         val serializedFiles = module.files
             .filter { it.packageFragmentDescriptor !is FunctionInterfacePackageFragment }
@@ -42,6 +49,10 @@ abstract class IrModuleSerializer<Serializer : IrFileSerializer>(
         if (settings.shouldCheckSignaturesOnUniqueness) {
             globalDeclarationTable.clashDetector.reportErrorsTo(diagnosticReporter)
         }
-        return SerializedIrModule(serializedFiles)
+
+        val inlinableFunctionsFile = module.erasedTopLevelInlineFunctions?.let {
+            serializePreparedInlinableFunctions(it)
+        }
+        return SerializedIrModule(serializedFiles, inlinableFunctionsFile)
     }
 }
