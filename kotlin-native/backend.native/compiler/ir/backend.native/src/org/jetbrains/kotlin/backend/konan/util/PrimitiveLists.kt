@@ -39,6 +39,8 @@ class IntArrayList : Iterable<Int> {
 
     override operator fun iterator(): Iterator<Int> = Itr()
 
+    fun toIntArray() = array.copyOf(length)
+
     private fun ensureCapacity(minCapacity: Int) {
         val oldArray = array
         if (minCapacity > oldArray.size) {
