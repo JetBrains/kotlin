@@ -243,5 +243,52 @@ abstract class AbstractTypeCreatorDslTest : AbstractAnalysisApiBasedTest() {
                 return session.typeCreator.starTypeProjection()
             }
         }
+
+        inner class VarargArrayType {
+            fun testBoxedArray(): KaType {
+                val type = getTypeByCaret("type")
+                return session.typeCreator.varargArrayType(type)
+            }
+
+            fun testErrorType(): KaType {
+                val type = getTypeByCaret("type")
+                return session.typeCreator.varargArrayType(type)
+            }
+
+            fun testFlexibleInt(): KaType {
+                val type = getTypeByCaret("type")
+                return session.typeCreator.varargArrayType(type)
+            }
+
+            fun testNullableInt(): KaType {
+                val type = getTypeByCaret("type")
+                return session.typeCreator.varargArrayType(type)
+            }
+
+            fun testNullableUserType(): KaType {
+                val type = getTypeByCaret("type")
+                return session.typeCreator.varargArrayType(type)
+            }
+
+            fun testPrimitiveArray(): KaType {
+                val type = getTypeByCaret("type")
+                return session.typeCreator.varargArrayType(type)
+            }
+
+            fun testSimpleUserType(): KaType {
+                val type = getTypeByCaret("type")
+                return session.typeCreator.varargArrayType(type)
+            }
+
+            fun testTypeParameter(): KaType {
+                val type = getTypeByCaret("type")
+                return session.typeCreator.varargArrayType(type)
+            }
+
+            fun testTypeParameterWithIntUpperBound(): KaType {
+                val type = getTypeByCaret("type")
+                return session.typeCreator.varargArrayType(type)
+            }
+        }
     }
 }
