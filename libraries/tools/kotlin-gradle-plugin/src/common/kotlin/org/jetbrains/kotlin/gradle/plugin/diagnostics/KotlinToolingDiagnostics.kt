@@ -1814,6 +1814,80 @@ internal object KotlinToolingDiagnostics {
                 .documentationLink(URI("https://issuetracker.google.com/438678642"))
         }
     }
+
+    object DeprecatedKotlinVersionKotlinDsl : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+        internal class VersionMetadata(
+            val version: KotlinVersion,
+            val type: String,
+            val accessor: String,
+            val languageVersionUnsupportedLevel: ToolingDiagnostic.Severity
+        )
+
+        operator fun invoke(versionMetadata: List<VersionMetadata>, nonDeprecatedVersion: KotlinVersion): ToolingDiagnostic {
+            val level = versionMetadata.maxOfOrNull { it.languageVersionUnsupportedLevel }
+            return build(severity = level) {
+                title("Unsupported Kotlin plugin version")
+                    .description {
+                        val isPlural = versionMetadata.size > 1
+                        val entries = versionMetadata.joinToString("\n") { meta ->
+                            "|- ${meta.type} version: ${meta.version.version}"
+                        }
+
+                        /**
+                         * Before Gradle 8.2, it was impossible to override the values of the API/language version because the kotlin-dsl plugin
+                         * configured them in an afterEvaluate block
+                         */
+                        val shouldUseAfterEvaluate = GradleVersion.current() < GradleVersion.version("8.2")
+
+                        val accessorsSnippet = versionMetadata.joinToString("\n") { meta ->
+                            val nestedLevel = if (shouldUseAfterEvaluate) 12 else 8
+                            "|${" ".repeat(nestedLevel)}${meta.accessor}.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.$nonDeprecatedVersion)"
+                        }
+
+                        val configureSnippet = if (shouldUseAfterEvaluate) {
+                            """
+                            |afterEvaluate { // this code can be unwrapped from afterEvaluate after upgrading to Gradle 8.2 or newer
+                            |    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+                            |        compilerOptions {
+                                         $accessorsSnippet
+                            |        }
+                            |    }
+                            |}
+                            """.trimMargin()
+                        } else {
+                            """
+                            |tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+                            |    compilerOptions {
+                                    $accessorsSnippet
+                            |    }
+                            |}
+                            """.trimMargin()
+                        }
+
+                        """
+                            |The Kotlin Gradle plugin detected incompatible Kotlin ${if (isPlural) "versions" else "version"} in the `kotlin-dsl` plugin. This may lead to a compilation failure.
+                            |
+                            |Detected unsupported Kotlin ${if (isPlural) "versions" else "version"} in `kotlin-dsl`:
+                            $entries
+                            |
+                            |The `kotlin-dsl` plugin relies on the Gradle-embedded Kotlin version. Using `kotlin-dsl` plugin together with a different Kotlin version (for example by using Kotlin Gradle plugin (`kotlin(jvm)`)) in the same module is not recommended.
+                            |
+                            |If you are writing a convention plugin (or a precompiled script plugin in general) it’s recommended to only use the `kotlin-dsl` plugin and use the embedded Kotlin version. If you are writing a binary plugin it’s recommended to not use the `kotlin-dsl` plugin and use the Kotlin Gradle plugin (`kotlin(jvm)`).
+                            |
+                            |You can configure your module to use ${nonDeprecatedVersion.version} or higher overriding `kotlin-dsl` behavior using a following snippet:
+                            |$configureSnippet
+                            |Note that this may lead to some hard to predict behavior and in general should be avoided, see documentation for more information.
+                            """.trimMargin()
+                    }
+                    .solutions(
+                        "Do not use `kotlin(jvm)` explicitly in this module and allow `kotlin-dsl` to auto-provide a compatible version on its own. If you prefer staying explicit, consider using the `embeddedKotlinVersion` constant.",
+                        "Do not use `kotlin-dsl` in this module.",
+                        "Configure your module to use ${nonDeprecatedVersion.version} or higher overriding `kotlin-dsl` behavior.",
+                    )
+                    .documentationLink(URI("https://kotl.in/gradle/kotlin-dsl-version-compatibility"))
+            }
+        }
+    }
 }
 
 private fun String.indentLines(nSpaces: Int = 4, skipFirstLine: Boolean = true): String {

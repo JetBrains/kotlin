@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.jvm.JvmTargetValidationMode
+import org.jetbrains.kotlin.gradle.internal.UnsupportedKotlinLanguageVersionsMetadata
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
 import org.jetbrains.kotlin.gradle.logging.GradleErrorMessageCollector
 import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.create
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.DeprecatedKotlinVersionKotlinDsl
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
 import org.jetbrains.kotlin.gradle.report.BuildReportMode
 import org.jetbrains.kotlin.gradle.tasks.internal.KotlinJvmOptionsCompat
@@ -328,6 +330,62 @@ abstract class KotlinCompile @Inject constructor(
         }
     }
 
+    /**
+     * KT-79851: Validates the Kotlin versions (API and language) when the Kotlin DSL plugin is present to simplify resolution.
+     * The check itself together with the related code generator may look overcomplicated.
+     * Though, they are such to properly check in regard to a custom compiler version set via BTA.
+     *
+     * Considering BTA follows the policy to provide proper support only up to 1 version forward,
+     * the only case we may lose is the used Kotlin version is deprecated in a version that this version of KGP wasn't aware of.
+     * In this case, we'll lose only deprecation, so it will continue working with a warning from the compiler itself.
+     * It sounds fine as it's impossible that the used version is completely dropped, and we don't catch it by this validation.
+     *
+     * @param args Kotlin JVM compiler options used to determine API and language versions.
+     */
+    private fun validateKotlinVersionsInPresenceOfKotlinDslPlugin(args: KotlinJvmCompilerOptions) {
+        if (!kotlinDslPluginIsPresent.get()) return
+
+        fun KotlinVersion?.unsupportedLevel(): ToolingDiagnostic.Severity? {
+            if (this == null) return null
+            val metadata = UnsupportedKotlinLanguageVersionsMetadata.unsupportedPerVersion[this]
+            return when {
+                metadata == null -> null
+                metadata.removalVersion != null && metadata.removalVersion <= kotlinCompilerVersion.get() -> ToolingDiagnostic.Severity.STRONG_WARNING
+                metadata.deprecationVersion <= kotlinCompilerVersion.get() -> ToolingDiagnostic.Severity.WARNING
+                else -> null
+            }
+        }
+
+        val versions = buildList {
+            // null means the default version which is always supported
+            val apiVersion = args.apiVersion.orNull
+            val apiVersionUnsupportedLevel = apiVersion.unsupportedLevel()
+            if (apiVersion != null && apiVersionUnsupportedLevel != null) {
+                add(DeprecatedKotlinVersionKotlinDsl.VersionMetadata(apiVersion, "API", "apiVersion", apiVersionUnsupportedLevel))
+            }
+            // null means the default version which is always supported
+            val languageVersion = args.languageVersion.orNull
+            val languageVersionUnsupportedLevel = languageVersion.unsupportedLevel()
+            if (languageVersion != null && languageVersionUnsupportedLevel != null) {
+                add(
+                    DeprecatedKotlinVersionKotlinDsl.VersionMetadata(
+                        languageVersion,
+                        "language",
+                        "languageVersion",
+                        languageVersionUnsupportedLevel
+                    )
+                )
+            }
+        }
+
+        if (versions.isNotEmpty()) {
+            val unsupportedVersionsMetadata = KotlinVersion.values().first {
+                UnsupportedKotlinLanguageVersionsMetadata.unsupportedPerVersion[it] == null
+            }
+            reportDiagnostic(DeprecatedKotlinVersionKotlinDsl(versions, unsupportedVersionsMetadata))
+        }
+    }
+
     private fun overrideXJvmDefaultInPresenceOfKotlinDslPlugin(
         args: K2JVMCompilerArguments
     ) {
@@ -375,6 +433,7 @@ abstract class KotlinCompile @Inject constructor(
         taskOutputsBackup: TaskOutputsBackup?,
     ) {
         validateKotlinAndJavaHasSameTargetCompatibility(args)
+        validateKotlinVersionsInPresenceOfKotlinDslPlugin(compilerOptions)
 
         val gradlePrintingMessageCollector = GradlePrintingMessageCollector(logger, args.allWarningsAsErrors)
         val gradleMessageCollector =
