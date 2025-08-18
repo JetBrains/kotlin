@@ -13245,6 +13245,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
     }
 
     @Test
+    @TestMetadata("implicitUnitReturn.kt")
+    public void testImplicitUnitReturn() {
+      runTest("compiler/testData/codegen/box/coroutines/implicitUnitReturn.kt");
+    }
+
+    @Test
     @TestMetadata("indirectInlineUsedAsNonInline.kt")
     public void testIndirectInlineUsedAsNonInline() {
       runTest("compiler/testData/codegen/box/coroutines/indirectInlineUsedAsNonInline.kt");

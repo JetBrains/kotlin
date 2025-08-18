@@ -9767,6 +9767,12 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
     }
 
     @Test
+    @TestMetadata("implicitUnitReturn.kt")
+    public void testImplicitUnitReturn() {
+      runTest("compiler/testData/codegen/box/coroutines/implicitUnitReturn.kt");
+    }
+
+    @Test
     @TestMetadata("indirectInlineUsedAsNonInline.kt")
     public void testIndirectInlineUsedAsNonInline() {
       runTest("compiler/testData/codegen/box/coroutines/indirectInlineUsedAsNonInline.kt");

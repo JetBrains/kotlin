@@ -9677,6 +9677,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Test
+    @TestMetadata("implicitUnitReturn.kt")
+    public void testImplicitUnitReturn() {
+      runTest("compiler/testData/codegen/box/coroutines/implicitUnitReturn.kt");
+    }
+
+    @Test
     @TestMetadata("indirectInlineUsedAsNonInline.kt")
     public void testIndirectInlineUsedAsNonInline() {
       runTest("compiler/testData/codegen/box/coroutines/indirectInlineUsedAsNonInline.kt");
