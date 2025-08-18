@@ -161,6 +161,9 @@ internal fun float32Array(a: Any?): Any?
 internal fun float64Array(a: Any?): Any?
 
 @JsIntrinsic
+internal fun bigint64Array(a: Any?): Any?
+
+@JsIntrinsic
 internal fun int8ArrayOf(a: Any?): Any?
 
 @JsIntrinsic
@@ -174,6 +177,9 @@ internal fun float32ArrayOf(a: Any?): Any?
 
 @JsIntrinsic
 internal fun float64ArrayOf(a: Any?): Any?
+
+@JsIntrinsic
+internal fun bigint64ArrayOf(a: Any?): Any?
 
 @JsIntrinsic
 internal fun <T> DefaultType(): T
@@ -225,6 +231,20 @@ internal fun jsIsEs6(): Boolean
 
 @JsIntrinsic
 internal fun <T> jsYield(suspendFunction: () -> T): T
+
+/**
+ * Depending on the target ES edition, calls transforms either
+ * to [kotlin.js.internal.boxedLong.longCopyOfRange], or to `arr.slice(fromIndex, toIndex)`
+ *
+ * TODO(KT-70480): Replace call sites with `arr.unsafeCast<BigInt64Array>().slice(fromIndex, toIndex)` when we drop the ES5 target
+ *
+ * TODO: after the next bootstrap drop the body of this function, @OptIn annotation and uncomment the @JsIntrinsic annotation;
+ * Since the current bootstrap compiler doesn't know how to handle this intrinsic the tests will fail without such tricks.
+ */
+// @JsIntrinsic
+@OptIn(BoxedLongApi::class)
+internal fun longCopyOfRange(arr: dynamic, fromIndex: dynamic, toIndex: dynamic): LongArray =
+    kotlin.js.internal.boxedLong.longCopyOfRange(arr, fromIndex, toIndex)
 
 /**
  * Depending on the target ES edition, calls to this function are either replaced with a call

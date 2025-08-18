@@ -40,7 +40,7 @@ internal fun <T : Any> getKClassFromExpression(e: T): KClass<T> =
                 e is ByteArray -> PrimitiveClasses.byteArrayClass
                 e is ShortArray -> PrimitiveClasses.shortArrayClass
                 e is IntArray -> PrimitiveClasses.intArrayClass
-                e is LongArray -> PrimitiveClasses.longArrayClass
+                e is LongArray -> LongArray::class
                 e is FloatArray -> PrimitiveClasses.floatArrayClass
                 e is DoubleArray -> PrimitiveClasses.doubleArrayClass
                 e is KClass<*> -> KClass::class

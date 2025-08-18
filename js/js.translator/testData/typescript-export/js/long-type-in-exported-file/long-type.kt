@@ -16,9 +16,8 @@ package foo
 
 val _long: Long = 1L
 
-// TODO: Add BigInt64Array
-//
-//val _long_array: LongArray = longArrayOf()
+
+val _long_array: LongArray = longArrayOf()
 
 
 val _array_long: Array<Long> = emptyArray()

@@ -9,6 +9,7 @@ package kotlin.js.internal.longAsBigInt
 
 import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.js.internal.*
+import kotlin.reflect.js.internal.PrimitiveKClassImpl
 
 /**
  * Marks the stdlib functions that implement the BigInt-backed [Long] operations.
@@ -191,3 +192,11 @@ internal fun Long.lowBits(): Int = toInt()
 @LongAsBigIntApi
 @UsedFromCompilerGeneratedCode
 internal fun Long.highBits(): Int = (this shr 32).toInt()
+
+@LongAsBigIntApi
+@UsedFromCompilerGeneratedCode
+internal val longArrayClass = PrimitiveKClassImpl(js("BigInt64Array").unsafeCast<JsClass<LongArray>>(), "LongArray", { it is LongArray })
+
+@LongAsBigIntApi
+@UsedFromCompilerGeneratedCode
+internal fun isLongArray(a: dynamic): Boolean = jsInstanceOf(a, js("BigInt64Array"))
