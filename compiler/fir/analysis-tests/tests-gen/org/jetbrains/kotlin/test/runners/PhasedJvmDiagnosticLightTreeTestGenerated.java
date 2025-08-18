@@ -1866,6 +1866,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
     }
 
     @Test
+    @TestMetadata("reportErrorsForImpossibleTypeChecks.kt")
+    public void testReportErrorsForImpossibleTypeChecks() {
+      runTest("compiler/testData/diagnostics/tests/reportErrorsForImpossibleTypeChecks.kt");
+    }
+
+    @Test
     @TestMetadata("ReserveYield.kt")
     public void testReserveYield() {
       runTest("compiler/testData/diagnostics/tests/ReserveYield.kt");
