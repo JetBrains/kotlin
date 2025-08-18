@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.library.IrLibrary
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.SerializedIrFile
 import org.jetbrains.kotlin.library.impl.*
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class ICData(val icData: List<SerializedIrFile>)
 
@@ -105,6 +106,17 @@ class ICKotlinLibrary(private val icData: List<SerializedIrFile>) : IrLibrary {
     override fun bodies(fileIndex: Int): ByteArray = icData[fileIndex].bodies
 
     override fun fileEntries(fileIndex: Int): ByteArray? = icData[fileIndex].fileEntries
+
+    // This class is not used by the K2 compiler, so the first stage inlining feature is not supported.
+    override val hasIrOfInlineableFuns: Boolean get() = false
+    override fun irDeclarationOfInlineableFuns(index: Int): ByteArray = shouldNotBeCalled()
+    override fun typeOfInlineableFuns(index: Int): ByteArray = shouldNotBeCalled()
+    override fun signatureOfInlineableFuns(index: Int): ByteArray = shouldNotBeCalled()
+    override fun stringOfInlineableFuns(index: Int): ByteArray = shouldNotBeCalled()
+    override fun bodyOfInlineableFuns(index: Int): ByteArray = shouldNotBeCalled()
+    override fun debugInfoOfInlineableFuns(index: Int): ByteArray? = shouldNotBeCalled()
+    override fun fileEntryOfInlineableFuns(index: Int): ByteArray = shouldNotBeCalled()
+    override fun signaturesOfInlineableFuns(): ByteArray = shouldNotBeCalled()
 }
 
 class CurrentModuleWithICDeserializer(

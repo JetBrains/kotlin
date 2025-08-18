@@ -22,6 +22,7 @@ const val KLIB_MANIFEST_FILE_NAME = "manifest"
 const val KLIB_MODULE_METADATA_FILE_NAME = "module"
 const val KLIB_METADATA_FOLDER_NAME = "linkdata"
 const val KLIB_IR_FOLDER_NAME = "ir"
+const val KLIB_IR_OF_INLINEABLE_FUNS_DIR_NAME = "ir_of_inlineable_functions"
 
 /**
  * This scheme describes the Kotlin/Native Library (KLIB) layout.
@@ -71,10 +72,30 @@ interface IrKotlinLibraryLayout : KotlinLibraryLayout {
         get() = File(irDir, IR_FILES_FILE_NAME)
     val irDebugInfo
         get() = File(irDir, IR_DEBUG_INFO_FILE_NAME)
-
     // Please check `hasFileEntriesTable` before getter invocation, otherwise it may crash in override getter
     val irFileEntries
         get() = File(irDir, IR_FILE_ENTRIES_FILE_NAME)
+
+    // This directory is similar to the main "ir" directory but contains only specially prepared copies of public inline functions,
+    // instead of the entire IR.
+    // Those may be read and inlined on the first stage of compilation, without the need to read the main, much bigger,
+    // "ir" directory (see KT-75794).
+    val irOfInlineableFunsDir
+        get() = File(componentDir, KLIB_IR_OF_INLINEABLE_FUNS_DIR_NAME)
+    val irDeclarationsOfInlineableFuns
+        get() = File(irOfInlineableFunsDir, IR_DECLARATIONS_FILE_NAME)
+    val irTypesOfInlineableFuns
+        get() = File(irOfInlineableFunsDir, IR_TYPES_FILE_NAME)
+    val irSignaturesOfInlineableFuns
+        get() = File(irOfInlineableFunsDir, IR_SIGNATURES_FILE_NAME)
+    val irStringsOfInlineableFuns
+        get() = File(irOfInlineableFunsDir, IR_STRINGS_FILE_NAME)
+    val irBodiesOfInlineableFuns
+        get() = File(irOfInlineableFunsDir, IR_BODIES_FILE_NAME)
+    val irDebugInfoOfInlineableFuns
+        get() = File(irOfInlineableFunsDir, IR_DEBUG_INFO_FILE_NAME)
+    val irFileEntriesOfInlineableFuns
+        get() = File(irOfInlineableFunsDir, IR_FILE_ENTRIES_FILE_NAME)
 
     companion object {
         const val IR_DECLARATIONS_FILE_NAME = "irDeclarations.knd"

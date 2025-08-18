@@ -179,6 +179,63 @@ class IrLibraryImpl(val access: IrLibraryAccess<IrKotlinLibraryLayout>) : IrLibr
     override fun fileEntries(fileIndex: Int): ByteArray? {
         return fileEntries?.tableItemBytes(fileIndex)
     }
+
+
+
+    override val hasIrOfInlineableFuns by lazy {
+        access.inPlace { it: IrKotlinLibraryLayout ->
+            it.irOfInlineableFunsDir.exists
+        }
+    }
+
+    override fun irDeclarationOfInlineableFuns(index: Int) = loadIrDeclarationOfInlineableFuns(index)
+
+    override fun typeOfInlineableFuns(index: Int) = typesOfInlineableFuns.tableItemBytes(0, index)
+
+    override fun signatureOfInlineableFuns(index: Int) = signaturesOfInlineableFuns.tableItemBytes(0, index)
+
+    override fun stringOfInlineableFuns(index: Int) = stringsOfInlineableFuns.tableItemBytes(0, index)
+
+    override fun bodyOfInlineableFuns(index: Int) = bodiesOfInlineableFuns.tableItemBytes(0, index)
+
+    override fun debugInfoOfInlineableFuns(index: Int) = debugInfosOfInlineableFuns?.tableItemBytes(0, index)
+
+    override fun fileEntryOfInlineableFuns(index: Int) = fileEntriesOfInlineableFuns.tableItemBytes(0, index)
+
+    private fun loadIrDeclarationOfInlineableFuns(index: Int) =
+        combinedDeclarationsOfInlineableFuns.tableItemBytes(0, DeclarationId(index))
+
+    private val combinedDeclarationsOfInlineableFuns: DeclarationIdMultiTableReader by lazy {
+        DeclarationIdMultiTableReader(access, IrKotlinLibraryLayout::irDeclarationsOfInlineableFuns)
+    }
+
+    private val typesOfInlineableFuns: IrMultiArrayReader by lazy {
+        IrMultiArrayReader(access, IrKotlinLibraryLayout::irTypesOfInlineableFuns)
+    }
+
+    private val signaturesOfInlineableFuns: IrMultiArrayReader by lazy {
+        IrMultiArrayReader(access, IrKotlinLibraryLayout::irSignaturesOfInlineableFuns)
+    }
+
+    private val stringsOfInlineableFuns: IrMultiArrayReader by lazy {
+        IrMultiArrayReader(access, IrKotlinLibraryLayout::irStringsOfInlineableFuns)
+    }
+
+    private val bodiesOfInlineableFuns: IrMultiArrayReader by lazy {
+        IrMultiArrayReader(access, IrKotlinLibraryLayout::irBodiesOfInlineableFuns)
+    }
+
+    private val debugInfosOfInlineableFuns: IrMultiArrayReader? by lazy {
+        IrMultiArrayReader(access, IrKotlinLibraryLayout::irDebugInfoOfInlineableFuns)
+    }
+
+    private val fileEntriesOfInlineableFuns: IrMultiArrayReader by lazy {
+        IrMultiArrayReader(access, IrKotlinLibraryLayout::irFileEntriesOfInlineableFuns)
+    }
+
+    override fun signaturesOfInlineableFuns(): ByteArray {
+        return signaturesOfInlineableFuns.tableItemBytes(0)
+    }
 }
 
 class KotlinLibraryImpl(

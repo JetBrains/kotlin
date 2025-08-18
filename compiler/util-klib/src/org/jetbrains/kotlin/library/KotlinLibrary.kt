@@ -118,6 +118,18 @@ interface IrLibrary {
     fun declarations(fileIndex: Int): ByteArray
     fun bodies(fileIndex: Int): ByteArray
     fun fileEntries(fileIndex: Int): ByteArray?
+
+    // Those duplicated structures store prepared copies of inlinable functions, see KT-75794.
+    val hasIrOfInlineableFuns: Boolean
+    fun irDeclarationOfInlineableFuns(index: Int): ByteArray
+    fun typeOfInlineableFuns(index: Int): ByteArray
+    fun signatureOfInlineableFuns(index: Int): ByteArray
+    fun stringOfInlineableFuns(index: Int): ByteArray
+    fun bodyOfInlineableFuns(index: Int): ByteArray
+    fun debugInfoOfInlineableFuns(index: Int): ByteArray?
+    fun fileEntryOfInlineableFuns(index: Int): ByteArray
+
+    fun signaturesOfInlineableFuns(): ByteArray
 }
 
 /** Whether [this] is a Kotlin/Native stdlib. */

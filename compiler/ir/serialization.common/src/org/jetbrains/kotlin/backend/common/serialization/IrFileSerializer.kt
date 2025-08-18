@@ -1581,6 +1581,34 @@ open class IrFileSerializer(
         )
     }
 
+    fun serializeIrFileWithPreparedInlineFunctions(preparedFunctions: List<IrSimpleFunction>): SerializedIrFile {
+        val topLevelDeclarations = preparedFunctions.map { function ->
+            val byteArray = serializeDeclaration(function).toByteArray()
+            val idSig = declarationTable.signatureByDeclaration(
+                function.originalOfErasedTopLevelCopy!!,
+                compatibleMode = false,
+                recordInSignatureClashDetector = false
+            )
+            val sigIndex = idSignatureSerializer.protoIdSignature(idSig)
+
+            SerializedDeclaration(sigIndex, byteArray)
+        }
+
+        return SerializedIrFile(
+            fileData = ByteArray(0),
+            fqName = "",
+            path = "",
+            types = IrArrayWriter(protoTypeArray.byteArrays).writeIntoMemory(),
+            signatures = IrArrayWriter(protoIdSignatureArray.map { it.toByteArray() }).writeIntoMemory(),
+            strings = IrStringWriter(protoStringArray).writeIntoMemory(),
+            bodies = IrArrayWriter(protoBodyArray.map { it.toByteArray() }).writeIntoMemory(),
+            declarations = IrDeclarationWriter(topLevelDeclarations).writeIntoMemory(),
+            debugInfo = IrStringWriter(protoDebugInfoArray).writeIntoMemory(),
+            backendSpecificMetadata = null,
+            fileEntries = IrArrayWriter(protoIrFileEntryArray.map { it.toByteArray() }).writeIntoMemory(),
+        )
+    }
+
     private fun serializeTopLevelDeclaration(topLevelDeclaration: IrDeclaration): SerializedDeclaration {
         val byteArray = serializeDeclaration(topLevelDeclaration).toByteArray()
         val idSig = declarationTable.signatureByDeclaration(
