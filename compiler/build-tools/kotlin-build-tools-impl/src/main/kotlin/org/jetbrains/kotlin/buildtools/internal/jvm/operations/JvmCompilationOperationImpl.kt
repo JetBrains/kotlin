@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.buildtools.internal.jvm.operations
 
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.BuildReporter
+import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporterImpl
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
@@ -48,11 +49,12 @@ import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.storage.FileLocations
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.ObjectOutputStream
 import java.net.URLClassLoader
 import java.nio.file.Path
 import java.rmi.RemoteException
-import kotlin.collections.plus
 import kotlin.io.path.absolutePathString
 
 internal class JvmCompilationOperationImpl(
@@ -288,10 +290,11 @@ internal class JvmCompilationOperationImpl(
         ) + kotlinSources.map { it.toFile() }
 
         val classpathChanges = classpathChanges
+        val metricsReporter = getMetricsReporter()
         val buildReporter = BuildReporter(
             icReporter = BuildToolsApiBuildICReporter(
                 loggerAdapter.kotlinLogger, projectDir
-            ), buildMetricsReporter = getMetricsReporter()
+            ), buildMetricsReporter = metricsReporter
         )
         val verifiedPreciseJavaTracking =
             arguments.disablePreciseJavaTrackingIfK2(usePreciseJavaTrackingByDefault = aggregatedIcConfigurationOptions[PRECISE_JAVA_TRACKING])
@@ -316,7 +319,13 @@ internal class JvmCompilationOperationImpl(
         } else null
         return incrementalCompiler.compile(
             kotlinSources, arguments, loggerAdapter, sourcesChanges.asChangedFiles, fileLocations
-        ).asCompilationResult
+        ).asCompilationResult.also {
+            if (this@JvmCompilationOperationImpl[XX_KGP_METRICS_COLLECTOR] && metricsReporter is BuildMetricsReporterImpl) {
+                this@JvmCompilationOperationImpl[XX_KGP_METRICS_COLLECTOR_OUT] = ByteArrayOutputStream().apply {
+                    ObjectOutputStream(this).writeObject(metricsReporter)
+                }.toByteArray()
+            }
+        }
     }
 
     private fun JvmCompilationOperationImpl.getNonFirRunner(
