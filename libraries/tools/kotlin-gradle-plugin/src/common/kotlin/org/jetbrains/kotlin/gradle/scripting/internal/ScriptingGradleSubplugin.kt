@@ -13,7 +13,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.artifacts.transform.*
-import org.gradle.api.attributes.Attribute
+import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileSystemLocation
 import org.gradle.api.provider.Property
@@ -33,8 +33,10 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.scripting.ScriptingExtension
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.configuration.BaseKotlinCompileConfig.Companion.CLASSES_SECONDARY_VARIANT_NAME
 import org.jetbrains.kotlin.gradle.utils.maybeCreateDependencyScope
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
+import org.jetbrains.kotlin.gradle.utils.registerTransformForArtifactType
 import org.jetbrains.kotlin.gradle.utils.withType
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 
@@ -124,7 +126,7 @@ private fun configureDiscoveryTransformation(
     discoveryResultsConfigurationName: String
 ) {
     project.configurations.maybeCreateResolvable(discoveryResultsConfigurationName).apply {
-        attributes.attribute(artifactType, scriptFilesExtensions)
+        attributes.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, scriptFilesExtensions)
         extendsFrom(discoveryConfiguration)
     }
     val classLoadersCachingService = ClassLoadersCachingBuildService.registerIfAbsent(project)
@@ -171,17 +173,17 @@ private fun DependencyHandler.registerDiscoverScriptExtensionsTransform(
         parameters.classLoadersCachingService.set(classLoadersCachingService)
         parameters.compilerClasspath.from(compilerClasspath)
     }
-    registerTransform(DiscoverScriptExtensionsTransformAction::class.java) { transformSpec ->
-        transformSpec.from.attributes.attribute(artifactType, "jar")
-        transformSpec.to.attributes.attribute(artifactType, scriptFilesExtensions)
-        transformSpec.configureCommonParameters()
-    }
+    registerTransformForArtifactType(
+        DiscoverScriptExtensionsTransformAction::class.java,
+        fromArtifactType = ArtifactTypeDefinition.JAR_TYPE,
+        toArtifactType = scriptFilesExtensions,
+    ) { it.configureCommonParameters() }
 
-    registerTransform(DiscoverScriptExtensionsTransformAction::class.java) { transformSpec ->
-        transformSpec.from.attributes.attribute(artifactType, "classes")
-        transformSpec.to.attributes.attribute(artifactType, scriptFilesExtensions)
-        transformSpec.configureCommonParameters()
-    }
+    registerTransformForArtifactType(
+        DiscoverScriptExtensionsTransformAction::class.java,
+        fromArtifactType = CLASSES_SECONDARY_VARIANT_NAME,
+        toArtifactType = scriptFilesExtensions,
+    ) { it.configureCommonParameters() }
 }
 
 private fun DependencyHandler.registerOnceDiscoverScriptExtensionsTransform(
@@ -193,8 +195,6 @@ private fun DependencyHandler.registerOnceDiscoverScriptExtensionsTransform(
         extensions.extraProperties["DiscoverScriptExtensionsTransform"] = true
     }
 }
-
-private val artifactType = Attribute.of("artifactType", String::class.java)
 
 private const val scriptFilesExtensions = "script-files-extensions"
 
