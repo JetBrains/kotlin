@@ -239,6 +239,85 @@ internal fun KotlinStubs.generateCCall(
     return result
 }
 
+internal fun KotlinStubs.generateCGlobalDirectAccess(
+        expression: IrCall, builder: IrBuilderWithScope,
+        foreignExceptionMode: ForeignExceptionMode.Mode = ForeignExceptionMode.default
+): IrExpression {
+    val callBuilder = KotlinToCCallBuilder(builder, this, isObjCMethod = false, foreignExceptionMode)
+
+    val callee = expression.symbol.owner
+    check(callee.isAccessor)
+
+    val isPointer =
+            callee.correspondingPropertySymbol!!.owner.hasAnnotation(RuntimeNames.cGlobalArray) ||
+                    callee.returnType.classOrNull?.isSubtypeOfClass(symbols.nativePointed) == true
+
+    val globalBinaryName = callee.correspondingPropertySymbol!!.owner.getAnnotationArgumentValue<String>(RuntimeNames.cGlobal, "name")!!
+
+    val valuePassing = if (isPointer) {
+        check(callee.isGetter)
+        check(callee.parameters.isEmpty())
+        TrivialValuePassing(callee.returnType, CTypes.pointer(CTypes.char))
+    } else {
+        val type = if (callee.isGetter) {
+            check(callee.parameters.isEmpty())
+            callee.returnType
+        } else if (callee.isSetter) {
+            check(callee.returnType.isUnit())
+            val valueParameter = callee.parameters.single()
+            valueParameter.type
+        } else {
+            error("")
+        }
+
+        callBuilder.state.mapType(
+                type,
+                retained = false, // TODO
+                variadic = false,
+                location = expression,
+        )
+    }
+
+    val globalCType = if (isPointer) CTypes.char else valuePassing.cType
+
+    val globalName = globalBinaryName.removePrefix("_")
+    if (globalBinaryName.startsWith("_")) {
+        callBuilder.cBridgeBodyLines.add("extern ${globalCType.render(globalName)};") // FIXME: use unique name.
+    } else {
+        callBuilder.cBridgeBodyLines.add("extern ${globalCType.render(globalName)} __asm(\"$globalBinaryName\");") // FIXME: use unique name.
+    }
+
+    val result: IrExpression
+
+    if (isPointer) {
+        result = with(valuePassing) {
+            callBuilder.returnValue("&$globalName")
+        }
+    } else if (callee.isGetter) {
+        result = with(valuePassing) {
+            callBuilder.returnValue(globalName)
+        }
+    } else if (callee.isSetter) {
+        val cValue = with(valuePassing) {
+            callBuilder.passValue(expression.arguments.single()!!)!!
+        }
+        result = with(VoidReturning) {
+            callBuilder.returnValue("$globalName = ${cValue.expression};")
+        }
+    } else {
+        error("")
+    }
+
+    val libraryName = callee.getPackageFragment().konanLibrary.let {
+        require(it?.isCInteropLibrary() == true) { "Expected a function from a cinterop library: ${callee.render()}" }
+        it.uniqueName
+    }
+
+    callBuilder.finishBuilding(libraryName)
+
+    return result
+}
+
 private fun KotlinToCCallBuilder.addArguments(arguments: List<IrExpression?>, callee: IrFunction) {
     val parameters = callee.parameters.filter { it.kind == IrParameterKind.Regular }
     arguments.forEachIndexed { index, argument ->

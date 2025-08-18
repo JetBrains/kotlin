@@ -11,6 +11,8 @@ object RuntimeNames {
     val exportTypeInfoAnnotation = NativeRuntimeNames.Annotations.exportTypeInfoClassId.asSingleFqName()
     val cCall = FqName("kotlinx.cinterop.internal.CCall")
     val cCallDirect = FqName("kotlinx.cinterop.internal.CCall.Direct")
+    val cGlobal = FqName("kotlinx.cinterop.internal.CGlobal")
+    val cGlobalArray = FqName("kotlinx.cinterop.internal.CGlobal.Array")
     val cStructMemberAt = FqName("kotlinx.cinterop.internal.CStruct.MemberAt")
     val cStructArrayMemberAt = FqName("kotlinx.cinterop.internal.CStruct.ArrayMemberAt")
     val cStructBitField = FqName("kotlinx.cinterop.internal.CStruct.BitField")

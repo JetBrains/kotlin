@@ -834,19 +834,30 @@ private class InteropTransformerPart2(
                 null
             }
 
-    private fun tryGenerateDirectCCall(expression: IrCall): IrExpression? =
-            if (expression.symbol.owner.hasAnnotation(RuntimeNames.cCallDirect)) {
-                generateCCall(expression, direct = true)
-            } else {
-                null
-            }
+    private fun tryGenerateDirectCCallOrGlobalAccess(expression: IrCall): IrExpression? {
+        val function = expression.symbol.owner
+        return when {
+            function.hasAnnotation(RuntimeNames.cCallDirect) -> generateCCall(expression, direct = true)
+            function.isCGlobalAccessor() -> generateCGlobalDirectAccess(expression)
+            else -> null
+        }
+    }
 
     private fun generateCFunctionCallOrGlobalAccess(expression: IrCall): IrExpression = when (context.config.cCallMode) {
         CCallMode.Indirect -> tryGenerateIndirectCCall(expression)
-        CCallMode.IndirectOrDirect -> tryGenerateIndirectCCall(expression) ?: tryGenerateDirectCCall(expression)
-        CCallMode.DirectOrIndirect -> tryGenerateDirectCCall(expression) ?: tryGenerateIndirectCCall(expression)
-        CCallMode.Direct -> tryGenerateDirectCCall(expression)
+        CCallMode.IndirectOrDirect -> tryGenerateIndirectCCall(expression) ?: tryGenerateDirectCCallOrGlobalAccess(expression)
+        CCallMode.DirectOrIndirect -> tryGenerateDirectCCallOrGlobalAccess(expression) ?: tryGenerateIndirectCCall(expression)
+        CCallMode.Direct -> tryGenerateDirectCCallOrGlobalAccess(expression)
     } ?: error(renderCompilerError(expression, "the call is incompatible with cCallMode=${context.config.cCallMode}"))
+
+    private fun generateCGlobalDirectAccess(expression: IrCall): IrExpression {
+        val function = expression.symbol.owner
+
+        val exceptionMode = ForeignExceptionMode.byValue(
+                function.konanLibrary?.manifestProperties?.getProperty(ForeignExceptionMode.manifestKey)
+        )
+        return builder.generateExpressionWithStubs(expression) { generateCGlobalDirectAccess(expression, builder, exceptionMode) }
+    }
 
     private fun lowerObjCInitBy(expression: IrCall): IrExpression {
         val argument = expression.arguments[1]!!

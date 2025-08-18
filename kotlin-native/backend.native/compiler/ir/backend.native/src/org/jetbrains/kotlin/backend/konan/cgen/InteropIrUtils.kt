@@ -36,6 +36,7 @@ private val cCall = RuntimeNames.cCall
 fun IrFunction.isCFunctionOrGlobalAccessor(): Boolean =
         annotations.hasAnnotation(RuntimeNames.cCall)
                 || annotations.hasAnnotation(RuntimeNames.cCallDirect)
+                || this.isCGlobalAccessor()
 
 fun IrDeclaration.hasCCallAnnotation(name: String): Boolean =
         this.annotations.hasAnnotation(cCall.child(Name.identifier(name)))
@@ -116,3 +117,5 @@ internal fun IrFunction.isCStructArrayMemberAtAccessor() = hasAnnotation(Runtime
 
 internal fun IrFunction.isCStructBitFieldAccessor() = hasAnnotation(RuntimeNames.cStructBitField)
 
+internal fun IrFunction.isCGlobalAccessor() = this is IrSimpleFunction &&
+        this.correspondingPropertySymbol?.owner?.hasAnnotation(RuntimeNames.cGlobal) == true
