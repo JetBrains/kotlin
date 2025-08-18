@@ -49,7 +49,6 @@ interface PreSerializationKlibSymbols : PreSerializationSymbols {
 
 @OptIn(InternalSymbolFinderAPI::class)
 abstract class PreSerializationKlibSymbolsImpl(irBuiltIns: IrBuiltIns) : PreSerializationKlibSymbols, PreSerializationSymbolsImpl(irBuiltIns) {
-    // The SharedVariableBox family of classes exists only in non-JVM stdlib variants, hence the nullability of the properties below.
     override val genericSharedVariableBox: PreSerializationKlibSymbols.SharedVariableBoxClassInfo = findSharedVariableBoxClass(null)
 }
 
