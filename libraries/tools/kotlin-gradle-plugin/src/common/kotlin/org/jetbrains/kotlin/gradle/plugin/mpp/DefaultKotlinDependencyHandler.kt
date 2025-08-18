@@ -21,7 +21,7 @@ import javax.inject.Inject
 
 internal open class DefaultKotlinDependencyHandler @Inject constructor(
     val parent: HasKotlinDependencies,
-    override val project: Project
+    override val project: Project,
 ) : KotlinDependencyHandler {
     override fun api(dependencyNotation: Any): Dependency? =
         addDependencyByAnyNotation(parent.apiConfigurationName, dependencyNotation)
@@ -69,7 +69,7 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
 
     private fun addDependencyByAnyNotation(
         configurationName: String,
-        dependencyNotation: Any
+        dependencyNotation: Any,
     ): Dependency? {
         return project.dependencies.add(configurationName, dependencyNotation)
     }
@@ -77,14 +77,14 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
     private fun addDependencyByStringNotation(
         configurationName: String,
         dependencyNotation: Any,
-        configure: ExternalModuleDependency.() -> Unit = { }
+        configure: ExternalModuleDependency.() -> Unit = { },
     ): ExternalModuleDependency =
         addDependency(configurationName, project.dependencies.create(dependencyNotation) as ExternalModuleDependency, configure)
 
     private fun <T : Dependency> addDependency(
         configurationName: String,
         dependency: T,
-        configure: T.() -> Unit
+        configure: T.() -> Unit,
     ): T =
         dependency.also {
             configure(it)
@@ -97,6 +97,7 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
     ): NpmDependency =
         NpmDependency(
             objectFactory = project.objects,
+            emptyFileCollection = project.objects.fileCollection(),
             name = name,
             version = version,
         )
@@ -121,18 +122,19 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
 
     override fun devNpm(
         name: String,
-        version: String
+        version: String,
     ): NpmDependency =
         NpmDependency(
             objectFactory = project.objects,
+            emptyFileCollection = project.objects.fileCollection(),
             name = name,
             version = version,
-            scope = NpmDependency.Scope.DEV
+            _scope = NpmDependency.Scope.DEV
         )
 
     override fun devNpm(
         name: String,
-        directory: File
+        directory: File,
     ): NpmDependency =
         directoryNpmDependency(
             name = name,
@@ -152,9 +154,10 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
     ): NpmDependency =
         NpmDependency(
             objectFactory = project.objects,
+            emptyFileCollection = project.objects.fileCollection(),
             name = name,
             version = version,
-            scope = NpmDependency.Scope.OPTIONAL,
+            _scope = NpmDependency.Scope.OPTIONAL,
         )
 
     override fun optionalNpm(
@@ -177,13 +180,14 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
 
     override fun peerNpm(
         name: String,
-        version: String
+        version: String,
     ): NpmDependency =
         NpmDependency(
             objectFactory = project.objects,
+            emptyFileCollection = project.objects.fileCollection(),
             name = name,
             version = version,
-            scope = NpmDependency.Scope.PEER
+            _scope = NpmDependency.Scope.PEER
         )
 
     private fun directoryNpmDependency(

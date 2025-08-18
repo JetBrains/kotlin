@@ -17,5 +17,11 @@ data class NpmPackageVersion(
     var version: String,
 ) : RequiredKotlinJsDependency {
     override fun createDependency(objectFactory: ObjectFactory, scope: NpmDependency.Scope): Dependency =
-        NpmDependency(objectFactory, scope, name, version)
+        NpmDependency(
+            objectFactory = objectFactory,
+            emptyFileCollection = objectFactory.fileCollection(),
+            _scope = scope,
+            name = name,
+            version = version
+        )
 }

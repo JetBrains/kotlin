@@ -3580,7 +3580,8 @@ public final class org/jetbrains/kotlin/gradle/targets/js/npm/NpmApiExecution$Co
 	public final fun resolveOperationDescription (Ljava/lang/String;)Ljava/lang/String;
 }
 
-public final class org/jetbrains/kotlin/gradle/targets/js/npm/NpmDependency : org/gradle/api/artifacts/FileCollectionDependency, org/gradle/api/internal/artifacts/dependencies/SelfResolvingDependencyInternal {
+public final class org/jetbrains/kotlin/gradle/targets/js/npm/NpmDependency : org/gradle/api/artifacts/FileCollectionDependency {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmDependency$Companion;
 	public fun <init> (Lorg/gradle/api/model/ObjectFactory;Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmDependency$Scope;Ljava/lang/String;Ljava/lang/String;)V
 	public synthetic fun <init> (Lorg/gradle/api/model/ObjectFactory;Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmDependency$Scope;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun because (Ljava/lang/String;)V
@@ -3598,12 +3599,15 @@ public final class org/jetbrains/kotlin/gradle/targets/js/npm/NpmDependency : or
 	public final fun getObjectFactory ()Lorg/gradle/api/model/ObjectFactory;
 	public fun getReason ()Ljava/lang/String;
 	public final fun getScope ()Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmDependency$Scope;
-	public fun getTargetComponentId ()Lorg/gradle/api/artifacts/component/ComponentIdentifier;
+	public final fun getTargetComponentId ()Lorg/gradle/api/artifacts/component/ComponentIdentifier;
 	public fun getVersion ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun resolve ()Ljava/util/Set;
 	public fun resolve (Z)Ljava/util/Set;
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/targets/js/npm/NpmDependency$Companion {
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/npm/NpmDependency$Scope : java/lang/Enum {

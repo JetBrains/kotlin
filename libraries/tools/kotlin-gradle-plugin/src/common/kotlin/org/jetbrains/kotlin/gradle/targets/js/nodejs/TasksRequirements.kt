@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency.Companion.toDeclaration
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependencyDeclaration
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
-import org.jetbrains.kotlin.gradle.targets.js.npm.toDeclaration
 import java.io.Serializable
 
 class TasksRequirements : Serializable {

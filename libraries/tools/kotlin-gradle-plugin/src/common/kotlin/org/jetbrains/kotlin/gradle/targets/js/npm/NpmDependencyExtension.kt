@@ -35,7 +35,7 @@ interface NpmDependencyWithExternalsExtension : BaseNpmDependencyExtension {
     operator fun invoke(
         name: String,
         version: String,
-        generateExternals: Boolean
+        generateExternals: Boolean,
     ): NpmDependency
 }
 
@@ -47,7 +47,7 @@ interface NpmDirectoryDependencyWithExternalsExtension : NpmDirectoryDependencyE
     operator fun invoke(
         name: String,
         directory: File,
-        generateExternals: Boolean
+        generateExternals: Boolean,
     ): NpmDependency
 
     @Deprecated(
@@ -56,7 +56,7 @@ interface NpmDirectoryDependencyWithExternalsExtension : NpmDirectoryDependencyE
     )
     operator fun invoke(
         directory: File,
-        generateExternals: Boolean
+        generateExternals: Boolean,
     ): NpmDependency
 }
 
@@ -128,9 +128,10 @@ private abstract class NpmDependencyExtensionDelegate(
     ): NpmDependency =
         NpmDependency(
             objectFactory = project.objects,
+            emptyFileCollection = project.objects.fileCollection(),
             name = name,
             version = version,
-            scope = scope,
+            _scope = scope,
         )
 
     override fun invoke(directory: File): NpmDependency =
@@ -186,7 +187,7 @@ private abstract class NpmDependencyExtensionDelegate(
     protected abstract fun processNamedNonStringSecondArgument(
         name: String,
         arg: Any?,
-        vararg args: Any?
+        vararg args: Any?,
     ): NpmDependency
 
     protected fun npmDeclarationException(args: Array<out Any?>): Nothing {
@@ -258,7 +259,7 @@ private class DefaultNpmDependencyExtension(
 }
 
 private class DefaultDevNpmDependencyExtension(
-    project: Project
+    project: Project,
 ) : Closure<NpmDependency>(project.dependencies),
     DevNpmDependencyExtension {
     private val delegate = defaultNpmDependencyDelegate(
@@ -341,7 +342,7 @@ private fun defaultNpmDependencyDelegate(
         override fun processNamedNonStringSecondArgument(
             name: String,
             arg: Any?,
-            vararg args: Any?
+            vararg args: Any?,
         ): NpmDependency {
             return when (arg) {
                 is File -> invoke(
@@ -363,7 +364,7 @@ private fun defaultNpmDependencyDelegate(
 }
 
 private class DefaultPeerNpmDependencyExtension(
-    project: Project
+    project: Project,
 ) : Closure<NpmDependency>(project.dependencies),
     PeerNpmDependencyExtension {
     private val delegate: NpmDependencyExtensionDelegate = object : NpmDependencyExtensionDelegate(
@@ -412,7 +413,7 @@ private class DefaultPeerNpmDependencyExtension(
         override fun processNamedNonStringSecondArgument(
             name: String,
             arg: Any?,
-            vararg args: Any?
+            vararg args: Any?,
         ): NpmDependency =
             npmDeclarationException(args)
     }

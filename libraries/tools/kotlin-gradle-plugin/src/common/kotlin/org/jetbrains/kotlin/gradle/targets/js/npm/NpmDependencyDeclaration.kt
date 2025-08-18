@@ -19,10 +19,3 @@ data class NpmDependencyDeclaration(
 
 fun NpmDependencyDeclaration.uniqueRepresentation() =
     "$scope $name:$version"
-
-internal fun NpmDependency.toDeclaration(): NpmDependencyDeclaration =
-    NpmDependencyDeclaration(
-        scope = this.scope,
-        name = this.name,
-        version = this.version,
-    )
