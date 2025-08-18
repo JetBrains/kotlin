@@ -386,7 +386,7 @@ class Fir2IrDelegatedMembersGenerationStrategy(
 
         val irCastOrCall = if (
             delegateTargetFunction.returnType.let { it.hasAnnotation(FlexibleNullability) || it.hasAnnotation(EnhancedNullability) } &&
-            !delegatedFunction.returnType.isMarkedNullable()
+            !delegatedFunction.returnType.canBeNull()
         ) {
             Fir2IrImplicitCastInserter.implicitNotNullCast(irCall)
         } else {
