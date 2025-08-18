@@ -77,6 +77,16 @@ public class FirIdeNormalAnalysisScriptSourceModuleTypeCreatorDslTestGenerated e
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/types/typeCreation/byDsl/typeArgumentWithVariance")
+  @TestDataPath("$PROJECT_ROOT")
+  public class TypeArgumentWithVariance {
+    @Test
+    public void testAllFilesPresentInTypeArgumentWithVariance() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/typeArgumentWithVariance"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/types/typeCreation/byDsl/typeParameterType")
   @TestDataPath("$PROJECT_ROOT")
   public class TypeParameterType {
