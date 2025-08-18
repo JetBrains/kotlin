@@ -7350,6 +7350,12 @@ public class FirSerializeCompileKotlinAgainstInlineKotlinTestWithInlineScopesGen
       }
 
       @Test
+      @TestMetadata("notNullAssertionsAndDelegationToGenericInterface.kt")
+      public void testNotNullAssertionsAndDelegationToGenericInterface() {
+        runTest("compiler/testData/codegen/box/classDelegation/notNullAssertionsAndDelegationToGenericInterface.kt");
+      }
+
+      @Test
       @TestMetadata("property.kt")
       public void testProperty() {
         runTest("compiler/testData/codegen/box/classDelegation/property.kt");
