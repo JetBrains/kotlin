@@ -57,25 +57,23 @@ internal fun getQualifiedName(rtti: kotlin.wasm.internal.reftypes.structref): St
 }
 
 internal fun getPackageName(rtti: kotlin.wasm.internal.reftypes.structref): String {
-    if (getWasmAbiVersion() < 1) return getPackageName0(rtti)
     val poolId = wasmGetRttiIntField(2, rtti)
     return wasmGetQualifierImpl(poolId, rtti)
 }
 
 internal fun getSimpleName(rtti: kotlin.wasm.internal.reftypes.structref): String {
-    if (getWasmAbiVersion() < 1) return getSimpleName0(rtti)
     val poolId = wasmGetRttiIntField(3, rtti)
     return wasmGetSimpleNameImpl(poolId, rtti)
 }
 
 internal fun getTypeId(rtti: kotlin.wasm.internal.reftypes.structref): Long =
-    wasmGetRttiLongField(8, rtti)
+    wasmGetRttiLongField(4, rtti)
 
 internal fun isAnonymousClass(rtti: kotlin.wasm.internal.reftypes.structref): Boolean =
-    (wasmGetRttiIntField(9, rtti) and TYPE_INFO_FLAG_ANONYMOUS_CLASS) != 0
+    (wasmGetRttiIntField(5, rtti) and TYPE_INFO_FLAG_ANONYMOUS_CLASS) != 0
 
 internal fun isLocalClass(rtti: kotlin.wasm.internal.reftypes.structref): Boolean =
-    (wasmGetRttiIntField(9, rtti) and TYPE_INFO_FLAG_LOCAL_CLASS) != 0
+    (wasmGetRttiIntField(5, rtti) and TYPE_INFO_FLAG_LOCAL_CLASS) != 0
 
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
@@ -114,24 +112,12 @@ internal fun wasmGetRttiLongField(intFieldIndex: Int, obj: kotlin.wasm.internal.
 internal fun wasmGetRttiSuperClass(rtti: kotlin.wasm.internal.reftypes.structref): kotlin.wasm.internal.reftypes.structref? =
     implementedAsIntrinsic
 
-// TODO remove following *0 declarations after bootstrap
-
-internal fun getPackageName0(rtti: kotlin.wasm.internal.reftypes.structref): String = stringLiteral(
-    start = wasmGetRttiIntField(2, rtti),
-    length = wasmGetRttiIntField(3, rtti),
-    poolId = wasmGetRttiIntField(4, rtti),
-)
-
-internal fun getSimpleName0(rtti: kotlin.wasm.internal.reftypes.structref): String = stringLiteral(
-    start = wasmGetRttiIntField(5, rtti),
-    length = wasmGetRttiIntField(6, rtti),
-    poolId = wasmGetRttiIntField(7, rtti),
-)
-
+@ExcludedFromCodegen
 @Suppress("UNUSED_PARAMETER")
 internal fun wasmGetQualifierImpl(poolId: Int, rtti: kotlin.wasm.internal.reftypes.structref): String =
-    getPackageName0(rtti) // TODO: replace to intrinsic implementation after bootstrap
+    implementedAsIntrinsic
 
+@ExcludedFromCodegen
 @Suppress("UNUSED_PARAMETER")
 internal fun wasmGetSimpleNameImpl(poolId: Int, rtti: kotlin.wasm.internal.reftypes.structref): String =
-    getSimpleName0(rtti) // TODO: replace to intrinsic implementation after bootstrap
+    implementedAsIntrinsic

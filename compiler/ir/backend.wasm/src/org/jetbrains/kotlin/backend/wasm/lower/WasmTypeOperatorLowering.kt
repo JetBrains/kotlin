@@ -42,7 +42,6 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
     private val builtIns = context.irBuiltIns
     private val jsToKotlinAnyAdapter get() = symbols.jsRelatedSymbols.jsInteropAdapters.jsToKotlinAnyAdapter
     private val kotlinToJsAnyAdapter get() = symbols.jsRelatedSymbols.jsInteropAdapters.kotlinToJsAnyAdapter
-    private val wasmCharArrayFqName = FqName("kotlin.wasm.internal.WasmCharArray")
 
     private lateinit var builder: DeclarationIrBuilder
 
@@ -327,9 +326,6 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
         val argumentType = when (expression) {
             is IrCall -> {
                 val function = expression.symbol.owner
-
-                // TODO: remove after bootstrap
-                if (function.symbol == context.wasmSymbols.wasmArrayNewData) return false
 
                 val packageFragment = function.getPackageFragment()
                 if (context.getExcludedPackageFragment(packageFragment.packageFqName) == packageFragment) return false

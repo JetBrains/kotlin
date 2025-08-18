@@ -36,15 +36,6 @@ internal class WasmUsefulDeclarationProcessor(
                 context.wasmSymbols.createString.owner.enqueue(
                     data, "String literal construction"
                 )
-                if ((expression.value as String).fitsLatin1) {
-                    // TODO: remove after bootstrap
-                    context.wasmSymbols.wasmGetQualifierImpl.owner
-                        .enqueue(data, "String literal intrinsic getter wasmGetQualifierImpl")
-                } else {
-                    // TODO: remove after bootstrap
-                    context.wasmSymbols.wasmGetSimpleNameImpl.owner
-                        .enqueue(data, "String literal intrinsic getter wasmGetSimpleNameImpl")
-                }
             }
             else -> Unit
         }

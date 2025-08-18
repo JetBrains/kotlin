@@ -67,8 +67,7 @@ class WasmCompiledFileFragment(
     val functionTypes: ReferencableAndDefinable<IdSignature, WasmFunctionType> = ReferencableAndDefinable(),
     val gcTypes: ReferencableAndDefinable<IdSignature, WasmTypeDeclaration> = ReferencableAndDefinable(),
     val vTableGcTypes: ReferencableAndDefinable<IdSignature, WasmTypeDeclaration> = ReferencableAndDefinable(),
-    val stringLiteralAddress: ReferencableElements<String, Int> = ReferencableElements(),
-    val stringLiteralPoolId: ReferencableElements<String, Int> = ReferencableElements(),
+    val stringLiteralId: ReferencableElements<String, Int> = ReferencableElements(),
     val constantArrayDataSegmentId: ReferencableElements<Pair<List<Long>, WasmType>, Int> = ReferencableElements(),
     val jsFuns: MutableMap<IdSignature, JsCodeSnippet> = mutableMapOf(),
     val jsModuleImports: MutableMap<IdSignature, String> = mutableMapOf(),
@@ -295,13 +294,6 @@ class WasmCompiledModuleFragment(
                 WasmStructFieldDeclaration("superClassRtti", WasmRefNullType(WasmHeapType.Type(rttiTypeDeclarationSymbol)), false),
                 WasmStructFieldDeclaration("packageNamePoolId", WasmI32, false),
                 WasmStructFieldDeclaration("simpleNamePoolId", WasmI32, false),
-
-                // TODO remove after bootstrap
-                WasmStructFieldDeclaration("dummy0", WasmI32, false),
-                WasmStructFieldDeclaration("dummy1", WasmI32, false),
-                WasmStructFieldDeclaration("dummy2", WasmI32, false),
-                WasmStructFieldDeclaration("dummy3", WasmI32, false),
-
                 WasmStructFieldDeclaration("klassId", WasmI64, false),
                 WasmStructFieldDeclaration("typeInfoFlag", WasmI32, false),
                 WasmStructFieldDeclaration("qualifierStringLoader", WasmFuncRef, false),
@@ -867,43 +859,36 @@ class WasmCompiledModuleFragment(
     private fun bindStringPoolSymbolsAndGetSize(data: MutableList<WasmData>): Int {
         val stringDataSectionBytes = mutableListOf<Byte>()
         var stringDataSectionStart = 0
-        val stringAddressAndId = mutableMapOf<String, Pair<Int, Int>>()
+        val visitedStrings = mutableMapOf<String, Int>()
         val addressesAndLengths = mutableListOf<Long>()
         wasmCompiledFileFragments.forEach { fragment ->
-            for ((string, literalAddressSymbol) in fragment.stringLiteralAddress.unbound) {
-                val currentStringAddress: Int
-                val currentStringId: Int
-                val addressAndId = stringAddressAndId[string]
-                if (addressAndId == null) {
-                    currentStringAddress = stringDataSectionStart
-                    currentStringId = stringAddressAndId.size
-                    stringAddressAndId[string] = currentStringAddress to currentStringId
-                    addressesAndLengths.add(currentStringAddress.toLong() or (string.length.toLong() shl 32))
+            for ((string, literalIdSymbol) in fragment.stringLiteralId.unbound) {
+                val visitedStringId = visitedStrings[string]
+                val stringId: Int
+                if (visitedStringId == null) {
+                    stringId = visitedStrings.size
+                    visitedStrings[string] = stringId
 
+                    addressesAndLengths.add(stringDataSectionStart.toLong() or (string.length.toLong() shl 32))
                     val constData = ConstantDataCharArray(string.toCharArray(), string.fitsLatin1)
                     stringDataSectionBytes += constData.toBytes().toList()
                     stringDataSectionStart += constData.sizeInBytes
                 } else {
-                    currentStringAddress = addressAndId.first
-                    currentStringId = addressAndId.second
+                    stringId = visitedStringId
                 }
-
-                val literalPoolIdSymbol = fragment.stringLiteralPoolId.unbound[string]
-                    ?: compilationException("String symbol expected", type = null)
-                literalAddressSymbol.bind(currentStringAddress)
-                literalPoolIdSymbol.bind(currentStringId)
+                literalIdSymbol.bind(stringId)
             }
         }
 
         wasmCompiledFileFragments.forEach { fragment ->
-            fragment.wasmStringsElements?.stringPoolSize?.bind(stringAddressAndId.size)
+            fragment.wasmStringsElements?.stringPoolSize?.bind(visitedStrings.size)
         }
 
         data.add(WasmData(WasmDataMode.Passive, stringDataSectionBytes.toByteArray()))
         val constDataAddressesAndLengths = ConstantDataIntegerArray(addressesAndLengths, LONG_SIZE_BYTES)
         data.add(WasmData(WasmDataMode.Passive, constDataAddressesAndLengths.toBytes()))
 
-        return stringAddressAndId.size
+        return visitedStrings.size
     }
 
     private fun bindConstantArrayDataSegmentIds(data: MutableList<WasmData>) {

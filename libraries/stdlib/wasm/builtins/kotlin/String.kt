@@ -155,16 +155,3 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
 
 internal fun WasmCharArray.createString(): String =
     String(null, this.len(), this)
-
-// TODO: remove after bootstrap
-internal fun stringLiteral(poolId: Int, start: Int, length: Int): String {
-    val cached = stringPool[poolId]
-    if (cached !== null) {
-        return cached
-    }
-
-    val chars = array_new_data0<WasmCharArray>(start, length)
-    val newString = String(null, length, chars)
-    stringPool[poolId] = newString
-    return newString
-}

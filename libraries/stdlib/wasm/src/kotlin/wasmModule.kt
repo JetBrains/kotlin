@@ -25,6 +25,7 @@ internal fun registerModuleDescriptor(associatedObjectGetter: kotlin.wasm.intern
 /**
  * Internal intrinsic to get associated object's for provided associated object getter.
  */
+@ExcludedFromCodegen
 @Suppress("UNUSED_PARAMETER")
 internal fun callAssociatedObjectGetter(param1: Long, param2: Long, funcRef: kotlin.wasm.internal.reftypes.funcref): Any? =
-    null //TODO: Make this intrinsic after bootstrap
+    implementedAsIntrinsic

@@ -22,11 +22,8 @@ class WasmFileCodegenContext(
     private fun IrSymbol.getReferenceKey(): IdSignature =
         idSignatureRetriever.declarationSignature(this.owner as IrDeclaration)!!
 
-    fun referenceStringLiteralAddressAndId(string: String): Pair<WasmSymbol<Int>, WasmSymbol<Int>> {
-        val address = wasmFileFragment.stringLiteralAddress.reference(string)
-        val id = wasmFileFragment.stringLiteralPoolId.reference(string)
-        return address to id
-    }
+    fun referenceStringLiteralId(string: String): WasmSymbol<Int> =
+        wasmFileFragment.stringLiteralId.reference(string)
 
     fun referenceConstantArray(resource: Pair<List<Long>, WasmType>): WasmSymbol<Int> =
         wasmFileFragment.constantArrayDataSegmentId.reference(resource)

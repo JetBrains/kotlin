@@ -380,8 +380,8 @@ class DeclarationGenerator(
                 ""
             }
         val simpleName = klass.name.asString()
-        val (_, packageNamePoolId) = wasmFileCodegenContext.referenceStringLiteralAddressAndId(qualifier)
-        val (_, simpleNamePoolId) = wasmFileCodegenContext.referenceStringLiteralAddressAndId(simpleName)
+        val packageNameStringLiteralId = wasmFileCodegenContext.referenceStringLiteralId(qualifier)
+        val simpleNameStringLiteralId = wasmFileCodegenContext.referenceStringLiteralId(simpleName)
 
         val location = SourceLocation.NoLocation("Create instance of rtti struct")
         val initRttiGlobal = buildWasmExpression {
@@ -392,14 +392,8 @@ class DeclarationGenerator(
                 buildRefNull(WasmHeapType.Simple.None, location)
             }
 
-            buildConstI32Symbol(packageNamePoolId, location)
-            buildConstI32Symbol(simpleNamePoolId, location)
-
-            // TODO remove after bootstrap
-            buildConstI32(0, location)
-            buildConstI32(0, location)
-            buildConstI32(0, location)
-            buildConstI32(0, location)
+            buildConstI32Symbol(packageNameStringLiteralId, location)
+            buildConstI32Symbol(simpleNameStringLiteralId, location)
 
             buildConstI64(wasmFileCodegenContext.referenceTypeId(symbol), location)
 
@@ -655,9 +649,9 @@ fun generateConstExpression(
         is IrConstKind.Double -> body.buildConstF64(expression.value as Double, location)
         is IrConstKind.String -> {
             val stringValue = expression.value as String
-            val (_, literalPoolId) = context.referenceStringLiteralAddressAndId(stringValue)
+            val literalId = context.referenceStringLiteralId(stringValue)
             body.commentGroupStart { "const string: \"$stringValue\"" }
-            body.buildConstI32Symbol(literalPoolId, location)
+            body.buildConstI32Symbol(literalId, location)
             if (stringValue.fitsLatin1) {
                 body.buildCall(context.wasmStringsElements.createStringLiteralLatin1, location)
             } else {
