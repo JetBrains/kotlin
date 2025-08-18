@@ -52,6 +52,10 @@ internal fun longArray(size: Int): LongArray = withType("LongArray", fillArrayVa
 internal fun longArrayOf(arr: Array<Long>): LongArray = withType("LongArray", arr.asDynamic().slice()).unsafeCast<LongArray>()
 
 @UsedFromCompilerGeneratedCode
+internal fun longCopyOfRange(arr: dynamic, fromIndex: dynamic = VOID, toIndex: dynamic = VOID): LongArray =
+    withType("LongArray", arr.slice(fromIndex, toIndex)).unsafeCast<LongArray>()
+
+@UsedFromCompilerGeneratedCode
 internal fun <T> arrayIterator(array: Array<T>) = object : Iterator<T> {
     var index = 0
     override fun hasNext() = index != array.size

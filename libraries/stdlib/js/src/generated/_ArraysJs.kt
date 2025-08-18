@@ -885,7 +885,7 @@ public actual inline fun IntArray.copyOf(): IntArray {
  * @sample samples.collections.Arrays.CopyOfOperations.copyOf
  */
 public actual fun LongArray.copyOf(): LongArray {
-    return withType("LongArray", this.asDynamic().slice())
+    return longCopyOfRange(this)
 }
 
 /**
@@ -991,7 +991,7 @@ public actual fun IntArray.copyOf(newSize: Int): IntArray {
  */
 public actual fun LongArray.copyOf(newSize: Int): LongArray {
     require(newSize >= 0) { "Invalid new array size: $newSize." }
-    return withType("LongArray", arrayCopyResize(this, newSize, 0L))
+    return fillFrom(this, LongArray(newSize))
 }
 
 /**
@@ -1147,7 +1147,7 @@ public actual fun IntArray.copyOfRange(fromIndex: Int, toIndex: Int): IntArray {
  */
 public actual fun LongArray.copyOfRange(fromIndex: Int, toIndex: Int): LongArray {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
-    return withType("LongArray", this.asDynamic().slice(fromIndex, toIndex))
+    return longCopyOfRange(this, fromIndex, toIndex)
 }
 
 /**
@@ -1482,7 +1482,10 @@ public actual operator fun IntArray.plus(elements: Collection<Int>): IntArray {
  * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
  */
 public actual operator fun LongArray.plus(elements: Collection<Long>): LongArray {
-    return arrayPlusCollection(this, elements)
+    var index = size
+    val result = this.copyOf(size + elements.size)
+    for (element in elements) result[index++] = element
+    return result
 }
 
 /**
@@ -1509,7 +1512,10 @@ public actual operator fun DoubleArray.plus(elements: Collection<Double>): Doubl
  * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
  */
 public actual operator fun BooleanArray.plus(elements: Collection<Boolean>): BooleanArray {
-    return arrayPlusCollection(this, elements)
+    var index = size
+    val result = this.copyOf(size + elements.size)
+    for (element in elements) result[index++] = element
+    return result
 }
 
 /**

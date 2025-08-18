@@ -10906,9 +10906,21 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     }
 
     @Test
+    @TestMetadata("primitiveKClassOnReifiedTypeEsNext.kt")
+    public void testPrimitiveKClassOnReifiedTypeEsNext() {
+      runTest("js/js.translator/testData/box/reflection/primitiveKClassOnReifiedTypeEsNext.kt");
+    }
+
+    @Test
     @TestMetadata("primitives.kt")
     public void testPrimitives() {
       runTest("js/js.translator/testData/box/reflection/primitives.kt");
+    }
+
+    @Test
+    @TestMetadata("primitivesEsNext.kt")
+    public void testPrimitivesEsNext() {
+      runTest("js/js.translator/testData/box/reflection/primitivesEsNext.kt");
     }
 
     @Test

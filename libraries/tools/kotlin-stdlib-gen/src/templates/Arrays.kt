@@ -652,24 +652,18 @@ object ArrayOps : TemplateGroupBase() {
                 }
                 on(Platform.JS) {
                     // TODO: inline arrayPlusCollection when @PublishedAPI is available
-//                        inline(Platform.JS, Inline.Yes)
-//                        annotations(Platform.JS, """@Suppress("NOTHING_TO_INLINE")""")
-                    when (primitive) {
-                        null, PrimitiveType.Boolean, PrimitiveType.Long ->
-                            body { "return arrayPlusCollection(this, elements)" }
-                        else -> {
-                            // Don't use fillFromCollection because it treats arrays
-                            // as `dynamic` but we need to concrete types to perform
-                            // unboxing of collections elements
-                            body {
-                                """
-                                var index = size
-                                val result = this.copyOf(size + elements.size)
-                                for (element in elements) result[index++] = element
-                                return result
-                                """
-                            }
-                        }
+                    // inline(Platform.JS, Inline.Yes)
+                    // annotations(Platform.JS, """@Suppress("NOTHING_TO_INLINE")""")
+                    // Don't use fillFromCollection because it treats arrays
+                    // as `dynamic` but we need to concrete types to perform
+                    // unboxing of collections elements
+                    body {
+                        """
+                        var index = size
+                        val result = this.copyOf(size + elements.size)
+                        for (element in elements) result[index++] = element
+                        return result
+                        """
                     }
                     specialFor(InvariantArraysOfObjects) {
                         inlineOnly()
@@ -902,8 +896,10 @@ object ArrayOps : TemplateGroupBase() {
             specialFor(InvariantArraysOfObjects, ArraysOfPrimitives) {
                 on(Platform.JS) {
                     when (primitive) {
-                        PrimitiveType.Char, PrimitiveType.Boolean, PrimitiveType.Long ->
+                        PrimitiveType.Char, PrimitiveType.Boolean ->
                             body { "return withType(\"${primitive}Array\", this.asDynamic().slice(fromIndex, toIndex))" }
+                        PrimitiveType.Long ->
+                            body { "return longCopyOfRange(this, fromIndex, toIndex)" }
                         null -> {
                             inlineOnly()
                             deprecate(Deprecation("Provided for expect-actual matching", level = DeprecationLevel.HIDDEN))
@@ -1019,7 +1015,9 @@ object ArrayOps : TemplateGroupBase() {
                             deprecate(Deprecation("Provided for expect-actual matching", level = DeprecationLevel.HIDDEN))
                             body { "return this.copyOf()" }
                         }
-                        PrimitiveType.Char, PrimitiveType.Boolean, PrimitiveType.Long ->
+                        PrimitiveType.Long ->
+                            body { "return longCopyOfRange(this)" }
+                        PrimitiveType.Char, PrimitiveType.Boolean ->
                             body { "return withType(\"${primitive}Array\", this.asDynamic().slice())" }
                         else -> {
                             inline(suppressWarning = true)
@@ -1081,8 +1079,6 @@ object ArrayOps : TemplateGroupBase() {
                             body { "return withType(\"BooleanArray\", arrayCopyResize(this, newSize, false))" }
                         PrimitiveType.Char ->
                             body { "return withType(\"CharArray\", fillFrom(this, ${primitive}Array(newSize)))" }
-                        PrimitiveType.Long ->
-                            body { "return withType(\"LongArray\", arrayCopyResize(this, newSize, ${primitive!!.zero()}))" }
                         else ->
                             body { "return fillFrom(this, ${primitive}Array(newSize))" }
                     }

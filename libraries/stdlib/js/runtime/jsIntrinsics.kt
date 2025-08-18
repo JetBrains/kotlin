@@ -161,6 +161,9 @@ internal fun float32Array(a: Any?): Any?
 internal fun float64Array(a: Any?): Any?
 
 @JsIntrinsic
+internal fun bigint64Array(a: Any?): Any?
+
+@JsIntrinsic
 internal fun int8ArrayOf(a: Any?): Any?
 
 @JsIntrinsic
@@ -174,6 +177,9 @@ internal fun float32ArrayOf(a: Any?): Any?
 
 @JsIntrinsic
 internal fun float64ArrayOf(a: Any?): Any?
+
+@JsIntrinsic
+internal fun bigint64ArrayOf(a: Any?): Any?
 
 @JsIntrinsic
 internal fun <T> DefaultType(): T

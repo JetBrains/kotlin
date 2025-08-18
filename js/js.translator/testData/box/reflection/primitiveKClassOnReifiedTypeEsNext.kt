@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS_IR_ES6
+// IGNORE_BACKEND: JS_IR
 // MODULE: lib
 // FILE: lib.kt
 inline fun <reified T: Any> klassLib() = T::class
@@ -31,7 +31,7 @@ fun box(): String {
     check(js("Int8Array"), "ByteArray", klass<ByteArray>())
     check(js("Int16Array"), "ShortArray", klass<ShortArray>())
     check(js("Int32Array"), "IntArray", klass<IntArray>())
-    check(js("Array"), "LongArray", klass<LongArray>())
+    check(js("BigInt64Array"), "LongArray", klass<LongArray>())
     check(js("Float32Array"), "FloatArray", klass<FloatArray>())
     check(js("Float64Array"), "DoubleArray", klass<DoubleArray>())
 

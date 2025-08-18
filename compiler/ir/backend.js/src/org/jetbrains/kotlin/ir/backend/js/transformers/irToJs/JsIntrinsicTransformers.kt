@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.util.getInlineClassBackingField
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.isInlineClassBoxing
 import org.jetbrains.kotlin.js.backend.ast.metadata.isInlineClassUnboxing
+import org.jetbrains.kotlin.js.config.compileLongAsBigint
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
 private typealias IrCallTransformer<T> = (T, context: JsGenerationContext) -> JsExpression
@@ -175,6 +176,13 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
 
             add(intrinsics.jsArraySlice) { call, context ->
                 JsInvocation(JsNameRef(Namer.SLICE_FUNCTION, translateCallArguments(call, context).single()))
+            }
+
+            if (backendContext.configuration.compileLongAsBigint) {
+                add(intrinsics.longCopyOfRange) { call, context ->
+                    val args = translateCallArguments(call, context)
+                    JsInvocation(JsNameRef(Namer.SLICE_FUNCTION, args.first()), args.drop(1))
+                }
             }
 
             for ((type, prefix) in intrinsics.primitiveToTypedArrayMap) {

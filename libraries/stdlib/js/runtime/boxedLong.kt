@@ -20,6 +20,7 @@
 package kotlin.js.internal.boxedLong
 
 import kotlin.internal.UsedFromCompilerGeneratedCode
+import kotlin.reflect.js.internal.PrimitiveKClassImpl
 
 /**
  * Marks the stdlib functions that implement the pre-BigInt Long boxing or rely on [Long] being implemented as a regular class
@@ -532,3 +533,11 @@ private val MIN_VALUE = Long(0, 1 shl 31)
 
 @BoxedLongApi
 private val TWO_PWR_24_ = fromInt(1 shl 24)
+
+@BoxedLongApi
+@UsedFromCompilerGeneratedCode
+internal val longArrayClass = PrimitiveKClassImpl(js("Array").unsafeCast<JsClass<LongArray>>(), "LongArray", { it is LongArray })
+
+@BoxedLongApi
+@UsedFromCompilerGeneratedCode
+internal fun isLongArray(a: dynamic): Boolean = isJsArray(a) && a.`$type$` === "LongArray"

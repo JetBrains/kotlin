@@ -73,7 +73,7 @@ internal fun isSuspendFunction(obj: dynamic, arity: Int): Boolean {
     return result
 }
 
-private fun isJsArray(obj: Any): Boolean {
+internal fun isJsArray(obj: Any): Boolean {
     return js("Array").isArray(obj).unsafeCast<Boolean>()
 }
 
@@ -109,9 +109,6 @@ internal fun isFloatArray(a: dynamic): Boolean = jsInstanceOf(a, js("Float32Arra
 
 @UsedFromCompilerGeneratedCode
 internal fun isDoubleArray(a: dynamic): Boolean = jsInstanceOf(a, js("Float64Array"))
-
-@UsedFromCompilerGeneratedCode
-internal fun isLongArray(a: dynamic): Boolean = isJsArray(a) && a.`$type$` === "LongArray"
 
 internal fun jsGetPrototypeOf(jsClass: dynamic) = js("Object").getPrototypeOf(jsClass)
 
