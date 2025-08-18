@@ -37,7 +37,7 @@ class IrSourceRangesDumpHandler(
     artifactKind: BackendKind<IrBackendInput>,
 ) : AbstractIrHandler(testServices, artifactKind) {
     companion object {
-        const val DUMP_EXTENSION = "txt"
+        const val DUMP_EXTENSION = "ranges.txt"
     }
 
     override val directiveContainers: List<DirectivesContainer>
