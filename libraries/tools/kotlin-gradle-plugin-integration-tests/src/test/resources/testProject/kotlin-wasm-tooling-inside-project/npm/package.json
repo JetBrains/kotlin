@@ -1,10 +1,10 @@
 {
   "name": "kotlin-npm-tooling",
-  "version": "0e8af1ba763e2a6bb176b6e17636dac8",
+  "version": "ed693c3f04b7e9342a4dd7715b69ad0e",
   "private": true,
   "devDependencies": {},
   "dependencies": {
-    "webpack": "5.100.2",
+    "webpack": "5.101.0",
     "webpack-cli": "6.0.1",
     "webpack-dev-server": "5.2.2",
     "source-map-loader": "5.0.0",
@@ -14,7 +14,7 @@
     "sass-loader": "16.0.5",
     "sass": "1.89.2",
     "to-string-loader": "1.2.0",
-    "mini-css-extract-plugin": "2.9.2",
+    "mini-css-extract-plugin": "2.9.3",
     "mocha": "11.7.1",
     "karma": "6.4.4",
     "karma-chrome-launcher": "3.2.0",
@@ -25,7 +25,7 @@
     "karma-mocha": "2.0.1",
     "karma-webpack": "5.0.1",
     "karma-sourcemap-loader": "0.4.0",
-    "typescript": "5.8.3",
+    "typescript": "5.9.2",
     "kotlin-web-helpers": "2.1.0"
   },
   "peerDependencies": {},
