@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.backend.konan.lower.loweredConstructorFunction
 import org.jetbrains.kotlin.backend.konan.util.IntArrayList
 import org.jetbrains.kotlin.backend.konan.lower.getObjectClassInstanceFunction
 import org.jetbrains.kotlin.backend.konan.util.CustomBitSet
+import org.jetbrains.kotlin.backend.konan.util.LongHashMap
 import org.jetbrains.kotlin.backend.konan.util.LongHashSet
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
@@ -144,11 +145,6 @@ internal object DevirtualizationAnalysis {
 
             var priority = -1
 
-            var multiNodeStart = -1
-            var multiNodeEnd = -1
-
-            val multiNodeSize get() = multiNodeEnd - multiNodeStart
-
             fun addCastEdge(edge: CastEdge) {
                 if (directCastEdges == null) directCastEdges = ArrayList(1)
                 directCastEdges!!.add(edge)
@@ -158,7 +154,32 @@ internal object DevirtualizationAnalysis {
 
             abstract fun toString(allTypes: Array<DataFlowIR.Type>): String
 
-            class Source(id: Int, typeId: Int, nameBuilder: () -> String) : Node(id) {
+            private var parent = this
+            private var rank = 0
+
+            fun root(): Node {
+                if (parent == this) return this
+                parent = parent.root()
+                return parent
+            }
+
+            fun join(other: Node) {
+                val r = root()
+                val otherR = other.root()
+
+                if (r === otherR) return
+
+                if (r.rank >= otherR.rank) {
+                    otherR.parent = r
+                } else {
+                    r.parent = otherR
+                }
+                if (r.rank == otherR.rank) {
+                    r.rank++
+                }
+            }
+
+            class Source(id: Int, val typeId: Int, nameBuilder: () -> String) : Node(id) {
                 val name = takeName(nameBuilder)
 
                 init {
@@ -290,15 +311,9 @@ internal object DevirtualizationAnalysis {
             }
         }
 
-        private inner class Condensation(val multiNodes: IntArray, val topologicalOrder: IntArray) {
-            inline fun forEachNode(node: Node, block: (Node) -> Unit) {
-                for (i in node.multiNodeStart until node.multiNodeEnd)
-                    block(constraintGraph.nodes[multiNodes[i]])
-            }
-        }
+        private inner class Condensation(val topologicalOrder: IntArray)
 
         private inner class CondensationBuilder(val directEdges: IntArray, val reversedEdges: IntArray) {
-            val startTime = System.currentTimeMillis()
             val nodes = constraintGraph.nodes
             val nodesCount = nodes.size
             val order = IntArray(nodesCount)
@@ -337,14 +352,12 @@ internal object DevirtualizationAnalysis {
                 require(index == nodesCount)
             }
 
-            private fun calculateMultiNodes() : IntArray {
+            private fun mergeMultiNodes() {
                 visited.clear()
                 var index = 0
-                val multiNodesInOrder = mutableListOf<Int>()
                 for (i in order.size - 1 downTo 0) {
                     val nodeIndex = order[i]
                     if (visited[nodeIndex]) continue
-                    multiNodesInOrder.add(nodeIndex)
                     val start = index
                     var cur = start
                     multiNodes[index++] = nodeIndex
@@ -358,21 +371,121 @@ internal object DevirtualizationAnalysis {
                         }
                     }
                     val end = index
+                    val startNode = nodes[multiNodes[start]]
                     for (multiNodeIndex in start until end) {
                         val node = nodes[multiNodes[multiNodeIndex]]
-                        node.multiNodeStart = start
-                        node.multiNodeEnd = end
+                        node.join(startNode)
                     }
                 }
                 require(index == nodesCount)
-                return multiNodesInOrder.toIntArray()
             }
 
+            fun mergeSources() {
+                val singleSource = IntArray(moduleDFG.symbolTable.typeHierarchy.allTypes.size) { -1 }
+                for (node in nodes) {
+                    if (node !is Node.Source) continue
+
+                    if (singleSource[node.typeId] == -1) {
+                        singleSource[node.typeId] = node.id
+                    } else {
+                        node.join(nodes[singleSource[node.typeId]])
+                    }
+                }
+            }
+
+            private fun mergeEdges() {
+                val numberOfNodes = constraintGraph.nodes.size
+
+                val bagOfEdges = LongHashSet(10, 0.4f)
+                val bagOfCastEdges = LongHashMap<CustomBitSet>(10, 0.4f)
+
+                val directEdgesCount = IntArrayList()
+                val reversedEdgesCount = IntArrayList()
+                directEdgesCount.reserve(numberOfNodes + 1)
+                reversedEdgesCount.reserve(numberOfNodes + 1)
+
+                for (from in nodes) {
+                    directEdges.forEachEdge(from.id) { toId ->
+                        val fromRootId = from.root().id
+                        val toRootId = nodes[toId].root().id
+                        if (fromRootId != toRootId) {
+                            val value = fromRootId.toLong() or (toRootId.toLong() shl 32)
+
+                            if (bagOfEdges.add(value)) {
+                                directEdgesCount[fromRootId]++
+                                reversedEdgesCount[toRootId]++
+                            }
+                        }
+                    }
+
+                    from.directCastEdges?.forEach { edge ->
+                        val fromRootId = from.root().id
+                        val toRootId = edge.node.root().id
+                        if (fromRootId != toRootId) {
+                            val value = fromRootId.toLong() or (toRootId.toLong() shl 32)
+
+                            bagOfCastEdges[value]?.or(edge.suitableTypes) ?: run {
+                                bagOfCastEdges[value] = edge.suitableTypes
+                            }
+                        }
+                    }
+                }
+
+                directEdges.fill(0)
+                var index = numberOfNodes + 1
+                for (v in 0..numberOfNodes) {
+                    directEdges[v] = index
+                    index += directEdgesCount[v]
+                    directEdgesCount[v] = 0
+                }
+
+                reversedEdges.fill(0)
+                index = numberOfNodes + 1
+                for (v in 0..numberOfNodes) {
+                    reversedEdges[v] = index
+                    index += reversedEdgesCount[v]
+                    reversedEdgesCount[v] = 0
+                }
+
+                for (edge in bagOfEdges) {
+                    val from = edge.toInt()
+                    val to = (edge shr 32).toInt()
+                    directEdges[directEdges[from] + (directEdgesCount[from]++)] = to
+                    reversedEdges[reversedEdges[to] + (reversedEdgesCount[to]++)] = from
+                }
+
+                nodes.forEach {
+                    it.directCastEdges = null
+                    it.reversedCastEdges = null
+                }
+
+                for (edge in bagOfCastEdges) {
+                    val from = edge.toInt()
+                    val to = (edge shr 32).toInt()
+                    val value = bagOfCastEdges[edge]!!
+
+                    nodes[from].addCastEdge(Node.CastEdge(nodes[to], value))
+                }
+            }
+
+            fun topologicalOrder(): IntArray {
+                val rootOrder = IntArrayList()
+                for (i in order.size - 1 downTo 0) {
+                    val n = nodes[order[i]]
+                    if (n.root() == n) {
+                        rootOrder.add(n.id)
+                    }
+                }
+                return rootOrder.toIntArray()
+            }
 
             fun build(): Condensation {
                 calculateTopologicalSort()
-                val multiNodesInOrder = calculateMultiNodes()
-                return Condensation(multiNodes, multiNodesInOrder)
+                mergeMultiNodes()
+                mergeSources()
+                mergeEdges()
+
+                return Condensation(topologicalOrder())
             }
         }
 
@@ -441,21 +554,21 @@ internal object DevirtualizationAnalysis {
             val condensation = CondensationBuilder(directEdges, reversedEdges).build()
             val topologicalOrder = condensation.topologicalOrder.map { constraintGraph.nodes[it] }
 
-            context.logMultiple {
-                +"CONDENSATION"
-                topologicalOrder.forEachIndexed { index, multiNode ->
-                    +"    MULTI-NODE #$index"
-                    condensation.forEachNode(multiNode) { +"        #${it.id}: ${it.toString(allTypes)}" }
-                }
-                +""
-            }
+//            context.logMultiple {
+//                +"CONDENSATION"
+//                topologicalOrder.forEachIndexed { index, multiNode ->
+//                    +"    MULTI-NODE #$index"
+//                    condensation.forEachNode(multiNode) { +"        #${it.id}: ${it.toString(allTypes)}" }
+//                }
+//                +""
+//            }
 
-            topologicalOrder.forEachIndexed { index, multiNode ->
-                condensation.forEachNode(multiNode) { node -> node.priority = index }
+            topologicalOrder.forEachIndexed { index, node ->
+                node.priority = index
             }
 
             val badEdges = mutableListOf<Pair<Node, Node.CastEdge>>()
-            for (node in constraintGraph.nodes) {
+            for (node in topologicalOrder) {
                 node.directCastEdges
                         ?.filter { it.node.priority < node.priority } // Contradicts topological order.
                         ?.forEach { badEdges += node to it }
@@ -470,23 +583,23 @@ internal object DevirtualizationAnalysis {
                 ++iterations
                 // Handle all 'right-directed' edges.
                 // TODO: this is pessimistic handling of [DataFlowIR.Type.Virtual], think how to do it better.
-                for (multiNode in topologicalOrder) {
-                    if (multiNode.multiNodeSize == 1 && multiNode is Node.Source)
+                for (node in topologicalOrder) {
+                    if (node is Node.Source)
                         continue // A source has no incoming edges.
                     val types = CustomBitSet()
-                    condensation.forEachNode(multiNode) { node ->
-                        reversedEdges.forEachEdge(node.id) {
-                            types.or(constraintGraph.nodes[it].types)
-                        }
-                        node.reversedCastEdges
-                                ?.filter { it.node.priority < node.priority } // Doesn't contradict topological order.
-                                ?.forEach {
-                                    val sourceTypes = it.node.types.copy()
-                                    sourceTypes.and(it.suitableTypes)
-                                    types.or(sourceTypes)
-                                }
+
+                    reversedEdges.forEachEdge(node.id) {
+                        types.or(constraintGraph.nodes[it].types)
                     }
-                    condensation.forEachNode(multiNode) { node -> node.types.or(types) }
+                    node.reversedCastEdges
+                            ?.filter { it.node.priority < node.priority } // Doesn't contradict topological order.
+                            ?.forEach {
+                                val sourceTypes = it.node.types.copy()
+                                sourceTypes.and(it.suitableTypes)
+                                types.or(sourceTypes)
+                            }
+
+                    node.types.or(types)
                 }
                 if (iterations >= maxNumberOfIterations) break
 
@@ -503,7 +616,7 @@ internal object DevirtualizationAnalysis {
             val secondPhaseStartTime = System.currentTimeMillis()
 
             // Second phase - do BFS.
-            val nodesCount = constraintGraph.nodes.size
+            val nodesCount = topologicalOrder.size
             val marked = CustomBitSet(nodesCount)
             var front = IntArray(nodesCount)
             var prevFront = IntArray(nodesCount)
@@ -551,19 +664,19 @@ internal object DevirtualizationAnalysis {
             if (entryPoint == null)
                 propagateFinalTypesFromExternalVirtualCalls(directEdges)
 
-            context.logMultiple {
-                topologicalOrder.forEachIndexed { index, multiNode ->
-                    +"Types of multi-node #$index"
-                    condensation.forEachNode(multiNode) { node ->
-                        +"    Node #${node.id}"
-                        allTypes.asSequence()
-                                .withIndex()
-                                .filter { node.types[it.index] }.toList()
-                                .forEach { +"        ${it.value}" }
-                    }
-                }
-                +""
-            }
+//            context.logMultiple {
+//                topologicalOrder.forEachIndexed { index, multiNode ->
+//                    +"Types of multi-node #$index"
+//                    condensation.forEachNode(multiNode) { node ->
+//                        +"    Node #${node.id}"
+//                        allTypes.asSequence()
+//                                .withIndex()
+//                                .filter { node.types[it.index] }.toList()
+//                                .forEach { +"        ${it.value}" }
+//                    }
+//                }
+//                +""
+//            }
 
             val result = mutableMapOf<DataFlowIR.Node.VirtualCall, Pair<DevirtualizedCallSite, DataFlowIR.FunctionSymbol>>()
             val nothing = symbolTable.classMap[context.symbols.nothing.owner]
@@ -572,7 +685,7 @@ internal object DevirtualizationAnalysis {
                 function.body.forEachNonScopeNode { node ->
                     val virtualCall = node as? DataFlowIR.Node.VirtualCall ?: return@forEachNonScopeNode
                     assert(nodesMap[virtualCall] != null) { "Node for virtual call $virtualCall has not been built" }
-                    val receiverNode = constraintGraph.virtualCallSiteReceivers[virtualCall]
+                    val receiverNode = constraintGraph.virtualCallSiteReceivers[virtualCall]?.root()
                             ?: error("virtualCallSiteReceivers were not built for virtual call $virtualCall")
                     if (receiverNode.types[VIRTUAL_TYPE_ID]) {
                         context.logMultiple {
@@ -658,7 +771,7 @@ internal object DevirtualizationAnalysis {
                         val visited = CustomBitSet(nodesCount)
                         val stack = mutableListOf<Node>()
                         list.forEach { call ->
-                            val returnsNode = call.returnsNode
+                            val returnsNode = call.returnsNode.root()
                             if (call.receiverNode.types[VIRTUAL_TYPE_ID] // Called from external world.
                                     && !returnsNode.types[type.index] && !visited[returnsNode.id]
                             ) {
