@@ -13,6 +13,9 @@ import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.ProjectId
 import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
+import java.io.DataInputStream
+import java.io.DataOutputStream
+import java.io.ObjectOutputStream
 
 internal abstract class BuildOperationImpl<R> : BuildOperation<R> {
     private val options: Options = Options(BuildOperation::class)

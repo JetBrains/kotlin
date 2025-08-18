@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperatio
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
-import org.jetbrains.kotlin.compilerRunner.GradleCompilationResults
 import org.jetbrains.kotlin.compilerRunner.GradleKotlinCompilerWorkArguments
 import org.jetbrains.kotlin.compilerRunner.asFinishLogMessage
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
@@ -43,7 +42,9 @@ import org.jetbrains.kotlin.gradle.report.TaskExecutionResult
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.destinationAsFile
 import org.jetbrains.kotlin.incremental.ClasspathChanges
+import java.io.ByteArrayInputStream
 import java.io.File
+import java.io.ObjectInputStream
 import java.nio.file.Paths
 import javax.inject.Inject
 
@@ -110,8 +111,10 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
             jvmCompilationOperation.compilerArguments.applyArgumentStrings(workArguments.compilerArgs.toList())
             jvmCompilationOperation[KOTLINSCRIPT_EXTENSIONS] = workArguments.kotlinScriptExtensions
             jvmCompilationOperation[COMPILER_ARGUMENTS_LOG_LEVEL] = workArguments.compilerArgumentsLogLevel.value
-            @Suppress("DEPRECATION_ERROR")
-            jvmCompilationOperation[BuildOperation.Companion.createCustomOption("XX_KGP_METRICS_COLLECTOR")] = metrics
+            if (metrics is BuildMetricsReporterImpl) {
+                @Suppress("DEPRECATION_ERROR")
+                jvmCompilationOperation[BuildOperation.createCustomOption("XX_KGP_METRICS_COLLECTOR")] = true
+            }
 
             val icEnv = workArguments.incrementalCompilationEnvironment
             val classpathChanges = icEnv?.classpathChanges
@@ -145,7 +148,21 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
                     else -> {}
                 }
             }
-            return build.executeOperation(jvmCompilationOperation, executionConfig, log)
+            return build.executeOperation(jvmCompilationOperation, executionConfig, log).also {
+                if (metrics is BuildMetricsReporterImpl) {
+                    @Suppress("DEPRECATION_ERROR")
+                    val key = BuildOperation.createCustomOption<ByteArray>("XX_KGP_METRICS_COLLECTOR_OUT")
+                    try {
+                        ByteArrayInputStream(jvmCompilationOperation[key]).use {
+                            @Suppress("UNCHECKED_CAST")
+                            val metricsFromBta =
+                                ObjectInputStream(it).readObject() as BuildMetricsReporterImpl<GradleBuildTime, GradleBuildPerformanceMetric>
+                            metrics.addMetrics(metricsFromBta.getMetrics())
+                        }
+                    } catch (_: Exception) {
+                    }
+                }
+            }
         } catch (e: Throwable) {
             wrapAndRethrowCompilationException(executionStrategy, e)
         } finally {
