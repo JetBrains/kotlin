@@ -492,6 +492,7 @@ public actual class StringBuilder public actual constructor(content: String) : A
      * @sample samples.text.Strings.clearStringBuilder
      */
     @SinceKotlin("1.3")
+    @IgnorableReturnValue
     public fun clear(): StringBuilder {
         string = ""
         return this
