@@ -240,7 +240,7 @@ FILE: importedSchema.kt
     public final fun box(): R|kotlin/String| {
         ^box String(OK)
     }
-FILE: __GENERATED DECLARATIONS__.kt
+FILE: org/jetbrains/kotlinx/dataframe/annotations/__GENERATED__CALLABLES__.kt
     package org.jetbrains.kotlinx.dataframe.annotations
 
     public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/annotations/Schema>|.id: R|kotlin/Int|

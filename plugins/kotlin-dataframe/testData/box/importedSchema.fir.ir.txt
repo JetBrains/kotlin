@@ -1268,7 +1268,7 @@ FILE fqName:<root> fileName:/testUtils.kt
           TYPE_ARG T: org.jetbrains.kotlinx.dataframe.schema.DataFrameSchema
           ARG <this>: GET_VAR 'schemas: kotlin.collections.List<org.jetbrains.kotlinx.dataframe.schema.DataFrameSchema> declared in <root>.compare' type=kotlin.collections.List<org.jetbrains.kotlinx.dataframe.schema.DataFrameSchema> origin=null
       VAR name:compare type:org.jetbrains.kotlinx.dataframe.schema.CompareResult [val]
-        CALL 'public abstract fun compare (other: org.jetbrains.kotlinx.dataframe.schema.DataFrameSchema, strictlyEqualNestedSchemas: kotlin.Boolean): org.jetbrains.kotlinx.dataframe.schema.CompareResult declared in org.jetbrains.kotlinx.dataframe.schema.DataFrameSchema' type=org.jetbrains.kotlinx.dataframe.schema.CompareResult origin=null
+        CALL 'public abstract fun compare (other: org.jetbrains.kotlinx.dataframe.schema.DataFrameSchema, comparisonMode: org.jetbrains.kotlinx.dataframe.schema.ComparisonMode): org.jetbrains.kotlinx.dataframe.schema.CompareResult declared in org.jetbrains.kotlinx.dataframe.schema.DataFrameSchema' type=org.jetbrains.kotlinx.dataframe.schema.CompareResult origin=null
           ARG <this>: GET_VAR 'runtime: org.jetbrains.kotlinx.dataframe.schema.DataFrameSchema declared in <root>.compare' type=org.jetbrains.kotlinx.dataframe.schema.DataFrameSchema origin=null
           ARG other: GET_VAR 'val schema: org.jetbrains.kotlinx.dataframe.schema.DataFrameSchema declared in <root>.compare' type=org.jetbrains.kotlinx.dataframe.schema.DataFrameSchema origin=null
       CALL 'public final fun require (value: kotlin.Boolean, lazyMessage: kotlin.Function0<kotlin.Any>): kotlin.Unit declared in kotlin' type=kotlin.Unit origin=null
@@ -1291,7 +1291,7 @@ FILE fqName:<root> fileName:/testUtils.kt
                         ARG <this>: GET_VAR '<destruct>: kotlin.Pair<org.jetbrains.kotlinx.dataframe.schema.DataFrameSchema, org.jetbrains.kotlinx.dataframe.schema.DataFrameSchema> declared in <root>.compare.<anonymous>' type=kotlin.Pair<org.jetbrains.kotlinx.dataframe.schema.DataFrameSchema, org.jetbrains.kotlinx.dataframe.schema.DataFrameSchema> origin=null
                     RETURN type=kotlin.Nothing from='local final fun <anonymous> (<destruct>: kotlin.Pair<org.jetbrains.kotlinx.dataframe.schema.DataFrameSchema, org.jetbrains.kotlinx.dataframe.schema.DataFrameSchema>): kotlin.Boolean declared in <root>.compare'
                       CALL 'public final fun isEqual (): kotlin.Boolean declared in org.jetbrains.kotlinx.dataframe.schema.CompareResult' type=kotlin.Boolean origin=null
-                        ARG <this>: CALL 'public abstract fun compare (other: org.jetbrains.kotlinx.dataframe.schema.DataFrameSchema, strictlyEqualNestedSchemas: kotlin.Boolean): org.jetbrains.kotlinx.dataframe.schema.CompareResult declared in org.jetbrains.kotlinx.dataframe.schema.DataFrameSchema' type=org.jetbrains.kotlinx.dataframe.schema.CompareResult origin=null
+                        ARG <this>: CALL 'public abstract fun compare (other: org.jetbrains.kotlinx.dataframe.schema.DataFrameSchema, comparisonMode: org.jetbrains.kotlinx.dataframe.schema.ComparisonMode): org.jetbrains.kotlinx.dataframe.schema.CompareResult declared in org.jetbrains.kotlinx.dataframe.schema.DataFrameSchema' type=org.jetbrains.kotlinx.dataframe.schema.CompareResult origin=null
                           ARG <this>: GET_VAR 'val a: org.jetbrains.kotlinx.dataframe.schema.DataFrameSchema declared in <root>.compare.<anonymous>' type=org.jetbrains.kotlinx.dataframe.schema.DataFrameSchema origin=null
                           ARG other: GET_VAR 'val b: org.jetbrains.kotlinx.dataframe.schema.DataFrameSchema declared in <root>.compare.<anonymous>' type=org.jetbrains.kotlinx.dataframe.schema.DataFrameSchema origin=null
             then: WHEN type=kotlin.Boolean origin=IF
@@ -1471,7 +1471,7 @@ FILE fqName:<root> fileName:/testUtils.kt
           TYPE_ARG T: T of <root>.compareSchemas
           ARG <this>: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.DataFrame<T of <root>.compareSchemas> declared in <root>.compareSchemas' type=org.jetbrains.kotlinx.dataframe.DataFrame<T of <root>.compareSchemas> origin=IMPLICIT_ARGUMENT
       VAR name:compare type:org.jetbrains.kotlinx.dataframe.schema.CompareResult [val]
-        CALL 'public abstract fun compare (other: org.jetbrains.kotlinx.dataframe.schema.DataFrameSchema, strictlyEqualNestedSchemas: kotlin.Boolean): org.jetbrains.kotlinx.dataframe.schema.CompareResult declared in org.jetbrains.kotlinx.dataframe.schema.DataFrameSchema' type=org.jetbrains.kotlinx.dataframe.schema.CompareResult origin=null
+        CALL 'public abstract fun compare (other: org.jetbrains.kotlinx.dataframe.schema.DataFrameSchema, comparisonMode: org.jetbrains.kotlinx.dataframe.schema.ComparisonMode): org.jetbrains.kotlinx.dataframe.schema.CompareResult declared in org.jetbrains.kotlinx.dataframe.schema.DataFrameSchema' type=org.jetbrains.kotlinx.dataframe.schema.CompareResult origin=null
           ARG <this>: GET_VAR 'val compileTimeSchema: org.jetbrains.kotlinx.dataframe.schema.DataFrameSchema declared in <root>.compareSchemas' type=org.jetbrains.kotlinx.dataframe.schema.DataFrameSchema origin=null
           ARG other: GET_VAR 'val schema: org.jetbrains.kotlinx.dataframe.schema.DataFrameSchema declared in <root>.compareSchemas' type=org.jetbrains.kotlinx.dataframe.schema.DataFrameSchema origin=null
       CALL 'public final fun require (value: kotlin.Boolean, lazyMessage: kotlin.Function0<kotlin.Any>): kotlin.Unit declared in kotlin' type=kotlin.Unit origin=null
@@ -1694,7 +1694,10 @@ FILE fqName:<root> fileName:/testUtils.kt
                                     ARG <this>: GET_VAR 'path: org.jetbrains.kotlinx.dataframe.columns.ColumnPath declared in <root>.equals' type=org.jetbrains.kotlinx.dataframe.columns.ColumnPath origin=null
                                     ARG name: TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
                                       GET_VAR 'name: @[EnhancedNullability] kotlin.String declared in <root>.equals.<anonymous>' type=@[EnhancedNullability] kotlin.String origin=null
-FILE fqName:org.jetbrains.kotlinx.dataframe.annotations fileName:__GENERATED DECLARATIONS__.kt
+                      BRANCH
+                        if: CONST Boolean type=kotlin.Boolean value=true
+                        then: CALL 'public final fun noWhenBranchMatchedException (): kotlin.Nothing declared in kotlin.internal.ir' type=kotlin.Nothing origin=null
+FILE fqName:org.jetbrains.kotlinx.dataframe.annotations fileName:org/jetbrains/kotlinx/dataframe/annotations/__GENERATED__CALLABLES__.kt
   PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin] name:id visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Int visibility:private [final,static]
     FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin] name:<get-id> visibility:public modality:FINAL returnType:kotlin.Int
