@@ -167,6 +167,40 @@ public class FirStandaloneNormalAnalysisSourceModuleTypeCreatorDslTestGenerated 
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/types/typeCreation/byDsl/typeParameterType")
+  @TestDataPath("$PROJECT_ROOT")
+  public class TypeParameterType {
+    @Test
+    public void testAllFilesPresentInTypeParameterType() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/typeParameterType"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("regularMakeNullable.kt")
+    public void testRegularMakeNullable() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/typeParameterType/regularMakeNullable.kt");
+    }
+
+    @Test
+    @TestMetadata("reified.kt")
+    public void testReified() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/typeParameterType/reified.kt");
+    }
+
+    @Test
+    @TestMetadata("withAnnotations.kt")
+    public void testWithAnnotations() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/typeParameterType/withAnnotations.kt");
+    }
+
+    @Test
+    @TestMetadata("withUpperBounds.kt")
+    public void testWithUpperBounds() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/typeParameterType/withUpperBounds.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/types/typeCreation/byDsl/varargArrayType")
   @TestDataPath("$PROJECT_ROOT")
   public class VarargArrayType {
