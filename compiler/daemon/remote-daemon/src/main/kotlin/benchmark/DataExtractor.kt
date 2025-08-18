@@ -10,12 +10,42 @@ import java.io.File
 
 data class Task(
     val name: String,
-    val compilerArgs: List<String> = emptyList(),
+    val compilerArgs: Map<String, String> = mapOf(),
     val messages: List<String> = emptyList(),
-    val dependencies: List<String> = emptyList(),
-    val sourceFiles: List<String> = emptyList(),
+    val dependencies: List<File> = emptyList(),
+    val sourceFiles: List<File> = emptyList(),
     val outputDirectory: String,
 )
+
+
+fun getMapFromCompilerArguments(args: List<String>): MutableMap<String, String> {
+    val map = mutableMapOf<String, String>()
+    var i = 0
+    while (i < args.size) {
+        val curr = args[i]
+        val next = args.getOrNull(i + 1)
+
+        if (curr.startsWith("-")) {
+            if ('=' in curr) {
+                val (key, value) = curr.split("=")
+                map["$key="] = value
+                i++
+                continue
+            }
+            if (next == null || next.startsWith("-")) {
+                map[curr] = ""
+                i++
+                continue
+            } else {
+                map[curr] = next
+                i += 2
+                continue
+            }
+        }
+        i++
+    }
+    return map
+}
 
 object DataExtractor {
 
@@ -34,40 +64,33 @@ object DataExtractor {
                 val taskName = line.substringBefore(compileTaskSearchString).substringAfter(":")
                 println("Task name: $taskName")
 
-                val compilerArgs = line.substringAfter(compileTaskSearchString).split(" ").toMutableList()
+                val compilerArgsList = line.substringAfter(compileTaskSearchString).split(" ").toMutableList()
+                val compilerArgs = getMapFromCompilerArguments(compilerArgsList)
 
                 // extract a list of dependencies from the compiler args
-                val dependenciesIndex = compilerArgs.indexOfFirst { it.trim() == "-classpath" } + 1
-                val dependencies = compilerArgs[dependenciesIndex].split(":").toMutableList()
-                compilerArgs.removeAt(dependenciesIndex)
-                compilerArgs.removeAt(dependenciesIndex - 1)
+                val dependencies = compilerArgs["-classpath"]?.split(":")?.map { File(it) } ?: emptyList()
+                compilerArgs.remove("-classpath")
                 println("Dependencies: $dependencies")
 
                 // extract the output directory from the compiler args
-                val outputDirectoryIndex = compilerArgs.indexOfFirst { it.trim() == "-d" } + 1
-                val outputDirectory = compilerArgs[outputDirectoryIndex]
+                val outputDirectory = compilerArgs["-d"]!!
                 // in general we do not need the output directory
-                // but it is useful for benchmarking because we need return back content of the directory
-                // compilerArgs.removeAt(outputDirectoryIndex)
-                // compilerArgs.removeAt(outputDirectoryIndex - 1)
+                // but it is useful for benchmarking because we need to return back content of the directory
 
                 // extract a list of source files from the compiler args
-                val sourceFiles = mutableListOf<String>()
-                for ((index, value) in compilerArgs.asReversed().withIndex()) {
+                val sourceFiles = mutableListOf<File>()
+                for (value in compilerArgsList.asReversed()) {
                     if (value.startsWith("/")) {
-                        sourceFiles.add(value)
+                        sourceFiles.add(File(value))
                     } else {
-                        compilerArgs.lastIndex - index
-                        //clear source files from the original list of compiler arguments
-                        compilerArgs.subList(compilerArgs.lastIndex - index + 1, compilerArgs.size).clear()
                         break
                     }
                 }
                 println("Source files: $sourceFiles")
 
                 println("Remaining compiler args:")
-                for (arg in compilerArgs) {
-                    println(arg)
+                for (arg in compilerArgs.entries) {
+                    println("key ${arg.key}    val ${arg.value}end")
                 }
 
                 // extract compiler messages
