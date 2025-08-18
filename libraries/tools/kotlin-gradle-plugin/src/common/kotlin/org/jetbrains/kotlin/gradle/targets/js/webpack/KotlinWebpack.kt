@@ -268,9 +268,6 @@ internal constructor(
                 output.globalObject = it.globalObject
                 output.clean = it.clean
             }
-            it.devServer?.let {
-                devServerProperty.set(it)
-            }
         }
         webpackConfigAppliers.add(body)
     }
