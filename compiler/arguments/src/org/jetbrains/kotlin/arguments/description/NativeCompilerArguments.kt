@@ -172,13 +172,6 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         valueType = StringType.defaultNull
         valueDescription = "<name>".asReleaseDependent()
 
-        additionalMetadata(
-            GradleOption(
-                value = DefaultValue.STRING_NULL_DEFAULT,
-                gradleInputType = GradleInputTypes.INPUT
-            )
-        )
-
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
             stabilizedVersion = KotlinReleaseVersion.v1_5_20,

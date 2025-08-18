@@ -57,14 +57,6 @@ val actualCommonToolsArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
 
         valueType = BooleanType.defaultFalse
 
-        additionalMetadata(
-            GradleOption(
-                value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
-                gradleInputType = GradleInputTypes.INTERNAL,
-                shouldGenerateDeprecatedKotlinOptions = true,
-            )
-        )
-
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_0_0,
             stabilizedVersion = KotlinReleaseVersion.v1_0_0,
@@ -77,15 +69,6 @@ val actualCommonToolsArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         description = "Don't generate any warnings.".asReleaseDependent()
 
         valueType = BooleanType.defaultFalse
-
-        additionalMetadata(
-            GradleOption(
-                value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
-                gradleInputType = GradleInputTypes.INTERNAL,
-                shouldGenerateDeprecatedKotlinOptions = true,
-            )
-
-        )
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_0_0,
@@ -100,14 +83,6 @@ val actualCommonToolsArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
 
         valueType = BooleanType.defaultFalse
 
-        additionalMetadata(
-            GradleOption(
-                value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
-                gradleInputType = GradleInputTypes.INPUT,
-                shouldGenerateDeprecatedKotlinOptions = true,
-            )
-        )
-
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_2_0,
             stabilizedVersion = KotlinReleaseVersion.v1_2_0,
@@ -120,13 +95,6 @@ val actualCommonToolsArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         description = "Enable extra checkers for K2.".asReleaseDependent()
 
         valueType = BooleanType.defaultFalse
-
-        additionalMetadata(
-            GradleOption(
-                value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
-                gradleInputType = GradleInputTypes.INPUT,
-            )
-        )
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_0,

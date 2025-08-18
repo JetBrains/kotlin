@@ -23,14 +23,6 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         )
         valueDescription = "<version>".asReleaseDependent()
 
-        additionalMetadata(
-            GradleOption(
-                value = DefaultValue.LANGUAGE_VERSIONS,
-                gradleInputType = GradleInputTypes.INPUT,
-                shouldGenerateDeprecatedKotlinOptions = true,
-            )
-        )
-
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_0_3,
             stabilizedVersion = KotlinReleaseVersion.v1_0_3,
@@ -44,14 +36,6 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
             defaultValue = null.asReleaseDependent()
         )
         valueDescription = "<version>".asReleaseDependent()
-
-        additionalMetadata(
-            GradleOption(
-                value = DefaultValue.API_VERSIONS,
-                gradleInputType = GradleInputTypes.INPUT,
-                shouldGenerateDeprecatedKotlinOptions = true,
-            )
-        )
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_0_5,
@@ -83,13 +67,6 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
                 progressive mode enabled may cause compilation errors in progressive mode.
                 """.trimIndent().asReleaseDependent()
         valueType = BooleanType.defaultFalse
-
-        additionalMetadata(
-            GradleOption(
-                value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
-                gradleInputType = GradleInputTypes.INPUT
-            )
-        )
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_2_50,
@@ -126,13 +103,6 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
             "Enable API usages that require opt-in with an opt-in requirement marker with the given fully qualified name.".asReleaseDependent()
         valueType = StringArrayType.defaultNull
         valueDescription = "<fq.name>".asReleaseDependent()
-
-        additionalMetadata(
-            GradleOption(
-                value = DefaultValue.EMPTY_STRING_ARRAY_DEFAULT,
-                gradleInputType = GradleInputTypes.INPUT
-            )
-        )
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_4_0,
@@ -557,19 +527,6 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         description =
             "Compile using the experimental K2 compiler pipeline. No compatibility guarantees are provided yet.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
-
-        additionalMetadata(
-            GradleOption(
-                value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
-                gradleInputType = GradleInputTypes.INPUT,
-                shouldGenerateDeprecatedKotlinOptions = false,
-            ),
-            GradleDeprecatedOption(
-                message = "Compiler flag -Xuse-k2 is deprecated; please use language version 2.0 instead",
-                level = DeprecationLevel.HIDDEN,
-                removeAfter = LanguageVersion.KOTLIN_2_2,
-            )
-        )
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_7_0,

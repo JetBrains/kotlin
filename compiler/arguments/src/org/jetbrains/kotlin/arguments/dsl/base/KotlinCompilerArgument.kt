@@ -51,8 +51,6 @@ data class KotlinCompilerArgument(
     @kotlinx.serialization.Transient
     val isObsolete: Boolean = false,
 
-    @kotlinx.serialization.Transient
-    val additionalMetadata: List<Any> = emptyList(),
 ) : WithKotlinReleaseVersionsMetadata {
 
     // corresponds to [org.jetbrains.kotlin.cli.common.arguments.Argument.Delimiters]
@@ -122,11 +120,6 @@ internal class KotlinCompilerArgumentBuilder {
     private val additionalAnnotations: MutableList<Annotation> = mutableListOf()
 
     /**
-     * @see KotlinCompilerArgument.additionalMetadata
-     */
-    private val additionalMetadata: MutableList<Any> = mutableListOf()
-
-    /**
      * Convenient method to define this argument [KotlinReleaseVersionLifecycle] metadata.
      */
     fun lifecycle(
@@ -151,13 +144,6 @@ internal class KotlinCompilerArgumentBuilder {
     }
 
     /**
-     * Convenient method to add additional into [KotlinCompilerArgument.additionalMetadata].
-     */
-    fun additionalMetadata(vararg metadata: Any) {
-        additionalMetadata.addAll(metadata)
-    }
-
-    /**
      * Build a new instance of [KotlinCompilerArgument].
      */
     fun build(): KotlinCompilerArgument = KotlinCompilerArgument(
@@ -171,7 +157,6 @@ internal class KotlinCompilerArgumentBuilder {
         additionalAnnotations = additionalAnnotations,
         compilerName = compilerName,
         delimiter = delimiter,
-        additionalMetadata = additionalMetadata,
     )
 }
 
