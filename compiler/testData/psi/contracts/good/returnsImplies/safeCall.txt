@@ -189,7 +189,7 @@ KtFile: safeCall.kt
                       TYPE_REFERENCE
                         USER_TYPE
                           REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('Boolean')
+                            PsiElement(IDENTIFIER)('String')
                     PsiElement(RPAR)(')')
               PsiWhiteSpace('\n    ')
               PsiElement(RBRACE)('}')

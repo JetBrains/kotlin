@@ -15,7 +15,7 @@ class Foo {
     @OptIn(ExperimentalContracts::class)
     fun test2(x: String?): Int? {
         contract {
-            returnsNotNull() implies (x is Boolean)
+            returnsNotNull() implies (x is String)
         }
 
         return x?.length

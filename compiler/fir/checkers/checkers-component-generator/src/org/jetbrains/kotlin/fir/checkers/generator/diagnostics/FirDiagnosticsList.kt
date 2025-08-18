@@ -1801,6 +1801,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("originalType")
             parameter<ConeKotlinType>("targetType")
         }
+        val IMPOSSIBLE_IS_CHECK by deprecationError<KtElement>(LanguageFeature.TurnTypeCheckWarningsIntoErrors) {
+            parameter<Boolean>("compileTimeCheckResult")
+        }
         val USELESS_IS_CHECK by warning<KtElement> {
             parameter<Boolean>("compileTimeCheckResult")
         }

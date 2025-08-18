@@ -6,7 +6,7 @@ interface Entity<T>
 abstract class SecuredEntity<out E>(val entity: E) where E : Entity<Int>, E : SecurityCodeAware<*,*>
 interface SecurityCodeAware<out E, R : SecuredEntity<E>> where E : Entity<Int>, E : SecurityCodeAware<E, R>
 fun <E, R : SecuredEntity<E>> SecurityCodeAware<E, R>.secured() : R where E : Entity<Int>, E : SecurityCodeAware<E, R> = <!RETURN_TYPE_MISMATCH!>when(this) {
-    <!USELESS_IS_CHECK!>is Order<!> -> SecuredOrder(this)
+    <!IMPOSSIBLE_IS_CHECK_ERROR!>is Order<!> -> SecuredOrder(this)
     else -> null!!
 }<!>
 class Order : Entity<Int>

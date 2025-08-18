@@ -2380,6 +2380,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
     }
 
     @Test
+    @TestMetadata("upcastThatCancelsSmartcast.kt")
+    public void testUpcastThatCancelsSmartcast() {
+      runTest("compiler/testData/diagnostics/tests/upcastThatCancelsSmartcast.kt");
+    }
+
+    @Test
     @TestMetadata("ValAndFunOverrideCompatibilityClash.kt")
     public void testValAndFunOverrideCompatibilityClash() {
       runTest("compiler/testData/diagnostics/tests/ValAndFunOverrideCompatibilityClash.kt");

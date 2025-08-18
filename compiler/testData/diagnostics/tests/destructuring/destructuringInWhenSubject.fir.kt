@@ -4,8 +4,8 @@ data class Foo(val name: String)
 fun main() {
     val foo = Foo("John")
     when (<!ILLEGAL_DECLARATION_IN_WHEN_SUBJECT!>val (name) = foo<!>) {
-        <!USELESS_IS_CHECK!>is String<!> -> bar("1")
-        <!USELESS_IS_CHECK!>is Foo<!> -> bar("2")
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>is String<!> -> bar("1")
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>is Foo<!> -> bar("2")
         else -> bar(<!UNRESOLVED_REFERENCE!>name<!>)
     }
 }
@@ -13,8 +13,8 @@ fun main() {
 fun main2() {
     val foo = Foo("John")
     when (<!ILLEGAL_DECLARATION_IN_WHEN_SUBJECT!>val (name) = foo<!>) {
-        <!USELESS_IS_CHECK!>is String<!> -> bar("1")
-        <!USELESS_IS_CHECK!>is Foo<!> -> bar("2")
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>is String<!> -> bar("1")
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>is Foo<!> -> bar("2")
     }
 }
 

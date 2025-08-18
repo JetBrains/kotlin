@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.config.LanguageFeature.ProhibitNullableTypeThroughTy
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitScriptTopLevelInnerClasses
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitSingleNamedFunctionAsExpression
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitTypealiasAsCallableQualifierInImport
+import org.jetbrains.kotlin.config.LanguageFeature.TurnTypeCheckWarningsIntoErrors
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -880,6 +881,7 @@ object FirErrors : KtDiagnosticsContainer() {
     val CAST_NEVER_SUCCEEDS: KtDiagnosticFactory0 = KtDiagnosticFactory0("CAST_NEVER_SUCCEEDS", WARNING, SourceElementPositioningStrategies.OPERATOR, KtBinaryExpressionWithTypeRHS::class, getRendererFactory())
     val USELESS_CAST: KtDiagnosticFactory0 = KtDiagnosticFactory0("USELESS_CAST", WARNING, SourceElementPositioningStrategies.AS_TYPE, KtBinaryExpressionWithTypeRHS::class, getRendererFactory())
     val UNCHECKED_CAST: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType> = KtDiagnosticFactory2("UNCHECKED_CAST", WARNING, SourceElementPositioningStrategies.AS_TYPE, KtBinaryExpressionWithTypeRHS::class, getRendererFactory())
+    val IMPOSSIBLE_IS_CHECK: KtDiagnosticFactoryForDeprecation1<Boolean> = KtDiagnosticFactoryForDeprecation1("IMPOSSIBLE_IS_CHECK", TurnTypeCheckWarningsIntoErrors, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val USELESS_IS_CHECK: KtDiagnosticFactory1<Boolean> = KtDiagnosticFactory1("USELESS_IS_CHECK", WARNING, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val IS_ENUM_ENTRY: KtDiagnosticFactory0 = KtDiagnosticFactory0("IS_ENUM_ENTRY", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val DYNAMIC_NOT_ALLOWED: KtDiagnosticFactory0 = KtDiagnosticFactory0("DYNAMIC_NOT_ALLOWED", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())

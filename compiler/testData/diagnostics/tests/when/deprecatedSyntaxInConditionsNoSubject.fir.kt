@@ -40,8 +40,8 @@ fun testWithSubject_ok(x: Boolean, y: Boolean?, any: Any, z: Boolean) {
         y ?: x -> {}
         x in x -> {}
         x !in x -> {}
-        <!USELESS_IS_CHECK!>x is String<!> -> {}
-        <!USELESS_IS_CHECK!>x !is String<!> -> {}
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>x is String<!> -> {}
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>x !is String<!> -> {}
         x < x -> {}
         x > x -> {}
         x <= x -> {}

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // SKIP_TXT
 // FIR_DUMP
 
@@ -12,7 +12,7 @@ fun checkCannotAccess() {
     object : InlineCompletionSessionManager() {
         fun chch() {
             val b: Proto = Proto()
-            if (<!USELESS_IS_CHECK!>b is Proto.Some<!>) return
+            if (<!IMPOSSIBLE_IS_CHECK_ERROR!>b is Proto.Some<!>) return
         }
     }
 }

@@ -4389,6 +4389,18 @@ internal class UncheckedCastImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtBinaryExpressionWithTypeRHS>(firDiagnostic, token), KaFirDiagnostic.UncheckedCast
 
+internal class ImpossibleIsCheckErrorImpl(
+    override val compileTimeCheckResult: Boolean,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ImpossibleIsCheckError
+
+internal class ImpossibleIsCheckWarningImpl(
+    override val compileTimeCheckResult: Boolean,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ImpossibleIsCheckWarning
+
 internal class UselessIsCheckImpl(
     override val compileTimeCheckResult: Boolean,
     firDiagnostic: KtPsiDiagnostic,

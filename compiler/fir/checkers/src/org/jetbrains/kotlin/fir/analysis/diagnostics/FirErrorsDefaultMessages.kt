@@ -392,6 +392,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLEMENTATION_BY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLICIT_BOXING_IN_IDENTITY_EQUALS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLICIT_NOTHING_PROPERTY_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLICIT_NOTHING_RETURN_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPOSSIBLE_IS_CHECK
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_ALL_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_ALL_TARGET_IN_MULTI_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_CANDIDATE
@@ -3076,6 +3077,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(CAST_NEVER_SUCCEEDS, "This cast can never succeed.")
         map.put(USELESS_CAST, "No cast needed.")
         map.put(UNCHECKED_CAST, "Unchecked cast of ''{0}'' to ''{1}''.", RENDER_TYPE, RENDER_TYPE)
+        map.put(IMPOSSIBLE_IS_CHECK, "Check for instance is always ''{0}''.", TO_STRING)
         map.put(USELESS_IS_CHECK, "Check for instance is always ''{0}''.", TO_STRING)
         map.put(DYNAMIC_NOT_ALLOWED, "Dynamic types are not allowed in this position.")
         map.put(IS_ENUM_ENTRY, "'is' over enum entry is prohibited. Use comparison instead.")

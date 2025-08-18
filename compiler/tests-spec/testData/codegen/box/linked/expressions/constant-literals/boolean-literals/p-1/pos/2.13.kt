@@ -23,6 +23,7 @@ inline fun <reified `true`, reified `false`> f1() =
         else -> false
     }
 
+@Suppress("IMPOSSIBLE_IS_CHECK_ERROR")
 inline fun <reified T : D<`false`>> T.f2(value: T) = value is `false`
 
 class A<K: List<out `true`<out String>>> {
