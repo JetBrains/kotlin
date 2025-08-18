@@ -1,0 +1,20 @@
+KaTypeArgumentWithVariance
+Variance: INVARIANT
+Type: KaUsualClassType:
+  abbreviation: null
+  annotations: []
+  classId: kotlin/String
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: String
+      symbol: KaNamedClassSymbol(kotlin/String)
+      typeArguments: []
+  ]
+  symbol: KaNamedClassSymbol(kotlin/String)
+  typeArguments: []
+  isMarkedNullable: true
+  isNullable: true
+  hasFlexibleNullability: false
+
+Rendered type argument:
+INVARIANT kotlin.String?

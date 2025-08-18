@@ -352,5 +352,21 @@ abstract class AbstractTypeCreatorDslTest : AbstractAnalysisApiBasedTest() {
                 }
             }
         }
+
+        inner class TypeArgumentWithVariance {
+            fun testIntWithInVariance(): KaTypeArgumentWithVariance {
+                val type = getTypeByCaret("type")
+                return session.typeCreator.typeArgumentWithVariance(Variance.IN_VARIANCE, type)
+            }
+
+            fun testInvariantStringTypeMarkedNullable(): KaTypeArgumentWithVariance {
+                val symbol = getClassLikeSymbolByCaret("type")
+                return session.typeCreator.typeArgumentWithVariance(Variance.INVARIANT) {
+                    classType(symbol) {
+                        isMarkedNullable = true
+                    }
+                }
+            }
+        }
     }
 }
