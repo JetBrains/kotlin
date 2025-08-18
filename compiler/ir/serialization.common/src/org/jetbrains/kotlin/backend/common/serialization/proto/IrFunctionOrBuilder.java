@@ -40,4 +40,21 @@ public interface IrFunctionOrBuilder extends
    * </pre>
    */
   long getOverridden(int index);
+
+  /**
+   * <code>optional int32 prepared_inline_function_file_entry_id = 3;</code>
+   *
+   * <pre>
+   * In case this is a prepared inlineable function copy, stores the file entry where the inline function was originally declared.
+   * </pre>
+   */
+  boolean hasPreparedInlineFunctionFileEntryId();
+  /**
+   * <code>optional int32 prepared_inline_function_file_entry_id = 3;</code>
+   *
+   * <pre>
+   * In case this is a prepared inlineable function copy, stores the file entry where the inline function was originally declared.
+   * </pre>
+   */
+  int getPreparedInlineFunctionFileEntryId();
 }
