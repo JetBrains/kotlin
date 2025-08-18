@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenEnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8EnvSpec
@@ -25,6 +26,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.net.URI
 import java.nio.file.Files
+import java.nio.file.Paths
 import kotlin.io.path.*
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -574,8 +576,22 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
             buildScriptInjection {
                 kotlinMultiplatform.wasmJs {
                     browser {
+                        webpackTask {
+                            it.generateConfigOnly = true
+                            it.devServerProperty.set(
+                                KotlinWebpackConfig.DevServer(
+                                    static = mutableListOf("foo")
+                                )
+                            )
+                        }
+
                         commonWebpackConfig {
                             it.outputFileName = "check.js"
+                            it.devServer = (it.devServer ?: KotlinWebpackConfig.DevServer()).apply {
+                                static = (static ?: mutableListOf()).apply {
+                                    add("bar")
+                                }
+                            }
                         }
                     }
                 }
@@ -584,14 +600,24 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
                     it.doLast { task ->
                         task as KotlinWebpack
                         println("File output name: " + task.mainOutputFileName.get())
+                        val pathConfig = task.configFile.get().toPath()
+                        println("Path config: " + pathConfig)
                     }
                 }
             }
 
-            build("assemble") {
+            build("wasmJsBrowserProductionWebpack") {
                 assertTasksExecuted(":wasmJsBrowserProductionWebpack")
 
                 assertOutputContains("File output name: check.js")
+                val pathConfig = output.substringAfter("Path config: ").substringBefore("webpack.config.js")
+                assertFileContains(
+                    Path(pathConfig + "webpack.config.js"),
+                    "\"static\": [\n" +
+                            "    \"foo\",\n" +
+                            "    \"bar\"\n" +
+                            "  ]"
+                )
             }
         }
     }
