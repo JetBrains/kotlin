@@ -11,9 +11,8 @@ package foo
 @JsExport
 val _long: Long = 1L
 
-// TODO: Add BigInt64Array
-//@JsExport
-//val _long_array: LongArray = longArrayOf()
+@JsExport
+val _long_array: LongArray = longArrayOf()
 
 @JsExport
 val _array_long: Array<Long> = emptyArray()

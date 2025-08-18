@@ -7,8 +7,7 @@ function assert(condition: boolean) {
 }
 
 assert(foo._long === 1n);
-// TODO: Add BigInt64Array
-// assert(foo._long_array instanceof BigInt64Array);
+assert(foo._long_array instanceof BigInt64Array);
 assert(foo._array_long instanceof Array);
 assert(foo._n_long === 1n);
 
