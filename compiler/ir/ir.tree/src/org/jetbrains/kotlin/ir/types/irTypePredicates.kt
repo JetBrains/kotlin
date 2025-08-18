@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.impl.IrCapturedType
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.hasEqualFqName
@@ -158,8 +159,17 @@ fun <T : Enum<T>> IrType.getPrimitiveOrUnsignedType(byIdSignature: Map<IdSignatu
     return byShortName[klass.name]
 }
 
-fun IrType.isMarkedNullable() = (this as? IrSimpleType)?.nullability == SimpleTypeNullability.MARKED_NULLABLE
-fun IrSimpleType.isMarkedNullable() = nullability == SimpleTypeNullability.MARKED_NULLABLE
+fun IrType.isMarkedNullable(): Boolean = (this as? IrSimpleType)?.nullability == SimpleTypeNullability.MARKED_NULLABLE
+fun IrSimpleType.isMarkedNullable(): Boolean = nullability == SimpleTypeNullability.MARKED_NULLABLE
+
+fun IrType.canBeNull(): Boolean = when (this) {
+    is IrSimpleType -> isMarkedNullable() || when (this) {
+        is IrCapturedType -> constructor.superTypes.any { it.canBeNull() }
+        else -> (classifier as? IrTypeParameterSymbol)?.owner?.superTypes?.all { it.canBeNull() } ?: false
+    }
+    is IrDynamicType -> true
+    is IrErrorType -> isMarkedNullable
+}
 
 fun IrType.isUnit() = isNotNullClassType(IdSignatureValues.unit)
 
