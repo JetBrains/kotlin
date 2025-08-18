@@ -20,4 +20,7 @@ dependencies {
     implicitDependencies(libs.dataframeJson) {
         because("workaround for KTIJ-30065, remove after its resolution")
     }
+    constraints {
+        api(libs.apache.commons.lang)
+    }
 }

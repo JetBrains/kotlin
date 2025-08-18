@@ -25,6 +25,15 @@
     <developerConnection>scm:git:https://github.com/JetBrains/kotlin.git</developerConnection>
     <url>https://github.com/JetBrains/kotlin</url>
   </scm>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>3.18.0</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
   <dependencies>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>

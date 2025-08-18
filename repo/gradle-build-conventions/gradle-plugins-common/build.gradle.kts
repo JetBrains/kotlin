@@ -62,6 +62,10 @@ dependencies {
     testImplementation(project(":gradle-plugins-documentation"))
     testRuntimeOnly(libs.junit.platform.launcher)
     testRuntimeOnly(libs.junit.jupiter.engine)
+
+    constraints {
+        api(libs.apache.commons.lang)
+    }
 }
 
 tasks.withType<Test>().configureEach {

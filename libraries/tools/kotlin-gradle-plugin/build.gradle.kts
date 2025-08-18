@@ -275,6 +275,11 @@ configurations.all {
             because("CVE-2025-25193, CVE-2024-47535, CVE-2024-29025, CVE-2023-4586, CVE-2023-34462")
         }
 
+        if (requested.group == "org.apache.commons" && requested.name == "commons-lang3") {
+            useVersion(libs.versions.commons.lang.get())
+            because("CVE-2025-48924")
+        }
+
         // Bouncy Castle
         if (requested.group == "org.bouncycastle" && requested.name == "bcpkix-jdk18on") {
             useVersion("1.80")

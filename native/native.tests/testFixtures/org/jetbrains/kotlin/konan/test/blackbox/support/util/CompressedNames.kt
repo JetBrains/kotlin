@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox.support.util
 
-import org.apache.commons.lang.StringUtils.splitByCharacterTypeCamelCase
+import org.apache.commons.lang3.StringUtils.splitByCharacterTypeCamelCase
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget

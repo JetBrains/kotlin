@@ -24,6 +24,10 @@ dependencies {
     testRuntimeOnly("org.slf4j:slf4j-nop:1.7.36")
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testImplementation(libs.kotlinx.coroutines.core)
+
+    constraints {
+        api(libs.apache.commons.lang)
+    }
 }
 
 sourceSets {
