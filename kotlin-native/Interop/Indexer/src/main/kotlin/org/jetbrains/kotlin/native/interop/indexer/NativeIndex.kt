@@ -139,7 +139,7 @@ abstract class NativeIndex {
     abstract val functions: Collection<FunctionDecl>
     abstract val macroConstants: Collection<ConstantDef>
     abstract val wrappedMacros: Collection<WrappedMacroDef>
-    abstract val globals: Collection<GlobalDecl>
+    abstract val globals: Collection<GlobalDeclOrConstantDef>
     abstract val includedHeaders: Collection<HeaderId>
 }
 
@@ -356,15 +356,23 @@ class TypedefDef(val aliased: Type, val name: String, override val location: Loc
 
 abstract class MacroDef(val name: String)
 
-abstract class ConstantDef(name: String, val type: Type): MacroDef(name)
+sealed interface GlobalDeclOrConstantDef {
+    val globalName: String
+}
+
+abstract class ConstantDef(name: String, val type: Type): MacroDef(name), GlobalDeclOrConstantDef {
+    override val globalName get() = name
+}
 class IntegerConstantDef(name: String, type: Type, val value: Long) : ConstantDef(name, type)
 class FloatingConstantDef(name: String, type: Type, val value: Double) : ConstantDef(name, type)
 class StringConstantDef(name: String, type: Type, val value: String) : ConstantDef(name, type)
 
 class WrappedMacroDef(name: String, val type: Type) : MacroDef(name)
 
-class GlobalDecl(val name: String, val type: Type, val isConst: Boolean, val binaryName: String?, val parentName: String? = null) {
+class GlobalDecl(val name: String, val type: Type, val isConst: Boolean, val binaryName: String?, val parentName: String? = null) : GlobalDeclOrConstantDef {
     val fullName: String get() = parentName?.let { "$it::$name" } ?: name
+    override val globalName: String
+        get() = name
 }
 
 /**

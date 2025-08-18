@@ -216,9 +216,9 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
     override val macroConstants = mutableListOf<ConstantDef>()
     override val wrappedMacros = mutableListOf<WrappedMacroDef>()
 
-    private val globalById = mutableMapOf<DeclarationID, GlobalDecl>()
+    private val globalById = mutableMapOf<DeclarationID, GlobalDeclOrConstantDef>()
 
-    override val globals: Collection<GlobalDecl>
+    override val globals: Collection<GlobalDeclOrConstantDef>
         get() = globalById.values
 
     override lateinit var includedHeaders: List<HeaderId>
@@ -958,12 +958,29 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
             CXIdxEntity_Variable -> {
                 val parentKind = info.semanticContainer!!.pointed.cursor.kind
                 if (parentKind == CXCursorKind.CXCursor_TranslationUnit || parentKind == CXCursorKind.CXCursor_Namespace) {
+                    val type = convertCursorType(cursor)
+                    val name = entityName!!
+                    val isConst = clang_isConstQualifiedType(clang_getCursorType(cursor)) != 0
+                    fun tryGetAsConstant(): ConstantDef? {
+                        if (!isConst) return null
+                        val evalResult = clang_Cursor_Evaluate(cursor)
+                        val unwrappedType = type.unwrapTypedefs()
+                        return when (clang_EvalResult_getKind(evalResult)) {
+                            CXEvalResultKind.CXEval_Int if unwrappedType is IntegerType ->
+                                IntegerConstantDef(name, type, clang_EvalResult_getAsLongLong(evalResult))
+
+                            CXEvalResultKind.CXEval_Float if unwrappedType is FloatingType ->
+                                FloatingConstantDef(name, type, clang_EvalResult_getAsDouble(evalResult))
+
+                            else -> null
+                        }
+                    }
                     // Top-level or namespace member. Skip class static members - they are loaded by visitClass
                     globalById.getOrPut(getDeclarationId(cursor)) {
-                        GlobalDecl(
-                                name = entityName!!,
-                                type = convertCursorType(cursor),
-                                isConst = clang_isConstQualifiedType(clang_getCursorType(cursor)) != 0,
+                        tryGetAsConstant() ?: GlobalDecl(
+                                name = name,
+                                type = type,
+                                isConst = isConst,
                                 binaryName = clang_Cursor_getMangling(cursor).convertAndDispose(),
                                 parentName = null
                         )

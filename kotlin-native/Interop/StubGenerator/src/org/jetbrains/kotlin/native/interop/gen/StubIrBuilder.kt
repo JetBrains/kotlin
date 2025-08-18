@@ -334,7 +334,7 @@ class StubIrBuilder(private val context: StubIrContext) {
         nativeIndex.functions.filter { it.name !in excludedFunctions }.forEach { generateStubsForFunction(it) }
         nativeIndex.typedefs.forEach { generateStubsForTypedef(it) }
         // globals are sorted, so its numbering is stable and thus testable with golden data
-        nativeIndex.globals.filter { it.name !in excludedFunctions }.sortedBy { it.name }.forEach { generateStubsForGlobal(it) }
+        nativeIndex.globals.filter { it.globalName !in excludedFunctions }.sortedBy { it.globalName }.forEach { generateStubsForGlobal(it) }
         nativeIndex.macroConstants.filter { it.name !in excludedMacros }.forEach { generateStubsForMacroConstant(it) }
         nativeIndex.wrappedMacros.filter { it.name !in excludedMacros }.forEach { generateStubsForWrappedMacro(it) }
 
@@ -454,7 +454,12 @@ class StubIrBuilder(private val context: StubIrContext) {
         }
     }
 
-    private fun generateStubsForGlobal(global: GlobalDecl) {
+    private fun generateStubsForGlobal(global: GlobalDeclOrConstantDef) {
+        when (global) {
+            is ConstantDef -> return generateStubsForMacroConstant(global)
+            is GlobalDecl -> {}
+        }
+
         try {
             addStubs(GlobalStubBuilder(buildingContext, global).build())
         } catch (e: Throwable) {
