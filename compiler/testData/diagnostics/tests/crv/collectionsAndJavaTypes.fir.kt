@@ -59,7 +59,7 @@ fun optional(s: String?) {
 
 fun stringBuilder(sb: StringBuilder, ss: CharSequence) {
     sb.append("")
-    sb.length // .length is not reported because of KT-80179
+    <!RETURN_VALUE_NOT_USED!>sb.length<!>
     <!RETURN_VALUE_NOT_USED!>sb.get(0)<!>
     <!RETURN_VALUE_NOT_USED!>ss.length<!>
     <!RETURN_VALUE_NOT_USED!>ss.get(0)<!>

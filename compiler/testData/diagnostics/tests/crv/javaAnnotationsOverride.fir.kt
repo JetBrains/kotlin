@@ -130,10 +130,10 @@ fun test2(l: List2) {
 }
 
 fun test3(l: List3) {
-    // Due to enhancements, UnnanotatedList.get gets @MURV from kotlin.collections.List.get
+    // Due to enhancements, UnnanotatedList.get/size get @MURV from kotlin.collections.List.get/size
     <!RETURN_VALUE_NOT_USED!>l.get(0)<!>
     l.notAListMember()
-    l.size
+    <!RETURN_VALUE_NOT_USED!>l.size<!>
     l.set(0, "")
     l.add("")
 }
@@ -141,7 +141,7 @@ fun test3(l: List3) {
 fun test4(l: List4) {
     <!RETURN_VALUE_NOT_USED!>l.get(0)<!>
     l.notAListMember()
-    l.size
+    <!RETURN_VALUE_NOT_USED!>l.size<!>
     l.set(0, "")
     <!RETURN_VALUE_NOT_USED!>l.add("")<!>
 }

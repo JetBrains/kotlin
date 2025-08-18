@@ -219,7 +219,7 @@ class FirSignatureEnhancement(
                     symbol = FirJavaOverriddenSyntheticPropertySymbol(propertySymbol.callableId, propertySymbol.getterId)
                     delegateGetter = enhancedGetterSymbol?.fir as FirSimpleFunction? ?: getterDelegate
                     delegateSetter = enhancedSetterSymbol?.fir as FirSimpleFunction? ?: setterDelegate
-                    customStatus = firElement.status
+                    customStatus = enhanceStatus(firElement.status, predefinedEnhancementInfo = null, overriddenMembers = overridden)
                     deprecationsProvider = getDeprecationsProviderFromAccessors(session, delegateGetter, delegateSetter)
                     dispatchReceiverType = firElement.dispatchReceiverType
                 }.symbol
@@ -409,7 +409,7 @@ class FirSignatureEnhancement(
                     origin = declarationOrigin
 
                     this.name = name!!
-                    status = enhanceStatus(firMethod, predefinedEnhancementInfo, overriddenMembers)
+                    status = enhanceStatus(firMethod.status, predefinedEnhancementInfo, overriddenMembers)
                     symbol = if (isIntersectionOverride) {
                         FirIntersectionOverrideFunctionSymbol(
                             methodId, overriddenMembers.map { it.symbol },
@@ -506,11 +506,10 @@ class FirSignatureEnhancement(
     }
 
     private fun enhanceStatus(
-        method: FirSimpleFunction,
+        original: FirDeclarationStatus,
         predefinedEnhancementInfo: PredefinedFunctionEnhancementInfo?,
         overriddenMembers: List<FirCallableDeclaration>,
     ): FirDeclarationStatus {
-        val original = method.status
         if (original.returnValueStatus != ReturnValueStatus.Unspecified) return original
         predefinedEnhancementInfo?.returnValueStatus?.takeIf { it != ReturnValueStatus.Unspecified }?.let { newRvStatus ->
             return original.copy(returnValueStatus = newRvStatus)
