@@ -1,2 +1,1 @@
-// INCONSISTENT_DECLARATIONS
 val (e) =

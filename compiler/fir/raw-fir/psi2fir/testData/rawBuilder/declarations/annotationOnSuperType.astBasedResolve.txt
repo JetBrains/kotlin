@@ -8,19 +8,19 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] annotationOnSuperType.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
-        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
+    public final const [ResolvedTo(CONTRACTS)] val prop: <implicit> = LAZY_EXPRESSION
+        public [ResolvedTo(CONTRACTS)] get(): <implicit>
     public abstract [ResolvedTo(BODY_RESOLVE)] interface I : R|kotlin/Any| {
     }
-    public final [ResolvedTo(BODY_RESOLVE)] class MyClassWithoutConstructor : R|@R|util/Anno|(position = <strcat>(String(MyClassWithoutConstructor super type ref ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(position = <strcat>(String(MyClassWithoutConstructor nested super type ref ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(position = <strcat>(String(MyClassWithoutConstructor nested nested super type ref ), R|util/prop|))  util/I>>| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClassWithoutConstructor] constructor(): R|util/MyClassWithoutConstructor| {
-            super<R|kotlin/Any|>()
+    public final [ResolvedTo(CONSTANT_EVALUATION)] class MyClassWithoutConstructor : R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  util/I>>| {
+        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=MyClassWithoutConstructor] constructor(): R|util/MyClassWithoutConstructor| {
+            LAZY_super<<implicit>>
         }
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] class MyClassWithConstructor : R|@R|util/Anno|(position = <strcat>(String(MyClassWithConstructor super type ref ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(position = <strcat>(String(MyClassWithConstructor nested super type ref ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(position = <strcat>(String(MyClassWithConstructor nested nested super type ref ), R|util/prop|))  util/I>>| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClassWithConstructor] constructor(): R|util/MyClassWithConstructor| {
-            super<R|kotlin/Any|>()
+    public final [ResolvedTo(CONSTANT_EVALUATION)] class MyClassWithConstructor : R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  util/I>>| {
+        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=MyClassWithConstructor] constructor(): R|util/MyClassWithConstructor| {
+            LAZY_super<<implicit>>
         }
 
     }
