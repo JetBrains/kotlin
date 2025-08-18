@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +HoldsInContracts
 // OPT_IN: kotlin.contracts.ExperimentalContracts, kotlin.contracts.ExperimentalExtendedContracts
 import kotlin.contracts.contract
@@ -14,7 +14,7 @@ inline fun <R> runIf(condition: Boolean, block: () -> R): R {
 fun returnsImpliesBeforeHoldsIn() {
     var a :Any? = materialize()
     require(a is Int)
-    runIf(<!USELESS_IS_CHECK!>a is String<!>) {
+    runIf(<!IMPOSSIBLE_IS_CHECK_ERROR!>a is String<!>) {
         a.length
     }
 }
@@ -22,7 +22,7 @@ fun returnsImpliesBeforeHoldsIn() {
 fun returnsImplesAfterHoldsIn() {
     var a: Any? = materialize()
     runIf(a is String) {
-        require(<!USELESS_IS_CHECK!>a is Int<!>)
+        require(<!IMPOSSIBLE_IS_CHECK_ERROR!>a is Int<!>)
         a.length
     }
 }

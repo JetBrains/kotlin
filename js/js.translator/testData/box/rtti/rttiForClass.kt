@@ -24,7 +24,9 @@ fun box(): String {
     if (c !is B) return "c !is B"
     if (c !is C) return "c !is C"
 
+    @Suppress("IMPOSSIBLE_IS_CHECK_ERROR")
     if (a is D) return "a is D"
+    @Suppress("IMPOSSIBLE_IS_CHECK_ERROR")
     if (b is D) return "b is D"
 
     return "OK"

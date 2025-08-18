@@ -19,7 +19,7 @@ fun foo() : Int {
     val s = ""
     val x = 1
     when (x) {
-      <!USELESS_IS_CHECK!>is String<!> -> 1
+      <!IMPOSSIBLE_IS_CHECK_ERROR!>is String<!> -> 1
       <!USELESS_IS_CHECK!>!is Int<!> -> 1
       <!USELESS_IS_CHECK!>is Any?<!> -> 1
       <!USELESS_IS_CHECK!>is Any<!> -> 1

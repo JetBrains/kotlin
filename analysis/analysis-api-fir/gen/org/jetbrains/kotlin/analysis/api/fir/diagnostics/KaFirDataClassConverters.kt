@@ -5222,6 +5222,20 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.IMPOSSIBLE_IS_CHECK.errorFactory) { firDiagnostic ->
+        ImpossibleIsCheckErrorImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.IMPOSSIBLE_IS_CHECK.warningFactory) { firDiagnostic ->
+        ImpossibleIsCheckWarningImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.USELESS_IS_CHECK) { firDiagnostic ->
         UselessIsCheckImpl(
             firDiagnostic.a,

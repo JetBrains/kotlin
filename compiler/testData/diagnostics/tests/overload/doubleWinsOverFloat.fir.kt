@@ -12,7 +12,7 @@ fun test(arg: Any) {
     ::foo
 
     if (arg is Double) {
-        if (arg is Float) {
+        if (<!IMPOSSIBLE_IS_CHECK_ERROR!>arg is Float<!>) {
             foo(arg)
             arg.bar()
         }

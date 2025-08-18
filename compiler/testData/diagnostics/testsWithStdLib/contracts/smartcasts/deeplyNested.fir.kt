@@ -80,7 +80,7 @@ fun branchedAndNested(x: Any?, y: Any?) {
 
 
 fun br(y: Any?) {
-    if (myAssert(y is Int) == Unit && myAssert(<!USELESS_IS_CHECK!>y is String<!>) == Unit) {
+    if (myAssert(y is Int) == Unit && myAssert(<!IMPOSSIBLE_IS_CHECK_ERROR!>y is String<!>) == Unit) {
         y.length
         y.inc()
     }
@@ -91,7 +91,7 @@ fun branchedAndNestedWithNativeOperators(x: Any?, y: Any?) {
             equalsTrue(notEqualsNull(nullWhenNotString(x)))   // x is String
             &&
             (
-                    (myAssert(y is Int) == Unit && myAssert(<!USELESS_IS_CHECK!>y is String<!>) == Unit)  // y is Int, String
+                    (myAssert(y is Int) == Unit && myAssert(<!IMPOSSIBLE_IS_CHECK_ERROR!>y is String<!>) == Unit)  // y is Int, String
                     ||
                     equalsTrue(isInt(y) && isString(y))                          // y is Int, String
             )

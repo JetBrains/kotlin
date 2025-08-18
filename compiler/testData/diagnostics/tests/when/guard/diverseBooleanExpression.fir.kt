@@ -23,14 +23,14 @@ fun simpleBooleanExpressionsInGuards(x: Any) {
         !is NullableBooleanHolder if x == null -> 1
         !is BooleanHolder if x is Boolean && !x -> 5
         !is Int if x !== null -> 7
-        !is String if x in 1..10 -> 8
-        is NullableBooleanHolder if x.value == null -> 1
-        is NullableBooleanHolder if <!CONDITION_TYPE_MISMATCH!>x.value<!> -> 2
-        is NullableBooleanHolder if x.value!! -> 3
-        is BooleanHolder if x.value -> 4
-        is BooleanHolder if !x.value -> 5
-        is String if <!CONDITION_TYPE_MISMATCH!>x<!> -> 6
-        is String if x == "" -> 7
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>!is String<!> if x in 1..10 -> 8
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>is NullableBooleanHolder<!> if x.value == null -> 1
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>is NullableBooleanHolder<!> if <!CONDITION_TYPE_MISMATCH!>x.value<!> -> 2
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>is NullableBooleanHolder<!> if x.value!! -> 3
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>is BooleanHolder<!> if x.value -> 4
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>is BooleanHolder<!> if !x.value -> 5
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>is String<!> if <!CONDITION_TYPE_MISMATCH!>x<!> -> 6
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>is String<!> if x == "" -> 7
         is Int if x in 1..10 -> 8
     }
 }

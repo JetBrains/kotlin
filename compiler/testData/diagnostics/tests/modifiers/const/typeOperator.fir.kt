@@ -10,9 +10,9 @@ const val asOperator2 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1 <!CAST_NEVER_S
 const val asOperator5 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>f() as String<!>
 
 const val isOperator1 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, USELESS_IS_CHECK!>1 is Int<!>
-const val isOperator2 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, USELESS_IS_CHECK!>1 is String<!>
-const val isOperator3 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, USELESS_IS_CHECK!>"1" !is Int<!>
-const val isOperator4 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, USELESS_IS_CHECK!>"1" !is MyClass<!>
+const val isOperator2 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, IMPOSSIBLE_IS_CHECK_ERROR!>1 is String<!>
+const val isOperator3 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, IMPOSSIBLE_IS_CHECK_ERROR!>"1" !is Int<!>
+const val isOperator4 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, IMPOSSIBLE_IS_CHECK_ERROR!>"1" !is MyClass<!>
 
 fun f(): String = ""
 

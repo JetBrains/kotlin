@@ -6,7 +6,7 @@ fun EEInConditionWithNoSubject(x: Any) {
     return when {
         if (x is Boolean) true else false -> Unit
         if (x is Boolean) true else if (x is String) true else false -> Unit
-        if (x is Boolean) x == false || if (x is String) true else false else if (x is String) true else false -> Unit
+        if (x is Boolean) x == false || if (<!IMPOSSIBLE_IS_CHECK_ERROR!>x is String<!>) true else false else if (x is String) true else false -> Unit
         else -> Unit
     }
 }
@@ -15,7 +15,7 @@ fun IEEInConditionWithGuard(x: Any) {
     return when (x) {
         if (x is Boolean) true else false if true -> Unit
         if (x is Boolean) true else if (x is String) true else false if true -> Unit
-        if (x is Boolean) x == false || if (x is String) true else false else if (x is String) true else false if true -> Unit
+        if (x is Boolean) x == false || if (<!IMPOSSIBLE_IS_CHECK_ERROR!>x is String<!>) true else false else if (x is String) true else false if true -> Unit
         else -> Unit
     }
 }
@@ -30,8 +30,8 @@ fun WronglyPlacedConditionTypeMismatch(x: Any, y: Any?): Int {
 fun IEEInGuard(x: Any) {
     return when (x) {
         is Boolean if if (x is Boolean) true else false -> Unit
-        is Boolean if if (x is Boolean) true else if (x is String) true else false -> Unit
-        is Boolean if if (x is Boolean) x == false || if (x is String) true else false else if (x is String) true else false -> Unit
+        is Boolean if if (x is Boolean) true else if (<!IMPOSSIBLE_IS_CHECK_ERROR!>x is String<!>) true else false -> Unit
+        is Boolean if if (x is Boolean) x == false || if (<!IMPOSSIBLE_IS_CHECK_ERROR!>x is String<!>) true else false else if (<!IMPOSSIBLE_IS_CHECK_ERROR!>x is String<!>) true else false -> Unit
         else -> Unit
     }
 }

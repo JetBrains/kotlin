@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-76766
 
 // FILE: DefaultJavaClass.java
@@ -17,13 +17,13 @@ import FinalJavaClass
 import JavaChild
 
 open class KotlinClass
-fun test1(a: DefaultJavaClass) = <!USELESS_IS_CHECK!>a is KotlinClass<!>
+fun test1(a: DefaultJavaClass) = <!IMPOSSIBLE_IS_CHECK_ERROR!>a is KotlinClass<!>
 
-fun test2(a: FinalJavaClass) = <!USELESS_IS_CHECK!>a is KotlinClass<!>
+fun test2(a: FinalJavaClass) = <!IMPOSSIBLE_IS_CHECK_ERROR!>a is KotlinClass<!>
 
-fun test3(a: KotlinClass) = <!USELESS_IS_CHECK!>a is DefaultJavaClass<!>
+fun test3(a: KotlinClass) = <!IMPOSSIBLE_IS_CHECK_ERROR!>a is DefaultJavaClass<!>
 
-fun test4(a: KotlinClass) = <!USELESS_IS_CHECK!>a is FinalJavaClass<!>
+fun test4(a: KotlinClass) = <!IMPOSSIBLE_IS_CHECK_ERROR!>a is FinalJavaClass<!>
 
 open class KotlinChild: DefaultJavaClass()
 

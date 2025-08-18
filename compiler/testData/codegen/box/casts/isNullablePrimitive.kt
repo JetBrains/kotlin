@@ -10,10 +10,15 @@ fun box(): String {
     val functionV: Any? = { x: Int -> x + 1 }
 
     if (n !is Int?) return "fail: null !is Int?"
+    @Suppress("IMPOSSIBLE_IS_CHECK_ERROR")
     if (n !is Float?) return "fail: null !is Float?"
+    @Suppress("IMPOSSIBLE_IS_CHECK_ERROR")
     if (n !is Double?) return "fail: null !is Double?"
+    @Suppress("IMPOSSIBLE_IS_CHECK_ERROR")
     if (n !is String?) return "fail: null !is String?"
+    @Suppress("IMPOSSIBLE_IS_CHECK_ERROR")
     if (n !is Boolean?) return "fail: null !is Boolean?"
+    @Suppress("IMPOSSIBLE_IS_CHECK_ERROR")
     if (n !is Function1<*, *>?) return "fail: null !is Function?"
 
     if (n is Int) return "fail: null is Int"
@@ -24,24 +29,31 @@ fun box(): String {
     if (n is Function1<*, *>) return "fail: null is Function"
 
     if (intV !is Int?) return "fail: 23 !is Int?"
+    @Suppress("IMPOSSIBLE_IS_CHECK_ERROR")
     if (intV is String?) return "fail: 23 is String?"
 
     if (floatV !is Float?) return "fail: 23.4F !is Float?"
+    @Suppress("IMPOSSIBLE_IS_CHECK_ERROR")
     if (floatV is String?) return "fail: 23.4F is String?"
 
     if (doubleV !is Double?) return "fail: 23.45 !is Double?"
+    @Suppress("IMPOSSIBLE_IS_CHECK_ERROR")
     if (doubleV is String?) return "fail: 23.45 is String?"
 
     if (longV !is Long?) return "fail: 234L !is Long?"
+    @Suppress("IMPOSSIBLE_IS_CHECK_ERROR")
     if (longV is String?) return "fail: 234L is String?"
 
     if (stringV !is String?) return "fail: 'foo' !is String?"
+    @Suppress("IMPOSSIBLE_IS_CHECK_ERROR")
     if (stringV is Double?) return "fail: 'foo' is Double?"
 
     if (booleanV !is Boolean?) return "fail: true !is Boolean?"
+    @Suppress("IMPOSSIBLE_IS_CHECK_ERROR")
     if (booleanV is Double?) return "fail: true is Double?"
 
     if (functionV !is Function1<*, *>?) return "fail: <function> !is Function?"
+    @Suppress("IMPOSSIBLE_IS_CHECK_ERROR")
     if (functionV is String?) return "fail: <function> is String?"
 
     return "OK"

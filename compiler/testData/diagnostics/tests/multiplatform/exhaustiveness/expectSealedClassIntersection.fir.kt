@@ -15,7 +15,7 @@ interface I
 fun testCommon(base: Base) {
     if (base is I) {
         val x = <!NO_ELSE_IN_WHEN!>when<!> (base) { // must be an error
-            <!USELESS_IS_CHECK!>is A<!> -> 1
+            <!IMPOSSIBLE_IS_CHECK_ERROR!>is A<!> -> 1
             B -> 2
         }
     }
@@ -32,9 +32,9 @@ class C : Base()
 fun testPlatformGood(base: Base) {
     if (base is I) {
         val x = when (base) { // must be OK
-            <!USELESS_IS_CHECK!>is A<!> -> 1
+            <!IMPOSSIBLE_IS_CHECK_ERROR!>is A<!> -> 1
             B -> 2
-            <!USELESS_IS_CHECK!>is C<!> -> 3
+            <!IMPOSSIBLE_IS_CHECK_ERROR!>is C<!> -> 3
         }
     }
 }
@@ -42,7 +42,7 @@ fun testPlatformGood(base: Base) {
 fun testPlatformBad(base: Base) {
     if (base is I) {
         val x = <!NO_ELSE_IN_WHEN!>when<!> (base) { // must be an error
-            <!USELESS_IS_CHECK!>is A<!> -> 1
+            <!IMPOSSIBLE_IS_CHECK_ERROR!>is A<!> -> 1
             B -> 2
         }
     }

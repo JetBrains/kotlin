@@ -18,7 +18,7 @@ fun test_2(x: Any) {
 fun test_3(x: Any) {
     when {
         x !is String -> {}
-        <!USELESS_IS_CHECK!>x !is Int<!> -> {}
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>x !is Int<!> -> {}
         else -> {
             x.length
             x.inc()

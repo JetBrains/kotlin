@@ -3661,6 +3661,16 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val targetType: KaType
     }
 
+    interface ImpossibleIsCheckError : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = ImpossibleIsCheckError::class
+        val compileTimeCheckResult: Boolean
+    }
+
+    interface ImpossibleIsCheckWarning : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = ImpossibleIsCheckWarning::class
+        val compileTimeCheckResult: Boolean
+    }
+
     interface UselessIsCheck : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = UselessIsCheck::class
         val compileTimeCheckResult: Boolean

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FIR2IR
+// RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 // FILE: A.java
@@ -46,7 +46,7 @@ fun test(i: Inv<Nothing>, iUnit: Inv<Unit>) {
         run<dynamic> { "" }
     }
 
-    if (<!USELESS_IS_CHECK!>iUnit is String<!>) {
+    if (<!IMPOSSIBLE_IS_CHECK_ERROR!>iUnit is String<!>) {
         launch {
             run(A.<!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>flexible<!>(iUnit)) { 42 }
         }

@@ -155,7 +155,7 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
             }
             Applicability.IMPOSSIBLE_IS_CHECK -> reportOn(
                 expression.source,
-                FirErrors.USELESS_IS_CHECK,
+                FirErrors.IMPOSSIBLE_IS_CHECK,
                 expression.operation != FirOperation.IS
             )
             Applicability.USELESS_IS_CHECK -> when {

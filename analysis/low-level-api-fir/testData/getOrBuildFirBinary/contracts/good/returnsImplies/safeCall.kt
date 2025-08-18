@@ -12,6 +12,7 @@ class Foo {
         return x?.length
     }
 
+    @Suppress("IMPOSSIBLE_IS_CHECK_ERROR")
     @OptIn(ExperimentalContracts::class)
     fun test2(x: String?): Int? {
         contract {

@@ -430,6 +430,7 @@ enum class LanguageFeature(
     ForbidAnnotationsWithUseSiteTargetOnExpressions(KOTLIN_2_3, enabledInProgressiveMode = true, "KT-75242"),
     ProhibitNullableTypeThroughTypealias(KOTLIN_2_3, enabledInProgressiveMode = true, "KTLC-279"),
     ForbidObjectDelegationToItself(KOTLIN_2_3, enabledInProgressiveMode = true, "KT-17417"),
+    TurnTypeCheckWarningsIntoErrors(KOTLIN_2_3, enabledInProgressiveMode = true, "KTLC-365"),
     JvmIndyAllowLambdasWithAnnotations(KOTLIN_2_3, "KT-76606"),
 
     AllowCheckForErasedTypesInContracts(KOTLIN_2_3, "KT-45683"),

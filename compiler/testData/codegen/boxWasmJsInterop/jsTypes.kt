@@ -4,7 +4,7 @@ import kotlin.test.*
 
 fun jsRepresentation(x: JsAny): String = js("(typeof x) + ':' + String(x)")
 
-@Suppress("INCOMPATIBLE_TYPES")
+@Suppress("INCOMPATIBLE_TYPES", "IMPOSSIBLE_IS_CHECK_ERROR")
 fun castToKotlinString(jsAny: JsAny?): String? =
     if (jsAny is String) jsAny as String else null
 
@@ -18,14 +18,19 @@ fun box(): String {
     val jsNumAsJsAny: JsAny = jsNum10
     assertTrue(jsNumAsJsAny == anotherJsNum10)
     assertTrue(jsNumAsJsAny is JsNumber)
+    @Suppress("IMPOSSIBLE_IS_CHECK_ERROR")
     assertTrue(jsNumAsJsAny !is JsString)
+    @Suppress("IMPOSSIBLE_IS_CHECK_ERROR")
     assertTrue(jsNumAsJsAny !is JsBoolean)
     assertTrue((jsNumAsJsAny as JsNumber).toInt() == 10)
     val jsNumAsAny: Any = jsNum10
     assertTrue(jsNumAsAny == anotherJsNum10)
     assertTrue(jsNumAsAny is JsNumber)
+    @Suppress("IMPOSSIBLE_IS_CHECK_ERROR")
     assertTrue(jsNumAsAny !is JsString)
+    @Suppress("IMPOSSIBLE_IS_CHECK_ERROR")
     assertTrue(jsNumAsAny !is JsBoolean)
+    @Suppress("IMPOSSIBLE_IS_CHECK_ERROR")
     assertTrue(jsNumAsAny !is JsBigInt)
     assertTrue((jsNumAsAny as JsNumber).toInt() == 10)
     assertTrue(jsRepresentation(jsNum10) == "number:10")
@@ -74,15 +79,21 @@ fun box(): String {
     val jsBigIntAsJsAny: JsAny = jsBigInt10
     assertTrue(jsBigIntAsJsAny == anotherJsBigInt10)
     assertTrue(jsBigIntAsJsAny is JsBigInt)
+    @Suppress("IMPOSSIBLE_IS_CHECK_ERROR")
     assertTrue(jsBigIntAsJsAny !is JsNumber)
+    @Suppress("IMPOSSIBLE_IS_CHECK_ERROR")
     assertTrue(jsBigIntAsJsAny !is JsString)
+    @Suppress("IMPOSSIBLE_IS_CHECK_ERROR")
     assertTrue(jsBigIntAsJsAny !is JsBoolean)
     assertTrue((jsBigIntAsJsAny as JsBigInt).toLong() == 10L)
     val jsBigIntAsAny: Any = jsBigInt10
     assertTrue(jsBigIntAsAny == anotherJsBigInt10)
     assertTrue(jsBigIntAsAny is JsBigInt)
+    @Suppress("IMPOSSIBLE_IS_CHECK_ERROR")
     assertTrue(jsBigIntAsAny !is JsNumber)
+    @Suppress("IMPOSSIBLE_IS_CHECK_ERROR")
     assertTrue(jsBigIntAsAny !is JsString)
+    @Suppress("IMPOSSIBLE_IS_CHECK_ERROR")
     assertTrue(jsBigIntAsAny !is JsBoolean)
     assertTrue((jsBigIntAsAny as JsBigInt).toLong() == 10L)
 

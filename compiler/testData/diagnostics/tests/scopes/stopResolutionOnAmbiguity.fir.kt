@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 package c
 
 interface B {
@@ -12,7 +12,7 @@ class C() {
 
 fun test(a : Any?) {
     if (a is B) {
-        if (<!USELESS_IS_CHECK!>a is C<!>) {
+        if (<!IMPOSSIBLE_IS_CHECK_ERROR!>a is C<!>) {
             a.bar();
         }
     }

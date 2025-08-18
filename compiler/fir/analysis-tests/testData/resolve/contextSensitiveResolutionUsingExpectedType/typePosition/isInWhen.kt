@@ -20,7 +20,7 @@ fun testIsInWhen(instance: SealedClass): String {
         instance is Inner -> instance.innerProp
         instance is IndirectSealedInheritor -> instance.prop1
         instance !is SealedInheritor2 -> "100"
-        <!USELESS_IS_CHECK!>instance !is SealedSealedInheritor1<!> -> "100"
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>instance !is SealedSealedInheritor1<!> -> "100"
         else -> "100"
     }
 }
@@ -31,7 +31,7 @@ fun testIsInWhenWithSubject(instance: SealedClass): String {
         is Inner -> instance.innerProp
         is IndirectSealedInheritor -> instance.prop1
         !is SealedInheritor2 -> "100"
-        <!USELESS_IS_CHECK!>!is SealedSealedInheritor1<!> -> "100"
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>!is SealedSealedInheritor1<!> -> "100"
         else -> "100"
     }
 }

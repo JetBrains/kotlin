@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_VARIABLE
 // SKIP_TXT
 
@@ -10,9 +10,9 @@ object CC : C()
 
 fun foo(a: A) {
     if (a is B) {
-        if (<!USELESS_IS_CHECK!>a is C<!>) {
+        if (<!IMPOSSIBLE_IS_CHECK_ERROR!>a is C<!>) {
             val t = when (a) {
-                <!USELESS_IS_CHECK!>is CC<!> -> "CC"
+                <!IMPOSSIBLE_IS_CHECK_ERROR!>is CC<!> -> "CC"
             }
         }
     }
@@ -20,9 +20,9 @@ fun foo(a: A) {
 
 fun foo2(a: A) {
     if (a is C) {
-        if (<!USELESS_IS_CHECK!>a is B<!>) {
+        if (<!IMPOSSIBLE_IS_CHECK_ERROR!>a is B<!>) {
             val t = when (a) {
-                    <!USELESS_IS_CHECK!>is CC<!> -> "CC"
+                    <!IMPOSSIBLE_IS_CHECK_ERROR!>is CC<!> -> "CC"
             }
         }
     }

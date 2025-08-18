@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 sealed class Sealed(val x: Int) {
     object First: Sealed(12)
     open class NonFirst(x: Int, val y: Int): Sealed(x) {
@@ -11,7 +11,7 @@ sealed class Sealed(val x: Int) {
 fun foo(s: Sealed): Int {
     return when(s) {
         !is Sealed.First -> 1
-        <!USELESS_IS_CHECK!>!is Sealed.Last<!> -> 0
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>!is Sealed.Last<!> -> 0
         // no else required
     }
 }

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 sealed class Sealed(val x: Int) {
     object First: Sealed(12)
     open class NonFirst(x: Int, val y: Int): Sealed(x) {

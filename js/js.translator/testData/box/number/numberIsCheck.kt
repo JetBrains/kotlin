@@ -44,6 +44,7 @@ fun box(): String {
     anyX = 100L
     assertEquals(true, anyX is Number, "anyX is Number")
     assertEquals(true, anyX is Long, "anyX is Long")
+    @Suppress("IMPOSSIBLE_IS_CHECK_ERROR")
     assertEquals(false, anyX is Int, "anyX is Int")
 
 
