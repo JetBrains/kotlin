@@ -44,7 +44,7 @@ kotlin {
 
                 runtimeOnly(libs.intellij.fastutil)
                 runtimeOnly(jpsModelImpl())
-                implementation(project(":compiler:backend-common"))
+                implementation(project(":compiler:backend-common.k1"))
                 implementation(project(":compiler:ir.backend.common"))
                 implementation(project(":compiler:cli"))
                 implementation(project(":compiler:backend.jvm"))

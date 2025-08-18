@@ -6,7 +6,7 @@ plugins {
 dependencies {
     api(project(":compiler:util"))
     api(project(":compiler:frontend"))
-    api(project(":compiler:backend-common"))
+    api(project(":compiler:backend-common.k1"))
     api(project(":compiler:ir.tree"))
     implementation(project(":compiler:ir.serialization.common"))
     implementation(project(":compiler:ir.backend.common"))

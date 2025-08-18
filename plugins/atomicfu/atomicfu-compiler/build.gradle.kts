@@ -120,7 +120,7 @@ dependencies {
 
     testRuntimeOnly(kotlinStdlib())
     testRuntimeOnly(project(":kotlin-preloader")) // it's required for ant tests
-    testRuntimeOnly(project(":compiler:backend-common"))
+    testRuntimeOnly(project(":compiler:backend-common.k1"))
     testRuntimeOnly(commonDependency("org.fusesource.jansi", "jansi"))
 
     atomicfuJsClasspath("org.jetbrains.kotlinx:atomicfu-js:0.25.0") { isTransitive = false }

@@ -74,7 +74,7 @@ dependencies {
         testJsRuntime(kotlinTest("js")) // to be sure that kotlin-test-js built before tests run
     }
     testRuntimeOnly(project(":kotlin-preloader")) // it's required for ant tests
-    testRuntimeOnly(project(":compiler:backend-common"))
+    testRuntimeOnly(project(":compiler:backend-common.k1"))
     testRuntimeOnly(project(":kotlin-util-klib-abi"))
     testRuntimeOnly(commonDependency("org.fusesource.jansi", "jansi"))
 
