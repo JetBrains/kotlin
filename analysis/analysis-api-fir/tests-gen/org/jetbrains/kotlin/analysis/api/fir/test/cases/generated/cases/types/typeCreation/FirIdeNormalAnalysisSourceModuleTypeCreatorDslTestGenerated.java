@@ -167,6 +167,28 @@ public class FirIdeNormalAnalysisSourceModuleTypeCreatorDslTestGenerated extends
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/types/typeCreation/byDsl/typeArgumentWithVariance")
+  @TestDataPath("$PROJECT_ROOT")
+  public class TypeArgumentWithVariance {
+    @Test
+    public void testAllFilesPresentInTypeArgumentWithVariance() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/typeArgumentWithVariance"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("intWithInVariance.kt")
+    public void testIntWithInVariance() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/typeArgumentWithVariance/intWithInVariance.kt");
+    }
+
+    @Test
+    @TestMetadata("invariantStringTypeMarkedNullable.kt")
+    public void testInvariantStringTypeMarkedNullable() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/typeArgumentWithVariance/invariantStringTypeMarkedNullable.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/types/typeCreation/byDsl/typeParameterType")
   @TestDataPath("$PROJECT_ROOT")
   public class TypeParameterType {
