@@ -165,4 +165,68 @@ public class Fe10IdeNormalAnalysisSourceModuleTypeCreatorDslTestGenerated extend
       runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/starTypeProjection/starTypeProjection.kt");
     }
   }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/types/typeCreation/byDsl/varargArrayType")
+  @TestDataPath("$PROJECT_ROOT")
+  public class VarargArrayType {
+    @Test
+    public void testAllFilesPresentInVarargArrayType() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/varargArrayType"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("boxedArray.kt")
+    public void testBoxedArray() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/varargArrayType/boxedArray.kt");
+    }
+
+    @Test
+    @TestMetadata("errorType.kt")
+    public void testErrorType() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/varargArrayType/errorType.kt");
+    }
+
+    @Test
+    @TestMetadata("flexibleInt.kt")
+    public void testFlexibleInt() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/varargArrayType/flexibleInt.kt");
+    }
+
+    @Test
+    @TestMetadata("nullableInt.kt")
+    public void testNullableInt() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/varargArrayType/nullableInt.kt");
+    }
+
+    @Test
+    @TestMetadata("nullableUserType.kt")
+    public void testNullableUserType() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/varargArrayType/nullableUserType.kt");
+    }
+
+    @Test
+    @TestMetadata("primitiveArray.kt")
+    public void testPrimitiveArray() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/varargArrayType/primitiveArray.kt");
+    }
+
+    @Test
+    @TestMetadata("simpleUserType.kt")
+    public void testSimpleUserType() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/varargArrayType/simpleUserType.kt");
+    }
+
+    @Test
+    @TestMetadata("typeParameter.kt")
+    public void testTypeParameter() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/varargArrayType/typeParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("typeParameterWithIntUpperBound.kt")
+    public void testTypeParameterWithIntUpperBound() {
+      runTest("analysis/analysis-api/testData/types/typeCreation/byDsl/varargArrayType/typeParameterWithIntUpperBound.kt");
+    }
+  }
 }

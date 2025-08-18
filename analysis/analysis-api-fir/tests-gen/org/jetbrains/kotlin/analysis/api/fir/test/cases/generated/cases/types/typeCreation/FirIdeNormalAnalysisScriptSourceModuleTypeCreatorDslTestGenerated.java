@@ -75,4 +75,14 @@ public class FirIdeNormalAnalysisScriptSourceModuleTypeCreatorDslTestGenerated e
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/starTypeProjection"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
   }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/types/typeCreation/byDsl/varargArrayType")
+  @TestDataPath("$PROJECT_ROOT")
+  public class VarargArrayType {
+    @Test
+    public void testAllFilesPresentInVarargArrayType() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typeCreation/byDsl/varargArrayType"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+  }
 }
