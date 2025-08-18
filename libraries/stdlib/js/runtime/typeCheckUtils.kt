@@ -6,6 +6,7 @@
 package kotlin.js
 
 import kotlin.internal.UsedFromCompilerGeneratedCode
+import kotlin.js.internal.boxedLong.BoxedLongApi
 
 internal external interface Ctor {
     var `$imask$`: BitMask?
@@ -109,6 +110,11 @@ internal fun isFloatArray(a: dynamic): Boolean = jsInstanceOf(a, js("Float32Arra
 
 @UsedFromCompilerGeneratedCode
 internal fun isDoubleArray(a: dynamic): Boolean = jsInstanceOf(a, js("Float64Array"))
+
+// TODO: Remove after bootstrap update
+@BoxedLongApi
+@Deprecated("Moved to kotlin.js.internal.boxedLong package", level = DeprecationLevel.HIDDEN)
+internal fun isLongArray(a: dynamic): Boolean = kotlin.js.internal.boxedLong.isLongArray(a)
 
 internal fun jsGetPrototypeOf(jsClass: dynamic) = js("Object").getPrototypeOf(jsClass)
 
