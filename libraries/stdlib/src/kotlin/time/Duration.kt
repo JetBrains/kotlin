@@ -1167,7 +1167,8 @@ private inline fun parseDefaultStringFormat(
             fraction
         } else 0L
 
-        val unit = value.durationUnitByShortNameOrNull(index) ?: return handleError(throwException)
+        val unit = value.durationUnitByShortNameOrNull(index)
+            ?: return handleError(throwException, "Unknown duration unit short name: ${value[index]}")
         if (prevUnit != null && prevUnit <= unit) {
             return handleError(throwException, "Unexpected order of duration components")
         }
