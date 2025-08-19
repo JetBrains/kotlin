@@ -16,16 +16,17 @@ import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConv
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.iosMain
 import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
-import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
-import org.jetbrains.kotlin.gradle.plugin.sources.internal
-import org.jetbrains.kotlin.gradle.unitTests.uklibs.GradleMetadataComponent.Variant
-import org.jetbrains.kotlin.gradle.util.*
-import org.jetbrains.kotlin.gradle.util.setUklibResolutionStrategy
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.UklibFragment
-import org.jetbrains.kotlin.gradle.testing.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
+import org.jetbrains.kotlin.gradle.testing.ResolvedComponentWithArtifacts
+import org.jetbrains.kotlin.gradle.testing.compilationResolution
+import org.jetbrains.kotlin.gradle.testing.prettyPrinted
+import org.jetbrains.kotlin.gradle.testing.resolveProjectDependencyComponentsWithArtifacts
+import org.jetbrains.kotlin.gradle.unitTests.uklibs.GradleMetadataComponent.Variant
+import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.incremental.createDirectory
-import org.jetbrains.kotlin.util.assertDoesNotThrow
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import kotlin.test.Test
@@ -130,7 +131,7 @@ class UklibResolutionTestsWithMockComponents {
                 "foo:direct:1.0" to ResolvedComponentWithArtifacts(
                     configuration = kmpIosArm64KlibVariant.name,
                     artifacts = mutableListOf(
-                        kmpIosArm64KlibVariant.attributes + klibCinteropCommonizerType,
+                        kmpIosArm64KlibVariant.attributes + klibArtifact + klibCinteropCommonizerType,
                     )
                 ),
             ).prettyPrinted, consumer.multiplatformExtension.iosArm64().compilationResolution().prettyPrinted
@@ -289,7 +290,7 @@ class UklibResolutionTestsWithMockComponents {
                 "foo:transitive:1.0" to ResolvedComponentWithArtifacts(
                     configuration = kmpIosX64KlibVariant.name,
                     artifacts = mutableListOf(
-                        kmpIosX64KlibVariant.attributes + klibCinteropCommonizerType,
+                        kmpIosX64KlibVariant.attributes + klibArtifact + klibCinteropCommonizerType,
                     )
                 ),
             ).prettyPrinted,
@@ -678,7 +679,7 @@ class UklibResolutionTestsWithMockComponents {
                 "foo:direct:1.0" to ResolvedComponentWithArtifacts(
                     configuration = kmpIosArm64KlibVariant.name,
                     artifacts = mutableListOf(
-                        kmpIosArm64KlibVariant.attributes + klibCinteropCommonizerType,
+                        kmpIosArm64KlibVariant.attributes + klibArtifact + klibCinteropCommonizerType,
                     )
                 ),
             ).prettyPrinted,

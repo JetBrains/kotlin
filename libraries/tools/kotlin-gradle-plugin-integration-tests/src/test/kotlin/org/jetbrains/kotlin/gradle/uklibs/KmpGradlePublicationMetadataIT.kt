@@ -137,7 +137,6 @@ class KmpGradlePublicationMetadataIT : KGPBaseTest() {
 private val rootVariantsSharedByAllPublications = mutableSetOf(
     Variant(
         attributes = mutableMapOf(
-            "artifactType" to "org.jetbrains.kotlin.klib",
             "org.gradle.category" to "library",
             "org.gradle.jvm.environment" to "non-jvm",
             "org.gradle.usage" to "kotlin-api",
@@ -170,7 +169,6 @@ private val rootVariantsSharedByAllPublications = mutableSetOf(
     ),
     Variant(
         attributes = mutableMapOf(
-            "artifactType" to "org.jetbrains.kotlin.klib",
             "org.gradle.category" to "library",
             "org.gradle.jvm.environment" to "non-jvm",
             "org.gradle.usage" to "kotlin-metadata",
@@ -186,7 +184,6 @@ private val rootVariantsSharedByAllPublications = mutableSetOf(
     ),
     Variant(
         attributes = mutableMapOf(
-            "artifactType" to "org.jetbrains.kotlin.klib",
             "org.gradle.category" to "library",
             "org.gradle.jvm.environment" to "non-jvm",
             "org.gradle.usage" to "kotlin-api",
@@ -219,7 +216,6 @@ private val rootVariantsSharedByAllPublications = mutableSetOf(
     ),
     Variant(
         attributes = mutableMapOf(
-            "artifactType" to "org.jetbrains.kotlin.klib",
             "org.gradle.category" to "library",
             "org.gradle.jvm.environment" to "non-jvm",
             "org.gradle.usage" to "kotlin-metadata",
@@ -282,7 +278,6 @@ private val rootVariantsSharedByAllPublications = mutableSetOf(
     ),
     Variant(
         attributes = mutableMapOf(
-            "artifactType" to "org.jetbrains.kotlin.klib",
             "org.gradle.category" to "library",
             "org.gradle.jvm.environment" to "non-jvm",
             "org.gradle.usage" to "kotlin-api",
@@ -315,7 +310,6 @@ private val rootVariantsSharedByAllPublications = mutableSetOf(
     ),
     Variant(
         attributes = mutableMapOf(
-            "artifactType" to "org.jetbrains.kotlin.klib",
             "org.gradle.category" to "library",
             "org.gradle.jvm.environment" to "non-jvm",
             "org.gradle.usage" to "kotlin-api",
