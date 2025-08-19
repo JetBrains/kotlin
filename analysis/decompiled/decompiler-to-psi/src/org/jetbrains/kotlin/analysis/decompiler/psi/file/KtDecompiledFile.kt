@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.decompiler.psi.text.buildDecompiledText
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsClassFinder
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.stubs.KotlinFileStub
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
 import org.jetbrains.kotlin.utils.concurrent.block.LockedClearableLazyValue
 
 open class KtDecompiledFile(
@@ -24,35 +24,8 @@ open class KtDecompiledFile(
 
     private val decompiledText = LockedClearableLazyValue(Any()) {
         if (stubBasedDecompilerEnabled) {
-            val stubTree = ClsClassFinder.allowMultifileClassPart {
-                val stubLoader = StubTreeLoader.getInstance()
-                val vFile = provider.virtualFile
-                val project = project
-
-                // The default project is not supported in the stub loader
-                if (project.isDefault) {
-                    stubLoader.build(/* project = */ null,/* vFile = */ vFile,/* psiFile = */ null)
-                } else {
-                    // Read stub from cache if it is present
-                    stubLoader.readOrBuild(/* project = */ project,/* vFile = */ vFile,/* psiFile = */ null)
-                }
-            }
-
-            val fileStub = stubTree?.root as? KotlinFileStub
-            if (fileStub != null) {
-                buildDecompiledText(fileStub)
-            } else {
-                val cause = if (stubTree == null) {
-                    "stub tree is not found"
-                } else {
-                    "non-Kotlin stub tree (${stubTree::class.simpleName})"
-                }
-
-                """
-                // Could not decompile the file: $cause
-                // Please report an issue: https://kotl.in/issue
-            """.trimIndent()
-            }
+            val stub = CompiledStubBuilder.readOrBuildCompiledStub(this)
+            buildDecompiledText(stub)
         } else {
             buildDecompiledText(provider.virtualFile).text
         }
@@ -68,7 +41,43 @@ open class KtDecompiledFile(
         provider.content.drop()
         decompiledText.drop()
     }
+}
 
+private object CompiledStubBuilder {
+    fun readOrBuildCompiledStub(file: KtDecompiledFile): KotlinFileStubImpl {
+        val virtualFile = file.viewProvider.virtualFile
+        val project = file.project
+
+        val stubTree = ClsClassFinder.allowMultifileClassPart {
+            val stubLoader = StubTreeLoader.getInstance()
+
+            // The default project is not supported in the stub loader
+            if (project.isDefault) {
+                stubLoader.build(/* project = */ null,/* vFile = */ virtualFile,/* psiFile = */ null)
+            } else {
+                // Read stub from cache if it is present
+                stubLoader.readOrBuild(/* project = */ project,/* vFile = */ virtualFile,/* psiFile = */ null)
+            }
+        }
+
+        val fileStub = stubTree?.root as? KotlinFileStubImpl
+        return if (fileStub != null) {
+            fileStub
+        } else {
+            val cause = if (stubTree == null) {
+                "stub tree is not found"
+            } else {
+                "non-Kotlin stub tree (${stubTree::class.simpleName})"
+            }
+
+            val text = """
+                // Could not decompile the file: $cause
+                // Please report an issue: https://kotl.in/issue
+            """.trimIndent()
+
+            KotlinFileStubImpl.forInvalid(text)
+        }
+    }
 }
 
 private val stubBasedDecompilerEnabled: Boolean by lazyPub {
