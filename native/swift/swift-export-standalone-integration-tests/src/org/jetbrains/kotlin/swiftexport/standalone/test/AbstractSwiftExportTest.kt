@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationFactory
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationFactory.ProduceStaticCache
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.isIgnoredTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunProvider
@@ -38,21 +39,38 @@ abstract class AbstractSwiftExportTest {
     lateinit var testRunSettings: TestRunSettings
     lateinit var testRunProvider: TestRunProvider
 
+    /*
+    * There are cases in Swift Export usages when we want to test the translation against some prebuilt KLIB. As an example, we want
+    * to verify the translation of user code that uses kotlinx.coroutines.
+    *
+    * For such cases it is possible to pass a klib into the translation unconditionally. KLIBs that are found here would be passed into both
+    * execution and generation context, simulating a case when a user has a dependency in their Gradle project.
+    * */
+    var givenModules: Set<TestModule.Given> = emptySet()
+
     private val binariesDir get() = testRunSettings.get<Binaries>().testBinariesDir
     protected fun buildDir(testName: String) = binariesDir.resolve(testName)
     protected val targets: KotlinNativeTargets get() = testRunSettings.get()
     protected val testCompilationFactory = TestCompilationFactory()
     private val compiledSwiftCache = ThreadSafeCache<SwiftExportModule, TestCompilationArtifact.Swift.Module>()
 
+    protected fun isTestIgnored(testDir: String): Boolean {
+        val testPathFull = getAbsoluteFile(testDir)
+        val testFile = (testPathFull.toPath() / "${testPathFull.name}.kt").toFile()
+        return testRunSettings.isIgnoredTarget(testFile)
+    }
+
     protected fun runConvertToSwift(@TestDataFile testDir: String): Pair<Set<SwiftExportModule>, TestCase> {
         val testPathFull = getAbsoluteFile(testDir)
+        val testFile = (testPathFull.toPath() / "${testPathFull.name}.kt").toFile()
 
-        val testCaseId = TestCaseId.TestDataFile((testPathFull.toPath() / "${testPathFull.name}.kt").toFile())
+        val testCaseId = TestCaseId.TestDataFile(testFile)
         val originalTestCase = testRunProvider.testCaseGroupProvider
             .getTestCaseGroup(testCaseId.testCaseGroupId, testRunSettings)
             ?.getByName(testCaseId)!!
+            .copyAndAddModules(givenModules)
 
-        val modulesToExport = (originalTestCase.rootModules + originalTestCase.modules).mapToSet {
+        val modulesToExport = (originalTestCase.rootModules + originalTestCase.modules + givenModules).mapToSet {
             createInputModule(
                 testModule = it,
                 originalTestCase = originalTestCase,
@@ -90,25 +108,28 @@ abstract class AbstractSwiftExportTest {
                 .flatMapToSet {
                     it.allRegularDependencies.filterIsInstance<TestModule.Exclusive>().toSet()
                 } - originalTestCase.rootModules,
+            dependencies = givenModules
         )
         return swiftExportOutputs to resultingTestCase
     }
 
     private fun createInputModule(
-        testModule: TestModule.Exclusive,
+        testModule: TestModule,
         originalTestCase: TestCase,
         shouldBeFullyExported: Boolean
-    ): InputModule =
-        testModule.constructSwiftInput(
+    ): InputModule {
+        val config = (testModule as? TestModule.Exclusive)?.swiftExportConfigMap()
+        return testModule.constructSwiftInput(
             originalTestCase.freeCompilerArgs,
             SwiftModuleConfig(
-                rootPackage = testModule.swiftExportConfigMap()?.get(SwiftModuleConfig.ROOT_PACKAGE),
-                unsupportedDeclarationReporterKind = getUnsupportedDeclarationsReporterKind(testModule.swiftExportConfigMap()),
+                rootPackage = config?.get(SwiftModuleConfig.ROOT_PACKAGE),
+                unsupportedDeclarationReporterKind = getUnsupportedDeclarationsReporterKind(config),
                 shouldBeFullyExported = shouldBeFullyExported,
             )
         )
+    }
 
-    private fun TestModule.Exclusive.constructSwiftInput(
+    private fun TestModule.constructSwiftInput(
         freeCompilerArgs: TestCompilerArgs,
         moduleConfig: SwiftModuleConfig,
     ): InputModule {
@@ -121,7 +142,7 @@ abstract class AbstractSwiftExportTest {
         )
         return InputModule(
             path = Path(klibToTranslate.klib.result.assertSuccess().resultingArtifact.path),
-            name = moduleToTranslate.name,
+            name = if (moduleToTranslate.name == "kotlinx-coroutines-core.klib") "KotlinxCoroutinesCore" else moduleToTranslate.name,
             config = moduleConfig
         )
     }
@@ -300,3 +321,8 @@ private fun getUnsupportedDeclarationsReporterKind(configMap: Map<String, String
                 .singleOrNull { it.name.equals(value, ignoreCase = true) }
         } ?: UnsupportedDeclarationReporterKind.Silent
 }
+
+private fun TestCase.copyAndAddModules(givenModules: Set<TestModule.Given>?): TestCase = TestCase(
+    id = id, kind = kind, modules = modules, freeCompilerArgs = freeCompilerArgs, nominalPackageName = nominalPackageName, checks = checks,
+    extras = extras, fileCheckStage = fileCheckStage, expectedFailure = expectedFailure
+).apply { initialize(givenModules, null) }

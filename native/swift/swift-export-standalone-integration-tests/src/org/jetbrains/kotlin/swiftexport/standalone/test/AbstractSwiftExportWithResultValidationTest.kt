@@ -23,6 +23,7 @@ abstract class AbstractSwiftExportWithResultValidationTest : AbstractSwiftExport
         val mainFile = (testPathFull.toPath() / "${testPathFull.name}.kt").toFile()
         val onlyApple = "// ${Directives.APPLE_ONLY_VALIDATION.name}" in mainFile.readLines()
         Assumptions.assumeTrue(!onlyApple || testRunSettings.get<KotlinNativeTargets>().hostTarget.family.isAppleFamily)
+        Assumptions.assumeFalse(isTestIgnored(testDir))
 
         val (swiftExportOutputs) = runConvertToSwift(testDir)
         validateSwiftExportOutput(testPathFull, swiftExportOutputs)

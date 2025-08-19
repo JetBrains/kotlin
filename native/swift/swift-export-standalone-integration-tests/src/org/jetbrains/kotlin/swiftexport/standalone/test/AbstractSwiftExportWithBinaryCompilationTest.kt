@@ -6,15 +6,18 @@
 package org.jetbrains.kotlin.swiftexport.standalone.test
 
 import com.intellij.testFramework.TestDataFile
+import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.BinaryLibraryKind
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.flatMapToSet
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportModule
 import org.jetbrains.kotlin.test.backend.handlers.UpdateTestDataSupport
 import org.junit.jupiter.api.Assumptions
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith
 import java.io.File
 
@@ -29,8 +32,16 @@ abstract class AbstractSwiftExportWithBinaryCompilationTest : AbstractSwiftExpor
     ) {
     }
 
+    @BeforeEach
+    fun checkHost() {
+        Assumptions.assumeTrue(testRunSettings.get<KotlinNativeTargets>().hostTarget.family.isAppleFamily)
+        // TODO: KT-75530
+        Assumptions.assumeTrue(testRunSettings.get<KotlinNativeTargets>().testTarget.family == Family.OSX)
+    }
+
     protected fun runTest(@TestDataFile testDir: String) {
-        Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
+        Assumptions.assumeFalse(isTestIgnored(testDir))
+
         val (swiftExportOutputs, resultingTestCase) = runConvertToSwift(testDir)
 
         // TODO: we don't need to compile Kotlin binary for generation tests.

@@ -932,7 +932,7 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
     }
 }
 
-internal fun Settings.isIgnoredTarget(testDataFile: File): Boolean {
+fun Settings.isIgnoredTarget(testDataFile: File): Boolean {
     val disposable = Disposer.newDisposable("Disposable for ExtTestCaseGroupProvider.isIgnoredTarget")
     try {
         val extTestDataFileStructure = ExtTestDataFileStructureFactory(disposable).ExtTestDataFileStructure(testDataFile, emptyList())
