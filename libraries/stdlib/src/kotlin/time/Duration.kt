@@ -1026,6 +1026,13 @@ public inline operator fun Double.times(duration: Duration): Duration = duration
 
 
 
+/**
+ * Parses a duration string in either ISO-8601 or default format.
+ * @param value the string to parse
+ * @param strictIso if true, only accepts ISO-8601 format; if false, accepts both ISO and default formats
+ * @param throwException if true, throws IllegalArgumentException on parse error; if false, returns Duration.INVALID
+ * @return parsed Duration or Duration.INVALID on error when throwException is false
+ */
 private fun parseDuration(value: String, strictIso: Boolean, throwException: Boolean = true): Duration {
     if (value.isEmpty()) return handleError(throwException, "The string is empty")
     var index = 0
@@ -1050,6 +1057,14 @@ private fun parseDuration(value: String, strictIso: Boolean, throwException: Boo
     return if (isNegative && result != Duration.INVALID) -result else result
 }
 
+/**
+ * Parses ISO-8601 duration format (e.g., "PT1H30M45S").
+ * @param value the full input string
+ * @param startIndex index after 'P' prefix
+ * @param length total length of the string
+ * @param throwException if true, throws on error; if false, returns Duration.INVALID
+ * @return parsed Duration or Duration.INVALID on error
+ */
 @kotlin.internal.InlineOnly
 private inline fun parseIsoStringFormat(
     value: String,
@@ -1119,6 +1134,15 @@ private inline fun parseIsoStringFormat(
     return totalMillis.toDuration(DurationUnit.MILLISECONDS) + totalNanos.toDuration(DurationUnit.NANOSECONDS)
 }
 
+/**
+ * Parses default duration format (e.g., "1h 30m", "45s", "500ms").
+ * @param value the input string
+ * @param startIndex starting position for parsing
+ * @param initialLength effective length of the string (may exclude closing parenthesis)
+ * @param hasSign whether the duration had a leading sign
+ * @param throwException if true, throws on error; if false, returns Duration.INVALID
+ * @return parsed Duration or Duration.INVALID on error
+ */
 @kotlin.internal.InlineOnly
 private inline fun parseDefaultStringFormat(
     value: String,
@@ -1211,6 +1235,10 @@ private inline fun parseDefaultStringFormat(
     return totalMillis.toDuration(DurationUnit.MILLISECONDS) + totalNanos.toDuration(DurationUnit.NANOSECONDS)
 }
 
+/**
+ * Checks if multiplying two Long values will exceed MAX_MILLIS bounds.
+ * @return true if a * b would overflow MAX_MILLIS or -MAX_MILLIS
+ */
 @kotlin.internal.InlineOnly
 private inline fun willMultiplyOverflow(a: Long, b: Long): Boolean = when {
     a == 0L -> false
@@ -1218,12 +1246,20 @@ private inline fun willMultiplyOverflow(a: Long, b: Long): Boolean = when {
     else -> a < -MAX_MILLIS / b
 }
 
+/**
+ * Multiplies this Long by another, clamping result to ±MAX_MILLIS on overflow.
+ * @return the product or ±MAX_MILLIS if overflow would occur
+ */
 @kotlin.internal.InlineOnly
 private inline fun Long.multiplyWithoutOverflow(other: Long): Long = when {
     willMultiplyOverflow(this, other) -> if (this > 0) MAX_MILLIS else -MAX_MILLIS
     else -> this * other
 }
 
+/**
+ * Checks if adding two Long values will exceed MAX_MILLIS bounds.
+ * @return true if a + b would overflow MAX_MILLIS or -MAX_MILLIS
+ */
 @kotlin.internal.InlineOnly
 private inline fun willAddOverflow(a: Long, b: Long): Boolean = when {
     a > 0 && b > 0 -> a > MAX_MILLIS - b
@@ -1231,6 +1267,10 @@ private inline fun willAddOverflow(a: Long, b: Long): Boolean = when {
     else -> false
 }
 
+/**
+ * Adds another Long to this one, handling overflow and special cases.
+ * @return the sum, ±MAX_MILLIS on overflow, or INVALID_RAW_VALUE for infinity arithmetic errors
+ */
 @kotlin.internal.InlineOnly
 private inline fun Long.addWithoutOverflow(other: Long): Long = when {
     this == -MAX_MILLIS && other == MAX_MILLIS || this == MAX_MILLIS && other == -MAX_MILLIS -> Duration.INVALID_RAW_VALUE
@@ -1242,6 +1282,13 @@ private inline fun Long.addWithoutOverflow(other: Long): Long = when {
 
 private data class NumericParseData(val value: Long, val index: Int, val sign: Int = 1, val hasOverflow: Boolean = false)
 
+/**
+ * Parses a Long from this string starting at the given index.
+ * @param startIndex position to start parsing
+ * @param withSign if true, accepts optional leading +/- sign
+ * @param overflowLimit maximum absolute value before overflow (default MAX_MILLIS)
+ * @return NumericParseData containing parsed value, end index, sign, and overflow flag
+ */
 @kotlin.internal.InlineOnly
 private inline fun String.parseLong(startIndex: Int, withSign: Boolean = true, overflowLimit: Long = MAX_MILLIS): NumericParseData {
     var sign = 1
@@ -1273,6 +1320,11 @@ private inline fun String.parseLong(startIndex: Int, withSign: Boolean = true, o
     return NumericParseData(result * sign, index, sign, hasOverflow = false)
 }
 
+/**
+ * Parses up to 15 decimal digits as a fraction, padding with zeros to exactly 15 digits.
+ * @param startIndex position to start parsing
+ * @return NumericParseData with the fraction scaled to 15 decimal places and end index
+ */
 @kotlin.internal.InlineOnly
 private inline fun String.parseFraction(startIndex: Int): NumericParseData {
     var result = 0L
@@ -1294,6 +1346,12 @@ private inline fun String.parseFraction(startIndex: Int): NumericParseData {
     return NumericParseData(result, index)
 }
 
+/**
+ * Fallback for parsing fractions with more than 15 digits using Double parsing.
+ * @param startIndex start of the fraction substring (including decimal point)
+ * @param endIndex end of the fraction substring
+ * @return the fraction as a Double value
+ */
 @kotlin.internal.InlineOnly
 private inline fun String.parseFractionFallback(startIndex: Int, endIndex: Int): Double {
     return substring(startIndex, endIndex).toDouble()
@@ -1305,12 +1363,24 @@ private inline fun Long.toNanos(unit: DurationUnit): Long = (this * unit.fractio
 @kotlin.internal.InlineOnly
 private inline fun Double.toNanos(unit: DurationUnit): Long = (this * unit.fallbackFractionMultiplier).roundToLong()
 
+/**
+ * Handles parsing errors based on the throwException flag.
+ * @param throwException if true, throws IllegalArgumentException; if false, returns Duration.INVALID
+ * @param message optional error message for the exception
+ * @return Duration.INVALID (only when throwException is false)
+ * @throws IllegalArgumentException when throwException is true
+ */
 @kotlin.internal.InlineOnly
 private inline fun handleError(throwException: Boolean, message: String = ""): Duration {
     if (throwException) throw IllegalArgumentException(message)
     return Duration.INVALID
 }
 
+/**
+ * Executes the given block if this Duration is INVALID, otherwise returns this Duration.
+ * @param block lambda to execute if Duration is INVALID (typically returns null)
+ * @return this Duration if valid, or the result of block if INVALID
+ */
 private inline fun Duration.onInvalid(block: () -> Nothing): Duration {
     return if (this == Duration.INVALID) block() else this
 }
