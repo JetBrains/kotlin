@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include <chrono>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -39,12 +41,14 @@ private:
     struct Event;
     struct PendingEvent;
 
-    void runBeforePass(StringRef P);
-    void runAfterPass(StringRef P);
+    void runBeforePass(StringRef P, const Function* F);
+    void runAfterPass(StringRef P, const Function* F);
 
     bool enabled_ = false;
     std::vector<Event> events_;
     std::vector<PendingEvent> pending_events_stack_;
+    std::map<std::string, std::vector<PendingEvent>> pending_events_per_function_;
+    std::map<std::string, std::chrono::nanoseconds> events_per_function_;
 };
 
 } // namespace llvm
