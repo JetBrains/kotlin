@@ -6,4 +6,5 @@ out
 -libraries
 libraries/stdlib/build/classes/kotlin/js/main
 -Xwarning-level=NOTHING_TO_INLINE\:disabled
--XXLanguage\:+IrInlinerBeforeKlibSerialization
+-XXLanguage\:+IrIntraModuleInlinerBeforeKlibSerialization
+-XXLanguage\:+IrCrossModuleInlinerBeforeKlibSerialization

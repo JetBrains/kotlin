@@ -1,6 +1,6 @@
 // KIND: STANDALONE_LLDB
 // FIR_IDENTICAL
-// FREE_COMPILER_ARGS: -XXLanguage:+IrInlinerBeforeKlibSerialization
+// FREE_COMPILER_ARGS: -XXLanguage:+IrIntraModuleInlinerBeforeKlibSerialization -XXLanguage:+IrCrossModuleInlinerBeforeKlibSerialization
 // IGNORE_NATIVE_K2: cacheMode=STATIC_PER_FILE_EVERYWHERE
 // IGNORE_NATIVE_K1: optimizationMode=DEBUG
 // IGNORE_NATIVE_K2: optimizationMode=DEBUG

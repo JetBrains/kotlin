@@ -1,5 +1,5 @@
 // ISSUE: KT-68975
-// LANGUAGE: +IrInlinerBeforeKlibSerialization
+// LANGUAGE: +IrIntraModuleInlinerBeforeKlibSerialization +IrCrossModuleInlinerBeforeKlibSerialization
 inline fun foo(<!UNUSED_PARAMETER!>makeInt<!>: () -> Int): Int {
     return js("makeInt()")
 }

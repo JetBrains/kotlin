@@ -1,4 +1,4 @@
-// LANGUAGE: +IrInlinerBeforeKlibSerialization
+// LANGUAGE: +IrIntraModuleInlinerBeforeKlibSerialization +IrCrossModuleInlinerBeforeKlibSerialization
 
 inline fun <T> inlineGenericTestFunction(f: () -> T) = f()
 
