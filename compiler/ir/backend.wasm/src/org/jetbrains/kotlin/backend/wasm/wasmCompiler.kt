@@ -233,7 +233,7 @@ fun compileWasm(
         )
         jsBuiltinsPolyfillsWrapper = wasmCompiledFileFragments.flatMap { fragment ->
             fragment.jsBuiltinsPolyfills.values.toList()
-        }.joinToString("\n")
+        }.joinToString("\n").takeIf { it.isNotEmpty() }
     } else {
         jsUninstantiatedWrapper = null
         jsWrapper =
