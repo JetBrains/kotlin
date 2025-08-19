@@ -95,7 +95,10 @@ abstract class AbstractFirJsDiagnosticWithBackendWithInlinedFunInKlibTestBase : 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         super.configure(builder)
         defaultDirectives {
-            LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
+            LANGUAGE with listOf(
+                "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
+                "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
+            )
         }
     }
 }
@@ -104,7 +107,10 @@ abstract class AbstractFirJsDiagnosticWithIrInlinerTestBase(parser: FirParser) :
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         super.configure(builder)
         defaultDirectives {
-            LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
+            LANGUAGE with listOf(
+                "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
+                "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
+            )
         }
 
         configureLoweredIrHandlersStep {

@@ -54,7 +54,10 @@ abstract class AbstractFirJsIrTextTestBase(private val parser: FirParser) : Abst
         with(builder) {
             defaultDirectives {
                 +CHECK_SAME_ABI_AFTER_INLINING
-                LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
+                LANGUAGE with listOf(
+                    "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
+                    "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
+                )
             }
         }
     }

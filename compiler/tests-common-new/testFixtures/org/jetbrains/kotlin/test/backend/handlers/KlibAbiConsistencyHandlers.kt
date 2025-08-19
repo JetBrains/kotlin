@@ -35,7 +35,7 @@ private val TestServices.abiDumpBeforeInlining: File
 
 private fun shouldCheckAbiConsistency(module: TestModule): Boolean =
     KlibAbiConsistencyDirectives.CHECK_SAME_ABI_AFTER_INLINING in module.directives &&
-            module.languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization)
+            module.languageVersionSettings.supportsFeature(LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization)
 
 private class SyntheticAccessors : AbiReadingFilter {
     override fun isDeclarationExcluded(declaration: AbiDeclaration): Boolean =

@@ -104,7 +104,8 @@ abstract class AbstractNativeKlibDumpSignaturesTest : AbstractNativeSimpleTest()
                 "-Xklib-relative-path-base=${sourceFile.parent}",
                 // Test only scenario with enabled preserialization IR-Inliner, since signatures must not be changed after inlining,
                 // modulo synthetic accessors
-                "-XXLanguage:+IrInlinerBeforeKlibSerialization",
+                "-XXLanguage:+IrIntraModuleInlinerBeforeKlibSerialization",
+                "-XXLanguage:+IrCrossModuleInlinerBeforeKlibSerialization",
             ),
             nominalPackageName = PackageName.EMPTY,
             checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),
