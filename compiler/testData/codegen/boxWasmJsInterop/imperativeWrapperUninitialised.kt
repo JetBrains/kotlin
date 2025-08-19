@@ -24,11 +24,13 @@ fun main() {
 
 // FILE: entry.mjs
 import { instantiate } from "./index.uninstantiated.mjs";
+import * as d2FzbTpqcy1zdHJpbmc from './js-builtins.mjs';
 
 let inc = x => x + 1;
 
 let imports = {
     "foo": { inc },
+    "wasm:js-string" : d2FzbTpqcy1zdHJpbmc,
 }
 
 let { exports } = await instantiate(imports, /*runInitializer=*/false);
