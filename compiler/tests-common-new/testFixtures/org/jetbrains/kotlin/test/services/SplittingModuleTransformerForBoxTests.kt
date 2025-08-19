@@ -65,7 +65,7 @@ class SplittingModuleTransformerForBoxTests(
 
         val secondModule = TestModule(
             name = "main",
-            files = listOf(secondModuleFile) + additionalFiles.map { it.copy() },
+            files = listOf(secondModuleFile), // additionalFiles are not added here, due to potential deserializing clashes between helpers' copies: coroutines and JS stepping.
             allDependencies = listOf(DependencyDescription(firstModule, DependencyKind.Binary, DependencyRelation.FriendDependency)),
             RegisteredDirectivesBuilder(module.directives).apply {
                 -CodegenTestDirectives.IGNORE_FIR_DIAGNOSTICS
@@ -104,17 +104,6 @@ class SplittingTestConfigurator(testServices: TestServices) : MetaTestConfigurat
                             .contains("inline fun")
                     }
                 ) return true
-            }
-        } else { // Klib backends
-            if (WITH_COROUTINES in moduleLib.directives) {
-                // KT-79665: WITH_COROUTINES works incorrectly for non-jvm multi-module tests, should EmptyContinuation object be referenced from moduleLib,
-                // or CHECK_STATE_MACHINE would add `val StateMachineChecker` to both modules
-                // Same helper sources `CoroutineHelpers.kt` and `CoroutineUtil.kt` are added to each module, which causes symbols clash in deserialization phase for moduleMain like:
-                //   IrClassSymbolImpl is already bound. Signature: helpers/EmptyContinuation|null[0]
-                if (CHECK_STATE_MACHINE in moduleLib.directives)
-                    return true
-                if (moduleLib.files[0].originalContent.contains("EmptyContinuation"))
-                    return true
             }
         }
         return false // Don't skip its execution, since the test has been split, and no counter-patterns found
