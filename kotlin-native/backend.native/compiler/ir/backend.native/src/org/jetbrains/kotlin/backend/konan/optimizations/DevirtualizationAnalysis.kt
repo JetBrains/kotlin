@@ -355,7 +355,7 @@ internal object DevirtualizationAnalysis {
             private fun mergeMultiNodes() {
                 visited.clear()
                 var index = 0
-                for (i in order.size - 1 downTo 0) {
+                for (i in nodesCount - 1 downTo 0) {
                     val nodeIndex = order[i]
                     if (visited[nodeIndex]) continue
                     val start = index
@@ -381,7 +381,7 @@ internal object DevirtualizationAnalysis {
             }
 
             private fun mergeDanglingNodes() {
-                for (i in order.size - 1 downTo 0) {
+                for (i in nodesCount - 1 downTo 0) {
                     val node = nodes[i]
                     if (node.reversedCastEdges != null) continue
 
@@ -526,6 +526,48 @@ internal object DevirtualizationAnalysis {
             })
         }
 
+        private fun markUsefulNodes(reversedEdges: IntArray, functions: Map<DataFlowIR.FunctionSymbol, DataFlowIR.Function>): BitSet {
+            val ua = BitSet(constraintGraph.nodes.size)
+            val stk = IntArray(constraintGraph.nodes.size)
+
+            fun dfs(i: Int) {
+                if (ua[i]) return
+
+                var stp = 0
+
+                ua.set(i)
+                stk[stp++] = i
+
+                while (stp != 0) {
+                    val u = stk[--stp]
+                    reversedEdges.forEachEdge(u) { v ->
+                        if (!ua.get(v)) {
+                            ua.set(v)
+                            stk[stp++] = v
+                        }
+                    }
+                    constraintGraph.nodes[u].reversedCastEdges?.forEach { nv ->
+                        if (!ua.get(nv.node.id)) {
+                            ua.set(nv.node.id)
+                            stk[stp++] = nv.node.id
+                        }
+                    }
+                }
+            }
+
+            for (function in functions.values) {
+                if (!constraintGraph.functions.containsKey(function.symbol)) continue
+                function.body.forEachNonScopeNode { node ->
+                    val virtualCall = node as? DataFlowIR.Node.VirtualCall ?: return@forEachNonScopeNode
+                    val receiverNode = constraintGraph.virtualCallSiteReceivers[virtualCall]!!
+
+                    dfs(receiverNode.id)
+                }
+            }
+
+            return ua
+        }
+
         fun analyze() {
             resetCallSitesAttributeOwnerIds()
 
@@ -596,6 +638,7 @@ internal object DevirtualizationAnalysis {
             }
             badEdges.sortBy { it.second.node.priority } // Heuristic.
 
+            val firstPhaseStartTime = System.currentTimeMillis()
             // First phase - greedy phase.
             var iterations = 0
             val maxNumberOfIterations = 2
@@ -632,6 +675,11 @@ internal object DevirtualizationAnalysis {
                 }
             } while (!end)
 
+            println("First phase took ${System.currentTimeMillis() - firstPhaseStartTime} ms")
+            val secondPhaseStartTime = System.currentTimeMillis()
+
+            val usefulNodes = markUsefulNodes(reversedEdges, functions)
+
             // Second phase - do BFS.
             val nodesCount = topologicalOrder.size
             val marked = CustomBitSet(nodesCount)
@@ -639,6 +687,8 @@ internal object DevirtualizationAnalysis {
             var prevFront = IntArray(nodesCount)
             var frontSize = 0
             for ((sourceNode, edge) in badEdges) {
+                if (!usefulNodes[sourceNode.id]) continue
+
                 val distNode = edge.node
                 if (distNode.types.or2(sourceNode.types, edge.suitableTypes) && !marked[distNode.id]) {
                     marked.set(distNode.id)
@@ -675,6 +725,8 @@ internal object DevirtualizationAnalysis {
                     }
                 }
             }
+
+            println("Second phase took ${System.currentTimeMillis() - secondPhaseStartTime} ms")
 
             if (entryPoint == null)
                 propagateFinalTypesFromExternalVirtualCalls(directEdges)
