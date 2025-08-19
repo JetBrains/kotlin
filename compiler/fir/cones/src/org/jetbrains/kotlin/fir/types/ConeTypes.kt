@@ -77,6 +77,7 @@ data class ConeErrorUnionType private constructor(
 
     companion object {
         fun create(valueType: ConeValueType, errorType: CEType): ConeErrorUnionType {
+            if (errorType is CEBotType) error("Unexpected")
             return ConeErrorUnionType(valueType, errorType)
         }
 
@@ -86,7 +87,7 @@ data class ConeErrorUnionType private constructor(
         }
 
         fun addErrorComponent(original: ConeKotlinType, errorType: CEType): ConeKotlinType {
-            if (errorType == CEBotType) return original
+            if (errorType is CEBotType) return original
 
             return when (original) {
                 is ConeFlexibleType -> {

@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.ConeRigidType
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -117,7 +118,7 @@ class ValueParameter(
         moduleData: FirModuleData,
         callableId: CallableId,
         isExpect: Boolean,
-        currentDispatchReceiver: ConeClassLikeType?,
+        currentDispatchReceiver: ConeRigidType?,
         context: Context<T>
     ): FirProperty {
         val name = this.firValueParameter.name

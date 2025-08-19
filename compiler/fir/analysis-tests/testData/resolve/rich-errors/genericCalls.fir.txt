@@ -61,3 +61,22 @@ FILE: genericCalls.kt
         R|/foo6<Inapplicable(INAPPLICABLE): /foo6>#|<R|kotlin/Nothing | TypeVariable(T)|, R|kotlin/Nothing | TypeVariable(V)|>(Q|E3|, Q|E2|)
         R|/foo6<Inapplicable(INAPPLICABLE): /foo6>#|<R|kotlin/Nothing | TypeVariable(T)|, R|kotlin/Nothing | TypeVariable(V)|>(Q|E3|, Q|E3|)
     }
+    public final inline fun <T, E1 : R|kotlin/Nothing | Error|, E2 : R|kotlin/Nothing | Error|> R|T | E1|.onError(f: R|(kotlin/Nothing | E1) -> kotlin/Nothing | E2|): R|T | E2| {
+        when () {
+            (this@R|/onError| is R|kotlin/Nothing | Error|) ->  {
+                ^onError R|<local>/f|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Nothing | E2|>|(this@R|/onError|)
+            }
+            else ->  {
+                ^onError this@R|/onError|
+            }
+        }
+
+    }
+    public final fun onErrorCaller(v: R|kotlin/Int | E1|): R|kotlin/Nothing | E1| {
+        lval v2: R|kotlin/Int| = R|<local>/v|.R|/onError|<R|kotlin/Int|, R|kotlin/Nothing | E1|, R|kotlin/Nothing | TypeVariable(E2)|>(<L> = onError@fun <anonymous>(it: R|kotlin/Nothing | E1|): R|kotlin/Nothing | TypeVariable(E2)| <inline=Inline, kind=UNKNOWN>  {
+            ^onErrorCaller R|<local>/it|
+        }
+        )
+        lval v3: R|kotlin/Int| = R|<local>/v2|
+        Null(null)!!
+    }

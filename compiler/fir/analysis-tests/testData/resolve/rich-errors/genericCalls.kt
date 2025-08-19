@@ -48,3 +48,17 @@ fun bar() {
     <!INAPPLICABLE_CANDIDATE!>foo6<!>(E3, E2)
     <!INAPPLICABLE_CANDIDATE!>foo6<!>(E3, E3)
 }
+
+inline fun <T : Any?, E1 : KError, E2: KError> (T | E1).onError(f: (E1) -> E2): T | E2 {
+    if (this is KError) {
+        return f(this)
+    } else {
+        return this
+    }
+}
+
+fun onErrorCaller(v: Int | E1): E1 {
+    val v2 = v.onError { return it }
+    val v3: Int = v2
+    null!!
+}

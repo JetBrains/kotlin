@@ -771,12 +771,37 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
                     !subTs.isSubtypeOfAtomic(CEBotType)
         }
 
-        return unsatisfiedSubTs.map { it to upperType }
+        val containedVariablesSub = subTs.filter { it is CETypeVariableType }
+
+        if (unsatisfiedSubTs.isEmpty()) {
+            val containedVariablesSuper = superTs.filter { it is CETypeVariableType }
+
+            return buildList {
+                containedVariablesSub.forEach { subV ->
+                    add(subV to CETopType)
+                }
+                containedVariablesSuper.forEach { superV ->
+                    add(superV to CETopType)
+                }
+            }
+        }
+
+        val lostSubV = containedVariablesSub.filter { subV ->
+            !unsatisfiedSubTs.contains(subV)
+        }
+
+        return buildList {
+            unsatisfiedSubTs.forEach { subT ->
+                add(subT to upperType)
+            }
+            lostSubV.forEach { subV ->
+                add(subV to CETopType)
+            }
+        }
     }
 
     override fun ErrorTypeMarker.isPossibleSubtypeOf(other: ErrorTypeMarker): Boolean {
         require(this !is CEUnionType) { "Expected atomic" }
-        require(!this.isSubtypeOf(other)) { "Already a subtype" }
 
         val subT = this as CEType
         val superTs = (other as CEType).collectAtomics(mutableListOf())

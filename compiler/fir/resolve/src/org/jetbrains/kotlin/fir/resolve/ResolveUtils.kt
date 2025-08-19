@@ -602,7 +602,7 @@ fun BodyResolveComponents.transformExpressionUsingSmartcastInfo(expression: FirE
         } else {
             valueType
         }
-        ConeErrorUnionType.create(newValueComponent, newErrorComponent)
+        ConeErrorUnionType.createNormalized(newValueComponent, newErrorComponent)
     } else {
         intersectedUpperType
     }

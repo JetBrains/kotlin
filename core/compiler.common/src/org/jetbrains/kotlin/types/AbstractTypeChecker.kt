@@ -341,7 +341,7 @@ object AbstractTypeChecker {
                     preparedSubType.projectOnValue(),
                     preparedSuperType.projectOnValue(),
                     isFromNullabilityConstraint
-                )
+                ) && completeIsSubTypeOfErrors(state, botTypeOfErrors(), preparedSuperTypeUb.errorType())
             }
             preparedSubTypeLb is ErrorUnionTypeMarker && preparedSuperTypeUb is ValueTypeMarker -> {
                 completeIsSubTypeOfValues(

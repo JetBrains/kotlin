@@ -39,6 +39,8 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.types.isAny
+import org.jetbrains.kotlin.ir.types.isNullableAny
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.name.*
 
@@ -114,8 +116,8 @@ fun Fir2IrComponents.createSafeCallConstruction(
         IrGetValueImpl(startOffset, endOffset, receiverVariableSymbol),
     )
 
-    // TODO: RE: HIGH: make errorable too
-    val resultType = expressionOnNotNull.type.makeNullable()
+    val mayHaveErrors = receiverVariable.type.isAny() || receiverVariable.type.isNullableAny()
+    val resultType = if (mayHaveErrors) receiverVariable.type else expressionOnNotNull.type.makeNullable()
 
     return IrBlockImpl(startOffset, endOffset, resultType, IrStatementOrigin.SAFE_CALL).apply {
         statements += receiverVariable
@@ -123,10 +125,11 @@ fun Fir2IrComponents.createSafeCallConstruction(
             branches += IrBranchImpl(
                 conditionNull(), IrConstImpl.constNull(startOffset, endOffset, builtins.nothingNType)
             )
-            // TODO: RE: HIGH: Do not add if receiverVariable.type is not appropriate
-            branches += IrBranchImpl(
-                conditionError(), IrGetValueImpl(startOffset, endOffset, receiverVariableSymbol)
-            )
+            if (mayHaveErrors) {
+                branches += IrBranchImpl(
+                    conditionError(), IrGetValueImpl(startOffset, endOffset, receiverVariableSymbol)
+                )
+            }
             branches += IrElseBranchImpl(
                 IrConstImpl.boolean(startOffset, endOffset, builtins.booleanType, true),
                 expressionOnNotNull

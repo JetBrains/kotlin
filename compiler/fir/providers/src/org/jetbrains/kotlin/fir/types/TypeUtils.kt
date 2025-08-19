@@ -778,7 +778,7 @@ private class CapturedArguments(val capturedArguments: Array<out ConeTypeProject
     }
 }
 
-fun CEType.toConeType(): ConeRigidType = ConeErrorUnionType.create(StandardTypes.Nothing, this)
+fun CEType.toConeType(): ConeRigidType = ConeErrorUnionType.createNormalized(StandardTypes.Nothing, this)
 
 fun ConeKotlinType.isSubtypeOf(superType: ConeKotlinType, session: FirSession, errorTypesEqualToAnything: Boolean = false): Boolean =
     AbstractTypeChecker.isSubtypeOf(

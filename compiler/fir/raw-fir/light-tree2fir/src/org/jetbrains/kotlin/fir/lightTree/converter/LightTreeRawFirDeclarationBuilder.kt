@@ -638,7 +638,7 @@ class LightTreeRawFirDeclarationBuilder(
                                         baseModuleData,
                                         callableIdForName(it.firValueParameter.name),
                                         classIsExpect,
-                                        currentDispatchReceiverType()?.expectNonErrorClassSoft,
+                                        currentDispatchReceiverType(),
                                         context
                                     )
                                 }

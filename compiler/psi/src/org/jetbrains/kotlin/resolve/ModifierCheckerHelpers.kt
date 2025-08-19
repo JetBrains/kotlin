@@ -216,7 +216,7 @@ val possibleTargetMap = mapOf(
         KotlinTarget.BACKING_FIELD
     ),
     DATA_KEYWORD to EnumSet.of(KotlinTarget.CLASS_ONLY, KotlinTarget.LOCAL_CLASS, KotlinTarget.STANDALONE_OBJECT),
-    ERROR_KEYWORD to EnumSet.of(KotlinTarget.STANDALONE_OBJECT),
+    ERROR_KEYWORD to EnumSet.of(KotlinTarget.CLASS_ONLY, KotlinTarget.LOCAL_CLASS, KotlinTarget.STANDALONE_OBJECT),
     INLINE_KEYWORD to EnumSet.of(
         KotlinTarget.FUNCTION,
         KotlinTarget.PROPERTY,

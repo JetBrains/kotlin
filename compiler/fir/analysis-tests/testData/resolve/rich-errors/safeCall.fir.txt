@@ -37,3 +37,11 @@ FILE: safeCall.kt
         public get(): R|kotlin/Int|
     public final val v52: R|kotlin/Int?| = R|/identity|<R|kotlin/Int? | E1|>(R|/neString|?.{ $subj$.R|/foo|() })
         public get(): R|kotlin/Int?|
+    public final fun foo(v: R|kotlin/Int | E1|): R|kotlin/Int| {
+        lval tmp: R|kotlin/Nothing | E1| = R|<local>/v|?.{ $subj$.R|kotlin/let|<R|kotlin/Int|, R|kotlin/Nothing|>(<L> = let@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Nothing| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^foo R|<local>/it|
+        }
+        ) }
+        lval tmp2: R|kotlin/Nothing | E1| = R|<local>/tmp|
+        Null(null)!!
+    }
