@@ -5,14 +5,15 @@
 
 package server.core
 
+import common.CompilerUtils
 import common.FileChunkingStrategy
 import common.OneFileOneChunkStrategy
 import common.RemoteCompilationService
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import model.CompilationMetadata
 import model.CompilationResult
@@ -23,6 +24,7 @@ import model.CompilerMessage
 import model.FileChunk
 import model.FileTransferReply
 import model.FileTransferRequest
+import model.FileType
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.client.BasicCompilerServicesWithResultsFacadeServer
 import org.jetbrains.kotlin.daemon.common.JpsCompilerServicesFacade
@@ -32,7 +34,7 @@ import server.interceptors.AuthInterceptor
 import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import kotlin.collections.plus
+import java.util.concurrent.atomic.AtomicInteger
 
 enum class CompilationMode {
     REAL,
@@ -56,10 +58,30 @@ class RemoteCompilationServiceImpl(
         cacheHandler.cleanup()
     }
 
+
     override fun compile(compileRequests: Flow<CompileRequest>): Flow<CompileResponse> {
         return channelFlow {
-            val sourceFilesChannel = Channel<File>(capacity = Channel.UNLIMITED)
-            val sourceFiles = mutableListOf<File>()
+
+            val allFilesReady = CompletableDeferred<Unit>()
+            val filesReceivedCounter = AtomicInteger(0)
+            var totalFilesExpected = -1
+
+            // <ClientPath, FileFromUserWorkspace>
+            val sourceFiles = mutableMapOf<String, File>()
+            val dependencyFiles = mutableMapOf<String, File>()
+            val compilerPluginFiles = mutableMapOf<String, File>()
+
+            fun addFile(clientPath: String, file: File, fileType: FileType) {
+                when (fileType) {
+                    FileType.SOURCE -> sourceFiles[clientPath] = file
+                    FileType.DEPENDENCY -> dependencyFiles[clientPath] = file
+                    FileType.COMPILER_PLUGIN -> compilerPluginFiles[clientPath] = file
+                    FileType.RESULT -> debug("Received illegal file type: $fileType")
+                }
+                if (totalFilesExpected > 0 && filesReceivedCounter.incrementAndGet() == totalFilesExpected) {
+                    allFilesReady.complete(Unit)
+                }
+            }
 
             val fileChunkStrategy = OneFileOneChunkStrategy()
             var compilationMetadata: CompilationMetadata? = null
@@ -72,6 +94,7 @@ class RemoteCompilationServiceImpl(
                     when (it) {
                         is CompilationMetadata -> {
                             compilationMetadata = it
+                            totalFilesExpected = it.sourceFilesCount + it.dependencyFilesCount + it.compilerPluginFilesCount
                         }
                         is FileTransferRequest -> {
                             compilationMetadata?.let { metadata ->
@@ -86,18 +109,19 @@ class RemoteCompilationServiceImpl(
                                                 userId,
                                                 compilationMetadata.projectName
                                             )
-                                            println("project file path = $projectFilePath")
-                                            sourceFilesChannel.send(projectFilePath.toFile())
+                                            addFile(it.filePath, projectFilePath.toFile(), it.fileType)
                                             FileTransferReply(
                                                 it.filePath,
-                                                isPresent = true
+                                                isPresent = true,
+                                                it.fileType
                                             )
                                         }
                                         false -> {
                                             debug("file ${it.filePath} is not available in cache")
                                             FileTransferReply(
                                                 it.filePath,
-                                                isPresent = false
+                                                isPresent = false,
+                                                it.fileType
                                             )
                                         }
                                     }
@@ -118,8 +142,8 @@ class RemoteCompilationServiceImpl(
                                             userId,
                                             compilationMetadata.projectName
                                         )
-                                        println("project file path = $projectFilePath")
-                                        sourceFilesChannel.send(projectFilePath.toFile())
+                                        debug("Reconstructed file, fileType=${it.fileType}, clientPath=${it.filePath}")
+                                        addFile(it.filePath, projectFilePath.toFile(), it.fileType)
                                     }
                                 }
                             }
@@ -128,43 +152,50 @@ class RemoteCompilationServiceImpl(
                 }
             }
 
+
             // here we collect source files, if all source files are available, we are ready to compile
             launch {
-                sourceFilesChannel.receiveAsFlow().collect { filePath ->
-                    println("new message in source file channel: $filePath")
-                    sourceFiles.add(filePath)
-                    if (sourceFiles.size == compilationMetadata?.fileCount) {
-                        launch(Dispatchers.Default) {
-                            when (compilationMode) {
-                                CompilationMode.REAL -> {
-                                    doCompilation(userId, compilationMetadata, sourceFiles, fileChunkStrategy).collect { send(it) }
-                                }
-                                CompilationMode.FAKE -> {
-                                    val outputDirIndex = compilationMetadata.compilerArguments.indexOfFirst { it.trim() == "-d" } + 1
-                                    val outputDir = compilationMetadata.compilerArguments[outputDirIndex]
-                                    getCompilationResult(outputDir, fileChunkStrategy).collect { send(it) }
-                                }
-                            }
-                            close()
-                        }
+                allFilesReady.join()
+
+                val remoteCompilerArguments = CompilerUtils.replaceClientPathsWithRemotePaths(
+                    userId,
+                    compilationMetadata!!, // TODO exclamation marks
+                    workspaceManager,
+                    dependencyFiles,
+                    sourceFiles,
+                    compilerPluginFiles
+                )
+                when (compilationMode) {
+                    CompilationMode.REAL -> {
+                        doCompilation(userId, remoteCompilerArguments, compilationMetadata, fileChunkStrategy).collect { send(it) }
+                    }
+                    CompilationMode.FAKE -> {
+                        doFakeCompilation(remoteCompilerArguments, fileChunkStrategy).collect { send(it) }
                     }
                 }
+                println("server closed ")
+                this@channelFlow.close()
             }
         }
     }
 
 
-    private fun getCompilationResult(outputDir: String, fileChunkStrategy: FileChunkingStrategy): Flow<CompileResponse> {
+    private fun doFakeCompilation(
+        remoteCompilerArguments: Map<String, String>,
+        fileChunkStrategy: FileChunkingStrategy
+    ): Flow<CompileResponse> {
         return channelFlow {
             send(CompilationResult(0, CompilationResultSource.COMPILER))
 
+            val outputDir = CompilerUtils.getOutputDir(remoteCompilerArguments).absolutePath
             File(outputDir).walkTopDown()
                 .filter { it.isFile }
                 .forEach { file ->
-                    fileChunkStrategy.chunk(file).collect { chunk ->
+                    fileChunkStrategy.chunk(file, FileType.RESULT).collect { chunk ->
                         send(
                             FileChunk(
                                 chunk.filePath,
+                                FileType.RESULT,
                                 chunk.content,
                                 chunk.isLast,
                             )
@@ -176,41 +207,31 @@ class RemoteCompilationServiceImpl(
 
     private fun doCompilation(
         userId: String,
+        remoteCompilerArguments: Map<String, String>,
         compilationMetadata: CompilationMetadata,
-        sourceFiles: List<File>,
         fileChunkStrategy: FileChunkingStrategy,
     ): Flow<CompileResponse> {
         return channelFlow {
+            val (isCompilationResultCached, inputFingerprint) = cacheHandler.isCompilationResultCached(remoteCompilerArguments)
 
-            val outputDirectory = workspaceManager.getOutputDir(userId, compilationMetadata.projectName)
-            val compilerArguments = InProcessCompilerService.buildCompilerArgsWithoutSourceFiles(
-                outputDirectory,
-                compilationMetadata.compilerArguments
-            )
-
-            // TODO: I made up compiler version
-            val (isCompilationResultCached, inputFingerprint) = cacheHandler.isCompilationResultCached(
-                sourceFiles,
-                compilerArguments,
-                compilerVersion = "2.0"
-            )
             if (isCompilationResultCached) {
+                debug("[SERVER COMPILATION] Compilation result is cached, fingerprint: $inputFingerprint")
                 val compilationResultDirectory = cacheHandler.getCompilationResultDirectory(inputFingerprint)
                 send(CompilationResult(exitCode = 0, CompilationResultSource.CACHE))
                 compilationResultDirectory.walkTopDown()
                     .filter { it.isFile }
                     .forEach { file ->
-                        fileChunkStrategy.chunk(file).collect { chunk ->
+                        fileChunkStrategy.chunk(file, FileType.RESULT).collect { chunk ->
                             send(
                                 FileChunk(
                                     chunk.filePath,
+                                    FileType.RESULT,
                                     chunk.content,
                                     chunk.isLast,
                                 )
                             )
                         }
                     }
-                close()
             } else {
                 val remoteMessageCollector = RemoteMessageCollector(object : OnReport {
                     override fun onReport(msg: CompilerMessage) {
@@ -222,9 +243,15 @@ class RemoteCompilationServiceImpl(
                 val servicesFacade =
                     BasicCompilerServicesWithResultsFacadeServer(remoteMessageCollector, outputsCollector)
 
-                debug("compilation started")
+                debug("[SERVER COMPILATION] compilation started")
+                debug("[SERVER COMPILATION] remote compiler arguments are:")
+//                for ((key, value) in remoteCompilerArguments) {
+//                    debug("[SERVER COMPILATION] $key $value")
+//                }
+                println(CompilerUtils.getCompilerArgumentsList(remoteCompilerArguments))
                 val exitCode = compilerService.compileImpl(
-                    compilerArguments = (sourceFiles.map { it.path } + compilerArguments).toTypedArray(),
+                    compilerArguments = CompilerUtils.getCompilerArgumentsList(remoteCompilerArguments)
+                        .toTypedArray(),
                     compilationOptions = compilationMetadata.compilationOptions,
                     servicesFacade = servicesFacade,
                     compilationResults = null,
@@ -240,25 +267,23 @@ class RemoteCompilationServiceImpl(
                         getBuildReporter(a, b!!, c)
                     }
                 )
-                debug("compilation finished and exist code is $exitCode")
+                debug("[SERVER COMPILATION] compilation finished and exit code is $exitCode")
 
                 send(CompilationResult(exitCode, CompilationResultSource.COMPILER))
 
                 if (exitCode == 0) {
-                    val cachedCompilationResult = cacheHandler.addCompilationResult(
-                        sourceFiles,
-                        outputDirectory.toFile(),
-                        compilerArguments,
-                        "2.0" // TODO: I just made up this
+                    val cachedCompilationResult = cacheHandler.cacheCompilationResult(
+                        remoteCompilerArguments
                     )
 
                     cachedCompilationResult.file.walkTopDown()
                         .filter { it.isFile }
                         .forEach { file ->
-                            fileChunkStrategy.chunk(file).collect { chunk ->
+                            fileChunkStrategy.chunk(file, FileType.RESULT).collect { chunk ->
                                 send(
                                     FileChunk(
                                         chunk.filePath,
+                                        FileType.RESULT,
                                         chunk.content,
                                         chunk.isLast,
                                     )
@@ -267,6 +292,7 @@ class RemoteCompilationServiceImpl(
                         }
                 }
             }
+            close()
         }
     }
 }

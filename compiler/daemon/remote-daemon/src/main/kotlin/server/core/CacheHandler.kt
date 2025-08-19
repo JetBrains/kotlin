@@ -5,6 +5,7 @@
 
 package server.core
 
+import common.CompilerUtils
 import common.FileChunkingStrategy
 import common.SERVER_CACHE_DIR
 import common.SERVER_COMPILATION_RESULT_CACHE_DIR
@@ -72,43 +73,36 @@ class CacheHandler(
         return CacheItem(fingerprint, file)
     }
 
-    fun addCompilationResult(
-        sourceFiles: List<File>,
-        compilationResultDirectory: File,
-        compilerArguments: List<String>,
-        compilerVersion: String
+    fun cacheCompilationResult(
+        compilerArguments: Map<String, String>
     ): CacheItem {
-        val inputFingerprint = calculateCompilationInputHash(
-            sourceFiles,
-            compilerArguments,
-            compilerVersion
-        )
+        val inputFingerprint = calculateCompilationInputHash(compilerArguments)
+
+        val resultOutputDir = compilerArguments["-d"]
         val cachedCompilationResultPath = Paths.get(SERVER_COMPILATION_RESULT_CACHE_DIR, inputFingerprint)
-        copyDirectoryRecursively(compilationResultDirectory.toPath(), cachedCompilationResultPath, overwrite = true)
+        copyDirectoryRecursively(
+            Paths.get(resultOutputDir!!),
+            cachedCompilationResultPath,
+            overwrite = true
+        ) // TODO double exclamation mark
         compilationResults[inputFingerprint] = cachedCompilationResultPath.toAbsolutePath().toString()
         return CacheItem(inputFingerprint, cachedCompilationResultPath.toFile())
     }
 
-    fun addCompilationResult(
+    fun cacheCompilationResult(
         inputFingerprint: String,
-        compilationResultDirectory: File
+        compilerArguments: Map<String, String>,
     ): CacheItem {
         val cachedCompilationResultPath = Paths.get(SERVER_COMPILATION_RESULT_CACHE_DIR, inputFingerprint)
-        copyDirectoryRecursively(compilationResultDirectory.toPath(), cachedCompilationResultPath, overwrite = true)
+        copyDirectoryRecursively(CompilerUtils.getOutputDir(compilerArguments).toPath(), cachedCompilationResultPath, overwrite = true)
         compilationResults[inputFingerprint] = cachedCompilationResultPath.toAbsolutePath().toString()
         return CacheItem(inputFingerprint, cachedCompilationResultPath.toFile())
     }
 
     fun isCompilationResultCached(
-        sourceFiles: List<File>,
-        compilerArguments: List<String>,
-        compilerVersion: String
+        compilerArguments: Map<String, String>,
     ): Pair<Boolean, String> {
-        val inputFingerprint = calculateCompilationInputHash(
-            sourceFiles,
-            compilerArguments,
-            compilerVersion
-        )
+        val inputFingerprint = calculateCompilationInputHash(compilerArguments)
         return compilationResults.containsKey(inputFingerprint) to inputFingerprint
     }
 

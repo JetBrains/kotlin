@@ -123,7 +123,6 @@ class InProcessCompilerService(
         val messageCollector = createMessageCollector(servicesFacade, compilationOptions)
         val daemonReporter = createReporter(servicesFacade, compilationOptions)
         val targetPlatform = compilationOptions.targetPlatform
-        println("Starting compilation with args: " + compilerArguments.joinToString(" "))
 
         @Suppress("UNCHECKED_CAST")
         val compiler = when (targetPlatform) {

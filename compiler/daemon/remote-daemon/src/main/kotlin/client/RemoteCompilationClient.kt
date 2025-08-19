@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.client
 
 import client.GrpcClientRemoteCompilationService
 import common.CLIENT_COMPILED_DIR
+import common.CompilerUtils
 import common.OneFileOneChunkStrategy
+import common.RemoteCompilationServiceImplType
 import common.buildAbsPath
 import common.computeSha256
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +18,6 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import main.kotlin.server.ServerImplType
 import model.CompilationMetadata
 import model.CompilationResult
 import model.CompileRequest
@@ -25,13 +26,14 @@ import model.CompilerMessage
 import model.FileChunk
 import model.FileTransferReply
 import model.FileTransferRequest
+import model.FileType
 import org.jetbrains.kotlin.daemon.common.CompilationOptions
 import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.CompilerMode
 import java.io.File
 
 class RemoteCompilationClient(
-    val serverImplType: ServerImplType
+    val serverImplType: RemoteCompilationServiceImplType
 ) {
 
     init {
@@ -40,16 +42,39 @@ class RemoteCompilationClient(
 
     private val client = GrpcClientRemoteCompilationService()
 
-    suspend fun compile(compilerArguments: Array<out String>, compilationOptions: CompilationOptions, sourceFiles: List<File>) {
+    suspend fun compile(compilerArguments: List<String>, compilationOptions: CompilationOptions): CompilationResult {
+        val compilerArgumentsMap = CompilerUtils.getMap(compilerArguments)
+
+        val sourceFiles = CompilerUtils.getSourceFiles(compilerArgumentsMap)
+        val dependencyFiles = CompilerUtils.getDependencyFiles(compilerArgumentsMap)
+        val compilerPluginFiles = CompilerUtils.getCompilerPluginFiles(compilerArgumentsMap)
+
+//        for (sf in sourceFiles) {
+//            println("source file: ${sf.path}")
+//        }
+//
+//        for (df in dependencyFiles) {
+//            println("dependency file: ${df.path}")
+//        }
+//
+//        for (pff in compilerPluginFiles) {
+//            println("plugin file: ${pff.path}")
+//        }
+//
+
         val requestChannel = Channel<CompileRequest>(capacity = Channel.UNLIMITED)
         val responseChannel = Channel<CompileResponse>(capacity = Channel.UNLIMITED)
+        var compilationResult: CompilationResult? = null
 
         val fileChunkStrategy = OneFileOneChunkStrategy()
 
         coroutineScope {
             // start consuming response
-            launch(Dispatchers.IO) {
+            val responseJob = launch(Dispatchers.IO) {
                 client.compile(requestChannel.receiveAsFlow()).collect { responseChannel.send(it) }
+                // when server stops closes connection, we can close our channels
+                responseChannel.close()
+                requestChannel.close()
             }
 
             launch {
@@ -58,7 +83,8 @@ class RemoteCompilationClient(
                         is FileTransferReply -> {
                             if (!it.isPresent) {
                                 launch {
-                                    fileChunkStrategy.chunk(File(it.filePath)).collect { chunk ->
+                                    val file
+                                    fileChunkStrategy.chunk(File(it.filePath), it.fileType).collect { chunk ->
                                         requestChannel.send(chunk)
                                     }
                                 }
@@ -77,6 +103,7 @@ class RemoteCompilationClient(
                             }
                         }
                         is CompilationResult -> {
+                            compilationResult = it
                             println("COMPILATION RESULT: $it")
                         }
                         is CompilerMessage -> {
@@ -92,27 +119,57 @@ class RemoteCompilationClient(
                     CompilationMetadata(
                         "mycustomproject",
                         sourceFiles.size,
-                        compilerArguments.toMutableList(),
+                        dependencyFiles.size,
+                        compilerPluginFiles.size,
+                        compilerArgumentsMap,
                         compilationOptions
                     )
                 )
 
-                // then we will send a question for a server for each file
+                // then we will ask server if source file is present in server cache
                 sourceFiles.forEach {
                     requestChannel.send(
                         FileTransferRequest(
                             it.path,
-                            computeSha256(it)
+                            computeSha256(it),
+                            FileType.SOURCE
+                        )
+                    )
+                }
+
+                dependencyFiles.forEach {
+                    if (it.isDirectory) {
+
+                    } else {
+                        requestChannel.send(
+                            FileTransferRequest(
+                                it.path,
+                                computeSha256(it),
+                                FileType.DEPENDENCY
+                            )
+                        )
+                    }
+
+                }
+
+                compilerPluginFiles.forEach {
+                    requestChannel.send(
+                        FileTransferRequest(
+                            it.path,
+                            computeSha256(it),
+                            FileType.COMPILER_PLUGIN
                         )
                     )
                 }
             }
+            responseJob.join()
         }
+        return compilationResult ?: throw IllegalStateException("Compilation result is null")
     }
-
 }
+
 suspend fun main(args: Array<String>) {
-    val client = RemoteCompilationClient(ServerImplType.GRPC)
+    val client = RemoteCompilationClient(RemoteCompilationServiceImplType.GRPC)
 
     val compilationOptions = CompilationOptions(
         compilerMode = CompilerMode.NON_INCREMENTAL_COMPILER,
@@ -122,7 +179,7 @@ suspend fun main(args: Array<String>) {
         requestedCompilationResults = arrayOf(),
     )
 
-    val compilerArguments = arrayOf<String>()
+    val compilerArguments = mapOf<String, String>()
 
     val sourceFiles = listOf(
         File("src/main/kotlin/client/input/Input.kt"),
@@ -130,9 +187,9 @@ suspend fun main(args: Array<String>) {
         File("src/main/kotlin/client/input/Input3.kt")
     )
 
-    client.compile(
-        compilerArguments = compilerArguments,
-        compilationOptions = compilationOptions,
-        sourceFiles = sourceFiles
-    )
+//    client.compile(
+//        compilerArguments = compilerArguments,
+//        compilationOptions = compilationOptions,
+//        sourceFiles = sourceFiles
+//    )
 }

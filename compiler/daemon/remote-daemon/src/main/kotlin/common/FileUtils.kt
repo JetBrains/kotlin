@@ -24,13 +24,26 @@ fun buildAbsPath(pathSuffix: String): String {
 
 fun computeSha256(file: File): String {
     val digest = MessageDigest.getInstance("SHA-256")
-    file.inputStream().use { input ->
-        val buffer = ByteArray(8192)
-        var bytesRead: Int
-        while (input.read(buffer).also { bytesRead = it } != -1) {
-            digest.update(buffer, 0, bytesRead)
+    if (file.isDirectory){
+        file.walkTopDown().forEach { fileInDir->
+            fileInDir.inputStream().use { input ->
+                val buffer = ByteArray(8192)
+                var bytesRead: Int
+                while (input.read(buffer).also { bytesRead = it } != -1) {
+                    digest.update(buffer, 0, bytesRead)
+                }
+            }
+        }
+    }else{
+        file.inputStream().use { input ->
+            val buffer = ByteArray(8192)
+            var bytesRead: Int
+            while (input.read(buffer).also { bytesRead = it } != -1) {
+                digest.update(buffer, 0, bytesRead)
+            }
         }
     }
+
     return digest.digest().joinToString("") { "%02x".format(it) }
 }
 

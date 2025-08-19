@@ -6,7 +6,7 @@
 package main.kotlin.server
 
 import common.OneFileOneChunkStrategy
-import common.RemoteCompilationService
+import common.RemoteCompilationServiceImplType
 import io.grpc.Server
 import io.grpc.ServerBuilder
 import io.grpc.ServerInterceptors
@@ -18,54 +18,37 @@ import server.auth.BasicHTTPAuthServer
 import server.core.RemoteCompilationServiceImpl
 import server.core.WorkspaceManager
 import server.interceptors.AuthInterceptor
-import io.ktor.server.application.*
-import io.ktor.server.engine.EmbeddedServer
-import io.ktor.server.engine.addShutdownHook
-import io.ktor.server.engine.embeddedServer
-import io.ktor.server.netty.Netty
-import io.ktor.server.routing.routing
-import kotlinx.rpc.krpc.ktor.server.Krpc
-import kotlinx.rpc.krpc.ktor.server.rpc
-import kotlinx.rpc.krpc.serialization.json.json
-
-enum class ServerImplType {
-    GRPC,
-    RPC,
-}
 
 class RemoteCompilationServer(
     private val port: Int,
-    private val implType: ServerImplType
+    private val serverImplType: RemoteCompilationServiceImplType
 ) {
 
     private val fileChunkingStrategy = OneFileOneChunkStrategy()
     private val cacheHandler = CacheHandler(fileChunkingStrategy)
     private val workspaceManager = WorkspaceManager()
-    private var grpcServer: Server? = null
-    private var rpcServer: EmbeddedServer<*, *>? = null
 
-    private fun startGrpcServer() {
-        grpcServer =
-            ServerBuilder
-                .forPort(port)
-                .addService(
-                    ServerInterceptors
-                        .intercept(
-                            GrpcRemoteCompilationService(
-                                RemoteCompilationServiceImpl(
-                                    cacheHandler,
-                                    InProcessCompilerService(),
-                                    workspaceManager
-                                )
-                            ),
-                            LoggingInterceptor(),
-                            AuthInterceptor(BasicHTTPAuthServer())
-                        )
-                )
-                .build().apply {
-                    start()
-                    awaitTermination()
-                }
+    val server: Server =
+        ServerBuilder
+            .forPort(port)
+            .addService(
+                ServerInterceptors
+                    .intercept(
+                        GrpcRemoteCompilationService(
+                            RemoteCompilationServiceImpl(
+                                cacheHandler,
+                                InProcessCompilerService(),
+                                workspaceManager
+                            )
+                        ),
+                        LoggingInterceptor(),
+                        AuthInterceptor(BasicHTTPAuthServer())
+                    )
+            )
+            .build()
+
+    fun start() {
+        server.start()
         println("Server started, listening on $port")
         Runtime.getRuntime().addShutdownHook(
             Thread {
@@ -76,52 +59,13 @@ class RemoteCompilationServer(
         )
     }
 
-    private fun startRpcServer() {
-        fun Application.module() {
-            install(Krpc)
-
-            routing {
-                rpc("/compile") {
-                    rpcConfig {
-                        serialization {
-                            json()
-                        }
-                    }
-
-                    registerService<RemoteCompilationService> {
-                        RemoteCompilationServiceImpl(
-                            cacheHandler,
-                            InProcessCompilerService(),
-                            workspaceManager
-                        )
-                    }
-                }
-            }
-        }
-
-        rpcServer = embeddedServer(Netty, port = port) {
-            module()
-            println("Server running")
-        }.apply {
-            start(wait = true)
-            addShutdownHook { stop() }
-        }
-    }
-
-
-    fun start() {
-        when (implType) {
-            ServerImplType.GRPC -> startGrpcServer()
-            ServerImplType.RPC -> startRpcServer()
-        }
-    }
-
     private fun stop() {
         cleanup()
-        when (implType) {
-            ServerImplType.GRPC -> grpcServer?.shutdown()
-            ServerImplType.RPC -> rpcServer?.stop(1000, 1000)
-        }
+        server.shutdown()
+    }
+
+    fun blockUntilShutdown() {
+        server.awaitTermination()
     }
 
     fun cleanup() {
@@ -133,8 +77,9 @@ class RemoteCompilationServer(
 fun main() {
     try {
         val port = System.getenv("PORT")?.toInt() ?: 50051
-        val server = RemoteCompilationServer(port, ServerImplType.RPC)
+        val server = RemoteCompilationServer(port, RemoteCompilationServiceImplType.GRPC)
         server.start()
+        server.blockUntilShutdown()
     } catch (e: Exception) {
         println("error occurred: ${e.message}")
         e.printStackTrace()
