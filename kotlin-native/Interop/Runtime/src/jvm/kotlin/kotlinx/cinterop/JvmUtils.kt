@@ -156,7 +156,7 @@ private fun tryLoadKonanLibrary(dir: String, fullLibraryName: String, runFromDae
             File(defaultTempDir).deleteOnExit()
             File("$defaultTempDir/$fullLibraryName").deleteOnExit()
         } else {
-            tempDir.deleteRecursively()
+            val _ = tempDir.deleteRecursively()
         }
         fullLibraryPath = Paths.get(defaultTempDir, fullLibraryName)
     }

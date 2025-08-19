@@ -149,6 +149,7 @@ public fun <T : Any> assertNotNull(actual: T?, message: String? = null): T {
 /** Asserts that the [actual] value is not `null`, with an optional [message] and a function [block] to process the not-null value. */
 @JvmName("assertNotNullInline")
 @InlineOnly
+@Suppress("RETURN_VALUE_NOT_USED") // TODO: stdlibBuildTask builds kotlin-test as well
 public inline fun <T : Any, R> assertNotNull(actual: T?, message: String? = null, block: (T) -> R) {
     contract { returns() implies (actual != null) }
     block(assertNotNull(actual, message))
@@ -771,4 +772,3 @@ public interface AsserterContributor {
      */
     public fun contribute(): Asserter?
 }
-

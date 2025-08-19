@@ -232,7 +232,7 @@ private inline fun <T> createCoroutineFromSuspendFunction(
                     when (label) {
                         0 -> {
                             label = 1
-                            result.getOrThrow() // Rethrow exception if trying to start with exception (will be caught by BaseContinuationImpl.resumeWith
+                            val _ = result.getOrThrow() // Rethrow exception if trying to start with exception (will be caught by BaseContinuationImpl.resumeWith
                             block(this) // run the block, may return or suspend
                         }
                         1 -> {
@@ -250,7 +250,7 @@ private inline fun <T> createCoroutineFromSuspendFunction(
                     when (label) {
                         0 -> {
                             label = 1
-                            result.getOrThrow() // Rethrow exception if trying to start with exception (will be caught by BaseContinuationImpl.resumeWith
+                            val _ = result.getOrThrow() // Rethrow exception if trying to start with exception (will be caught by BaseContinuationImpl.resumeWith
                             block(this) // run the block, may return or suspend
                         }
                         1 -> {

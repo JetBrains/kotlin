@@ -323,7 +323,7 @@ public inline fun <reified T : CStructVar> T.readValue(): CValue<T> = this.readV
 
 @ExperimentalForeignApi
 public fun <T : CVariable> CValue<T>.write(location: NativePtr) {
-    this.place(interpretCPointer(location)!!)
+    val _ = this.place(interpretCPointer(location)!!)
 }
 
 // TODO: optimize
