@@ -1273,14 +1273,18 @@ private inline fun String.parseLong(startIndex: Int, withSign: Boolean = true, o
 private inline fun String.parseFraction(startIndex: Int): NumericParseData {
     var result = 0L
     var index = startIndex
-    var multiplier = 100_000_000_000_000L
-    while (index < length && multiplier > 0) {
+    var digitCount = 0
+    while (index < length && digitCount < FRACTION_LIMIT) {
         val ch = this[index]
         if (ch !in '0'..'9') break
         val digit = ch - '0'
-        result += digit * multiplier
-        multiplier /= 10
+        result = result * 10 + digit
+        digitCount++
         index++
+    }
+    while (digitCount < FRACTION_LIMIT) {
+        result *= 10
+        digitCount++
     }
     while (index < length && this[index] in '0'..'9') index++
     return NumericParseData(result, index)
