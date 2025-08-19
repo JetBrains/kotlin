@@ -44,7 +44,7 @@ public actual inline fun StringBuilder.appendLine(value: Float): StringBuilder =
 public actual inline fun StringBuilder.appendLine(value: Double): StringBuilder = append(value).appendLine()
 
 internal actual fun insertString(array: CharArray, destinationIndex: Int, value: String, sourceIndex: Int, count: Int): Int {
-    copyWasmArray(value.chars, array.storage, sourceIndex, destinationIndex, count)
+    copyWasmArray(value.getChars(), array.storage, sourceIndex, destinationIndex, count)
     return count
 }
 
