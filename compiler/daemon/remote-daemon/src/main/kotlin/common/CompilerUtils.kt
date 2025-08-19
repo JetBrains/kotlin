@@ -16,6 +16,18 @@ object CompilerUtils {
     const val SOURCE_FILE_KEY = ""
 
     fun getMap(args: List<String>): MutableMap<String, String> {
+        //  TODO this must be verified
+        val expectsPath = setOf(
+            "-d",
+            "-classpath",
+            "-jdk-home",
+            "-Xmodule-path",
+            "-Xbuild-file",
+            "-Xjava-source-roots",
+            "-Xfriend-paths",
+            "-Xklib",
+            "-Xprofile"
+        )
         val map = mutableMapOf<String, String>()
         var i = 0
         while (i < args.size) {
@@ -29,7 +41,7 @@ object CompilerUtils {
                     i++
                     continue
                 }
-                if (next == null || next.startsWith("-")) {
+                if (next == null || next.startsWith("-") || (next.startsWith('/') && curr !in expectsPath)) {
                     map[curr] = ""
                     i++
                     continue
@@ -51,15 +63,16 @@ object CompilerUtils {
             }
         }
         map[SOURCE_FILE_KEY] = sourceFiles.reversed().joinToString(" ")
+        map.remove("-Xplugin=") //TODO temporary removal to make compilations work
         return map
     }
 
     fun getSourceFiles(args: Map<String, String>): List<File> {
-        return args[SOURCE_FILE_KEY]?.split(" ")?.map { File(it) } ?: emptyList()
+        return args[SOURCE_FILE_KEY]?.split(" ")?.map { File(it.trim()) } ?: emptyList()
     }
 
     fun getDependencyFiles(args: Map<String, String>): List<File> {
-        return args["-classpath"]?.split(":")?.map { File(it) } ?: emptyList()
+        return args["-classpath"]?.split(":")?.map { File(it.trim()) } ?: emptyList()
     }
 
     fun getOutputDir(args: Map<String, String>): File {
@@ -67,7 +80,7 @@ object CompilerUtils {
     }
 
     fun getCompilerPluginFiles(args: Map<String, String>): List<File> {
-        return args["-Xplugin"]?.split(":")?.map { File(it) } ?: emptyList()
+        return args["-Xplugin="]?.split(",")?.map { File(it.trim()) } ?: emptyList()
     }
 
     // -d
@@ -103,6 +116,14 @@ object CompilerUtils {
             args["-classpath"] = remoteDependencies
         }
 
+        if ("-Xplugin=" in args) {
+            val clientPlugins = args["-Xplugin="]?.split(",") ?: emptyList()
+            val remotePlugins = clientPlugins.joinToString(",") { clientPath ->
+                compilerPluginFiles[clientPath]?.absolutePath.toString()
+            }
+            args["-Xplugin="] = remotePlugins
+        }
+
         if ("-Xfragment-sources" in args) {
             val clientSources = args["-Xfragment-sources"]?.split(",") ?: emptyList()
             val remoteSources = clientSources.joinToString(",") {
@@ -115,12 +136,18 @@ object CompilerUtils {
         return args
     }
 
-    fun getCompilerArgumentsList(args: Map<String, String>): List<String> =
-        args.entries.flatMap { (key, value) ->
-            if (key.endsWith('=')) {
-                listOf("$key$value")
-            } else {
-                listOf(key, value)
-            }
+    fun getCompilerArgumentsList(args: Map<String, String>): List<String>{
+        for ((key, value) in args) {
+            if ('=' in key) println("$key$value") else println("$key $value")
         }
+        return args.entries.flatMap { (key, value) ->
+            when {
+                key.endsWith('=') -> listOf("$key$value")
+                value.isEmpty() -> listOf(key)
+                key == SOURCE_FILE_KEY -> value.split(' ')
+                else -> listOf(key, value)
+
+            }
+        }.filter { it.isNotBlank() }
+    }
 }
