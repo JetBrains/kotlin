@@ -13,8 +13,6 @@ dependencies {
     embedded(project(":kotlin-dataframe-compiler-plugin.cli")) { isTransitive = false }
 
     testFixturesApi(project(":kotlin-dataframe-compiler-plugin.cli"))
-    testRuntimeOnly(libs.dataframe.core.dev)
-    testRuntimeOnly(libs.dataframe.csv.dev)
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)

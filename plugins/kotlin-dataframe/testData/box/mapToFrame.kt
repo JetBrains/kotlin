@@ -5,9 +5,9 @@ import org.jetbrains.kotlinx.dataframe.io.*
 
 fun box(): String {
     val df = dataFrameOf("a")(1).mapToFrame {
-        "id" from { it }
+        "id" from { it.a }
         "group" {
-            "a" from { it }
+            "a" from { it.a }
         }
     }
 
