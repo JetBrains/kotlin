@@ -1,0 +1,47 @@
+<caret_1>:
+  KDocName(48,55): 'Int.foo'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in A) fun kotlin.Int.foo()
+
+<caret_2>:
+  KDocName(102,109): 'Int.foo'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in A) fun kotlin.Int.foo()
+
+<caret_3>:
+  KDocName(168,175): 'Int.foo'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in A) fun kotlin.Int.foo()
+
+<caret_4>:
+  KDocName(228,235): 'Int.foo'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in A) fun kotlin.Int.foo()
+
+<caret_5>:
+  KDocName(294,301): 'Int.foo'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in A) fun kotlin.Int.foo()
+
+<caret_6>:
+  KDocName(357,364): 'Int.foo'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in A) fun kotlin.Int.foo()

@@ -1,0 +1,6 @@
+KDocName(74,76): 'TT'
+  KDocReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in <local>: A.A) TT

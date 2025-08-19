@@ -1,0 +1,2 @@
+KtClass(0,34): '/**'
+  NO_CANDIDATES

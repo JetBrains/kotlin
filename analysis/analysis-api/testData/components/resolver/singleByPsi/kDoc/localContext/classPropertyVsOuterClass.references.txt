@@ -1,0 +1,6 @@
+KDocName(19,22): 'abc'
+  KDocReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in A) val abc: kotlin.Int

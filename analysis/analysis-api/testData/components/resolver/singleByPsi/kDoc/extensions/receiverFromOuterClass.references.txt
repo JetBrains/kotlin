@@ -1,0 +1,47 @@
+<caret_1>:
+  KDocName(42,50): 'Some.foo'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in A.B) fun A.Some.foo()
+
+<caret_2>:
+  KDocName(98,106): 'Some.foo'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in A.B) fun A.Some.foo()
+
+<caret_3>:
+  KDocName(169,177): 'Some.foo'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in A.C) fun A.Some.foo()
+
+<caret_4>:
+  KDocName(231,239): 'Some.foo'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in A.C) fun A.Some.foo()
+
+<caret_5>:
+  KDocName(302,310): 'Some.foo'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in A.Companion) fun A.Some.foo()
+
+<caret_6>:
+  KDocName(367,375): 'Some.foo'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in A.Companion) fun A.Some.foo()
