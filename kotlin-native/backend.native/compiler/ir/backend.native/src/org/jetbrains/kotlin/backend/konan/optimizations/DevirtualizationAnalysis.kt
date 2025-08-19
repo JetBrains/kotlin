@@ -1301,7 +1301,12 @@ internal object DevirtualizationAnalysis {
     class DevirtualizedCallSite(val callee: DataFlowIR.FunctionSymbol, val possibleCallees: List<DevirtualizedCallee>)
 
     fun run(context: Context, irModule: IrModuleFragment, moduleDFG: ModuleDFG) =
-            DevirtualizationAnalysisImpl(context, irModule, moduleDFG).analyze()
+            run {
+                val startTime = System.currentTimeMillis()
+                DevirtualizationAnalysisImpl(context, irModule, moduleDFG).analyze().also {
+                    println("Devirtualization took ${System.currentTimeMillis() - startTime} ms")
+                }
+            }
 
     fun devirtualize(irModule: IrModuleFragment, moduleDFG: ModuleDFG, generationState: NativeGenerationState,
                      maxVTableUnfoldFactor: Int, maxITableUnfoldFactor: Int) {
