@@ -639,9 +639,7 @@ class CallAndReferenceGenerator(
                                 contextParameterCount = property.contextParameters.size,
                                 hasDispatchReceiver = property.dispatchReceiverType != null,
                                 hasExtensionReceiver = property.isExtension,
-                                origin = incOrDecSourceKindToIrStatementOrigin[qualifiedAccess.source?.kind]
-                                    ?: augmentedAssignSourceKindToIrStatementOrigin[qualifiedAccess.source?.kind]
-                                    ?: IrStatementOrigin.GET_PROPERTY,
+                                origin = qualifiedAccess.source.propertyAccessOrigin(),
                                 superQualifierSymbol = dispatchReceiver?.superQualifierSymbolForFunctionAndPropertyAccess()
                             )
                         }

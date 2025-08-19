@@ -357,7 +357,7 @@ private class RangeLoopTransformer(
         override fun visitCall(expression: IrCall) {
             val candidateCall = when (expression.origin) {
                 IrStatementOrigin.FOR_LOOP_NEXT -> expression
-                is IrStatementOrigin.COMPONENT_N ->
+                is IrStatementOrigin.COMPONENT_N, IrStatementOrigin.NAME_BASED_DESTRUCTURING_ACCESS ->
                     if (mainLoopVariable != null && (expression.dispatchReceiver as? IrGetValue)?.symbol == mainLoopVariable.symbol) {
                         expression
                     } else {
@@ -446,6 +446,10 @@ private class RangeLoopTransformer(
                 }
                 is IrStatementOrigin.COMPONENT_N -> {
                     loopVariableComponents[origin.index] = stmt
+                    loopVariableComponentIndices.add(i)
+                }
+                IrStatementOrigin.NAME_BASED_DESTRUCTURING_ACCESS -> {
+                    loopVariableComponents[i] = stmt
                     loopVariableComponentIndices.add(i)
                 }
             }

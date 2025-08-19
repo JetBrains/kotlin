@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.backend.utils
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.StandardNames.DATA_CLASS_COMPONENT_PREFIX
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.containingClassLookupTag
@@ -55,7 +56,7 @@ fun FirClass.irOrigin(): IrDeclarationOrigin = when {
 fun FirDeclaration?.computeIrOrigin(
     predefinedOrigin: IrDeclarationOrigin? = null,
     parentOrigin: IrDeclarationOrigin? = null,
-    fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null
+    fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null,
 ): IrDeclarationOrigin {
     if (this == null) {
         return predefinedOrigin ?: parentOrigin ?: IrDeclarationOrigin.DEFINED
@@ -208,3 +209,16 @@ val incOrDecSourceKindToIrStatementOrigin: Map<KtFakeSourceElementKind, IrStatem
     KtFakeSourceElementKind.DesugaredPrefixIncSecondGetReference to IrStatementOrigin.PREFIX_INCR,
     KtFakeSourceElementKind.DesugaredPrefixDecSecondGetReference to IrStatementOrigin.PREFIX_DECR
 )
+
+
+fun KtSourceElement?.propertyAccessOrigin(): IrStatementOrigin {
+    val kind = this?.kind
+
+    if (kind == KtFakeSourceElementKind.DesugaredNameBasedDestructuring) {
+        return IrStatementOrigin.NAME_BASED_DESTRUCTURING_ACCESS
+    }
+
+    return incOrDecSourceKindToIrStatementOrigin[kind]
+        ?: augmentedAssignSourceKindToIrStatementOrigin[kind]
+        ?: IrStatementOrigin.GET_PROPERTY
+}

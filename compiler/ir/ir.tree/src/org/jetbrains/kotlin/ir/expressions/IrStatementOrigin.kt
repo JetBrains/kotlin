@@ -130,6 +130,7 @@ interface IrStatementOrigin {
         val INLINED_FUNCTION_REFERENCE by IrStatementOriginImpl
         val INLINE_LAMBDA by IrStatementOriginImpl
         val INLINE_ARGS_CONTAINER by IrStatementOriginImpl
+        val NAME_BASED_DESTRUCTURING_ACCESS by IrStatementOriginImpl
     }
 
     data class COMPONENT_N private constructor(val index: Int) : IrStatementOrigin {
