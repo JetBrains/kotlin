@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
-// LANGUAGE: +ContextParameters
+// LANGUAGE: +ContextParameters +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 
 <!UNSUPPORTED!>context(_: String)<!>
 class C {
@@ -99,10 +99,14 @@ fun test(collection : Array<Pair<Int,Int>>) {
 
     for (<!UNSUPPORTED!>context(a: String)<!> item: Int in 1..10) { }
 
-    for (<!UNSUPPORTED!>context(a: String)<!> (b, c) in collection) { }
+    for (<!UNSUPPORTED!>context(a: String)<!> (<!UNRESOLVED_REFERENCE!>b<!>, <!UNRESOLVED_REFERENCE!>c<!>) in collection) { }
+    for (<!UNSUPPORTED!>context(a: String)<!> [b, c] in collection) { }
 
     <!UNSUPPORTED!>context(a: String)<!>
-    val (_, b) = Pair(1, 2)
+    val (<!NAME_BASED_DESTRUCTURING_UNDERSCORE_WITHOUT_RENAMING!>_<!>, <!UNRESOLVED_REFERENCE!>b<!>) = Pair(1, 2)
+
+    <!UNSUPPORTED!>context(a: String)<!>
+    val [_, b2] = Pair(1, 2)
 
     fun local(<!UNSUPPORTED!>context(a: A)<!> f: Int = 1) { }
 }
