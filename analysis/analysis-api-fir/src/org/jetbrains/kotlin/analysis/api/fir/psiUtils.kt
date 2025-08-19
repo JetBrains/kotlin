@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypes2
 import org.jetbrains.kotlin.resolve.calls.util.isSingleUnderscore
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -93,13 +94,22 @@ internal fun FirDeclaration.findReferencePsi(scope: GlobalSearchScope): PsiEleme
 }
 
 internal val KtNamedFunction.kaSymbolModality: KaSymbolModality?
-    get() = kaSymbolModalityByModifiers ?: when {
-        isTopLevel || isLocal -> KaSymbolModality.FINAL
+    get() {
+        val modalityByModifiers = kaSymbolModalityByModifiers
+        return when {
+            modalityByModifiers != null -> when {
+                // KT-80178: interface members with no body have implicit ABSTRACT modality
+                modalityByModifiers.isOpenFromInterface && !hasBody() -> KaSymbolModality.ABSTRACT
+                else -> modalityByModifiers
+            }
 
-        // Green code cannot have those modifiers with other modalities
-        hasModifier(KtTokens.INLINE_KEYWORD) || hasModifier(KtTokens.TAILREC_KEYWORD) -> KaSymbolModality.FINAL
+            isTopLevel || isLocal -> KaSymbolModality.FINAL
 
-        else -> null
+            // Green code cannot have those modifiers with other modalities
+            hasModifier(KtTokens.INLINE_KEYWORD) || hasModifier(KtTokens.TAILREC_KEYWORD) -> KaSymbolModality.FINAL
+
+            else -> null
+        }
     }
 
 internal val KtDestructuringDeclarationEntry.entryName: Name
@@ -125,11 +135,20 @@ internal val KtClassOrObject.kaSymbolModality: KaSymbolModality?
     }
 
 internal val KtProperty.kaSymbolModality: KaSymbolModality?
-    get() = kaSymbolModalityByModifiers ?: when {
+    get() {
+        val modalityByModifiers = kaSymbolModalityByModifiers
+        return when {
+            modalityByModifiers != null -> when {
+                // KT-80178: interface members with no body have implicit ABSTRACT modality
+                modalityByModifiers.isOpenFromInterface && !hasBody() -> KaSymbolModality.ABSTRACT
+                else -> modalityByModifiers
+            }
 
-        // Green code cannot have those modifiers with other modalities
-        hasModifier(KtTokens.CONST_KEYWORD) -> KaSymbolModality.FINAL
-        else -> null
+            // Green code cannot have those modifiers with other modalities
+            hasModifier(KtTokens.CONST_KEYWORD) -> KaSymbolModality.FINAL
+
+            else -> null
+        }
     }
 
 internal val KtDeclaration.kaSymbolModalityByModifiers: KaSymbolModality?
@@ -209,3 +228,7 @@ internal val KtProperty.hasRegularSetter: Boolean
  */
 internal val KtProperty.hasRegularGetter: Boolean
     get() = hasDelegate() || getter?.hasBody() == true
+
+context(callable: KtCallableDeclaration)
+private val KaSymbolModality.isOpenFromInterface: Boolean
+    get() = this == KaSymbolModality.OPEN && (callable.containingClassOrObject as? KtClass)?.isInterface() == true

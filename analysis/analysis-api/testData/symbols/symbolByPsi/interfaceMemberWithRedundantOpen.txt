@@ -150,7 +150,7 @@ KaKotlinPropertySymbol:
     isNotDefault: false
     isOverride: false
     location: PROPERTY
-    modality: OPEN
+    modality: ABSTRACT
     origin: SOURCE
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -183,7 +183,7 @@ KaKotlinPropertySymbol:
   isStatic: false
   isVal: true
   location: CLASS
-  modality: OPEN
+  modality: ABSTRACT
   name: defaultWithOpen
   origin: SOURCE
   receiverParameter: null
@@ -372,7 +372,7 @@ KaNamedFunctionSymbol:
   isSuspend: false
   isTailRec: false
   location: CLASS
-  modality: OPEN
+  modality: ABSTRACT
   name: fooWithOpen
   origin: SOURCE
   receiverParameter: null
