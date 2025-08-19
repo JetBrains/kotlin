@@ -80,7 +80,7 @@ size_t CustomAllocator::GetAllocatedHeapSize(ObjHeader* object) noexcept {
     return CustomHeapObject::from(object).size();
 }
 
-uint8_t* CustomAllocator::Allocate(AllocationSize size) noexcept {
+PERFORMANCE_INLINE uint8_t* CustomAllocator::Allocate(AllocationSize size) noexcept {
     RuntimeAssert(size > AllocationSize::cells(0), "CustomAllocator::Allocate cannot allocate 0 bytes");
     CustomAllocDebug("CustomAllocator::Allocate(%" PRIu64 ")", size.inBytes());
     uint64_t cellCount = size.inCells();
@@ -96,13 +96,13 @@ uint8_t* CustomAllocator::Allocate(AllocationSize size) noexcept {
     return AllocateInNextFitPage(cellCount);
 }
 
-uint8_t* CustomAllocator::AllocateInSingleObjectPage(uint64_t cellCount) noexcept {
+NO_INLINE uint8_t* CustomAllocator::AllocateInSingleObjectPage(uint64_t cellCount) noexcept {
     CustomAllocDebug("CustomAllocator::AllocateInSingleObjectPage(%" PRIu64 ")", cellCount);
     uint8_t* block = heap_.GetSingleObjectPage(cellCount)->Allocate();
     return block;
 }
 
-uint8_t* CustomAllocator::AllocateInNextFitPage(uint32_t cellCount) noexcept {
+NO_INLINE uint8_t* CustomAllocator::AllocateInNextFitPage(uint32_t cellCount) noexcept {
     CustomAllocDebug("CustomAllocator::AllocateInNextFitPage(%u)", cellCount);
     if (nextFitPage_) {
         uint8_t* block = nextFitPage_->TryAllocate(cellCount);
@@ -116,7 +116,7 @@ uint8_t* CustomAllocator::AllocateInNextFitPage(uint32_t cellCount) noexcept {
     }
 }
 
-uint8_t* CustomAllocator::AllocateInFixedBlockPage(uint32_t cellCount) noexcept {
+NO_INLINE uint8_t* CustomAllocator::AllocateInFixedBlockPage(uint32_t cellCount) noexcept {
     CustomAllocDebug("CustomAllocator::AllocateInFixedBlockPage(%u)", cellCount);
     FixedBlockPage* page = fixedBlockPages_[cellCount];
     if (page) {
