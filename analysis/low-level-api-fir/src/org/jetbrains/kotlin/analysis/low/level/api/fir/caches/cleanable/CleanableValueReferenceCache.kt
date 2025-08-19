@@ -254,7 +254,7 @@ abstract class CleanableValueReferenceCache<K : Any, V : Any>(
 
     override fun toString(): String = "${this::class.simpleName} size:$size"
 
-    private fun ReferenceWithCleanup<K, V>.performCleanup(diagnosticInformation: String? = null) {
+    private fun ReferenceWithCleanup<K, V>.performCleanup(diagnosticInformation: String?) {
         cleaner.cleanUp(get(), diagnosticInformation)
     }
 }

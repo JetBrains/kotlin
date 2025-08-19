@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.cleanable.ValueReferenceCleaner
 
@@ -47,7 +48,14 @@ internal class LLFirSessionCleaner(private val disposable: Disposable?) : ValueR
     }
 
     override fun cleanUp(value: LLFirSession?, diagnosticInformation: String?) {
+        value?.invalidationInformation = buildString {
+            if (diagnosticInformation != null) {
+                append(diagnosticInformation)
+                append(", ")
+            }
+            append("write-access:")
+            append(ApplicationManager.getApplication().isWriteAccessAllowed)
+        }
         cleanUp(value)
-        value?.invalidationInformation = diagnosticInformation
     }
 }
