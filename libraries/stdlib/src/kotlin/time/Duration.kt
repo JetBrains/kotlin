@@ -1396,12 +1396,24 @@ private inline fun Duration.onInvalid(block: () -> Nothing): Duration {
     return if (this == Duration.INVALID) block() else this
 }
 
+/**
+ * Skips characters in this string starting from the given index while they match the predicate.
+ * @param startIndex the index to start skipping from
+ * @param predicate condition to test each character
+ * @return the index of the first character that doesn't match the predicate, or string length
+ */
 private inline fun String.skipWhile(startIndex: Int, predicate: (Char) -> Boolean): Int {
     var i = startIndex
     while (i < length && predicate(this[i])) i++
     return i
 }
 
+/**
+ * Parses a duration unit from its short name at the given position.
+ * Recognizes: d (days), h (hours), m/ms (minutes/milliseconds), s (seconds), us (microseconds), ns (nanoseconds).
+ * @param start the index in the string where the unit name starts
+ * @return the corresponding DurationUnit or null if no valid unit is found
+ */
 @kotlin.internal.InlineOnly
 private inline fun String.durationUnitByShortNameOrNull(start: Int): DurationUnit? {
     val first = this[start]
@@ -1418,6 +1430,10 @@ private inline fun String.durationUnitByShortNameOrNull(start: Int): DurationUni
     }
 }
 
+/**
+ * Multiplier to convert a 15-digit fraction to nanoseconds for this unit.
+ * Used for efficient fraction parsing when the fraction has 15 or fewer digits.
+ */
 @Suppress("REDUNDANT_ELSE_IN_WHEN")
 private val DurationUnit.fractionMultiplier: Double
     get() = when (this) {
@@ -1431,6 +1447,10 @@ private val DurationUnit.fractionMultiplier: Double
         else -> error("Unknown unit: $this")
     }
 
+/**
+ * Multiplier to convert a Double fraction (0.0 to 1.0) to nanoseconds for this unit.
+ * Used as fallback for fractions with more than 15 digits that require Double parsing.
+ */
 private val DurationUnit.fallbackFractionMultiplier: Long
     get() = when (this) {
         DurationUnit.MINUTES -> 60_000_000_000L
@@ -1439,6 +1459,10 @@ private val DurationUnit.fallbackFractionMultiplier: Long
         else -> error("Invalid unit: $this for fallback fraction multiplier")
     }
 
+/**
+ * Number of milliseconds in one unit of this DurationUnit.
+ * Used for converting whole unit values to milliseconds during parsing.
+ */
 private val DurationUnit.millisMultiplier: Long
     get() = when (this) {
         DurationUnit.DAYS -> MILLIS_IN_DAY
@@ -1449,6 +1473,10 @@ private val DurationUnit.millisMultiplier: Long
         else -> error("Wrong unit for millisMultiplier: $this")
     }
 
+/**
+ * The length of this unit's short name in characters.
+ * Returns 2 for two-character units (ms, us, ns) and 1 for single-character units (d, h, m, s).
+ */
 private val DurationUnit.length: Int
     get() = when (this) {
         DurationUnit.MILLISECONDS, DurationUnit.MICROSECONDS, DurationUnit.NANOSECONDS -> 2
