@@ -1128,7 +1128,7 @@ private inline fun parseDefaultStringFormat(
     var length = initialLength
     var allowSpaces = !hasSign
 
-    if (hasSign && value[index] == '(' && value.last() == ')') {
+    if (hasSign && value[index] == '(' && value[length - 1] == ')') {
         allowSpaces = true
         index++
         length--
