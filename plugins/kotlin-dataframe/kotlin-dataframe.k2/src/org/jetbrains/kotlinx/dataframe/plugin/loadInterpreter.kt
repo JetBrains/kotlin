@@ -281,15 +281,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 internal fun FirFunctionCall.loadInterpreter(session: FirSession, isTest: Boolean): Interpreter<*>? {
     val interpreter = Stdlib.interpreter(this)
     if (interpreter != null) return interpreter
-    val symbol =
-        (calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirCallableSymbol ?: return null
-    val argName = Name.identifier("interpreter")
-    return symbol.resolvedAnnotationsWithClassIds
-        .find { it.fqName(session)?.equals(INTERPRETABLE_FQNAME) ?: false }
-        ?.let { annotation ->
-            val name = (annotation.findArgumentByName(argName) as FirLiteralExpression).value as String
-            name.load<Interpreter<*>>(isTest)
-        }
+    return interpreterName(session)?.load<Interpreter<*>>(isTest)
 }
 
 private object Stdlib {
@@ -323,7 +315,7 @@ internal fun FirFunctionCall.interpreterName(session: FirSession): String? {
     val symbol =
         (calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirCallableSymbol ?: return null
     val argName = Name.identifier("interpreter")
-    return symbol.resolvedAnnotationsWithClassIds
+    return symbol.resolvedAnnotationsWithArguments
         .find { it.fqName(session)?.equals(INTERPRETABLE_FQNAME) ?: false }
         ?.let { annotation ->
             val name = (annotation.findArgumentByName(argName) as FirLiteralExpression).value as String

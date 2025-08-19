@@ -500,7 +500,7 @@ internal fun FirExpression.getSchema(session: FirSession): ObjectWithSchema? {
         } else {
             resolvedType to it
         }
-        symbol.resolvedAnnotationsWithClassIds.firstNotNullOfOrNull {
+        symbol.resolvedAnnotationsWithArguments.firstNotNullOfOrNull {
             runIf(it.fqName(session)?.asString() == HasSchema::class.qualifiedName!!) {
                 val argumentName = Name.identifier(HasSchema::schemaArg.name)
                 val schemaArg = (it.findArgumentByName(argumentName) as FirLiteralExpression).value
