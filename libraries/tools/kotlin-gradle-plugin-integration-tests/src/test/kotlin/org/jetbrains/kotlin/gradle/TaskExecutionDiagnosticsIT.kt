@@ -83,7 +83,7 @@ class TaskExecutionDiagnosticsIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("KT-79851: emit unsupported language version kotlin-dsl diagnostic, default LV and compiler")
+    @DisplayName("KT-79851: emit unsupported language version kotlin-dsl diagnostic, default compiler")
     @JvmGradlePluginTests
     @GradleTest
     fun emitDiagnosticOnUnsupportedVersionAlongKotlinDsl(gradleVersion: GradleVersion) =
