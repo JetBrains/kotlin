@@ -272,6 +272,164 @@ class KotlinStandaloneDeclarationProviderFactory(
 
 private class IndexData(val fakeKtFiles: List<KtFile>, val index: KotlinStandaloneDeclarationIndex)
 
+private class KotlinStandaloneDeclarationIndexImpl : KotlinStandaloneDeclarationIndex {
+    override val facadeFileMap: MutableMap<FqName, MutableSet<KtFile>> = mutableMapOf()
+    override val multiFileClassPartMap: MutableMap<FqName, MutableSet<KtFile>> = mutableMapOf()
+    override val scriptMap: MutableMap<FqName, MutableSet<KtScript>> = mutableMapOf()
+    override val classMap: MutableMap<FqName, MutableSet<KtClassOrObject>> = mutableMapOf()
+    override val typeAliasMap: MutableMap<FqName, MutableSet<KtTypeAlias>> = mutableMapOf()
+    override val topLevelFunctionMap: MutableMap<FqName, MutableSet<KtNamedFunction>> = mutableMapOf()
+    override val topLevelPropertyMap: MutableMap<FqName, MutableSet<KtProperty>> = mutableMapOf()
+    override val classesBySupertypeName: MutableMap<Name, MutableSet<KtClassOrObject>> = mutableMapOf()
+    override val inheritableTypeAliasesByAliasedName: MutableMap<Name, MutableSet<KtTypeAlias>> = mutableMapOf()
+
+    fun addToFacadeFileMap(file: KtFile) {
+        if (!file.hasTopLevelCallables()) return
+        facadeFileMap.computeIfAbsent(file.packageFqName) {
+            mutableSetOf()
+        }.add(file)
+    }
+
+    fun addToScriptMap(script: KtScript) {
+        scriptMap.computeIfAbsent(script.fqName) {
+            mutableSetOf()
+        }.add(script)
+    }
+
+
+    private fun addToClassMap(classOrObject: KtClassOrObject) {
+        classOrObject.getClassId()?.let { classId ->
+            classMap.computeIfAbsent(classId.packageFqName) {
+                mutableSetOf()
+            }.add(classOrObject)
+        }
+    }
+
+    private fun indexSupertypeNames(classOrObject: KtClassOrObject) {
+        classOrObject.getSuperNames().forEach { superName ->
+            classesBySupertypeName
+                .computeIfAbsent(Name.identifier(superName)) { mutableSetOf() }
+                .add(classOrObject)
+        }
+    }
+
+
+    fun indexClassOrObject(classOrObject: KtClassOrObject) {
+        addToClassMap(classOrObject)
+        indexSupertypeNames(classOrObject)
+    }
+
+    private fun addToTypeAliasMap(typeAlias: KtTypeAlias) {
+        typeAlias.getClassId()?.let { classId ->
+            typeAliasMap.computeIfAbsent(classId.packageFqName) {
+                mutableSetOf()
+            }.add(typeAlias)
+        }
+    }
+
+    fun processMultifileClassStub(ktFileStub: KotlinFileStubImpl) {
+        val ktFile: KtFile = ktFileStub.psi
+
+        val partNames = ktFileStub.facadePartSimpleNames ?: return
+        val packageFqName = ktFileStub.getPackageFqName()
+        for (partName in partNames) {
+            val multiFileClassPartFqName: FqName = packageFqName.child(Name.identifier(partName))
+            multiFileClassPartMap.computeIfAbsent(multiFileClassPartFqName) { mutableSetOf() }.add(ktFile)
+        }
+    }
+
+    private fun indexTypeAliasDefinition(typeAlias: KtTypeAlias) {
+        val typeElement = typeAlias.getTypeReference()?.typeElement ?: return
+
+        findInheritableSimpleNames(typeElement).forEach { expandedName ->
+            inheritableTypeAliasesByAliasedName
+                .computeIfAbsent(Name.identifier(expandedName)) { mutableSetOf() }
+                .add(typeAlias)
+        }
+    }
+
+    fun indexTypeAlias(typeAlias: KtTypeAlias) {
+        addToTypeAliasMap(typeAlias)
+        indexTypeAliasDefinition(typeAlias)
+    }
+
+    fun addToFunctionMap(function: KtNamedFunction) {
+        if (!function.isTopLevel) return
+        val packageFqName = (function.parent as KtFile).packageFqName
+        topLevelFunctionMap.computeIfAbsent(packageFqName) {
+            mutableSetOf()
+        }.add(function)
+    }
+
+    fun addToPropertyMap(property: KtProperty) {
+        if (!property.isTopLevel) return
+        val packageFqName = (property.parent as KtFile).packageFqName
+        topLevelPropertyMap.computeIfAbsent(packageFqName) {
+            mutableSetOf()
+        }.add(property)
+    }
+
+    private fun indexStub(stub: StubElement<*>) {
+        when (stub) {
+            is KotlinClassStubImpl -> {
+                indexClassOrObject(stub.psi)
+                // member functions and properties
+                stub.childrenStubs.forEach(::indexStub)
+            }
+            is KotlinObjectStubImpl -> {
+                indexClassOrObject(stub.psi)
+                // member functions and properties
+                stub.childrenStubs.forEach(::indexStub)
+            }
+            is KotlinTypeAliasStubImpl -> indexTypeAlias(stub.psi)
+            is KotlinFunctionStubImpl -> addToFunctionMap(stub.psi)
+            is KotlinPropertyStubImpl -> addToPropertyMap(stub.psi)
+            is KotlinPlaceHolderStubImpl -> {
+                if (stub.stubType == KtStubElementTypes.CLASS_BODY) {
+                    stub.childrenStubs.filterIsInstance<KotlinClassOrObjectStub<*>>().forEach(::indexStub)
+                }
+            }
+        }
+    }
+
+    fun processStub(ktFileStub: KotlinFileStubImpl) {
+        addToFacadeFileMap(ktFileStub.psi)
+        processMultifileClassStub(ktFileStub)
+
+        // top-level functions and properties, built-in classes
+        ktFileStub.childrenStubs.forEach(::indexStub)
+    }
+
+}
+
+/**
+ * This is a simplified version of `KtTypeElement.index()` from the IDE. If we need to move more indexing code to Standalone, we should
+ * consider moving more code from the IDE to the Analysis API.
+ *
+ * @see KotlinStandaloneDeclarationIndex.inheritableTypeAliasesByAliasedName
+ */
+private fun findInheritableSimpleNames(typeElement: KtTypeElement): List<String> {
+    return when (typeElement) {
+        is KtUserType -> {
+            val referenceName = typeElement.referencedName ?: return emptyList()
+
+            buildList {
+                add(referenceName)
+
+                val ktFile = typeElement.containingKtFile
+                if (!ktFile.isCompiled) {
+                    addIfNotNull(getImportedSimpleNameByImportAlias(typeElement.containingKtFile, referenceName))
+                }
+            }
+        }
+
+        // `typealias T = A?` is inheritable.
+        is KtNullableType -> typeElement.innerType?.let(::findInheritableSimpleNames) ?: emptyList()
+
+        else -> emptyList()
+    }
+}
+
 private fun computeIndex(
     project: Project,
     sourceKtFiles: Collection<KtFile>,
@@ -280,7 +438,7 @@ private fun computeIndex(
     skipBuiltins: Boolean,
     shouldBuildStubsForBinaryLibraries: Boolean,
 ): IndexData {
-    val index = KotlinStandaloneDeclarationIndex()
+    val index = KotlinStandaloneDeclarationIndexImpl()
 
     val psiManager = PsiManager.getInstance(project)
     val builtInDecompiler = KotlinBuiltInDecompiler()
@@ -339,154 +497,6 @@ private fun computeIndex(
         }
     }
 
-
-    fun addToFacadeFileMap(file: KtFile) {
-        if (!file.hasTopLevelCallables()) return
-        index.facadeFileMap.computeIfAbsent(file.packageFqName) {
-            mutableSetOf()
-        }.add(file)
-    }
-
-    fun addToScriptMap(script: KtScript) {
-        index.scriptMap.computeIfAbsent(script.fqName) {
-            mutableSetOf()
-        }.add(script)
-    }
-
-
-    fun addToClassMap(classOrObject: KtClassOrObject) {
-        classOrObject.getClassId()?.let { classId ->
-            index.classMap.computeIfAbsent(classId.packageFqName) {
-                mutableSetOf()
-            }.add(classOrObject)
-        }
-    }
-
-    fun indexSupertypeNames(classOrObject: KtClassOrObject) {
-        classOrObject.getSuperNames().forEach { superName ->
-            index.classesBySupertypeName
-                .computeIfAbsent(Name.identifier(superName)) { mutableSetOf() }
-                .add(classOrObject)
-        }
-    }
-
-
-    fun indexClassOrObject(classOrObject: KtClassOrObject) {
-        addToClassMap(classOrObject)
-        indexSupertypeNames(classOrObject)
-    }
-
-    fun addToTypeAliasMap(typeAlias: KtTypeAlias) {
-        typeAlias.getClassId()?.let { classId ->
-            index.typeAliasMap.computeIfAbsent(classId.packageFqName) {
-                mutableSetOf()
-            }.add(typeAlias)
-        }
-    }
-
-
-    /**
-     * This is a simplified version of `KtTypeElement.index()` from the IDE. If we need to move more indexing code to Standalone, we should
-     * consider moving more code from the IDE to the Analysis API.
-     *
-     * @see KotlinStandaloneDeclarationIndex.inheritableTypeAliasesByAliasedName
-     */
-    fun findInheritableSimpleNames(typeElement: KtTypeElement): List<String> {
-        return when (typeElement) {
-            is KtUserType -> {
-                val referenceName = typeElement.referencedName ?: return emptyList()
-
-                buildList {
-                    add(referenceName)
-
-                    val ktFile = typeElement.containingKtFile
-                    if (!ktFile.isCompiled) {
-                        addIfNotNull(getImportedSimpleNameByImportAlias(typeElement.containingKtFile, referenceName))
-                    }
-                }
-            }
-
-            // `typealias T = A?` is inheritable.
-            is KtNullableType -> typeElement.innerType?.let(::findInheritableSimpleNames) ?: emptyList()
-
-            else -> emptyList()
-        }
-    }
-
-
-    fun processMultifileClassStub(ktFileStub: KotlinFileStubImpl) {
-        val ktFile: KtFile = ktFileStub.psi
-
-        val partNames = ktFileStub.facadePartSimpleNames ?: return
-        val packageFqName = ktFileStub.getPackageFqName()
-        for (partName in partNames) {
-            val multiFileClassPartFqName: FqName = packageFqName.child(Name.identifier(partName))
-            index.multiFileClassPartMap.computeIfAbsent(multiFileClassPartFqName) { mutableSetOf() }.add(ktFile)
-        }
-    }
-
-    fun indexTypeAliasDefinition(typeAlias: KtTypeAlias) {
-        val typeElement = typeAlias.getTypeReference()?.typeElement ?: return
-
-        findInheritableSimpleNames(typeElement).forEach { expandedName ->
-            index.inheritableTypeAliasesByAliasedName
-                .computeIfAbsent(Name.identifier(expandedName)) { mutableSetOf() }
-                .add(typeAlias)
-        }
-    }
-
-    fun indexTypeAlias(typeAlias: KtTypeAlias) {
-        addToTypeAliasMap(typeAlias)
-        indexTypeAliasDefinition(typeAlias)
-    }
-
-    fun addToFunctionMap(function: KtNamedFunction) {
-        if (!function.isTopLevel) return
-        val packageFqName = (function.parent as KtFile).packageFqName
-        index.topLevelFunctionMap.computeIfAbsent(packageFqName) {
-            mutableSetOf()
-        }.add(function)
-    }
-
-    fun addToPropertyMap(property: KtProperty) {
-        if (!property.isTopLevel) return
-        val packageFqName = (property.parent as KtFile).packageFqName
-        index.topLevelPropertyMap.computeIfAbsent(packageFqName) {
-            mutableSetOf()
-        }.add(property)
-    }
-
-    fun indexStub(stub: StubElement<*>) {
-        when (stub) {
-            is KotlinClassStubImpl -> {
-                indexClassOrObject(stub.psi)
-                // member functions and properties
-                stub.childrenStubs.forEach(::indexStub)
-            }
-            is KotlinObjectStubImpl -> {
-                indexClassOrObject(stub.psi)
-                // member functions and properties
-                stub.childrenStubs.forEach(::indexStub)
-            }
-            is KotlinTypeAliasStubImpl -> indexTypeAlias(stub.psi)
-            is KotlinFunctionStubImpl -> addToFunctionMap(stub.psi)
-            is KotlinPropertyStubImpl -> addToPropertyMap(stub.psi)
-            is KotlinPlaceHolderStubImpl -> {
-                if (stub.stubType == KtStubElementTypes.CLASS_BODY) {
-                    stub.childrenStubs.filterIsInstance<KotlinClassOrObjectStub<*>>().forEach(::indexStub)
-                }
-            }
-        }
-    }
-
-    fun processStub(ktFileStub: KotlinFileStubImpl) {
-        addToFacadeFileMap(ktFileStub.psi)
-        processMultifileClassStub(ktFileStub)
-
-        // top-level functions and properties, built-in classes
-        ktFileStub.childrenStubs.forEach(::indexStub)
-    }
-
     fun buildStubByVirtualFile(
         file: VirtualFile,
         binaryClassCache: ClsKotlinBinaryClassCache,
@@ -531,7 +541,7 @@ private fun computeIndex(
         fun process(entries: List<Map.Entry<VirtualFile, KotlinFileStubImpl>>) {
             entries.forEach { entry ->
                 val stub = registerStub(entry.value, entry.key, isSharedStubs)
-                processStub(stub)
+                index.processStub(stub)
             }
         }
 
@@ -548,28 +558,32 @@ private fun computeIndex(
         }
 
         override fun visitKtFile(file: KtFile) {
-            addToFacadeFileMap(file)
-            file.script?.let { addToScriptMap(it) }
+            index.addToFacadeFileMap(file)
             super.visitKtFile(file)
         }
 
+        override fun visitScript(script: KtScript) {
+            index.addToScriptMap(script)
+            super.visitScript(script)
+        }
+
         override fun visitClassOrObject(classOrObject: KtClassOrObject) {
-            indexClassOrObject(classOrObject)
+            index.indexClassOrObject(classOrObject)
             super.visitClassOrObject(classOrObject)
         }
 
         override fun visitTypeAlias(typeAlias: KtTypeAlias) {
-            indexTypeAlias(typeAlias)
+            index.indexTypeAlias(typeAlias)
             super.visitTypeAlias(typeAlias)
         }
 
         override fun visitNamedFunction(function: KtNamedFunction) {
-            addToFunctionMap(function)
+            index.addToFunctionMap(function)
             super.visitNamedFunction(function)
         }
 
         override fun visitProperty(property: KtProperty) {
-            addToPropertyMap(property)
+            index.addToPropertyMap(property)
             super.visitProperty(property)
         }
     }
@@ -579,7 +593,7 @@ private fun computeIndex(
     // Indexing built-ins
     if (!skipBuiltins) {
         loadBuiltIns().forEach {
-            processStub(it)
+            index.processStub(it)
         }
     }
 
@@ -610,7 +624,7 @@ private fun computeIndex(
             // This behavior is closer to real indices.
             if (stub != null) {
                 stub.psi = file
-                processMultifileClassStub(stub)
+                index.processMultifileClassStub(stub)
 
                 file.accept(recorder)
             }

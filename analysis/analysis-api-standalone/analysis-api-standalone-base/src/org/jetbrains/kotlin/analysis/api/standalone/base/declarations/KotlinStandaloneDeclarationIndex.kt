@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,19 +9,19 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
-internal class KotlinStandaloneDeclarationIndex {
-    internal val facadeFileMap: MutableMap<FqName, MutableSet<KtFile>> = mutableMapOf()
-    internal val multiFileClassPartMap: MutableMap<FqName, MutableSet<KtFile>> = mutableMapOf()
-    internal val scriptMap: MutableMap<FqName, MutableSet<KtScript>> = mutableMapOf()
-    internal val classMap: MutableMap<FqName, MutableSet<KtClassOrObject>> = mutableMapOf()
-    internal val typeAliasMap: MutableMap<FqName, MutableSet<KtTypeAlias>> = mutableMapOf()
-    internal val topLevelFunctionMap: MutableMap<FqName, MutableSet<KtNamedFunction>> = mutableMapOf()
-    internal val topLevelPropertyMap: MutableMap<FqName, MutableSet<KtProperty>> = mutableMapOf()
+internal interface KotlinStandaloneDeclarationIndex {
+    val facadeFileMap: Map<FqName, Set<KtFile>>
+    val multiFileClassPartMap: Map<FqName, Set<KtFile>>
+    val scriptMap: Map<FqName, Set<KtScript>>
+    val classMap: Map<FqName, Set<KtClassOrObject>>
+    val typeAliasMap: Map<FqName, Set<KtTypeAlias>>
+    val topLevelFunctionMap: Map<FqName, Set<KtNamedFunction>>
+    val topLevelPropertyMap: Map<FqName, Set<KtProperty>>
 
     /**
      * Allows quickly finding [KtClassOrObject]s which have a given simple name as a supertype. The map may contain local classes as well.
      */
-    internal val classesBySupertypeName: MutableMap<Name, MutableSet<KtClassOrObject>> = mutableMapOf()
+    val classesBySupertypeName: Map<Name, Set<KtClassOrObject>>
 
     /**
      * Maps a simple name `N` to type aliases `A` in whose definition `N` occurs as the topmost user type, which is a prerequisite for other
@@ -45,5 +45,5 @@ internal class KotlinStandaloneDeclarationIndex {
      *
      * The index contains the following entry: `"C" -> A`.
      */
-    internal val inheritableTypeAliasesByAliasedName: MutableMap<Name, MutableSet<KtTypeAlias>> = mutableMapOf()
+    val inheritableTypeAliasesByAliasedName: Map<Name, Set<KtTypeAlias>>
 }
