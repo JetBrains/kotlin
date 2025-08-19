@@ -7,4 +7,5 @@ reportPerfK2
 -libraries
 $STDLIB_WASM_JS$
 -Xreport-perf=true
--XXLanguage\:+IrInlinerBeforeKlibSerialization
+-XXLanguage\:+IrIntraModuleInlinerBeforeKlibSerialization
+-XXLanguage\:+IrCrossModuleInlinerBeforeKlibSerialization
