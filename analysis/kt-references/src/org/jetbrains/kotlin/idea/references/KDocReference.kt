@@ -15,7 +15,7 @@ abstract class KDocReference(element: KDocName) : KtMultiReference<KDocName>(ele
 
     override fun canRename(): Boolean = true
 
-    override fun resolve(): PsiElement? = multiResolve(false).firstOrNull()?.element
+    override fun resolve(): PsiElement? = multiResolve(incompleteCode = false).singleOrNull()?.element
 
     override fun getCanonicalText(): String = element.getNameText()
 
