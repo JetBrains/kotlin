@@ -55,7 +55,9 @@ testing {
                     useJUnitPlatform {
                         excludeTags.addAll(onlySymbolsTags)
                     }
-                    classpath += descriptorsTestImplementationResolver.incoming.files
+                    // Analysis dependencies from `descriptorsTestImplementation` should precede all other dependencies
+                    // in order to use the shadowed stdlib from the analysis dependencies
+                    classpath = descriptorsTestImplementationResolver.incoming.files + classpath
                 }
             }
 
@@ -66,7 +68,9 @@ testing {
                     useJUnitPlatform {
                         excludeTags.addAll(onlyDescriptorTags)
                     }
-                    classpath += symbolsTestImplementationResolver.incoming.files
+                    // Analysis dependencies from `symbolsTestImplementation` should precede all other dependencies
+                    // in order  to use the shadowed stdlib from the analysis dependencies
+                    classpath = symbolsTestImplementationResolver.incoming.files + classpath
                 }
             }
 
