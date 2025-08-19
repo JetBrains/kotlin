@@ -65,6 +65,7 @@ plugins {
     alias(libs.plugins.gradle.node) apply false
     id("nodejs-cache-redirector-configuration")
     id("gradle-plugins-documentation") apply false
+    id("com.autonomousapps.dependency-analysis") version "2.19.0"
 }
 
 val isTeamcityBuild = project.kotlinBuildProperties.isTeamcityBuild
@@ -572,7 +573,9 @@ allprojects {
     if (!project.path.startsWith(":kotlin-ide.")) {
         pluginManager.apply("common-configuration")
     }
-
+    if (!project.path.startsWith(":compiler:build-tools")) {
+        pluginManager.apply("com.autonomousapps.dependency-analysis")
+    }
     if (kotlinBuildProperties.isInIdeaSync) {
         afterEvaluate {
             configurations.all {
