@@ -72,14 +72,9 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
 
     @Nullable
     public KtExpression getDefaultValue() {
-        KotlinParameterStub stub = getStub();
+        KotlinParameterStub stub = getGreenStub();
         if (stub != null) {
             if (!stub.getHasDefaultValue()) {
-                return null;
-            }
-
-            if (getContainingKtFile().isCompiled()) {
-                //don't load ast
                 return null;
             }
         }

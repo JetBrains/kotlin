@@ -112,13 +112,9 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
     @Override
     @Nullable
     public KtExpression getBodyExpression() {
-        KotlinFunctionStub stub = getStub();
+        KotlinFunctionStub stub = getGreenStub();
         if (stub != null) {
             if (!stub.getHasBody()) {
-                return null;
-            }
-            if (getContainingKtFile().isCompiled()) {
-                //don't load ast
                 return null;
             }
         }
@@ -129,13 +125,9 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
     @Nullable
     @Override
     public KtBlockExpression getBodyBlockExpression() {
-        KotlinFunctionStub stub = getStub();
+        KotlinFunctionStub stub = getGreenStub();
         if (stub != null) {
             if (!(stub.getHasNoExpressionBody() && stub.getHasBody())) {
-                return null;
-            }
-            if (getContainingKtFile().isCompiled()) {
-                //don't load ast
                 return null;
             }
         }

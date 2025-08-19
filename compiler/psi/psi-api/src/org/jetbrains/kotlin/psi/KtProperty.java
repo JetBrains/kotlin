@@ -210,7 +210,7 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
 
     @Nullable
     public KtPropertyDelegate getDelegate() {
-        KotlinPropertyStub stub = getStub();
+        KotlinPropertyStub stub = getGreenStub();
         if (stub != null && !stub.getHasDelegate()) {
             return null;
         }
@@ -229,7 +229,7 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
 
     @Nullable
     public KtExpression getDelegateExpression() {
-        KotlinPropertyStub stub = getStub();
+        KotlinPropertyStub stub = getGreenStub();
         if (stub != null && !stub.getHasDelegateExpression()) {
             return null;
         }
@@ -255,14 +255,9 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
     @Override
     @Nullable
     public KtExpression getInitializer() {
-        KotlinPropertyStub stub = getStub();
+        KotlinPropertyStub stub = getGreenStub();
         if (stub != null) {
             if (!stub.getHasInitializer()) {
-                return null;
-            }
-
-            if (getContainingKtFile().isCompiled()) {
-                //don't load ast
                 return null;
             }
         }

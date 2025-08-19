@@ -46,18 +46,18 @@ class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub>, KtDecl
         listOfNotNull(parameter)
 
     override fun getBodyExpression(): KtExpression? {
-        stub?.let {
+        greenStub?.let {
             if (!it.hasBody) return null
-            if (containingKtFile.isCompiled) return null
         }
+
         return findChildByClass(KtExpression::class.java)
     }
 
     override fun getBodyBlockExpression(): KtBlockExpression? {
-        stub?.let {
+        greenStub?.let {
             if (!(it.hasNoExpressionBody && it.hasBody)) return null
-            if (containingKtFile.isCompiled) return null
         }
+
         return findChildByClass(KtExpression::class.java) as? KtBlockExpression
     }
 
