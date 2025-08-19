@@ -4,12 +4,10 @@
 #include "PassesProfileHandler.h"
 
 #include <chrono>
-#include <iostream>
 #include <sstream>
 
 #include <llvm/ADT/StringMap.h>
 #include <llvm/ADT/Twine.h>
-#include <llvm/IR/Function.h>
 #include <llvm/Support/Error.h>
 
 using namespace llvm;
@@ -38,29 +36,9 @@ private:
 
 PassesProfileHandler::PassesProfileHandler(bool enabled) : enabled_(enabled) {}
 
-PassesProfileHandler::~PassesProfileHandler() {
-    std::cerr << "\n";
-    // NOTE: what.
-    events_per_function_.clear();
-    pending_events_per_function_.clear();
-    std::cerr << "\n";
-}
+PassesProfileHandler::~PassesProfileHandler() = default;
 
 PassesProfile PassesProfileHandler::serialize() const {
-    {
-        for (const auto& [name, events] : pending_events_per_function_) {
-            if (!events.empty()) {
-                report_fatal_error(Twine("Mismatched event finalization. Stack not empty"));
-            }
-        }
-
-        /*
-        for (const auto& [name, duration] : events_per_function_) {
-            std::cerr << "FUN " << std::string_view(name) << " " << std::chrono::duration_cast<std::chrono::microseconds>(duration).count() << " us\n";
-        }
-        */
-    }
-
     if (!pending_events_stack_.empty()) {
         report_fatal_error(Twine("Mismatched event finalization. Pending event stack is not empty ") + Twine(pending_events_stack_.size()));
     }
@@ -82,67 +60,34 @@ PassesProfile PassesProfileHandler::serialize() const {
     return PassesProfile{out.str()};
 }
 
-namespace {
-
-const Function* unwrapFunction(Any IR) {
-    auto** IRPtr = any_cast<const Function*>(&IR);
-    return IRPtr ? *IRPtr : nullptr;
-}
-
-}
-
 void PassesProfileHandler::registerCallbacks(PassInstrumentationCallbacks &PIC) {
     if (!enabled_) {
         return;
     }
     PIC.registerBeforeNonSkippedPassCallback(
-            [this](StringRef P, Any IR) { runBeforePass(P, unwrapFunction(IR)); });
+            [this](StringRef P, Any IR) { runBeforePass(P); });
     PIC.registerAfterPassCallback(
             [this](StringRef P, Any IR, const PreservedAnalyses &) {
-                runAfterPass(P, unwrapFunction(IR));
+                runAfterPass(P);
             },
             true);
     PIC.registerAfterPassInvalidatedCallback(
-            [this](StringRef P, const PreservedAnalyses &) { runAfterPass(P, nullptr); },
+            [this](StringRef P, const PreservedAnalyses &) { runAfterPass(P); },
             true);
     PIC.registerBeforeAnalysisCallback(
-            [this](StringRef P, Any IR) { runBeforePass(P, unwrapFunction(IR)); });
+            [this](StringRef P, Any IR) { runBeforePass(P); });
     PIC.registerAfterAnalysisCallback(
-            [this](StringRef P, Any IR) { runAfterPass(P, unwrapFunction(IR)); }, true);
+            [this](StringRef P, Any IR) { runAfterPass(P); }, true);
 }
 
-void PassesProfileHandler::runBeforePass(StringRef P, const Function* F) {
-    if (F) {
-        auto name = F->getName().str();
-        auto [iter, ignored] = pending_events_per_function_.insert(std::make_pair(name, std::vector<PendingEvent>()));
-        auto& pending_events_stack = iter->second;
-
-        PendingEvent* parent = nullptr;
-        if (!pending_events_stack.empty())
-            parent = &pending_events_stack.back();
-        pending_events_stack.emplace_back(parent, P);
-    }
+void PassesProfileHandler::runBeforePass(StringRef P) {
     PendingEvent* parent = nullptr;
     if (!pending_events_stack_.empty())
         parent = &pending_events_stack_.back();
     pending_events_stack_.emplace_back(parent, P);
 }
 
-void PassesProfileHandler::runAfterPass(StringRef P, const Function* F) {
-    if (F) {
-        auto name = F->getName().str();
-        auto& pending_events_stack = pending_events_per_function_[name];
-        auto event = pending_events_stack.back().finalize(P);
-        if (name == "kfun:org.jetbrains.kotlinconf.screens.ScheduleViewModel.ScheduleViewModel$1.invoke#internal") {
-            std::cerr << "PASS " << event.Name << " " << std::chrono::duration_cast<std::chrono::microseconds>(event.Duration).count() << "\n";
-        }
-        pending_events_stack.pop_back();
-        if (pending_events_stack.empty()) {
-            auto [iter, ignored] = events_per_function_.insert(std::make_pair(name, std::chrono::nanoseconds(0)));
-            auto& duration = iter->second;
-            duration += event.Duration;
-        }
-    }
+void PassesProfileHandler::runAfterPass(StringRef P) {
     events_.emplace_back(pending_events_stack_.back().finalize(P));
     pending_events_stack_.pop_back();
 }
