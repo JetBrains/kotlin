@@ -1038,7 +1038,7 @@ public inline operator fun Double.times(duration: Duration): Duration = duration
 /**
  * Parses a duration string in either ISO-8601 or default format.
  * @param value the string to parse
- * @param strictIso if true, only accepts ISO-8601 format; if false, accepts both ISO and default formats
+ * @param strictIso if true, only accepts an ISO-8601 format; if false, accepts both ISO and default formats
  * @param throwException if true, throws IllegalArgumentException on parse error; if false, returns Duration.INVALID
  * @return parsed Duration or Duration.INVALID on error when throwException is false
  */
@@ -1257,7 +1257,7 @@ private inline fun parseDefaultStringFormat(
 }
 
 /**
- * Checks if multiplying two Long values will exceed MAX_MILLIS bounds.
+ * Checks if multiplying two Long values exceeds MAX_MILLIS bounds.
  * @return true if a * b would overflow MAX_MILLIS or -MAX_MILLIS
  */
 @kotlin.internal.InlineOnly
@@ -1268,8 +1268,8 @@ private inline fun willMultiplyOverflow(a: Long, b: Long): Boolean = when {
 }
 
 /**
- * Multiplies this Long by another, clamping result to ±MAX_MILLIS on overflow.
- * @return the product or ±MAX_MILLIS if overflow would occur
+ * Multiplies this Long by another, clamping the result to ±MAX_MILLIS on overflow.
+ * @return the product or ±MAX_MILLIS if overflow occurs
  */
 @kotlin.internal.InlineOnly
 private inline fun Long.multiplyWithoutOverflow(other: Long): Long = when {
@@ -1278,7 +1278,7 @@ private inline fun Long.multiplyWithoutOverflow(other: Long): Long = when {
 }
 
 /**
- * Checks if adding two Long values will exceed MAX_MILLIS bounds.
+ * Checks if adding two Long values exceeds MAX_MILLIS bounds.
  * @return true if a + b would overflow MAX_MILLIS or -MAX_MILLIS
  */
 @kotlin.internal.InlineOnly
@@ -1304,7 +1304,7 @@ private inline fun Long.addWithoutOverflow(other: Long): Long = when {
 private data class NumericParseData(val value: Long, val index: Int, val sign: Int = 1, val hasOverflow: Boolean = false)
 
 /**
- * Parses a Long from this string starting at the given index.
+ * Parses the Long from this string starting at the given index.
  * @param startIndex position to start parsing
  * @param withSign if true, accepts optional leading +/- sign
  * @param overflowLimit maximum absolute value before overflow (default MAX_MILLIS)
@@ -1411,7 +1411,7 @@ private inline fun handleError(throwException: Boolean, message: String = ""): D
 /**
  * Executes the given block if this Duration is INVALID, otherwise returns this Duration.
  * @param block lambda to execute if Duration is INVALID (typically returns null)
- * @return this Duration if valid, or the result of block if INVALID
+ * @return this Duration if valid, or the result of the block if INVALID
  */
 private inline fun Duration.onInvalid(block: () -> Nothing): Duration {
     return if (this == Duration.INVALID) block() else this
