@@ -1,3 +1,5 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
+// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: BACKEND
 class A {
     operator fun component1() : Int = 1
@@ -6,11 +8,11 @@ class A {
 
 fun a(aa : A?, b : Any) {
     if (aa != null) {
-        val (a1, b1) = <!DEBUG_INFO_SMARTCAST!>aa<!>;
+        val [a1, b1] = aa;
     }
 
     if (b is A) {
-        val (a1, b1) = <!DEBUG_INFO_SMARTCAST!>b<!>;
+        val [a1, b1] = b;
     }
 }
 

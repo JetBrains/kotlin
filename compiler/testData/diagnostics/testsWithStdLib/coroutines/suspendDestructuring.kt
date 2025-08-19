@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 // SKIP_TXT
@@ -9,7 +10,7 @@ fun foo(c: suspend (A) -> Unit) {}
 
 fun bar() {
     foo {
-        (x) ->
+        [x] ->
         x.length
     }
 }

@@ -1,3 +1,5 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
+// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: FRONTEND
 // CHECK_TYPE
 // DIAGNOSTICS: -UNUSED_PARAMETER
@@ -9,37 +11,37 @@ fun <X, Y> foo(y: Y, x: (X, Y) -> Unit) {}
 
 fun bar(aInstance: A, bInstance: B) {
     foo("") {
-        (a, b): A, c ->
+        [a, b]: A, c ->
         a checkType { _<Int>() }
         b checkType { _<String>() }
         c checkType { _<String>() }
     }
 
     foo(aInstance) {
-        a: String, (b, c) ->
+        a: String, [b, c] ->
         a checkType { _<String>() }
         b checkType { _<Int>() }
         c checkType { _<String>() }
     }
 
     foo(bInstance) {
-        (a, b): A, (c, d) ->
+        [a, b]: A, [c, d] ->
         a checkType { _<Int>() }
         b checkType { _<String>() }
         c checkType { _<Double>() }
         d checkType { _<Short>() }
     }
 
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>(bInstance) {
-        <!CANNOT_INFER_PARAMETER_TYPE!>(a, b)<!>, (c, d) ->
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>a<!> <!DEBUG_INFO_MISSING_UNRESOLVED!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><Int>() }
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>b<!> <!DEBUG_INFO_MISSING_UNRESOLVED!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><String>() }
+    <!CANNOT_INFER_PARAMETER_TYPE!>foo<!>(bInstance) {
+        <!CANNOT_INFER_PARAMETER_TYPE, COMPONENT_FUNCTION_MISSING, COMPONENT_FUNCTION_MISSING!>[a, b]<!>, [c, d] ->
+        a <!CANNOT_INFER_PARAMETER_TYPE!>checkType<!> { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><<!CANNOT_INFER_PARAMETER_TYPE!>Int<!>>() }
+        b <!CANNOT_INFER_PARAMETER_TYPE!>checkType<!> { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><<!CANNOT_INFER_PARAMETER_TYPE!>String<!>>() }
         c checkType { _<Double>() }
         d checkType { _<Short>() }
     }
 
     foo<A, B>(bInstance) {
-        (a, b), (c, d) ->
+        [a, b], [c, d] ->
         a checkType { _<Int>() }
         b checkType { _<String>() }
         c checkType { _<Double>() }

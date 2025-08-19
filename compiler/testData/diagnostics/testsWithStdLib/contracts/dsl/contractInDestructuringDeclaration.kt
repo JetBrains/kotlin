@@ -1,7 +1,7 @@
 // FIR_IDENTICAL
 // RUN_PIPELINE_TILL: BACKEND
 // OPT_IN: kotlin.contracts.ExperimentalContracts
-// LANGUAGE: +AllowContractsOnSomeOperators
+// LANGUAGE: +AllowContractsOnSomeOperators +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 import kotlin.contracts.*
 
 class PairList<T>(val items: List<T>)
@@ -32,12 +32,12 @@ operator fun <T> PairList<T>?.iterator(): Iterator<T> {
 }
 
 fun destructuringTest(pair: PairList<String>?) {
-    val (first, second) = pair
+    val [first, second] = pair
     pair.items.size
 }
 
 fun iteratorTest(pair: PairList<String>?) {
-    for ((a,b) in pair) {
+    for ([a,b] in pair) {
         pair.items.size
     }
 }

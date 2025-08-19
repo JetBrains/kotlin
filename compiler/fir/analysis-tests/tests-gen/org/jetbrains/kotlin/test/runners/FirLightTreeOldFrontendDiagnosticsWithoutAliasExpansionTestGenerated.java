@@ -198,6 +198,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
     }
 
     @Test
+    @TestMetadata("UnderscoreOld.kt")
+    public void testUnderscoreOld() {
+      runTest("compiler/testData/diagnostics/tests/UnderscoreOld.kt");
+    }
+
+    @Test
     @TestMetadata("unnamedArgsInJavaAnnotations.kt")
     public void testUnnamedArgsInJavaAnnotations() {
       runTest("compiler/testData/diagnostics/tests/unnamedArgsInJavaAnnotations.kt");

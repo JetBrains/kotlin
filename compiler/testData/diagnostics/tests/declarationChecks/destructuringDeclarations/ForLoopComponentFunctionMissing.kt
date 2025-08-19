@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 class A {
@@ -9,7 +10,7 @@ class C {
 }
 
 fun test() {
-    for ((x, y) in <!COMPONENT_FUNCTION_MISSING!>C()<!>) {
+    for ([x, y] in <!COMPONENT_FUNCTION_MISSING!>C()<!>) {
 
     }
 }

@@ -1,3 +1,5 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
+// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: FRONTEND
 class A {
     operator fun component1() = 1
@@ -5,15 +7,15 @@ class A {
 }
 
 fun test() {
-    val (_, _) = A()
-    val (_, _, _) = <!COMPONENT_FUNCTION_MISSING!>A()<!>
+    val [_, _] = A()
+    val [_, _, _] = <!COMPONENT_FUNCTION_MISSING!>A()<!>
 
-    val (_: Int, _: String) = A()
-    val (_: String, _) = <!COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH!>A()<!>
+    val [_: Int, _: String] = A()
+    val [_: String, _] = <!COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH!>A()<!>
 
-    val f: (A) -> Int = { (_, _) -> 1 }
-    val g: (A) -> Int = { (_, _, <!COMPONENT_FUNCTION_MISSING!>_<!>) -> 2 }
-    val h: (A) -> Int = { (<!COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH!>_: String<!>, _) -> 3}
+    val f: (A) -> Int = { [_, _] -> 1 }
+    val g: (A) -> Int = { <!COMPONENT_FUNCTION_MISSING!>[_, _, _]<!> -> 2 }
+    val h: (A) -> Int = { [<!COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH!>_: String<!>, _] -> 3}
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, destructuringDeclaration, functionDeclaration, functionalType, integerLiteral,

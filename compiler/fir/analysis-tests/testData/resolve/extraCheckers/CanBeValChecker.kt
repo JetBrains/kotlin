@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 import kotlin.contracts.*
@@ -34,23 +35,23 @@ fun testOperatorAssignment() {
 
 
 fun destructuringDeclaration() {
-    <!CAN_BE_VAL!>var<!> (v1, <!UNUSED_VARIABLE!>v2<!>) = getPair()
+    <!CAN_BE_VAL!>var<!> [v1, <!UNUSED_VARIABLE!>v2<!>] = getPair()
     print(v1)
 
-    var (v3, <!VARIABLE_NEVER_READ!>v4<!>) = getPair()
+    var [v3, <!VARIABLE_NEVER_READ!>v4<!>] = getPair()
     print(v3)
     <!ASSIGNED_VALUE_IS_NEVER_READ!>v4<!> = ""
 
-    var (<!VARIABLE_NEVER_READ!>v5<!>, <!UNUSED_VARIABLE!>v6<!>) = getPair()
+    var [<!VARIABLE_NEVER_READ!>v5<!>, <!UNUSED_VARIABLE!>v6<!>] = getPair()
     <!ASSIGNED_VALUE_IS_NEVER_READ!>v5<!> = 1
 
-    var (<!VARIABLE_NEVER_READ!>v7<!>, <!VARIABLE_NEVER_READ!>v8<!>) = getPair()
+    var [<!VARIABLE_NEVER_READ!>v7<!>, <!VARIABLE_NEVER_READ!>v8<!>] = getPair()
     <!ASSIGNED_VALUE_IS_NEVER_READ!>v7<!> = 2
     <!ASSIGNED_VALUE_IS_NEVER_READ!>v8<!> = "42"
 
-    val (<!UNUSED_VARIABLE!>a<!>, <!UNUSED_VARIABLE!>b<!>, <!UNUSED_VARIABLE!>c<!>) = Triple(1, 1, 1)
+    val [<!UNUSED_VARIABLE!>a<!>, <!UNUSED_VARIABLE!>b<!>, <!UNUSED_VARIABLE!>c<!>] = Triple(1, 1, 1)
 
-    <!CAN_BE_VAL!>var<!> (<!UNUSED_VARIABLE!>x<!>, <!UNUSED_VARIABLE!>y<!>, <!UNUSED_VARIABLE!>z<!>) = Triple(1, 1, 1)
+    <!CAN_BE_VAL!>var<!> [<!UNUSED_VARIABLE!>x<!>, <!UNUSED_VARIABLE!>y<!>, <!UNUSED_VARIABLE!>z<!>] = Triple(1, 1, 1)
 }
 
 fun stackOverflowBug() {
