@@ -260,6 +260,14 @@ fun main(args: Array<String>) {
                 model("stepping")
             }
 
+            testClass<AbstractFirJsSteppingSplitTest> {
+                model("stepping")
+            }
+
+            testClass<AbstractFirJsSteppingSplitWithInlinedFunInKlibTest> {
+                model("stepping")
+            }
+
             testClass<AbstractIrJsLocalVariableTest>(
                 annotations = listOf(
                     *legacyFrontend(),
