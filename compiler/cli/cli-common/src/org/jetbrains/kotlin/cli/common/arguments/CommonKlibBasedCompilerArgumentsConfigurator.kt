@@ -11,7 +11,8 @@ open class CommonKlibBasedCompilerArgumentsConfigurator : CommonCompilerArgument
     override fun configureExtraLanguageFeatures(arguments: CommonCompilerArguments, map: HashMap<LanguageFeature, LanguageFeature.State>) {
         require(arguments is CommonKlibBasedCompilerArguments)
         if (arguments.irInlinerBeforeKlibSerialization) {
-            map[LanguageFeature.IrInlinerBeforeKlibSerialization] = LanguageFeature.State.ENABLED
+            map[LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization] = LanguageFeature.State.ENABLED
+            map[LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization] = LanguageFeature.State.ENABLED
         }
     }
 }

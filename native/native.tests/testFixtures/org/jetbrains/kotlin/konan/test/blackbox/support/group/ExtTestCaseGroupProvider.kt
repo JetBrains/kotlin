@@ -143,8 +143,10 @@ private class ExtTestDataFile(
         val optInsForSourceCode = optIns subtract OPT_INS_PURELY_FOR_COMPILER
         val optInsForCompiler = optIns intersect OPT_INS_PURELY_FOR_COMPILER
         val extraLanguageSettings = buildSet {
-            if (klibIrInlinerMode == KlibIrInlinerMode.ON)
-                add("+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}")
+            if (klibIrInlinerMode == KlibIrInlinerMode.ON) {
+                add("+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}")
+                add("+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}")
+            }
         }
 
         ExtTestDataFileSettings(

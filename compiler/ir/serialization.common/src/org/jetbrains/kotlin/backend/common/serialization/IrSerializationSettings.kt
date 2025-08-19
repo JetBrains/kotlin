@@ -41,6 +41,6 @@ class IrSerializationSettings(
     val sourceBaseDirs: Collection<String> = configuration.klibRelativePathBases,
     val normalizeAbsolutePaths: Boolean = configuration.klibNormalizeAbsolutePath,
     val shouldCheckSignaturesOnUniqueness: Boolean = configuration.get(KlibConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS, true),
-    val reuseExistingSignaturesForSymbols: Boolean = languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization),
+    val reuseExistingSignaturesForSymbols: Boolean = languageVersionSettings.supportsFeature(LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization),
     val abiCompatibilityLevel: KlibAbiCompatibilityLevel = configuration.klibAbiCompatibilityLevel,
 )

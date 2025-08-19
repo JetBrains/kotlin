@@ -141,7 +141,7 @@ fun loweringsOfTheFirstPhase(
     languageVersionSettings: LanguageVersionSettings
 ): List<NamedCompilerPhase<PreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> = buildList {
     this += avoidLocalFOsInInlineFunctionsLowering
-    if (languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization)) {
+    if (languageVersionSettings.supportsFeature(LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization)) {
         this += lateinitPhase
         this += sharedVariablesLoweringPhase
         this += localClassesInInlineLambdasPhase
