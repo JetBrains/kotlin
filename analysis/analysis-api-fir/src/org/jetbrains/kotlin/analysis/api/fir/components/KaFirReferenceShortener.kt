@@ -63,7 +63,6 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal class KaFirReferenceShortener(
@@ -1552,27 +1551,32 @@ private class KDocQualifiersToShortenCollector(
         // KDocs are only shortened if they are available without imports, so `additionalImports` contain all the imports to add
         if (fqName.isInNewImports(additionalImports)) return true
 
-        val resolvedSymbols = with(analysisSession) {
+        with(analysisSession) {
             val shortFqName = FqName.topLevel(fqName.shortName())
             val owner = kDocName.getContainingDoc().owner
 
             val contextElement = owner ?: kDocName.containingKtFile
-            KDocReferenceResolver.resolveKdocFqName(useSiteSession, shortFqName, shortFqName, contextElement)
-        }
+            // There we have to calculate the resolution results for FQN and short name to then ensure that these sets of symbols are the same
+            val resolvedSymbolsByShortName =
+                KDocReferenceResolver.resolveKdocFqName(useSiteSession, shortFqName, shortFqName, contextElement)
+            val resolvedSymbolsByFQN =
+                KDocReferenceResolver.resolveKdocFqName(useSiteSession, fqName, fqName, contextElement)
 
-        resolvedSymbols.firstIsInstanceOrNull<KaCallableSymbol>()?.firSymbol?.let { availableCallable ->
-            return canShorten(fqName, availableCallable.callableId?.asSingleFqName()) { callableShortenStrategy(availableCallable) }
-        }
+            // Shortening lead to another set of symbols being available, so we cannot shorten the KDoc
+            if (resolvedSymbolsByShortName != resolvedSymbolsByFQN) return false
 
-        resolvedSymbols.firstIsInstanceOrNull<KaClassLikeSymbol>()?.firSymbol?.let { availableClassifier ->
-            return canShorten(fqName, availableClassifier.classId.asSingleFqName()) { classShortenStrategy(availableClassifier) }
-        }
+            val shortenStrategies = resolvedSymbolsByFQN.map { symbol ->
+                when (symbol) {
+                    is KaCallableSymbol -> callableShortenStrategy(symbol.firSymbol)
+                    is KaClassLikeSymbol -> classShortenStrategy(symbol.firSymbol)
+                    else -> ShortenStrategy.DO_NOT_SHORTEN
+                }
+            }
 
-        return false
+            val singleStrategy = shortenStrategies.distinct().singleOrNull() ?: return false
+            return singleStrategy != ShortenStrategy.DO_NOT_SHORTEN
+        }
     }
-
-    private fun canShorten(fqNameToShorten: FqName, fqNameOfAvailableSymbol: FqName?, getShortenStrategy: () -> ShortenStrategy): Boolean =
-        fqNameToShorten == fqNameOfAvailableSymbol && getShortenStrategy() != ShortenStrategy.DO_NOT_SHORTEN
 
     private fun FqName.isInNewImports(additionalImports: AdditionalImports): Boolean =
         this in additionalImports.simpleImports || this.parent() in additionalImports.starImports

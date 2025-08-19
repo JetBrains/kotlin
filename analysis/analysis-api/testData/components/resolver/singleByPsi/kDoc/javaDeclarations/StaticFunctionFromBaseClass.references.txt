@@ -1,3 +1,3 @@
 KDocName(94,103): 'staticFun'
   KDocReference:
-    Nothing (Unresolved reference)
+    (in dependency.JavaBase) open fun staticFun()

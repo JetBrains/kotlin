@@ -1,14 +1,12 @@
 <caret_1>:
   KDocName(80,88): 'test.ext'
     KDocReference:
-      0: (in test) fun test.Foo.ext()
-      1: (in test) val test.Foo.ext: kotlin.Int
+      (in test) fun test.Foo.ext()
 
 <caret_2>:
   KDocName(94,97): 'ext'
     KDocReference:
-      0: (in test) fun test.Foo.ext()
-      1: (in test) val test.Foo.ext: kotlin.Int
+      (in test) fun test.Foo.ext()
 
 <caret_3>:
   KDocName(106,113): 'Foo.ext'

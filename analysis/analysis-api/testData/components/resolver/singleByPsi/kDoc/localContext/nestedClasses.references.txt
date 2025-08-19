@@ -6,8 +6,7 @@
 <caret_2>:
   KDocName(44,49): 'AA.AA'
     KDocReference:
-      0: (in AA) class AA
-      1: (in AA) fun AA(p: kotlin.Int)
+      (in AA) class AA
 
 <caret_3>:
   KDocName(100,102): 'AA'

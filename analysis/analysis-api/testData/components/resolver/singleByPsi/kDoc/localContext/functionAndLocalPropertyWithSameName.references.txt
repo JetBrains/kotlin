@@ -1,3 +1,3 @@
 KDocName(57,60): 'foo'
   KDocReference:
-    (in ROOT) fun foo(t: kotlin.String)
+    (in <local>: foo) val foo: kotlin.String
