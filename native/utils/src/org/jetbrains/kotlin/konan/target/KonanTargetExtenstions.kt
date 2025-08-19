@@ -81,8 +81,7 @@ fun KonanTarget.supportsUnalignedAccess(): Boolean = when (architecture) {
 } && this != KonanTarget.WATCHOS_ARM64
 
 fun KonanTarget.needSmallBinary() = when {
-    family == Family.WATCHOS -> true
-    family.isAppleFamily -> architecture == Architecture.ARM32
+    family.isAppleFamily -> true
     else -> false
 }
 

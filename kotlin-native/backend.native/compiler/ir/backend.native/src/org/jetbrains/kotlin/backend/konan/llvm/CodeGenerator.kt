@@ -767,7 +767,8 @@ internal abstract class FunctionGenerationContext(
         require(alignment == null || alignment % runtime.pointerAlignment == 0)
         if (onStack) {
             require(!isVolatile) { "Stack ref update can't be volatile"}
-            call(llvm.updateStackRefFunction, listOf(address, value))
+//            call(llvm.updateStackRefFunction, listOf(address, value))
+            LLVMBuildStore(builder, value, address)
         } else {
             if (isVolatile) {
                 call(llvm.UpdateVolatileHeapRef, listOf(address, value))
