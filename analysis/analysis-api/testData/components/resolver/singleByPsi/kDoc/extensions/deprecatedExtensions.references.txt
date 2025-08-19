@@ -12,7 +12,7 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        (in ROOT) fun kotlin.Int.funHidden()
+        Nothing (Unresolved reference)
 
 <caret_3>:
   KDocName(530,542): 'Int.funError'
@@ -36,7 +36,7 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        (in ROOT) val kotlin.Int.propHidden: kotlin.Int
+        Nothing (Unresolved reference)
 
 <caret_6>:
   KDocName(589,602): 'Int.propError'

@@ -4,8 +4,7 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        0: (in AA) class AA
-        1: package AA
+        (in AA) class AA
 
 <caret_2>:
   KDocName(38,40): 'AA'
@@ -13,8 +12,7 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        0: (in AA) fun AA(a: kotlin.Int)
-        1: package AA
+        (in AA) fun AA(a: kotlin.Int)
 
 <caret_3>:
   KDocName(70,72): 'bb'
@@ -38,8 +36,7 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        0: (in AA) fun bb(): kotlin.Int
-        1: (in AA) val bb: kotlin.Int
+        (in AA) fun bb(): kotlin.Int
 
 <caret_6>:
   KDocName(133,135): 'AA'
@@ -47,6 +44,4 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        0: (in AA) class AA
-        1: (in AA) fun AA(a: kotlin.Int)
-        2: package AA
+        (in AA) class AA

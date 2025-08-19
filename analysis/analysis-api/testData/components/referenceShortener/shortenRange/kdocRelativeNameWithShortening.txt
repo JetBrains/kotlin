@@ -1,6 +1,10 @@
 Before shortening: A.foo
 with default settings:
+[kdoc] A.foo
 with DO_NOT_SHORTEN:
 with SHORTEN_IF_ALREADY_IMPORTED:
+[kdoc] A.foo
 with SHORTEN_AND_IMPORT:
+[kdoc] A.foo
 with SHORTEN_AND_STAR_IMPORT:
+[kdoc] A.foo

@@ -4,8 +4,7 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        0: (in com) class AA
-        1: (in com) fun AA(a: kotlin.Int)
+        (in com) class AA
 
 <caret_2>:
   KDocName(42,48): 'com.AA'
@@ -13,8 +12,7 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        0: (in com) class AA
-        1: (in com) fun AA(a: kotlin.Int)
+        (in com) class AA
 
 <caret_3>:
   KDocName(80,86): 'com.AA'
@@ -22,8 +20,7 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        0: (in com) class AA
-        1: (in com) fun AA(a: kotlin.Int)
+        (in com) class AA
 
 <caret_4>:
   KDocName(95,98): 'com'

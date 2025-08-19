@@ -4,7 +4,8 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        (in test.Outer) class Foo
+        0: (in test.Outer) class Foo
+        1: (in test) class Foo
 
 <caret_2>:
   KDocName(112,121): 'Outer.Foo'
@@ -36,7 +37,9 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        (in test.Outer.Nested) class Foo
+        0: (in test.Outer.Nested) class Foo
+        1: (in test.Outer) class Foo
+        2: (in test) class Foo
 
 <caret_nested_2>:
   KDocName(307,317): 'Nested.Foo'

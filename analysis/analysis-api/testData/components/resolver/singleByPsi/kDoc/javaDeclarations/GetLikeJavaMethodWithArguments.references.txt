@@ -12,4 +12,4 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        (in Storage) open fun getProp(value: kotlin.String!): kotlin.String!
+        Nothing (Unresolved reference)

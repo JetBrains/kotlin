@@ -3,4 +3,4 @@ KDocName(94,103): 'staticFun'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      Nothing (Unresolved reference)
+      (in dependency.JavaBase) open fun staticFun()

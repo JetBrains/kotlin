@@ -43,11 +43,14 @@ import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
-import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.FirSamResolver
+import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.OverloadCandidate
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnmatchedTypeArgumentsError
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.referencedMemberSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.PackageResolutionResult
 import org.jetbrains.kotlin.fir.resolve.transformers.resolveToPackageOrClass
 import org.jetbrains.kotlin.fir.scopes.*
@@ -63,7 +66,6 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal class KaFirReferenceShortener(
@@ -1552,27 +1554,45 @@ private class KDocQualifiersToShortenCollector(
         // KDocs are only shortened if they are available without imports, so `additionalImports` contain all the imports to add
         if (fqName.isInNewImports(additionalImports)) return true
 
-        val resolvedSymbols = with(analysisSession) {
+        with(analysisSession) {
             val shortFqName = FqName.topLevel(fqName.shortName())
             val owner = kDocName.getContainingDoc().owner
 
             val contextElement = owner ?: kDocName.containingKtFile
-            KDocReferenceResolver.resolveKdocFqName(useSiteSession, shortFqName, shortFqName, contextElement)
-        }
+            // There we have to calculate the resolution results for FQN and short name to then ensure that these sets of symbols are the same
+            val resolvedSymbolsByShortName =
+                KDocReferenceResolver.resolveKdocFqName(
+                    useSiteSession,
+                    selectedFqName = shortFqName,
+                    fullFqName = shortFqName,
+                    contextElement
+                )
 
-        resolvedSymbols.firstIsInstanceOrNull<KaCallableSymbol>()?.firSymbol?.let { availableCallable ->
-            return canShorten(fqName, availableCallable.callableId?.asSingleFqName()) { callableShortenStrategy(availableCallable) }
-        }
+            val resolvedSymbolsByFQN =
+                KDocReferenceResolver.resolveKdocFqName(
+                    useSiteSession,
+                    selectedFqName = fqName,
+                    fullFqName = fqName,
+                    contextElement
+                )
 
-        resolvedSymbols.firstIsInstanceOrNull<KaClassLikeSymbol>()?.firSymbol?.let { availableClassifier ->
-            return canShorten(fqName, availableClassifier.classId.asSingleFqName()) { classShortenStrategy(availableClassifier) }
-        }
+            if (resolvedSymbolsByShortName != resolvedSymbolsByFQN) {
+                // Shortening led to another set of symbols being available, so we cannot shorten the KDoc
+                return false
+            }
 
-        return false
+            val shortenStrategies = resolvedSymbolsByFQN.map { symbol ->
+                when (symbol) {
+                    is KaCallableSymbol -> callableShortenStrategy(symbol.firSymbol)
+                    is KaClassLikeSymbol -> classShortenStrategy(symbol.firSymbol)
+                    else -> ShortenStrategy.DO_NOT_SHORTEN
+                }
+            }
+
+            val singleStrategy = shortenStrategies.distinct().singleOrNull() ?: return false
+            return singleStrategy != ShortenStrategy.DO_NOT_SHORTEN
+        }
     }
-
-    private fun canShorten(fqNameToShorten: FqName, fqNameOfAvailableSymbol: FqName?, getShortenStrategy: () -> ShortenStrategy): Boolean =
-        fqNameToShorten == fqNameOfAvailableSymbol && getShortenStrategy() != ShortenStrategy.DO_NOT_SHORTEN
 
     private fun FqName.isInNewImports(additionalImports: AdditionalImports): Boolean =
         this in additionalImports.simpleImports || this.parent() in additionalImports.starImports

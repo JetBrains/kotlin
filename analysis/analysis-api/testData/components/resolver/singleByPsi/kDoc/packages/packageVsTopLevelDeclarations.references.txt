@@ -4,9 +4,7 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        0: (in foo) interface foo
-        1: (in foo) fun foo()
-        2: package foo
+        (in foo) interface foo
 
 <caret_2>:
   KDocName(62,65): 'foo'
@@ -22,5 +20,4 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        0: (in foo) interface foo
-        1: (in foo) fun foo()
+        (in foo) interface foo
