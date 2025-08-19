@@ -48,7 +48,6 @@ internal fun TypeBridge.makeNothing(llvm: CodegenLlvmHelpers) = when (this) {
 
 internal class ObjCExportFunctionGenerationContext(
         builder: ObjCExportFunctionGenerationContextBuilder,
-        override val needCleanupLandingpadAndLeaveFrame: Boolean
 ) : FunctionGenerationContext(builder) {
     val objCExportCodegen = builder.objCExportCodegen
 
@@ -115,11 +114,12 @@ internal class ObjCExportFunctionGenerationContextBuilder(
         functionProto,
         objCExportCodegen.codegen
 ) {
-    // Unless specified otherwise, all generated bridges by ObjCExport should have `LeaveFrame`
-    // because there is no guarantee of catching Kotlin exception in Kotlin code.
-    var needCleanupLandingpadAndLeaveFrame = true
-
-    override fun build() = ObjCExportFunctionGenerationContext(this, needCleanupLandingpadAndLeaveFrame)
+    init {
+        forceCleanupLandingpad = true
+    }
+    override fun build(): ObjCExportFunctionGenerationContext {
+        return ObjCExportFunctionGenerationContext(this)
+    }
 }
 
 internal inline fun ObjCExportCodeGeneratorBase.functionGenerator(
@@ -171,7 +171,7 @@ internal fun ObjCExportFunctionGenerationContext.callAndMaybeRetainAutoreleased(
     val outlined = objCExportCodegen.functionGenerator(outlinedType.toProto( this.function.name.orEmpty() + "_outlined", null, LLVMLinkage.LLVMPrivateLinkage)) {
         setupBridgeDebugInfo()
         // Don't generate redundant cleanup landingpad (the generation would fail due to forbidRuntime below):
-        needCleanupLandingpadAndLeaveFrame = false
+        forceCleanupLandingpad = false
     }.generate {
         forbidRuntime = true // Don't emit safe points, frame management etc.
 
