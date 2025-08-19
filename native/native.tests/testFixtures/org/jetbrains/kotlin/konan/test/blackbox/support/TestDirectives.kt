@@ -507,6 +507,7 @@ internal class Location(private val testDataFile: File, val lineNumber: Int? = n
     }
 }
 
+fun TestModule.shouldBeExportedToSwift(): Boolean = (this as? TestModule.Exclusive)?.shouldBeExportedToSwift() ?: false
 fun TestModule.Exclusive.shouldBeExportedToSwift(): Boolean = markedExportedToSwift() || swiftExportConfigMap() != null
 
 fun TestModule.Exclusive.swiftExportConfigMap(): Map<String, String>? = @Suppress("UNCHECKED_CAST") (directives

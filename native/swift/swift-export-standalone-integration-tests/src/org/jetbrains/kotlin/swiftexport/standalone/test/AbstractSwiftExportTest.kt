@@ -37,6 +37,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 abstract class AbstractSwiftExportTest {
     lateinit var testRunSettings: TestRunSettings
     lateinit var testRunProvider: TestRunProvider
+    var givenModules: Set<TestModule.Given> = emptySet()
 
     private val binariesDir get() = testRunSettings.get<Binaries>().testBinariesDir
     protected fun buildDir(testName: String) = binariesDir.resolve(testName)
@@ -48,11 +49,15 @@ abstract class AbstractSwiftExportTest {
         val testPathFull = getAbsoluteFile(testDir)
 
         val testCaseId = TestCaseId.TestDataFile((testPathFull.toPath() / "${testPathFull.name}.kt").toFile())
-        val originalTestCase = testRunProvider.testCaseGroupProvider
+        var originalTestCase = testRunProvider.testCaseGroupProvider
             .getTestCaseGroup(testCaseId.testCaseGroupId, testRunSettings)
             ?.getByName(testCaseId)!!
 
-        val modulesToExport = (originalTestCase.rootModules + originalTestCase.modules).mapToSet {
+        if (givenModules.isNotEmpty()) {
+            originalTestCase = originalTestCase.copyAndAddModules(givenModules)
+        }
+
+        val modulesToExport = (originalTestCase.rootModules + originalTestCase.modules + givenModules).mapToSet {
             createInputModule(
                 testModule = it,
                 originalTestCase = originalTestCase,
@@ -90,25 +95,28 @@ abstract class AbstractSwiftExportTest {
                 .flatMapToSet {
                     it.allRegularDependencies.filterIsInstance<TestModule.Exclusive>().toSet()
                 } - originalTestCase.rootModules,
+            dependencies = givenModules
         )
         return swiftExportOutputs to resultingTestCase
     }
 
     private fun createInputModule(
-        testModule: TestModule.Exclusive,
+        testModule: TestModule,
         originalTestCase: TestCase,
         shouldBeFullyExported: Boolean
-    ): InputModule =
-        testModule.constructSwiftInput(
+    ): InputModule {
+        val config = (testModule as? TestModule.Exclusive)?.swiftExportConfigMap()
+        return testModule.constructSwiftInput(
             originalTestCase.freeCompilerArgs,
             SwiftModuleConfig(
-                rootPackage = testModule.swiftExportConfigMap()?.get(SwiftModuleConfig.ROOT_PACKAGE),
-                unsupportedDeclarationReporterKind = getUnsupportedDeclarationsReporterKind(testModule.swiftExportConfigMap()),
+                rootPackage = config?.get(SwiftModuleConfig.ROOT_PACKAGE),
+                unsupportedDeclarationReporterKind = getUnsupportedDeclarationsReporterKind(config),
                 shouldBeFullyExported = shouldBeFullyExported,
             )
         )
+    }
 
-    private fun TestModule.Exclusive.constructSwiftInput(
+    private fun TestModule.constructSwiftInput(
         freeCompilerArgs: TestCompilerArgs,
         moduleConfig: SwiftModuleConfig,
     ): InputModule {
@@ -121,7 +129,7 @@ abstract class AbstractSwiftExportTest {
         )
         return InputModule(
             path = Path(klibToTranslate.klib.result.assertSuccess().resultingArtifact.path),
-            name = moduleToTranslate.name,
+            name = if (moduleToTranslate.name == "kotlinx-coroutines-core.klib") "KotlinxCoroutinesCore" else moduleToTranslate.name,
             config = moduleConfig
         )
     }
@@ -299,4 +307,22 @@ private fun getUnsupportedDeclarationsReporterKind(configMap: Map<String, String
             UnsupportedDeclarationReporterKind.entries
                 .singleOrNull { it.name.equals(value, ignoreCase = true) }
         } ?: UnsupportedDeclarationReporterKind.Silent
+}
+
+private fun TestCase.copyAndAddModules(givenModules: Set<TestModule.Given>?): TestCase {
+    val originalTestCase = TestCase(
+        id = this.id,
+        kind = this.kind,
+        modules = this.modules,
+        freeCompilerArgs = this.freeCompilerArgs,
+        nominalPackageName = this.nominalPackageName,
+        checks = this.checks,
+        extras = this.extras,
+        fileCheckStage = this.fileCheckStage,
+        expectedFailure = this.expectedFailure
+    )
+
+    originalTestCase.initialize(givenModules, null)
+
+    return originalTestCase
 }
