@@ -65,19 +65,19 @@ void PassesProfileHandler::registerCallbacks(PassInstrumentationCallbacks &PIC) 
         return;
     }
     PIC.registerBeforeNonSkippedPassCallback(
-            [this](StringRef P, Any IR) { runBeforePass(P); });
+            [this, &PIC](StringRef P, Any IR) { runBeforePass(PIC.getPassNameForClassName(P)); });
     PIC.registerAfterPassCallback(
-            [this](StringRef P, Any IR, const PreservedAnalyses &) {
-                runAfterPass(P);
+            [this, &PIC](StringRef P, Any IR, const PreservedAnalyses &) {
+                runAfterPass(PIC.getPassNameForClassName(P));
             },
             true);
     PIC.registerAfterPassInvalidatedCallback(
-            [this](StringRef P, const PreservedAnalyses &) { runAfterPass(P); },
+            [this, &PIC](StringRef P, const PreservedAnalyses &) { runAfterPass(PIC.getPassNameForClassName(P)); },
             true);
     PIC.registerBeforeAnalysisCallback(
-            [this](StringRef P, Any IR) { runBeforePass(P); });
+            [this, &PIC](StringRef P, Any IR) { runBeforePass(PIC.getPassNameForClassName(P)); });
     PIC.registerAfterAnalysisCallback(
-            [this](StringRef P, Any IR) { runAfterPass(P); }, true);
+            [this, &PIC](StringRef P, Any IR) { runAfterPass(PIC.getPassNameForClassName(P)); }, true);
 }
 
 void PassesProfileHandler::runBeforePass(StringRef P) {
