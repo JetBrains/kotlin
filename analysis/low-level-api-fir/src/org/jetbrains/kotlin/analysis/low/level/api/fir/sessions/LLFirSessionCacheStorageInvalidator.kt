@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirBuiltinsSessionFactory
 
-
 /**
  * Invalidates sessions in [LLFirSessionCacheStorage] when the corresponding module state has changed.
  *
@@ -36,7 +35,6 @@ class LLFirSessionCacheStorageInvalidator(
     private val project: Project,
     private val storage: LLFirSessionCacheStorage,
 ) {
-
     private val sessionInvalidationEventPublisher: LLFirSessionInvalidationEventPublisher
         get() = LLFirSessionInvalidationEventPublisher.getInstance(project)
 
@@ -162,7 +160,7 @@ class LLFirSessionCacheStorageInvalidator(
         }
     }
 
-    private fun invalidateScriptSessions() = removeAllScriptSessions()
+    private fun invalidateScriptSessions() = performInvalidation { removeAllScriptSessions() }
 
     /**
      * Invalidates all cached sessions. If [includeLibraryModules] is `true`, also invalidates sessions for libraries and builtins.
