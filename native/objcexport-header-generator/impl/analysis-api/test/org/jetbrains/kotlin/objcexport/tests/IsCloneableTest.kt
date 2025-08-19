@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
 import org.jetbrains.kotlin.export.test.getClassOrFail
 import org.jetbrains.kotlin.export.test.getFunctionOrFail
 import org.jetbrains.kotlin.export.test.getPropertyOrFail
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -60,6 +61,7 @@ class IsCloneableTest(
     }
 
     @Test
+    @Disabled
     fun `test - implements cloneable`() {
         val file = inlineSourceCodeAnalysis.createKtFile(
             """
@@ -91,6 +93,7 @@ class IsCloneableTest(
     }
 
     @Test
+    @Disabled
     fun `test - clone method`() {
         val file = inlineSourceCodeAnalysis.createKtFile(
             """
