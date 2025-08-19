@@ -3425,6 +3425,12 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveReferenceTestGenerated exte
       }
 
       @Test
+      @TestMetadata("extensionFromOuterClass.kt")
+      public void testExtensionFromOuterClass() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/extensions/extensionFromOuterClass.kt");
+      }
+
+      @Test
       @TestMetadata("fromBaseClass.kt")
       public void testFromBaseClass() {
         runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/extensions/fromBaseClass.kt");
@@ -3452,6 +3458,12 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveReferenceTestGenerated exte
       @TestMetadata("qualifiers.kt")
       public void testQualifiers() {
         runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/extensions/qualifiers.kt");
+      }
+
+      @Test
+      @TestMetadata("receiverFromOuterClass.kt")
+      public void testReceiverFromOuterClass() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/extensions/receiverFromOuterClass.kt");
       }
 
       @Test
@@ -3789,6 +3801,24 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveReferenceTestGenerated exte
       }
 
       @Test
+      @TestMetadata("classPropertyVsOuterClass.kt")
+      public void testClassPropertyVsOuterClass() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/localContext/classPropertyVsOuterClass.kt");
+      }
+
+      @Test
+      @TestMetadata("danglingReference.kt")
+      public void testDanglingReference() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/localContext/danglingReference.kt");
+      }
+
+      @Test
+      @TestMetadata("functionAndLocalPropertyWithSameName.kt")
+      public void testFunctionAndLocalPropertyWithSameName() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/localContext/functionAndLocalPropertyWithSameName.kt");
+      }
+
+      @Test
       @TestMetadata("LocalSemiFullQualifiedCallableName.kt")
       public void testLocalSemiFullQualifiedCallableName() {
         runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/localContext/LocalSemiFullQualifiedCallableName.kt");
@@ -3801,6 +3831,12 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveReferenceTestGenerated exte
       }
 
       @Test
+      @TestMetadata("nestedClasses.kt")
+      public void testNestedClasses() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/localContext/nestedClasses.kt");
+      }
+
+      @Test
       @TestMetadata("NonLocalSemiFullQualifiedCallableName.kt")
       public void testNonLocalSemiFullQualifiedCallableName() {
         runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/localContext/NonLocalSemiFullQualifiedCallableName.kt");
@@ -3810,6 +3846,30 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveReferenceTestGenerated exte
       @TestMetadata("NonLocalSemiFullQualifiedClassName.kt")
       public void testNonLocalSemiFullQualifiedClassName() {
         runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/localContext/NonLocalSemiFullQualifiedClassName.kt");
+      }
+
+      @Test
+      @TestMetadata("overloadedCallablesPriorities.kt")
+      public void testOverloadedCallablesPriorities() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/localContext/overloadedCallablesPriorities.kt");
+      }
+
+      @Test
+      @TestMetadata("referenceToMemberFromParameter.kt")
+      public void testReferenceToMemberFromParameter() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/localContext/referenceToMemberFromParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("referencesToEnumValuesFromEnumClass.kt")
+      public void testReferencesToEnumValuesFromEnumClass() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/localContext/referencesToEnumValuesFromEnumClass.kt");
+      }
+
+      @Test
+      @TestMetadata("referencesToMembersOfOuterClass.kt")
+      public void testReferencesToMembersOfOuterClass() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/localContext/referencesToMembersOfOuterClass.kt");
       }
 
       @Test
@@ -3846,6 +3906,12 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveReferenceTestGenerated exte
       @TestMetadata("SelfNonLocalProperty.kt")
       public void testSelfNonLocalProperty() {
         runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/localContext/SelfNonLocalProperty.kt");
+      }
+
+      @Test
+      @TestMetadata("shortNamesPriorities.kt")
+      public void testShortNamesPriorities() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/localContext/shortNamesPriorities.kt");
       }
 
       @Test
@@ -3954,6 +4020,12 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveReferenceTestGenerated exte
       @TestMetadata("backtickedIdentifiers.kt")
       public void testBacktickedIdentifiers() {
         runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/qualified/backtickedIdentifiers.kt");
+      }
+
+      @Test
+      @TestMetadata("fqnPriorities.kt")
+      public void testFqnPriorities() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/qualified/fqnPriorities.kt");
       }
 
       @Nested

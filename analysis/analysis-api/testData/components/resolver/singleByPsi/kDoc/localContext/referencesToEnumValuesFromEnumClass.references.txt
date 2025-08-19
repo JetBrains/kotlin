@@ -1,0 +1,3 @@
+KDocName(7,9): 'BB'
+  KDocReference:
+    (in A) BB

@@ -1,0 +1,3 @@
+KDocName(19,22): 'abc'
+  KDocReference:
+    (in A) val abc: kotlin.Int

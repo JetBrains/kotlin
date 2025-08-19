@@ -1,0 +1,15 @@
+<caret_1>:
+  KDocName(5,7): 'cc'
+    KDocReference:
+      (in ROOT) fun cc(a: kotlin.String): kotlin.Int
+
+<caret_2>:
+  KDocName(62,64): 'cc'
+    KDocReference:
+      (in ROOT) fun cc(): kotlin.Int
+
+<caret_3>:
+  KDocName(102,104): 'cc'
+    KDocReference:
+      0: (in ROOT) fun cc(a: kotlin.String): kotlin.Int
+      1: (in ROOT) fun cc(): kotlin.Int

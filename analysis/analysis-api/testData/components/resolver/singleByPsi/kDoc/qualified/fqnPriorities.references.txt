@@ -1,0 +1,22 @@
+<caret_1>:
+  KDocName(17,23): 'com.AA'
+    KDocReference:
+      0: (in com) class AA
+      1: (in com) fun AA(a: kotlin.Int)
+
+<caret_2>:
+  KDocName(56,62): 'com.AA'
+    KDocReference:
+      0: (in com) class AA
+      1: (in com) fun AA(a: kotlin.Int)
+
+<caret_3>:
+  KDocName(108,114): 'com.AA'
+    KDocReference:
+      0: (in com) class AA
+      1: (in com) fun AA(a: kotlin.Int)
+
+<caret_4>:
+  KDocName(204,207): 'com'
+    KDocReference:
+      package com
