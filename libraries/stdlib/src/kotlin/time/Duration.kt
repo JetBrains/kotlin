@@ -1120,7 +1120,7 @@ private inline fun parseIsoStringFormat(
                 val (fractionValue, fractionEndIndex) = value.parseFraction(index)
                 index = fractionEndIndex
                 if (index == fractionStartIndex || index == length || value[index] != 'S') return handleError(throwException)
-                totalNanos = sign * fractionValue.toNanos(DurationUnit.SECONDS)
+                totalNanos = sign * fractionValue.fractionDigitsToNanos(DurationUnit.SECONDS)
                 unit = 'S'
             }
 
@@ -1226,9 +1226,9 @@ private inline fun parseDefaultStringFormat(
             }
 
             totalNanos += if (unit >= DurationUnit.MINUTES && index - fractionStartIndex > FRACTION_LIMIT)
-                value.parseFractionFallback(fractionStartIndex, index - unit.length).toNanos(unit)
+                value.parseFractionFallback(fractionStartIndex, index - unit.length).fractionAsDoubleToNanos(unit)
             else
-                fractionValue.toNanos(unit)
+                fractionValue.fractionDigitsToNanos(unit)
         }
     }
 
@@ -1357,11 +1357,22 @@ private inline fun String.parseFractionFallback(startIndex: Int, endIndex: Int):
     return substring(startIndex, endIndex).toDouble()
 }
 
+/**
+ * Converts fraction digits (scaled to 15 decimal places) to nanoseconds for the given unit.
+ * @param unit the duration unit of the whole part before the fraction
+ * @return nanoseconds representing the fractional part
+ */
 @kotlin.internal.InlineOnly
-private inline fun Long.toNanos(unit: DurationUnit): Long = (this * unit.fractionMultiplier).roundToLong()
+private inline fun Long.fractionDigitsToNanos(unit: DurationUnit): Long = (this * unit.fractionMultiplier).roundToLong()
 
+/**
+ * Converts a fraction parsed as Double to nanoseconds for the given unit.
+ * Used as fallback for fractions with more than 15 digits.
+ * @param unit the duration unit of the whole part before the fraction
+ * @return nanoseconds representing the fractional part
+ */
 @kotlin.internal.InlineOnly
-private inline fun Double.toNanos(unit: DurationUnit): Long = (this * unit.fallbackFractionMultiplier).roundToLong()
+private inline fun Double.fractionAsDoubleToNanos(unit: DurationUnit): Long = (this * unit.fallbackFractionMultiplier).roundToLong()
 
 /**
  * Handles parsing errors based on the throwException flag.
