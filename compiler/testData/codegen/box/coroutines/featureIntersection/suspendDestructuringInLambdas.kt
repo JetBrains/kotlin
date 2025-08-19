@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // WITH_STDLIB
 // WITH_COROUTINES
 import helpers.*
@@ -18,7 +19,7 @@ fun box(): String {
     var result = ""
 
     builder {
-        (x, y) ->
+        [x, y] ->
         result = x + y
     }
 

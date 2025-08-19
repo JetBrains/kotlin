@@ -53,9 +53,9 @@ fun box(): String {
         array[index] = 8
     }
 
-    for ((i, v) in (0..array.size - 1 step 2).withIndex()) {
-        array[v] = 8
-        array[i] = 6
+    for ((index, value) in (0..array.size - 1 step 2).withIndex()) {
+        array[value] = 8
+        array[index] = 6
     }
     for (i in array.reversed()) {
         sum += i

@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // WITH_STDLIB
 // FILECHECK_STAGE: CStubs
 import kotlin.test.*
@@ -7,7 +8,7 @@ import kotlin.test.*
 // CHECK-LABEL: epilogue:
 fun testIntForWithIndex(): Int {
     var s = 0
-    for ((index, elem) in (1..5).withIndex()) {
+    for ([index, elem] in (1..5).withIndex()) {
         s = s * 10 + index * elem
     }
     return s
@@ -18,7 +19,7 @@ fun testIntForWithIndex(): Int {
 // CHECK-LABEL: epilogue:
 fun testIntForWithIndexNotUsed(): Int {
     var s = 0
-    for ((_, _) in (1..5).withIndex()) {
+    for ([_, _] in (1..5).withIndex()) {
         s++
     }
     return s
@@ -29,7 +30,7 @@ fun testIntForWithIndexNotUsed(): Int {
 // CHECK-LABEL: epilogue:
 fun testIntForWithIndexPartiallyUsed(): Int {
     var s = 0
-    for ((index, _) in (1..5).withIndex()) {
+    for ([index, _] in (1..5).withIndex()) {
         s = s * 10 + index
     }
     return s
@@ -41,7 +42,7 @@ fun testIntForWithIndexPartiallyUsed(): Int {
 fun testIntForWithIndexAndDestructor(): Int {
     var s = 0
     for (ie in (1..5).withIndex()) {
-        val (index, elem) = ie
+        val [index, elem] = ie
         s = s * 10 + index * elem
     }
     return s
@@ -63,7 +64,7 @@ fun testIntForWithIndexAndDestructorNotUsed(): Int {
 // CHECK-LABEL: epilogue:
 fun testIntArrayForWithIndex(): Int {
     var s = 0
-    for ((index, elem) in intArrayOf(1, 2, 3, 4, 5).withIndex()) {
+    for ([index, elem] in intArrayOf(1, 2, 3, 4, 5).withIndex()) {
         s = s * 10 + index * elem
     }
     return s
@@ -74,7 +75,7 @@ fun testIntArrayForWithIndex(): Int {
 // CHECK-LABEL: epilogue:
 fun testUIntArrayForWithIndex(): Int {
     var s = 0
-    for ((index, elem) in uintArrayOf(1u, 2u, 3u, 4u, 5u).withIndex()) {
+    for ([index, elem] in uintArrayOf(1u, 2u, 3u, 4u, 5u).withIndex()) {
         s = s * 10 + index * elem.toInt()
     }
     return s
@@ -85,7 +86,7 @@ fun testUIntArrayForWithIndex(): Int {
 // CHECK-LABEL: epilogue:
 fun testForStringWithIndex(): Int {
     var s = 0
-    for ((index, elem) in "ABC".withIndex()) {
+    for ([index, elem] in "ABC".withIndex()) {
         s = s * 10 + index * elem.code
     }
     return s
@@ -100,7 +101,7 @@ fun testIntForWithIndexWithTemporary(): Int {
     val intRange = 1..5
     val withIndex1 = intRange.withIndex()
     val withIndex2 = withIndex1
-    for ((index, elem) in withIndex2) {
+    for ([index, elem] in withIndex2) {
         s = s * 10 + index * elem
     }
     return s
@@ -112,7 +113,7 @@ fun testIntForWithIndexWithTemporary(): Int {
 // CHECK-LABEL: epilogue:
 fun testIntWithIndexForEach(): Int {
     var s = 0
-    (1 .. 5).withIndex().forEach { (index, elem) ->
+    (1 .. 5).withIndex().forEach { [index, elem] ->
         s = s * 10 + index * elem
     }
     return s
@@ -124,7 +125,7 @@ fun testIntWithIndexForEach(): Int {
 // CHECK-LABEL: epilogue:
 fun testIntSequenceWithIndex(): Int {
     var s = 0
-    for ((index, elem) in (0..4).asSequence().withIndex()) {
+    for ([index, elem] in (0..4).asSequence().withIndex()) {
         s = s * 10 + index * elem
     }
     return s
@@ -136,7 +137,7 @@ fun testIntSequenceWithIndex(): Int {
 // CHECK-LABEL: epilogue:
 fun testIntForEachSequenceWithIndex(): Int {
     var s = 0
-    (0..4).asSequence().withIndex().forEach { (index, elem) ->
+    (0..4).asSequence().withIndex().forEach { [index, elem] ->
         s = s * 10 + index * elem
     }
     return s

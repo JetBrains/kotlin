@@ -1,4 +1,4 @@
-// LANGUAGE: +StrictJavaNullabilityAssertions
+// LANGUAGE: +StrictJavaNullabilityAssertions +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND_K1: JVM_IR
 // WITH_STDLIB
@@ -13,12 +13,12 @@ import kotlin.test.*
 fun box(): String {
     // Sanity check to make sure there IS an exception even when not in a for-loop
     try {
-        val (index, i) = J.iteratorOfNotNull().withIndex().next()
+        val [index, i] = J.iteratorOfNotNull().withIndex().next()
         return "Fail: should throw on get()"
     } catch (e: NullPointerException) {}
 
     try {
-        for ((index, i) in J.iteratorOfNotNull().withIndex()) {
+        for ([index, i] in J.iteratorOfNotNull().withIndex()) {
             return "Fail: should throw on get() in loop header"
         }
     }

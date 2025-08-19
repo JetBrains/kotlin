@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // OPT_IN: kotlin.contracts.ExperimentalContracts
 // WITH_STDLIB
 
@@ -12,7 +13,7 @@ fun runOnce(action: () -> Unit) {
 
 fun ok(): String {
     val res: String
-    val (o, _) = "OK" to "FAIL"
+    val [o, _] = "OK" to "FAIL"
     runOnce {
         res = o
     }

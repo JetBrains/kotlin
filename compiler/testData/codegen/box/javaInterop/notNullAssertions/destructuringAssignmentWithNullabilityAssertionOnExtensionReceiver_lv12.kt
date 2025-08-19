@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 // FILE: destructuringAssignmentWithNullabilityAssertionOnExtensionReceiver_lv12.kt
@@ -15,7 +16,7 @@ fun use(x: Any) {}
 
 fun box(): String {
     assertFailsWith<NullPointerException> {
-        val (a, b) = J.j()
+        val [a, b] = J.j()
     }
     if (!component1Evaluated) return "component1 should be evaluated"
     return "OK"

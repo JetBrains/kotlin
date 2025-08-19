@@ -1,4 +1,4 @@
-// LANGUAGE: +UnnamedLocalVariables
+// LANGUAGE: +UnnamedLocalVariables +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // IGNORE_BACKEND_K1: ANY
 
 var result = "FAIL: call() must be called"
@@ -15,6 +15,6 @@ object Structure {
 
 fun box(): String {
     val _ = call()
-    val (_) = Structure
+    val [_] = Structure
     return result
 }

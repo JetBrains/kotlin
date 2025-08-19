@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // WITH_STDLIB
 // FILECHECK_STAGE: CStubs
 import kotlin.test.*
@@ -35,7 +36,7 @@ fun testIntSumOfArrayReversed(): Int {
 // CHECK-LABEL: epilogue:
 fun testIntForWithIndexReversed(): Int {
     var s = 0
-    for ((index, elem) in (1..5).withIndex().reversed()) {
+    for ([index, elem] in (1..5).withIndex().reversed()) {
         s = s * 10 + index * elem
     }
     return s
