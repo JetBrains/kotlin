@@ -1027,8 +1027,7 @@ public inline operator fun Double.times(duration: Duration): Duration = duration
 
 
 private fun parseDuration(value: String, strictIso: Boolean, throwException: Boolean = true): Duration {
-    val length = value.length
-    if (length == 0) return handleError(throwException, "The string is empty")
+    if (value.isEmpty()) return handleError(throwException, "The string is empty")
     var index = 0
     val firstChar = value[index]
     var isNegative = false
@@ -1040,13 +1039,13 @@ private fun parseDuration(value: String, strictIso: Boolean, throwException: Boo
     }
     val hasSign = index > 0
     val result = when {
-        length <= index -> return handleError(throwException, "No components")
-        value[index] == 'P' -> parseIsoStringFormat(value, index + 1, length, throwException)
+        value.length <= index -> return handleError(throwException, "No components")
+        value[index] == 'P' -> parseIsoStringFormat(value, index + 1, value.length, throwException)
         strictIso -> return handleError(throwException)
-        value.regionMatches(index, INFINITY_STRING, 0, length = maxOf(length - index, INFINITY_STRING.length), ignoreCase = true) -> {
+        value.regionMatches(index, INFINITY_STRING, 0, length = maxOf(value.length - index, INFINITY_STRING.length), ignoreCase = true) -> {
             Duration.INFINITE
         }
-        else -> parseDefaultStringFormat(value, index, length, hasSign, throwException)
+        else -> parseDefaultStringFormat(value, index, value.length, hasSign, throwException)
     }
     return if (isNegative && result != Duration.INVALID) -result else result
 }
