@@ -165,6 +165,8 @@ abstract class BenchmarkTemplate(
                 gradleProfilerBin.absolutePath,
                 "--benchmark",
                 "--measure-config-time",
+                "--async-profiler-event", "cpu",
+                "--profile", "async-profiler",
                 "--project-dir",
                 projectRepoDir.absolutePath,
                 "--scenario-file",
