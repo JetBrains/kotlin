@@ -46,7 +46,7 @@ runBenchmarks(
             iterations = defaultIterations
 
             useGradleArgs(
-                "-Pkotlin.kmp.unresolvedDependenciesDiagnostic=false",
+//                "-Pkotlin.kmp.unresolvedDependenciesDiagnostic=false",
             )
 
             runTasks("jsJar")
@@ -58,7 +58,7 @@ runBenchmarks(
             iterations = defaultIterations
 
             useGradleArgs(
-                "-Pkotlin.kmp.unresolvedDependenciesDiagnostic=false",
+//                "-Pkotlin.kmp.unresolvedDependenciesDiagnostic=false",
             )
 
             runTasks("jsJar")
@@ -69,7 +69,7 @@ runBenchmarks(
             title = "Dry run configuration time"
             useGradleArgs(
                 "-m",
-                "-Pkotlin.kmp.unresolvedDependenciesDiagnostic=false",
+//                "-Pkotlin.kmp.unresolvedDependenciesDiagnostic=false",
             )
             iterations = defaultIterations
 
@@ -81,7 +81,7 @@ runBenchmarks(
             iterations = defaultIterations
 
             useGradleArgs(
-                "-Pkotlin.kmp.unresolvedDependenciesDiagnostic=false",
+//                "-Pkotlin.kmp.unresolvedDependenciesDiagnostic=false",
             )
 
             runTasks("help")
@@ -92,7 +92,7 @@ runBenchmarks(
             iterations = defaultIterations
 
             useGradleArgs(
-                "-Pkotlin.kmp.unresolvedDependenciesDiagnostic=false",
+//                "-Pkotlin.kmp.unresolvedDependenciesDiagnostic=false",
             )
 
             runTasks("jsJar")
