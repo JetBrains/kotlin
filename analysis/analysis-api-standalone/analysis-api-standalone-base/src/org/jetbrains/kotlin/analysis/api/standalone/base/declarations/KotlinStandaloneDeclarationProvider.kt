@@ -141,15 +141,14 @@ class KotlinStandaloneDeclarationProvider internal constructor(
     private val KaLibraryModule.canComputePackageSetFromIndex: Boolean
         get() = KotlinPlatformSettings.getInstance(project).deserializedDeclarationsOrigin == KotlinDeserializedDeclarationsOrigin.STUBS
 
-    private fun computePackageSetFromIndex(): Set<String> =
-        buildSet {
-            addPackageNamesInScope(index.classMap)
-            addPackageNamesInScope(index.typeAliasMap)
-            addPackageNamesInScope(index.topLevelPropertyMap)
-            addPackageNamesInScope(index.topLevelFunctionMap)
-        }
+    private fun computePackageSetFromIndex(): Set<String> = buildSet {
+        addPackageNamesInScope(index.classMap)
+        addPackageNamesInScope(index.typeAliasMap)
+        addPackageNamesInScope(index.topLevelPropertyMap)
+        addPackageNamesInScope(index.topLevelFunctionMap)
+    }
 
-    private fun <T : KtDeclaration> MutableSet<String>.addPackageNamesInScope(map: Map<FqName, MutableSet<T>>) {
+    private fun <T : KtDeclaration> MutableSet<String>.addPackageNamesInScope(map: Map<FqName, Set<T>>) {
         map.forEach { (fqName, declarations) ->
             if (declarations.any { it.inScope }) {
                 add(fqName.asString())
@@ -242,33 +241,63 @@ class KotlinStandaloneDeclarationProviderFactory(
     shouldBuildStubsForBinaryLibraries: Boolean = false,
     private val shouldComputeBinaryLibraryPackageSets: Boolean = false,
 ) : KotlinDeclarationProviderFactory {
-    private val index = KotlinStandaloneDeclarationIndex()
+    private val indexData: IndexData = computeIndex(
+        project = project,
+        sourceKtFiles = sourceKtFiles,
+        binaryRoots = binaryRoots,
+        sharedBinaryRoots = sharedBinaryRoots,
+        skipBuiltins = skipBuiltins,
+        shouldBuildStubsForBinaryLibraries = shouldBuildStubsForBinaryLibraries,
+    )
 
-    private val psiManager = PsiManager.getInstance(project)
-    private val builtInDecompiler = KotlinBuiltInDecompiler()
-    private val createdFakeKtFiles = mutableListOf<KtFile>()
+    private val index: KotlinStandaloneDeclarationIndex
+        get() = indexData.index
 
-    private fun loadBuiltIns(): Collection<KotlinFileStubImpl> {
-        val cacheService = ApplicationManager.getApplication().serviceOrNull<KotlinFakeClsStubsCache>()
-        return BuiltinsVirtualFileProvider.getInstance().getBuiltinVirtualFiles().mapNotNull { virtualFile ->
-            val stub = if (cacheService != null)
-                cacheService.processBuiltinsFile(virtualFile, this::createFileStub)
-            else
-                createFileStub(virtualFile)
-
-            stub?.let {
-                registerStub(it, virtualFile, isSharedStub = cacheService != null)
-            }
-        }
+    override fun createDeclarationProvider(scope: GlobalSearchScope, contextualModule: KaModule?): KotlinDeclarationProvider {
+        return KotlinStandaloneDeclarationProvider(index, scope, contextualModule, environment, shouldComputeBinaryLibraryPackageSets)
     }
 
-    private fun createFileStub(virtualFile: VirtualFile): KotlinFileStubImpl? {
+    fun getAdditionalCreatedKtFiles(): List<KtFile> {
+        return indexData.fakeKtFiles
+    }
+
+    fun getAllKtClasses(): List<KtClassOrObject> = index.classMap.values.flattenTo(mutableListOf())
+
+    fun getDirectInheritorCandidates(baseClassName: Name): Set<KtClassOrObject> =
+        index.classesBySupertypeName[baseClassName].orEmpty()
+
+    fun getInheritableTypeAliases(aliasedName: Name): Set<KtTypeAlias> =
+        index.inheritableTypeAliasesByAliasedName[aliasedName].orEmpty()
+}
+
+private class IndexData(val fakeKtFiles: List<KtFile>, val index: KotlinStandaloneDeclarationIndex)
+
+private fun computeIndex(
+    project: Project,
+    sourceKtFiles: Collection<KtFile>,
+    binaryRoots: List<VirtualFile>,
+    sharedBinaryRoots: List<VirtualFile>,
+    skipBuiltins: Boolean,
+    shouldBuildStubsForBinaryLibraries: Boolean,
+): IndexData {
+    val index = KotlinStandaloneDeclarationIndex()
+
+    val psiManager = PsiManager.getInstance(project)
+    val builtInDecompiler = KotlinBuiltInDecompiler()
+    val createdFakeKtFiles = mutableListOf<KtFile>()
+
+    fun createFileStub(virtualFile: VirtualFile): KotlinFileStubImpl? {
         val fileContent = FileContentImpl.createByFile(virtualFile, project)
         return builtInDecompiler.stubBuilder.buildFileStub(fileContent) as? KotlinFileStubImpl
     }
 
+    class KtClassFileViewProvider(
+        psiManager: PsiManager,
+        virtualFile: VirtualFile,
+    ) : SingleRootFileViewProvider(psiManager, virtualFile, true, KotlinLanguage.INSTANCE)
+
     @OptIn(KaImplementationDetail::class)
-    private fun registerStub(stub: KotlinFileStubImpl, virtualFile: VirtualFile, isSharedStub: Boolean): KotlinFileStubImpl {
+    fun registerStub(stub: KotlinFileStubImpl, virtualFile: VirtualFile, isSharedStub: Boolean): KotlinFileStubImpl {
         val resultStub = if (isSharedStub) {
             if (stub.psi != null) {
                 error("Shared stub cannot have psi as it leads to a project leak")
@@ -296,12 +325,224 @@ class KotlinStandaloneDeclarationProviderFactory(
         return resultStub
     }
 
-    private class KtClassFileViewProvider(
-        psiManager: PsiManager,
-        virtualFile: VirtualFile,
-    ) : SingleRootFileViewProvider(psiManager, virtualFile, true, KotlinLanguage.INSTANCE)
+    fun loadBuiltIns(): Collection<KotlinFileStubImpl> {
+        val cacheService = ApplicationManager.getApplication().serviceOrNull<KotlinFakeClsStubsCache>()
+        return BuiltinsVirtualFileProvider.getInstance().getBuiltinVirtualFiles().mapNotNull { virtualFile ->
+            val stub = if (cacheService != null)
+                cacheService.processBuiltinsFile(virtualFile, ::createFileStub)
+            else
+                createFileStub(virtualFile)
 
-    private inner class KtDeclarationRecorder : KtVisitorVoid() {
+            stub?.let {
+                registerStub(it, virtualFile, isSharedStub = cacheService != null)
+            }
+        }
+    }
+
+
+    fun addToFacadeFileMap(file: KtFile) {
+        if (!file.hasTopLevelCallables()) return
+        index.facadeFileMap.computeIfAbsent(file.packageFqName) {
+            mutableSetOf()
+        }.add(file)
+    }
+
+    fun addToScriptMap(script: KtScript) {
+        index.scriptMap.computeIfAbsent(script.fqName) {
+            mutableSetOf()
+        }.add(script)
+    }
+
+
+    fun addToClassMap(classOrObject: KtClassOrObject) {
+        classOrObject.getClassId()?.let { classId ->
+            index.classMap.computeIfAbsent(classId.packageFqName) {
+                mutableSetOf()
+            }.add(classOrObject)
+        }
+    }
+
+    fun indexSupertypeNames(classOrObject: KtClassOrObject) {
+        classOrObject.getSuperNames().forEach { superName ->
+            index.classesBySupertypeName
+                .computeIfAbsent(Name.identifier(superName)) { mutableSetOf() }
+                .add(classOrObject)
+        }
+    }
+
+
+    fun indexClassOrObject(classOrObject: KtClassOrObject) {
+        addToClassMap(classOrObject)
+        indexSupertypeNames(classOrObject)
+    }
+
+    fun addToTypeAliasMap(typeAlias: KtTypeAlias) {
+        typeAlias.getClassId()?.let { classId ->
+            index.typeAliasMap.computeIfAbsent(classId.packageFqName) {
+                mutableSetOf()
+            }.add(typeAlias)
+        }
+    }
+
+
+    /**
+     * This is a simplified version of `KtTypeElement.index()` from the IDE. If we need to move more indexing code to Standalone, we should
+     * consider moving more code from the IDE to the Analysis API.
+     *
+     * @see KotlinStandaloneDeclarationIndex.inheritableTypeAliasesByAliasedName
+     */
+    fun findInheritableSimpleNames(typeElement: KtTypeElement): List<String> {
+        return when (typeElement) {
+            is KtUserType -> {
+                val referenceName = typeElement.referencedName ?: return emptyList()
+
+                buildList {
+                    add(referenceName)
+
+                    val ktFile = typeElement.containingKtFile
+                    if (!ktFile.isCompiled) {
+                        addIfNotNull(getImportedSimpleNameByImportAlias(typeElement.containingKtFile, referenceName))
+                    }
+                }
+            }
+
+            // `typealias T = A?` is inheritable.
+            is KtNullableType -> typeElement.innerType?.let(::findInheritableSimpleNames) ?: emptyList()
+
+            else -> emptyList()
+        }
+    }
+
+
+    fun processMultifileClassStub(ktFileStub: KotlinFileStubImpl) {
+        val ktFile: KtFile = ktFileStub.psi
+
+        val partNames = ktFileStub.facadePartSimpleNames ?: return
+        val packageFqName = ktFileStub.getPackageFqName()
+        for (partName in partNames) {
+            val multiFileClassPartFqName: FqName = packageFqName.child(Name.identifier(partName))
+            index.multiFileClassPartMap.computeIfAbsent(multiFileClassPartFqName) { mutableSetOf() }.add(ktFile)
+        }
+    }
+
+    fun indexTypeAliasDefinition(typeAlias: KtTypeAlias) {
+        val typeElement = typeAlias.getTypeReference()?.typeElement ?: return
+
+        findInheritableSimpleNames(typeElement).forEach { expandedName ->
+            index.inheritableTypeAliasesByAliasedName
+                .computeIfAbsent(Name.identifier(expandedName)) { mutableSetOf() }
+                .add(typeAlias)
+        }
+    }
+
+    fun indexTypeAlias(typeAlias: KtTypeAlias) {
+        addToTypeAliasMap(typeAlias)
+        indexTypeAliasDefinition(typeAlias)
+    }
+
+    fun addToFunctionMap(function: KtNamedFunction) {
+        if (!function.isTopLevel) return
+        val packageFqName = (function.parent as KtFile).packageFqName
+        index.topLevelFunctionMap.computeIfAbsent(packageFqName) {
+            mutableSetOf()
+        }.add(function)
+    }
+
+    fun addToPropertyMap(property: KtProperty) {
+        if (!property.isTopLevel) return
+        val packageFqName = (property.parent as KtFile).packageFqName
+        index.topLevelPropertyMap.computeIfAbsent(packageFqName) {
+            mutableSetOf()
+        }.add(property)
+    }
+
+    fun indexStub(stub: StubElement<*>) {
+        when (stub) {
+            is KotlinClassStubImpl -> {
+                indexClassOrObject(stub.psi)
+                // member functions and properties
+                stub.childrenStubs.forEach(::indexStub)
+            }
+            is KotlinObjectStubImpl -> {
+                indexClassOrObject(stub.psi)
+                // member functions and properties
+                stub.childrenStubs.forEach(::indexStub)
+            }
+            is KotlinTypeAliasStubImpl -> indexTypeAlias(stub.psi)
+            is KotlinFunctionStubImpl -> addToFunctionMap(stub.psi)
+            is KotlinPropertyStubImpl -> addToPropertyMap(stub.psi)
+            is KotlinPlaceHolderStubImpl -> {
+                if (stub.stubType == KtStubElementTypes.CLASS_BODY) {
+                    stub.childrenStubs.filterIsInstance<KotlinClassOrObjectStub<*>>().forEach(::indexStub)
+                }
+            }
+        }
+    }
+
+    fun processStub(ktFileStub: KotlinFileStubImpl) {
+        addToFacadeFileMap(ktFileStub.psi)
+        processMultifileClassStub(ktFileStub)
+
+        // top-level functions and properties, built-in classes
+        ktFileStub.childrenStubs.forEach(::indexStub)
+    }
+
+    fun buildStubByVirtualFile(
+        file: VirtualFile,
+        binaryClassCache: ClsKotlinBinaryClassCache,
+    ): KotlinFileStubImpl? {
+        val fileContent = FileContentImpl.createByFile(file)
+        val fileType = fileContent.fileType
+        val stubBuilder = when (fileType) {
+            JavaClassFileType.INSTANCE if binaryClassCache.isKotlinJvmCompiledFile(file, fileContent.content) -> {
+                KotlinClsStubBuilder()
+            }
+
+            KotlinBuiltInFileType -> {
+                builtInDecompiler.stubBuilder
+            }
+
+            KlibMetaFileType -> K2KotlinNativeMetadataDecompiler().stubBuilder
+            else -> return null
+        }
+
+        return stubBuilder.buildFileStub(fileContent) as? KotlinFileStubImpl
+    }
+
+    fun collectStubsFromBinaryRoot(
+        binaryRoot: VirtualFile,
+        binaryClassCache: ClsKotlinBinaryClassCache,
+    ): Map<VirtualFile, KotlinFileStubImpl> =
+        buildMap {
+            VfsUtilCore.visitChildrenRecursively(binaryRoot, object : VirtualFileVisitor<Void>() {
+                override fun visitFile(file: VirtualFile): Boolean {
+                    if (!file.isDirectory) {
+                        val stub = buildStubByVirtualFile(file, binaryClassCache) ?: return true
+                        put(file, stub)
+                    }
+                    return true
+                }
+            })
+        }
+
+    fun processCollectedBinaryStubs(stubs: Map<VirtualFile, KotlinFileStubImpl>, isSharedStubs: Boolean) {
+        val (builtinEntries, otherEntries) = stubs.entries.partition { entry -> entry.key.fileType == KotlinBuiltInFileType }
+
+        fun process(entries: List<Map.Entry<VirtualFile, KotlinFileStubImpl>>) {
+            entries.forEach { entry ->
+                val stub = registerStub(entry.value, entry.key, isSharedStubs)
+                processStub(stub)
+            }
+        }
+
+        process(otherEntries)
+
+        // Due to KT-78748, we have to index builtin declarations last so that class declarations are preferred. Note that this currently
+        // only affects Analysis API tests, since production Standalone doesn't index binary declarations as stubs.
+        process(builtinEntries)
+    }
+
+    class KtDeclarationRecorder : KtVisitorVoid() {
         override fun visitElement(element: PsiElement) {
             element.acceptChildren(this)
         }
@@ -333,270 +574,59 @@ class KotlinStandaloneDeclarationProviderFactory(
         }
     }
 
-    private fun addToFacadeFileMap(file: KtFile) {
-        if (!file.hasTopLevelCallables()) return
-        index.facadeFileMap.computeIfAbsent(file.packageFqName) {
-            mutableSetOf()
-        }.add(file)
-    }
+    val recorder = KtDeclarationRecorder()
 
-    private fun addToScriptMap(script: KtScript) {
-        index.scriptMap.computeIfAbsent(script.fqName) {
-            mutableSetOf()
-        }.add(script)
-    }
-
-    private fun indexClassOrObject(classOrObject: KtClassOrObject) {
-        addToClassMap(classOrObject)
-        indexSupertypeNames(classOrObject)
-    }
-
-    private fun addToClassMap(classOrObject: KtClassOrObject) {
-        classOrObject.getClassId()?.let { classId ->
-            index.classMap.computeIfAbsent(classId.packageFqName) {
-                mutableSetOf()
-            }.add(classOrObject)
+    // Indexing built-ins
+    if (!skipBuiltins) {
+        loadBuiltIns().forEach {
+            processStub(it)
         }
     }
 
-    private fun indexSupertypeNames(classOrObject: KtClassOrObject) {
-        classOrObject.getSuperNames().forEach { superName ->
-            index.classesBySupertypeName
-                .computeIfAbsent(Name.identifier(superName)) { mutableSetOf() }
-                .add(classOrObject)
-        }
-    }
+    // We only need to index binary roots if we deserialize compiled symbols from stubs. When deserializing from class files, we don't
+    // need these symbols in the declaration provider.
+    if (shouldBuildStubsForBinaryLibraries) {
+        val binaryClassCache = ClsKotlinBinaryClassCache.getInstance()
 
-    private fun indexTypeAlias(typeAlias: KtTypeAlias) {
-        addToTypeAliasMap(typeAlias)
-        indexTypeAliasDefinition(typeAlias)
-    }
-
-    private fun addToTypeAliasMap(typeAlias: KtTypeAlias) {
-        typeAlias.getClassId()?.let { classId ->
-            index.typeAliasMap.computeIfAbsent(classId.packageFqName) {
-                mutableSetOf()
-            }.add(typeAlias)
-        }
-    }
-
-    private fun indexTypeAliasDefinition(typeAlias: KtTypeAlias) {
-        val typeElement = typeAlias.getTypeReference()?.typeElement ?: return
-
-        findInheritableSimpleNames(typeElement).forEach { expandedName ->
-            index.inheritableTypeAliasesByAliasedName
-                .computeIfAbsent(Name.identifier(expandedName)) { mutableSetOf() }
-                .add(typeAlias)
-        }
-    }
-
-    /**
-     * This is a simplified version of `KtTypeElement.index()` from the IDE. If we need to move more indexing code to Standalone, we should
-     * consider moving more code from the IDE to the Analysis API.
-     *
-     * @see KotlinStandaloneDeclarationIndex.inheritableTypeAliasesByAliasedName
-     */
-    private fun findInheritableSimpleNames(typeElement: KtTypeElement): List<String> {
-        return when (typeElement) {
-            is KtUserType -> {
-                val referenceName = typeElement.referencedName ?: return emptyList()
-
-                buildList {
-                    add(referenceName)
-
-                    val ktFile = typeElement.containingKtFile
-                    if (!ktFile.isCompiled) {
-                        addIfNotNull(getImportedSimpleNameByImportAlias(typeElement.containingKtFile, referenceName))
-                    }
-                }
-            }
-
-            // `typealias T = A?` is inheritable.
-            is KtNullableType -> typeElement.innerType?.let(::findInheritableSimpleNames) ?: emptyList()
-
-            else -> emptyList()
-        }
-    }
-
-    private fun addToFunctionMap(function: KtNamedFunction) {
-        if (!function.isTopLevel) return
-        val packageFqName = (function.parent as KtFile).packageFqName
-        index.topLevelFunctionMap.computeIfAbsent(packageFqName) {
-            mutableSetOf()
-        }.add(function)
-    }
-
-    private fun addToPropertyMap(property: KtProperty) {
-        if (!property.isTopLevel) return
-        val packageFqName = (property.parent as KtFile).packageFqName
-        index.topLevelPropertyMap.computeIfAbsent(packageFqName) {
-            mutableSetOf()
-        }.add(property)
-    }
-
-    init {
-        val recorder = KtDeclarationRecorder()
-
-        // Indexing built-ins
-        if (!skipBuiltins) {
-            loadBuiltIns().forEach {
-                processStub(it)
-            }
+        for (root in sharedBinaryRoots) {
+            KotlinFakeClsStubsCache.processAdditionalRoot(root) { additionalRoot ->
+                collectStubsFromBinaryRoot(additionalRoot, binaryClassCache)
+            }?.let { processCollectedBinaryStubs(it, isSharedStubs = true) }
         }
 
-        // We only need to index binary roots if we deserialize compiled symbols from stubs. When deserializing from class files, we don't
-        // need these symbols in the declaration provider.
-        if (shouldBuildStubsForBinaryLibraries) {
-            val binaryClassCache = ClsKotlinBinaryClassCache.getInstance()
+        // In contrast to `sharedBinaryRoots`, which are shared between many different projects (e.g. the Kotlin stdlib), `binaryRoots`
+        // come from binary libraries which are specific to the project. Caching them in `KotlinFakeClsStubsCache` won't have any
+        // performance advantage.
+        binaryRoots
+            .map { collectStubsFromBinaryRoot(it, binaryClassCache) }
+            .forEach { processCollectedBinaryStubs(it, isSharedStubs = false) }
 
-            for (root in sharedBinaryRoots) {
-                KotlinFakeClsStubsCache.processAdditionalRoot(root) { additionalRoot ->
-                    collectStubsFromBinaryRoot(additionalRoot, binaryClassCache)
-                }?.let { processCollectedBinaryStubs(it, isSharedStubs = true) }
-            }
+        for (file in sourceKtFiles) {
+            if (!file.isCompiled) continue
 
-            // In contrast to `sharedBinaryRoots`, which are shared between many different projects (e.g. the Kotlin stdlib), `binaryRoots`
-            // come from binary libraries which are specific to the project. Caching them in `KotlinFakeClsStubsCache` won't have any
-            // performance advantage.
-            binaryRoots
-                .map { collectStubsFromBinaryRoot(it, binaryClassCache) }
-                .forEach { processCollectedBinaryStubs(it, isSharedStubs = false) }
+            val stub = buildStubByVirtualFile(file.virtualFile, binaryClassCache)
 
-            for (file in sourceKtFiles) {
-                if (!file.isCompiled) continue
+            // Only files for which stub exists should be indexed, so some synthetic classes should be ignored.
+            // This behavior is closer to real indices.
+            if (stub != null) {
+                stub.psi = file
+                processMultifileClassStub(stub)
 
-                val stub = buildStubByVirtualFile(file.virtualFile, binaryClassCache)
-
-                // Only files for which stub exists should be indexed, so some synthetic classes should be ignored.
-                // This behavior is closer to real indices.
-                if (stub != null) {
-                    stub.psi = file
-                    processMultifileClassStub(stub)
-
-                    file.accept(recorder)
-                }
-            }
-        }
-
-        sourceKtFiles.forEach { file ->
-            if (!shouldBuildStubsForBinaryLibraries || !file.isCompiled) {
                 file.accept(recorder)
             }
         }
     }
 
-    private fun indexStub(stub: StubElement<*>) {
-        when (stub) {
-            is KotlinClassStubImpl -> {
-                indexClassOrObject(stub.psi)
-                // member functions and properties
-                stub.childrenStubs.forEach(::indexStub)
-            }
-            is KotlinObjectStubImpl -> {
-                indexClassOrObject(stub.psi)
-                // member functions and properties
-                stub.childrenStubs.forEach(::indexStub)
-            }
-            is KotlinTypeAliasStubImpl -> indexTypeAlias(stub.psi)
-            is KotlinFunctionStubImpl -> addToFunctionMap(stub.psi)
-            is KotlinPropertyStubImpl -> addToPropertyMap(stub.psi)
-            is KotlinPlaceHolderStubImpl -> {
-                if (stub.stubType == KtStubElementTypes.CLASS_BODY) {
-                    stub.childrenStubs.filterIsInstance<KotlinClassOrObjectStub<*>>().forEach(::indexStub)
-                }
-            }
+    sourceKtFiles.forEach { file ->
+        if (!shouldBuildStubsForBinaryLibraries || !file.isCompiled) {
+            file.accept(recorder)
         }
     }
 
-    private fun processMultifileClassStub(ktFileStub: KotlinFileStubImpl) {
-        val ktFile: KtFile = ktFileStub.psi
-
-        val partNames = ktFileStub.facadePartSimpleNames ?: return
-        val packageFqName = ktFileStub.getPackageFqName()
-        for (partName in partNames) {
-            val multiFileClassPartFqName: FqName = packageFqName.child(Name.identifier(partName))
-            index.multiFileClassPartMap.computeIfAbsent(multiFileClassPartFqName) { mutableSetOf() }.add(ktFile)
-        }
-    }
-
-    private fun processStub(ktFileStub: KotlinFileStubImpl) {
-        addToFacadeFileMap(ktFileStub.psi)
-        processMultifileClassStub(ktFileStub)
-
-        // top-level functions and properties, built-in classes
-        ktFileStub.childrenStubs.forEach(::indexStub)
-    }
-
-    private fun collectStubsFromBinaryRoot(
-        binaryRoot: VirtualFile,
-        binaryClassCache: ClsKotlinBinaryClassCache,
-    ): Map<VirtualFile, KotlinFileStubImpl> =
-        buildMap {
-            VfsUtilCore.visitChildrenRecursively(binaryRoot, object : VirtualFileVisitor<Void>() {
-                override fun visitFile(file: VirtualFile): Boolean {
-                    if (!file.isDirectory) {
-                        val stub = buildStubByVirtualFile(file, binaryClassCache) ?: return true
-                        put(file, stub)
-                    }
-                    return true
-                }
-            })
-        }
-
-    private fun buildStubByVirtualFile(
-        file: VirtualFile,
-        binaryClassCache: ClsKotlinBinaryClassCache,
-    ): KotlinFileStubImpl? {
-        val fileContent = FileContentImpl.createByFile(file)
-        val fileType = fileContent.fileType
-        val stubBuilder = when (fileType) {
-            JavaClassFileType.INSTANCE if binaryClassCache.isKotlinJvmCompiledFile(file, fileContent.content) -> {
-                KotlinClsStubBuilder()
-            }
-
-            KotlinBuiltInFileType -> {
-                builtInDecompiler.stubBuilder
-            }
-
-            KlibMetaFileType -> K2KotlinNativeMetadataDecompiler().stubBuilder
-            else -> return null
-        }
-
-        return stubBuilder.buildFileStub(fileContent) as? KotlinFileStubImpl
-    }
-
-    private fun processCollectedBinaryStubs(stubs: Map<VirtualFile, KotlinFileStubImpl>, isSharedStubs: Boolean) {
-        val (builtinEntries, otherEntries) = stubs.entries.partition { entry -> entry.key.fileType == KotlinBuiltInFileType }
-
-        fun process(entries: List<Map.Entry<VirtualFile, KotlinFileStubImpl>>) {
-            entries.forEach { entry ->
-                val stub = registerStub(entry.value, entry.key, isSharedStubs)
-                processStub(stub)
-            }
-        }
-
-        process(otherEntries)
-
-        // Due to KT-78748, we have to index builtin declarations last so that class declarations are preferred. Note that this currently
-        // only affects Analysis API tests, since production Standalone doesn't index binary declarations as stubs.
-        process(builtinEntries)
-    }
-
-    override fun createDeclarationProvider(scope: GlobalSearchScope, contextualModule: KaModule?): KotlinDeclarationProvider {
-        return KotlinStandaloneDeclarationProvider(index, scope, contextualModule, environment, shouldComputeBinaryLibraryPackageSets)
-    }
-
-    fun getAdditionalCreatedKtFiles(): List<KtFile> {
-        return createdFakeKtFiles
-    }
-
-    fun getAllKtClasses(): List<KtClassOrObject> = index.classMap.values.flattenTo(mutableListOf())
-
-    fun getDirectInheritorCandidates(baseClassName: Name): Set<KtClassOrObject> =
-        index.classesBySupertypeName[baseClassName].orEmpty()
-
-    fun getInheritableTypeAliases(aliasedName: Name): Set<KtTypeAlias> =
-        index.inheritableTypeAliasesByAliasedName[aliasedName].orEmpty()
+    return IndexData(
+        fakeKtFiles = createdFakeKtFiles,
+        index = index,
+    )
 }
 
 /**
@@ -619,7 +649,7 @@ internal class KotlinFakeClsStubsCache {
     companion object {
         fun processAdditionalRoot(
             root: VirtualFile,
-            storage: (VirtualFile) -> Map<VirtualFile, KotlinFileStubImpl>
+            storage: (VirtualFile) -> Map<VirtualFile, KotlinFileStubImpl>,
         ): Map<VirtualFile, KotlinFileStubImpl>? {
             val service = ApplicationManager.getApplication().serviceOrNull<KotlinFakeClsStubsCache>() ?: return null
             return service.fakeFileClsStubs.computeIfAbsent(root.path) { _ ->
