@@ -30,7 +30,10 @@ import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
-import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getTopmostParentOfType
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFunctionStubImpl
@@ -469,11 +472,10 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
             deserializedContainerSourceProvider: DeserializedContainerSourceProvider,
             session: FirSession,
         ): FirPropertySymbol {
-            val propertyStub = property.stub as? KotlinPropertyStubImpl ?: loadStubByElement(property)
-            val propertyFile = property.containingKtFile
+            val compiledStub: KotlinPropertyStubImpl? = property.compiledStub
             val containerSource = deserializedContainerSourceProvider.getFacadeContainerSource(
-                file = propertyFile,
-                stubOrigin = propertyStub?.origin,
+                file = property.containingKtFile,
+                stubOrigin = compiledStub?.origin,
                 declarationOrigin = propertyOrigin,
             )
 
@@ -502,11 +504,10 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
             deserializedContainerSourceProvider: DeserializedContainerSourceProvider,
             session: FirSession,
         ): FirNamedFunctionSymbol? {
-            val functionStub = function.stub as? KotlinFunctionStubImpl ?: loadStubByElement(function)
-            val functionFile = function.containingKtFile
+            val compiledStub: KotlinFunctionStubImpl? = function.compiledStub
             val containerSource = deserializedContainerSourceProvider.getFacadeContainerSource(
-                file = functionFile,
-                stubOrigin = functionStub?.origin,
+                file = function.containingKtFile,
+                stubOrigin = compiledStub?.origin,
                 declarationOrigin = functionOrigin,
             )
 

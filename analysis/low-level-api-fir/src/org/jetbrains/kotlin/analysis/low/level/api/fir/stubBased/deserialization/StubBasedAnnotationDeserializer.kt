@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -63,7 +63,7 @@ internal class StubBasedAnnotationDeserializer(private val session: FirSession) 
     fun loadConstant(property: KtProperty, isUnsigned: Boolean, isFromAnnotation: Boolean): FirExpression? {
         // Default values for annotation properties have constant as a workaround for KT-58137 (ee30cc04ee810fcdd719085af3a0e0c1995a73ee)
         if (!property.hasModifier(KtTokens.CONST_KEYWORD) && !isFromAnnotation) return null
-        val propertyStub = (property.stub ?: loadStubByElement(property)) as? KotlinPropertyStubImpl ?: return null
+        val propertyStub: KotlinPropertyStubImpl = property.compiledStub ?: return null
         val constantValue = propertyStub.constantInitializer ?: return null
         val resultValue = when {
             !isUnsigned -> constantValue
@@ -86,10 +86,13 @@ internal class StubBasedAnnotationDeserializer(private val session: FirSession) 
             return null
         }
 
+        val compiledStub: KotlinAnnotationEntryStubImpl? = ktAnnotation.compiledStub
+        val valueArguments = compiledStub?.valueArguments
+
         return deserializeAnnotation(
             ktAnnotation,
             getAnnotationClassId(ktAnnotation),
-            ((ktAnnotation.stub ?: loadStubByElement(ktAnnotation)) as? KotlinAnnotationEntryStubImpl)?.valueArguments,
+            valueArguments,
             useSiteTarget,
         )
     }

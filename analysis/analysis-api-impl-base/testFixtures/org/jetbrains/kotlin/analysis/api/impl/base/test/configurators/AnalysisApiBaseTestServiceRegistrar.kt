@@ -1,15 +1,25 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.configurators
 
+import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.extensions.LoadingOrder
+import com.intellij.openapi.fileTypes.BinaryFileTypeDecompilers
 import com.intellij.openapi.project.Project
+import com.intellij.psi.ClassFileViewProviderFactory
+import com.intellij.psi.FileTypeFileViewProviders
 import com.intellij.psi.PsiClass
+import com.intellij.psi.compiled.ClassFileDecompilers
+import com.intellij.psi.impl.compiled.ClassFileDecompiler
+import com.intellij.psi.impl.compiled.ClassFileStubBuilder
+import com.intellij.psi.impl.compiled.ClsDecompilerImpl
+import com.intellij.psi.stubs.BinaryFileStubBuilders
 import org.jetbrains.kotlin.analysis.api.platform.KotlinDeserializedDeclarationsOrigin
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformSettings
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinAnnotationsResolverFactory
@@ -28,13 +38,16 @@ import org.jetbrains.kotlin.analysis.api.standalone.base.packages.KotlinStandalo
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.ClsJavaStubByVirtualFileCache
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.DecompiledLightClassesFactory
+import org.jetbrains.kotlin.analysis.decompiler.konan.K2KotlinNativeMetadataDecompiler
 import org.jetbrains.kotlin.analysis.decompiler.konan.KlibMetaFileType
-import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltInDefinitionFile
+import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInDecompiler
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInFileType
+import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinClassFileDecompiler
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiBinaryLibraryIndexingMode
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.libraryIndexingConfiguration
+import org.jetbrains.kotlin.analysis.test.framework.services.disposableProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
@@ -131,32 +144,26 @@ object AnalysisApiBaseTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
         project.apply {
             registerService(KotlinAnnotationsResolverFactory::class.java, KotlinStandaloneAnnotationsResolverFactory(project, testKtFiles))
 
-            val filter = BuiltInDefinitionFile.FILTER_OUT_CLASSES_EXISTING_AS_JVM_CLASS_FILES
             val ktFilesForBinaries: List<KtFile>
-            try {
-                BuiltInDefinitionFile.FILTER_OUT_CLASSES_EXISTING_AS_JVM_CLASS_FILES = false
+            val shouldBuildStubsForBinaryLibraries =
+                testServices.libraryIndexingConfiguration.binaryLibraryIndexingMode == AnalysisApiBinaryLibraryIndexingMode.INDEX_STUBS
 
-                val shouldBuildStubsForBinaryLibraries =
-                    testServices.libraryIndexingConfiguration.binaryLibraryIndexingMode == AnalysisApiBinaryLibraryIndexingMode.INDEX_STUBS
+            val declarationProviderFactory = KotlinStandaloneDeclarationProviderFactory(
+                project,
+                testServices.environmentManager.getApplicationEnvironment(),
+                testKtFiles,
+                binaryRoots = mainBinaryRoots + mainBinaryVirtualFiles,
+                sharedBinaryRoots = sharedBinaryRoots + sharedBinaryVirtualFiles,
+                skipBuiltins = testServices.moduleStructure.allDirectives.contains(NO_RUNTIME),
+                shouldBuildStubsForBinaryLibraries = shouldBuildStubsForBinaryLibraries,
+                shouldComputeBinaryLibraryPackageSets = true,
+                postponeIndexing = true,
+            )
 
-                val declarationProviderFactory = KotlinStandaloneDeclarationProviderFactory(
-                    project,
-                    testServices.environmentManager.getApplicationEnvironment(),
-                    testKtFiles,
-                    binaryRoots = mainBinaryRoots + mainBinaryVirtualFiles,
-                    sharedBinaryRoots = sharedBinaryRoots + sharedBinaryVirtualFiles,
-                    skipBuiltins = testServices.moduleStructure.allDirectives.contains(NO_RUNTIME),
-                    shouldBuildStubsForBinaryLibraries = shouldBuildStubsForBinaryLibraries,
-                    shouldComputeBinaryLibraryPackageSets = true,
-                )
-
-                ktFilesForBinaries = declarationProviderFactory.getAdditionalCreatedKtFiles()
-                registerService(
-                    KotlinDeclarationProviderFactory::class.java, declarationProviderFactory
-                )
-            } finally {
-                BuiltInDefinitionFile.FILTER_OUT_CLASSES_EXISTING_AS_JVM_CLASS_FILES = filter
-            }
+            ktFilesForBinaries = declarationProviderFactory.getAdditionalCreatedKtFiles()
+            registerService(
+                KotlinDeclarationProviderFactory::class.java, declarationProviderFactory
+            )
             registerService(KotlinDeclarationProviderMerger::class.java, KotlinStandaloneDeclarationProviderMerger(project))
             registerService(
                 KotlinPackageProviderFactory::class.java,
@@ -167,10 +174,36 @@ object AnalysisApiBaseTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
     }
 
     override fun registerApplicationServices(application: MockApplication, testServices: TestServices) {
-        testServices.environmentManager.getApplicationEnvironment()
-            .registerFileType(KotlinBuiltInFileType, BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION)
+        val applicationEnvironment = testServices.environmentManager.getApplicationEnvironment()
+        val applicationDisposable = testServices.disposableProvider.getApplicationDisposable()
 
-        testServices.environmentManager.getApplicationEnvironment().registerFileType(KotlinBuiltInFileType, METADATA_FILE_EXTENSION)
-        testServices.environmentManager.getApplicationEnvironment().registerFileType(KlibMetaFileType, KLIB_METADATA_FILE_EXTENSION)
+        applicationEnvironment.registerFileType(KotlinBuiltInFileType, BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION)
+        applicationEnvironment.registerFileType(KotlinBuiltInFileType, METADATA_FILE_EXTENSION)
+        applicationEnvironment.registerFileType(KlibMetaFileType, KLIB_METADATA_FILE_EXTENSION)
+
+        // Everything related to decompiled files has to be registered here since we support stubs.
+        // In particular, the library indexer requires them for correct work (which is applicable to almost all tests)
+        for (fileType in listOf(JavaClassFileType.INSTANCE, KotlinBuiltInFileType, KlibMetaFileType)) {
+            FileTypeFileViewProviders.INSTANCE.addExplicitExtension(
+                fileType,
+                ClassFileViewProviderFactory(),
+                applicationDisposable,
+            )
+
+            BinaryFileStubBuilders.INSTANCE.addExplicitExtension(fileType, ClassFileStubBuilder(), applicationDisposable)
+            BinaryFileTypeDecompilers.getInstance().addExplicitExtension(fileType, ClassFileDecompiler(), applicationDisposable)
+        }
+
+        ClassFileDecompilers.getInstance().EP_NAME.point.apply {
+            registerExtension(KotlinClassFileDecompiler(), LoadingOrder.FIRST, applicationDisposable)
+            registerExtension(KotlinBuiltInDecompiler(), LoadingOrder.FIRST, applicationDisposable)
+            registerExtension(
+                K2KotlinNativeMetadataDecompiler(),
+                LoadingOrder.FIRST,
+                applicationDisposable,
+            )
+
+            registerExtension(ClsDecompilerImpl(), LoadingOrder.FIRST, applicationDisposable)
+        }
     }
 }

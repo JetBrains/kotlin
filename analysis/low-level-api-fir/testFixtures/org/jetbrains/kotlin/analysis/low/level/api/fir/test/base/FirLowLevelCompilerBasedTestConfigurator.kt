@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,17 +8,12 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.test.base
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiBaseTestServiceRegistrar
-import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiDecompiledCodeTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiIdeModeTestServiceRegistrar
-import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
-import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.FirStandaloneServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.allDirectDependenciesOfType
-import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KaScriptModuleByCompilerConfiguration
-import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KaSourceModuleByCompilerConfiguration
-import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
-import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModuleStructure
-import org.jetbrains.kotlin.analysis.test.framework.projectStructure.TestModuleStructureFactory
+import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
+import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.FirStandaloneServiceRegistrar
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.*
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiBinaryLibraryIndexingMode
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiIndexingConfiguration
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode
@@ -44,7 +39,6 @@ object FirLowLevelCompilerBasedTestConfigurator : AnalysisApiTestConfigurator() 
     override val serviceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>> = listOf(
         AnalysisApiBaseTestServiceRegistrar,
         AnalysisApiIdeModeTestServiceRegistrar,
-        AnalysisApiDecompiledCodeTestServiceRegistrar,
         FirStandaloneServiceRegistrar,
         AnalysisApiFirTestServiceRegistrar,
     )

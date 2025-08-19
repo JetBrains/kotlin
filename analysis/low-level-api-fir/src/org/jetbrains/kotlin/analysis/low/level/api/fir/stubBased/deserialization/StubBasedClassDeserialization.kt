@@ -10,6 +10,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.Key
 import com.intellij.psi.impl.source.tree.FileElement
 import com.intellij.psi.stubs.Stub
+import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubTreeLoader
 import com.intellij.psi.util.PsiUtilCore
 import org.jetbrains.kotlin.KtRealPsiSourceElement
@@ -46,8 +47,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
-import org.jetbrains.kotlin.psi.stubs.KotlinClassStub
 import org.jetbrains.kotlin.psi.stubs.elements.KotlinValueClassRepresentation
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinClassStubImpl
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -78,27 +77,37 @@ internal val KtDeclaration.modality: Modality
         }
     }
 
-private val STUBS_KEY = Key.create<WeakReference<List<Stub>?>>("STUBS")
-internal fun <S, T> loadStubByElement(ktElement: T): S? where T : StubBasedPsiElementBase<*>, T : KtElement {
-    ktElement.greenStub?.let {
-        @Suppress("UNCHECKED_CAST")
-        return it as S
+private val STUBS_KEY = Key.create<WeakReference<List<Stub>>>("STUBS")
+
+/**
+ * Loads compiled stub for [this] element and casts it to [S].
+ *
+ * [S] has to be a real stub implementation class. For instance, for [KtNamedFunction] it has to be [org.jetbrains.kotlin.psi.stubs.impl.KotlinFunctionStubImpl].
+ *
+ * @return compiled stub or `null` if it's impossible to load stub for some reason.
+ */
+internal inline val <T, reified S> T.compiledStub: S? where T : StubBasedPsiElementBase<in S>, T : KtElement, S : StubElement<*>
+    get() {
+        val loadedStub = loadStubByElement(this) ?: return null
+        return loadedStub as S
     }
 
+private fun <S, T> loadStubByElement(ktElement: T): Stub? where T : StubBasedPsiElementBase<in S>, T : KtElement, S : StubElement<*> {
     val ktFile = ktElement.containingKtFile
     requireWithAttachment(ktFile.isCompiled, { "Expected compiled file" }) {
         withPsiEntry("ktFile", ktFile)
     }
 
-    val virtualFile = PsiUtilCore.getVirtualFile(ktFile) ?: return null
-    var stubList = ktFile.getUserData(STUBS_KEY)?.get()
-    if (stubList == null) {
+    val stubList = ktFile.getUserData(STUBS_KEY)?.get() ?: run {
+        val virtualFile = PsiUtilCore.getVirtualFile(ktFile) ?: return null
         val stubTree = ClsClassFinder.allowMultifileClassPart {
             StubTreeLoader.getInstance().readOrBuild(ktElement.project, virtualFile, null)
         }
 
-        stubList = stubTree?.plainList ?: emptyList()
-        ktFile.putUserDataIfAbsent(STUBS_KEY, WeakReference(stubList))
+        val stubList = stubTree?.plainList.orEmpty()
+        // We don't care about potential races as the tree would be the same
+        ktFile.putUserData(STUBS_KEY, WeakReference(stubList))
+        stubList
     }
 
     val nodeList = (ktFile.node as FileElement).stubbedSpine.spineNodes
@@ -129,8 +138,7 @@ internal fun <S, T> loadStubByElement(ktElement: T): S? where T : StubBasedPsiEl
         return null
     }
 
-    @Suppress("UNCHECKED_CAST")
-    return stubList[nodeList.indexOf(ktElement.node)] as S
+    return stubList[nodeList.indexOf(ktElement.node)]
 }
 
 internal fun deserializeClassToSymbol(
@@ -296,17 +304,21 @@ internal fun deserializeClassToSymbol(
 
         contextParameters.addAll(memberDeserializer.createContextReceiversForClass(classOrObject, symbol))
     }.apply {
-        val classStub = classOrObject.stub as? KotlinClassStub
-            ?: (loadStubByElement<KotlinClassOrObjectStub<KtClassOrObject>?, KtClassOrObject>(classOrObject) as? KotlinClassStub)
+        if (classOrObject is KtClass) {
+            val classStub: KotlinClassStubImpl? = classOrObject.compiledStub
+            if (classStub != null) {
+                if (isInlineOrValue) {
+                    valueClassRepresentation = classStub.deserializeValueClassRepresentation(this)
+                }
 
-        if (classOrObject is KtClass && isInlineOrValue) {
-            val stub = classStub as? KotlinClassStubImpl
-            valueClassRepresentation = stub?.deserializeValueClassRepresentation(this)
+                val clsStubCompiledToJvmDefaultImplementation = classStub.isClsStubCompiledToJvmDefaultImplementation
+                if (clsStubCompiledToJvmDefaultImplementation) {
+                    symbol.fir.isNewPlaceForBodyGeneration = true
+                }
+            }
         }
 
-        replaceAnnotations(
-            context.annotationDeserializer.loadAnnotations(classOrObject)
-        )
+        replaceAnnotations(context.annotationDeserializer.loadAnnotations(classOrObject))
 
         sourceElement = containerSource
 
@@ -317,11 +329,6 @@ internal fun deserializeClassToSymbol(
             parentProperty = null,
             session
         )
-
-        val clsStubCompiledToJvmDefaultImplementation = classStub?.isClsStubCompiledToJvmDefaultImplementation
-        if (clsStubCompiledToJvmDefaultImplementation == true) {
-            symbol.fir.isNewPlaceForBodyGeneration = clsStubCompiledToJvmDefaultImplementation
-        }
     }
 }
 

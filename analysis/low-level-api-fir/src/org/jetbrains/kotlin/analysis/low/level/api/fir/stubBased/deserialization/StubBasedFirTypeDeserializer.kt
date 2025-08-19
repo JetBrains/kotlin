@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
-import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
@@ -119,7 +118,7 @@ internal class StubBasedFirTypeDeserializer(
             StubBasedAnnotationDeserializer.TYPE_ANNOTATIONS_FILTER,
         ).toMutableList()
 
-        val parent = (typeReference.stub ?: loadStubByElement(typeReference))?.parentStub
+        val parent = typeReference.compiledStub?.parentStub
         if (parent is KotlinParameterStubImpl) {
             parent.functionTypeParameterName?.let { paramName ->
                 annotations += buildAnnotation {
@@ -208,15 +207,15 @@ internal class StubBasedFirTypeDeserializer(
     }
 
     private fun deserializeFunctionType(typeReference: KtTypeReference, type: KtFunctionType, attributes: ConeAttributes): ConeKotlinType {
-        val stub = (type.stub ?: loadStubByElement(type)) as? KotlinFunctionTypeStubImpl
-        return simpleTypeOrError(typeReference, attributes.withAbbreviation(stub?.abbreviatedType))
+        val compiledStub: KotlinFunctionTypeStubImpl? = type.compiledStub
+        return simpleTypeOrError(typeReference, attributes.withAbbreviation(compiledStub?.abbreviatedType))
     }
 
     private fun deserializeUserType(typeReference: KtTypeReference, type: KtUserType, attributes: ConeAttributes): ConeKotlinType {
-        val stub = (type.stub ?: loadStubByElement(type)) as? KotlinUserTypeStubImpl
-        val coneType = simpleTypeOrError(typeReference, attributes.withAbbreviation(stub?.abbreviatedType))
+        val compiledStub: KotlinUserTypeStubImpl? = type.compiledStub
+        val coneType = simpleTypeOrError(typeReference, attributes.withAbbreviation(compiledStub?.abbreviatedType))
 
-        val upperBoundTypeBean = stub?.upperBound
+        val upperBoundTypeBean = compiledStub?.upperBound
         return if (upperBoundTypeBean != null) {
             val upperBoundType = type(upperBoundTypeBean)
 
@@ -394,8 +393,8 @@ internal fun KtUserType.classId(): ClassId {
         val referenceExpression = type.referenceExpression as? KtNameReferenceExpression
         if (referenceExpression != null) {
             val referencedName = referenceExpression.getReferencedName()
-            val stub = referenceExpression.stub ?: loadStubByElement(referenceExpression)
-            if (stub is KotlinNameReferenceExpressionStubImpl && stub.isClassRef) {
+            val compiledStub: KotlinNameReferenceExpressionStubImpl? = referenceExpression.compiledStub
+            if (compiledStub != null && compiledStub.isClassRef) {
                 classFragments.add(referencedName)
             } else {
                 packageFragments.add(referencedName)

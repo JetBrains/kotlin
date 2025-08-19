@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiBaseTestServiceRegistrar
-import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiDecompiledCodeTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiIdeModeTestServiceRegistrar
-import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiLibraryBaseTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.FirStandaloneServiceRegistrar
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AnalysisApiFirTestServiceRegistrar
@@ -64,9 +62,7 @@ object AnalysisApiFirLibrarySourceTestConfigurator : AnalysisApiTestConfigurator
         listOf(
             AnalysisApiBaseTestServiceRegistrar,
             AnalysisApiIdeModeTestServiceRegistrar,
-            AnalysisApiDecompiledCodeTestServiceRegistrar,
             FirStandaloneServiceRegistrar,
             AnalysisApiFirTestServiceRegistrar,
-            AnalysisApiLibraryBaseTestServiceRegistrar,
         )
 }
