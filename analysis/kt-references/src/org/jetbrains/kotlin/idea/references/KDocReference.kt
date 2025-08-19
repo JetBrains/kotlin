@@ -17,7 +17,15 @@ abstract class KDocReference(element: KDocName) : KtMultiReference<KDocName>(ele
 
     override fun canRename(): Boolean = true
 
-    override fun resolve(): PsiElement? = multiResolve(false).firstOrNull()?.element
+    /**
+     * It's important to use [singleOrNull] instead of [firstOrNull] here
+     * to get a drop-down menu in the IDE for KDoc references with multiple resolved results.
+     * In cases when [resolve] returns `null`,
+     * IDE will use [multiResolve] instead and show all the found results.
+     * Otherwise, when some element is returned from [resolve],
+     * the IDE considers it to be the primary result and just shows it as-is.
+     */
+    override fun resolve(): PsiElement? = multiResolve(incompleteCode = false).singleOrNull()?.element
 
     override fun getCanonicalText(): String = element.getNameText()
 
