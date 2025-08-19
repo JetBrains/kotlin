@@ -31971,6 +31971,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
       }
 
       @Test
+      @TestMetadata("nameBasedDestructuringShortFormWithIndex.kt")
+      public void testNameBasedDestructuringShortFormWithIndex() {
+        runTest("compiler/testData/codegen/box/multiDecl/nameBasedDestructuringShortFormWithIndex.kt");
+      }
+
+      @Test
       @TestMetadata("nameBasedDestructuringUnderscoreWithRenaming.kt")
       public void testNameBasedDestructuringUnderscoreWithRenaming() {
         runTest("compiler/testData/codegen/box/multiDecl/nameBasedDestructuringUnderscoreWithRenaming.kt");
