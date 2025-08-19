@@ -64,7 +64,6 @@ KONAN_HOME="$(findHome)"
 
 java_opts=(-ea \
             -Xmx3G \
-            -XX:TieredStopAtLevel=1 \
             -Dfile.encoding=UTF-8 \
             -Dkonan.home="$KONAN_HOME" \
             ${JAVA_OPTS})
