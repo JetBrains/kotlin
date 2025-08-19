@@ -380,7 +380,27 @@ internal object DevirtualizationAnalysis {
                 require(index == nodesCount)
             }
 
-            fun mergeSources() {
+            private fun mergeDanglingNodes() {
+                for (i in order.size - 1 downTo 0) {
+                    val node = nodes[i]
+                    if (node.reversedCastEdges != null) continue
+
+                    var rootId = -1
+                    reversedEdges.forEachEdge(i) {
+                        val nodeId = nodes[it].root().id
+                        if (rootId == -1) {
+                            rootId = nodeId
+                        } else if (rootId != nodeId) {
+                            rootId = -2
+                        }
+                    }
+                    if (rootId < 0) continue
+
+                    node.join(nodes[rootId])
+                }
+            }
+
+            private fun mergeSources() {
                 val singleSource = IntArray(moduleDFG.symbolTable.typeHierarchy.allTypes.size) { -1 }
                 for (node in nodes) {
                     if (node !is Node.Source) continue
@@ -483,6 +503,7 @@ internal object DevirtualizationAnalysis {
                 calculateTopologicalSort()
                 mergeMultiNodes()
                 mergeSources()
+                mergeDanglingNodes()
                 mergeEdges()
 
                 return Condensation(topologicalOrder())
