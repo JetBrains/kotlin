@@ -115,7 +115,7 @@ public actual fun CharArray.concatToString(startIndex: Int = 0, endIndex: Int = 
  */
 @SinceKotlin("1.4")
 public actual fun String.toCharArray(): CharArray {
-    val thisChars = this.chars
+    val thisChars = this.getChars()
     val thisLength = thisChars.len()
     val newArray = CharArray(thisLength)
     copyWasmArray(thisChars, newArray.storage, 0, 0, thisLength)
@@ -137,7 +137,7 @@ public actual fun String.toCharArray(startIndex: Int = 0, endIndex: Int = this.l
     AbstractList.checkBoundsIndexes(startIndex, endIndex, length)
     val newLength = endIndex - startIndex
     val newArray = CharArray(newLength)
-    copyWasmArray(this.chars, newArray.storage, startIndex, 0, newLength)
+    copyWasmArray(this.getChars(), newArray.storage, startIndex, 0, newLength)
     return newArray
 }
 
@@ -165,7 +165,7 @@ public actual fun String.toCharArray(
     AbstractList.checkBoundsIndexes(startIndex, endIndex, length)
     val rangeSize = endIndex - startIndex
     AbstractList.checkBoundsIndexes(destinationOffset, destinationOffset + rangeSize, destination.size)
-    copyWasmArray(this.chars, destination.storage, startIndex, destinationOffset, rangeSize)
+    copyWasmArray(this.getChars(), destination.storage, startIndex, destinationOffset, rangeSize)
     return destination
 }
 
