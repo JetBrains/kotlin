@@ -1109,6 +1109,7 @@ private inline fun parseIsoStringFormat(
                 unit = 'S'
             }
 
+            // Because the order of the units matches their lexical order (D, H, M, S), we can compare units as symbols
             if (unit <= prevUnit) return handleError(throwException, "Unexpected order of duration components")
             prevUnit = unit
         }
