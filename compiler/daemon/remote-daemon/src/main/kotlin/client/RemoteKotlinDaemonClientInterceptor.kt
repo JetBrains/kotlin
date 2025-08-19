@@ -14,6 +14,8 @@ import io.grpc.ForwardingClientCall
 import io.grpc.ForwardingClientCallListener
 import io.grpc.Metadata
 import io.grpc.MethodDescriptor
+import org.jetbrains.kotlin.server.CompileRequestGrpc
+import org.jetbrains.kotlin.server.CompileResponseGrpc
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -38,7 +40,13 @@ class RemoteClientInterceptor : ClientInterceptor {
         // CLIENT ---> SERVER
         return object : ForwardingClientCall.SimpleForwardingClientCall<ReqT?, RespT?>(call) {
             override fun sendMessage(message: ReqT?) {
-                debug("sending message: ${printer.print(message as MessageOrBuilder)}")
+                if (message is CompileRequestGrpc && message.hasSourceFileChunk()){
+                    val chunk = message.sourceFileChunk
+                    val size = chunk.content.size()
+                    debug("sending message: FileChunkGrpc{file_path=${chunk.filePath}, file_type=${chunk.fileType}, is_last=${chunk.isLast}, content_size=${size} bytes}")
+                } else {
+                    debug("sending message: ${printer.print(message as MessageOrBuilder)}")
+                }
                 super.sendMessage(message)
             }
 
@@ -57,7 +65,13 @@ class RemoteClientInterceptor : ClientInterceptor {
                 // SERVER ---> CLIENT
                 val wrappedListener = object : ForwardingClientCallListener.SimpleForwardingClientCallListener<RespT?>(responseListener) {
                     override fun onMessage(message: RespT?) {
-                        debug("receiving message: ${message}")
+                        if (message is CompileResponseGrpc && message.hasCompiledFileChunk()){
+                            val chunk = message.compiledFileChunk
+                            val size = chunk.content.size()
+                            debug("receiving message: FileChunkGrpc{file_path=${chunk.filePath}, file_type=${chunk.fileType}, is_last=${chunk.isLast}, content_size=${size} bytes}")
+                        } else {
+                            debug("receiving message: ${printer.print(message as MessageOrBuilder)}")
+                        }
                         super.onMessage(message)
                     }
 
