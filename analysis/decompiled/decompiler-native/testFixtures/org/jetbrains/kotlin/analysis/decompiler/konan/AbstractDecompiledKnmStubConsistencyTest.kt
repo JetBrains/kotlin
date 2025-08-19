@@ -15,7 +15,6 @@ import com.intellij.psi.impl.compiled.ClassFileStubBuilder
 import com.intellij.psi.stubs.BinaryFileStubBuilders
 import com.intellij.util.indexing.FileContentImpl
 import org.jetbrains.kotlin.analysis.decompiler.stub.files.serializeToString
-import org.jetbrains.kotlin.psi.stubs.elements.KtFileStubBuilder
 import org.junit.Assert
 import java.nio.file.Path
 
@@ -60,11 +59,9 @@ abstract class AbstractDecompiledKnmStubConsistencyTest : AbstractDecompiledKnmF
             knmFile, PsiManager.getInstance(project), physical = false,
         )
 
-        val stubTreeForDecompiledFile = KtFileStubBuilder().buildStubTree(
-            KlibDecompiledFile(fileViewProviderForDecompiledFile) { virtualFile ->
-                decompiler.buildDecompiledTextForTests(virtualFile)
-            }
-        )
+        val stubTreeForDecompiledFile = KlibDecompiledFile(fileViewProviderForDecompiledFile) { virtualFile ->
+            decompiler.buildDecompiledTextForTests(virtualFile)
+        }.calcStubTree().root
 
         Assert.assertEquals(
             "PSI and deserialized stubs don't match",

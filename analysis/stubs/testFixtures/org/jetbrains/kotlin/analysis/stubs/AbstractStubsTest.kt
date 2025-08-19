@@ -8,9 +8,8 @@ package org.jetbrains.kotlin.analysis.stubs
 import com.intellij.psi.StubBasedPsiElement
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.psi.stubs.StubElement
-import com.intellij.util.indexing.FileContentImpl
+import com.intellij.psi.stubs.StubTreeLoader
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsClassFinder
-import org.jetbrains.kotlin.analysis.decompiler.stub.file.KotlinClsStubBuilder
 import org.jetbrains.kotlin.analysis.decompiler.stub.files.serializeToString
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirBinaryTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
@@ -22,7 +21,6 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisA
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.stubs.elements.KtFileStubBuilder
 import org.jetbrains.kotlin.test.services.AssertionsService
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
@@ -84,14 +82,17 @@ abstract class AbstractStubsTest : AbstractAnalysisApiBasedTest() {
 abstract class AbstractSourceStubsTest : AbstractStubsTest() {
     override val configurator: AnalysisApiTestConfigurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
 
-    override fun computeStub(file: KtFile): PsiFileStub<*>? = KtFileStubBuilder().buildStubTree(file) as PsiFileStub<*>
+    override fun computeStub(file: KtFile): PsiFileStub<*> = file.calcStubTree().root
 }
 
 abstract class AbstractCompiledStubsTest : AbstractStubsTest() {
     override val configurator: AnalysisApiTestConfigurator = CompiledStubsTestConfigurator()
 
     override fun computeStub(file: KtFile): PsiFileStub<*>? = ClsClassFinder.allowMultifileClassPart {
-        KotlinClsStubBuilder().buildFileStub(FileContentImpl.createByFile(file.virtualFile))
+        StubTreeLoader.getInstance()
+            .build(/* project = */ null, /* vFile = */ file.virtualFile, /* psiFile = */ null)
+            ?.root
+            ?.let { it as PsiFileStub<*> }
     }
 }
 
@@ -105,5 +106,5 @@ abstract class AbstractDecompiledStubsTest : AbstractStubsTest() {
         override val testPrefixes: List<String> get() = listOf("decompiled") + super.testPrefixes
     }
 
-    override fun computeStub(file: KtFile): PsiFileStub<*>? = KtFileStubBuilder().buildStubTree(file) as PsiFileStub<*>
+    override fun computeStub(file: KtFile): PsiFileStub<*> = file.calcStubTree().root
 }
