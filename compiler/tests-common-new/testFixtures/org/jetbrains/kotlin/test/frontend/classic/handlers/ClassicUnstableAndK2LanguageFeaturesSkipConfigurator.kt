@@ -20,6 +20,11 @@ class ClassicUnstableAndK2LanguageFeaturesSkipConfigurator(testServices: TestSer
             LanguageFeature.ContractSyntaxV2,
             LanguageFeature.ExplicitBackingFields,
             LanguageFeature.AnnotationAllUseSiteTarget,
+            LanguageFeature.ImplicitJvmExposeBoxed,
+            LanguageFeature.AllowAnyAsAnActualTypeForExpectInterface,
+            LanguageFeature.NameBasedDestructuring,
+            LanguageFeature.DeprecateNameMismatchInShortDestructuringWithParentheses,
+            LanguageFeature.EnableNameBasedDestructuringShortForm,
         )
     }
 
