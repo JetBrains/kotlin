@@ -12,6 +12,7 @@ dependencies {
 }
 
 configureKotlinCompileTasksGradleCompatibility()
+configureJvmToolchain(JdkMajorVersion.JDK_11_0)
 
 kotlin {
     compilerOptions {

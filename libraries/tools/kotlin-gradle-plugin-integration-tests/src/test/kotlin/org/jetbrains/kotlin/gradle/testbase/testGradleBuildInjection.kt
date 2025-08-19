@@ -280,7 +280,7 @@ class GradleProjectBuildScriptInjectionContext(
     val swiftExport get() = kotlinMultiplatform.extensions.getByName("swiftExport") as SwiftExportExtension
     val androidLibrary get() = project.extensions.getByName("android") as LibraryExtension
     val androidApp get() = project.extensions.getByName("android") as AppExtension
-    val androidBase get() = project.extensions.getByName("android") as CommonExtension<*, *, *, *>
+    val androidBase get() = project.extensions.getByName("android") as CommonExtension<*, *, *, *, *>
     val publishing get() = project.extensions.getByName("publishing") as PublishingExtension
     val signing get() = project.extensions.getByName("signing") as SigningExtension
     val dependencies get() = project.dependencies

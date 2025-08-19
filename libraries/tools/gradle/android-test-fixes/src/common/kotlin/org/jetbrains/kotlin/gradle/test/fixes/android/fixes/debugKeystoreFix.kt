@@ -27,7 +27,7 @@ internal fun Project.applyDebugKeystoreFix(
     plugins.withId("com.android.test", fix<TestExtension>(testFixesProperties))
 }
 
-private inline fun <reified AndroidExtension : CommonExtension<*, *, *, *>> Project.fix(
+private inline fun <reified AndroidExtension : CommonExtension<*, *, *, *, *>> Project.fix(
     testFixesProperties: TestFixesProperties
 ): Action<Plugin<*>> = Action {
     extensions.configure<AndroidExtension> {

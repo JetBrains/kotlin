@@ -16,38 +16,6 @@ import kotlin.io.path.appendText
 @DisplayName("android with kapt3 external dependencies tests")
 @AndroidGradlePluginTests
 open class Kapt3AndroidExternalIT : Kapt3BaseIT() {
-    // Deprecated and doesn't work with Gradle 8 + AGP 8, so keeping max Gradle version as 7.6
-    // For example: https://github.com/JakeWharton/butterknife/issues/1686
-    @DisplayName("kapt works with butterknife")
-    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_7_6)
-    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_74)
-    @GradleAndroidTest
-    fun testButterKnife(
-        gradleVersion: GradleVersion,
-        agpVersion: String,
-        jdkVersion: JdkVersions.ProvidedJdk,
-    ) {
-        project(
-            "android-butterknife".withPrefix,
-            gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
-            buildJdk = jdkVersion.location
-        ) {
-            build("assembleDebug") {
-                assertKaptSuccessful()
-                assertFileInProjectExists("app/build/generated/source/kapt/debug/org/example/kotlin/butterknife/SimpleActivity\$\$ViewBinder.java")
-
-                val butterknifeJavaClassesDir = "app/build/intermediates/javac/debug/classes/org/example/kotlin/butterknife/"
-                assertFileInProjectExists(butterknifeJavaClassesDir + "SimpleActivity\$\$ViewBinder.class")
-
-                assertFileInProjectExists("app/build/tmp/kotlin-classes/debug/org/example/kotlin/butterknife/SimpleAdapter\$ViewHolder.class")
-            }
-
-            build("assembleDebug") {
-                assertTasksUpToDate(":app:compileDebugKotlin", ":app:compileDebugJavaWithJavac")
-            }
-        }
-    }
 
     @DisplayName("kapt works with dagger")
     @GradleAndroidTest
@@ -112,11 +80,7 @@ open class Kapt3AndroidExternalIT : Kapt3BaseIT() {
         agpVersion: String,
         jdkVersion: JdkVersions.ProvidedJdk,
     ) {
-        val realmVersion = if (agpVersion != TestVersions.AGP.AGP_73) {
-            "10.19.0"
-        } else {
-            "10.11.0"
-        }
+        val realmVersion = "10.19.0"
         project(
             "android-realm".withPrefix,
             gradleVersion,

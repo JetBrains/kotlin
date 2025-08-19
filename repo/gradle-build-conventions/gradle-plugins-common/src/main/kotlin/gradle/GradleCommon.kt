@@ -907,3 +907,12 @@ fun Configuration.useDependenciesCompiledForGradle(
     GradlePluginApiVersion.GRADLE_PLUGIN_API_VERSION_ATTRIBUTE,
     objects.named(version),
 )
+
+/**
+ * Allows resolving dependency targeting [jdkMajorVersion] in the project using an incompatible JDK version.
+ */
+fun ModuleDependency.overrideTargetJvmVersion(jdkMajorVersion: Int) {
+    attributes {
+        attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, jdkMajorVersion)
+    }
+}

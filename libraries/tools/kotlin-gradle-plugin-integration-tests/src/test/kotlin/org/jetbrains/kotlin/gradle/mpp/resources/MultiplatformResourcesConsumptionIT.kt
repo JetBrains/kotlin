@@ -23,8 +23,6 @@ import org.junit.jupiter.api.DisplayName
 class MultiplatformResourcesConsumptionIT : KGPBaseTest() {
 
     @DisplayName("Resolve resources with consumption API using variant reselection")
-    // Before 7.6 Gradle fails to resolve project dependencies with variant reselection
-    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_74)
     @GradleAndroidTest
     fun testWithVariantReselection(
         gradleVersion: GradleVersion,

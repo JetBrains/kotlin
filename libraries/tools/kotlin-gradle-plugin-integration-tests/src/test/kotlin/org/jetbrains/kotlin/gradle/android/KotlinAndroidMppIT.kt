@@ -1070,7 +1070,6 @@ class KotlinAndroidMppIT : KGPBaseTest() {
 
     @DisplayName("KT-70380: KMM App failed to consume android binary lib when published incorrectly")
     @GradleAndroidTest
-    @AndroidTestVersions(additionalVersions = [TestVersions.AGP.AGP_81])
     @GradleTestVersions(additionalVersions = [TestVersions.Gradle.G_8_1, TestVersions.Gradle.G_8_2, TestVersions.Gradle.G_8_3])
     fun kotlinAndroidHasBuildTypeAttribute(
         gradleVersion: GradleVersion,
@@ -1092,12 +1091,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             }
 
             build("publish") {
-                if (agpVersion == TestVersions.AGP.AGP_73) {
-                    // AGP 7.3 configures Publication automatically, so no diagnostic should be reported
-                    assertNoDiagnostic(KotlinToolingDiagnostics.AndroidPublicationNotConfigured)
-                } else {
-                    assertHasDiagnostic(KotlinToolingDiagnostics.AndroidPublicationNotConfigured)
-                }
+                assertHasDiagnostic(KotlinToolingDiagnostics.AndroidPublicationNotConfigured)
             }
         }
     }
