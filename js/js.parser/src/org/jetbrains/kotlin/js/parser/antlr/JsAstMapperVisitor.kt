@@ -10,15 +10,22 @@ import org.antlr.v4.runtime.tree.ErrorNode
 import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.RuleNode
 import org.antlr.v4.runtime.tree.TerminalNode
+import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperation
+import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperator
 import org.jetbrains.kotlin.js.backend.ast.JsBlock
-import org.jetbrains.kotlin.js.backend.ast.JsBreak
+import org.jetbrains.kotlin.js.backend.ast.JsExpression
 import org.jetbrains.kotlin.js.backend.ast.JsFunction
 import org.jetbrains.kotlin.js.backend.ast.JsNode
 import org.jetbrains.kotlin.js.backend.ast.JsParameter
+import org.jetbrains.kotlin.js.backend.ast.JsStatement
+import org.jetbrains.kotlin.js.backend.ast.JsVars
 import org.jetbrains.kotlin.js.parser.antlr.generated.JavaScriptParser
 import org.jetbrains.kotlin.js.parser.antlr.generated.JavaScriptParserVisitor
 
-class JsAstMapperVisitor(private val fileName: String, private val scopeContext: ScopeContext) : JavaScriptParserVisitor<JsNode?> {
+class JsAstMapperVisitor(
+    private val fileName: String,
+    private val scopeContext: ScopeContext
+) : JavaScriptParserVisitor<JsNode?> {
     override fun visitProgram(ctx: JavaScriptParser.ProgramContext): JsNode? {
         TODO("Not yet implemented")
     }
@@ -28,20 +35,40 @@ class JsAstMapperVisitor(private val fileName: String, private val scopeContext:
     }
 
     // ENTRY POINT
-    override fun visitStatement(ctx: JavaScriptParser.StatementContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitStatement(ctx: JavaScriptParser.StatementContext): JsStatement? {
+        ctx.block()?.run {
+            return visitBlock(this)
+        }
+
+        ctx.variableStatement()?.run {
+            return visitVariableStatement(this)
+        }
+
+        ctx.emptyStatement_()?.run {
+            return null
+        }
+
+        ctx.functionDeclaration()?.run {
+            return visitFunctionDeclaration(this).makeStmt()
+        }
+
+        ctx.expressionStatement()?.run {
+            return visitExpressionStatement(this)
+        }
+
+        TODO("Node is not supported yet: ${ctx.javaClass.name}")
     }
 
-    override fun visitBlock(ctx: JavaScriptParser.BlockContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitBlock(ctx: JavaScriptParser.BlockContext): JsBlock {
+        return mapBlock(ctx.statementList().statement())
     }
 
-    override fun visitStatementList(ctx: JavaScriptParser.StatementListContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitStatementList(ctx: JavaScriptParser.StatementListContext): JsBlock {
+        return mapBlock(ctx.statement())
     }
 
     override fun visitImportStatement(ctx: JavaScriptParser.ImportStatementContext): JsNode? {
-        TODO("Not yet implemented")
+        TODO("Import statemements not supported yet")
     }
 
     override fun visitImportFromBlock(ctx: JavaScriptParser.ImportFromBlockContext): JsNode? {
@@ -104,7 +131,7 @@ class JsAstMapperVisitor(private val fileName: String, private val scopeContext:
         TODO("Not yet implemented")
     }
 
-    override fun visitVariableStatement(ctx: JavaScriptParser.VariableStatementContext): JsNode? {
+    override fun visitVariableStatement(ctx: JavaScriptParser.VariableStatementContext): JsVars {
         TODO("Not yet implemented")
     }
 
@@ -116,11 +143,11 @@ class JsAstMapperVisitor(private val fileName: String, private val scopeContext:
         TODO("Not yet implemented")
     }
 
-    override fun visitEmptyStatement_(ctx: JavaScriptParser.EmptyStatement_Context): JsNode? {
+    override fun visitEmptyStatement_(ctx: JavaScriptParser.EmptyStatement_Context): JsStatement {
         TODO("Not yet implemented")
     }
 
-    override fun visitExpressionStatement(ctx: JavaScriptParser.ExpressionStatementContext): JsNode? {
+    override fun visitExpressionStatement(ctx: JavaScriptParser.ExpressionStatementContext): JsStatement? {
         TODO("Not yet implemented")
     }
 
@@ -216,8 +243,13 @@ class JsAstMapperVisitor(private val fileName: String, private val scopeContext:
         TODO("Not yet implemented")
     }
 
-    override fun visitFunctionDeclaration(ctx: JavaScriptParser.FunctionDeclarationContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitFunctionDeclaration(ctx: JavaScriptParser.FunctionDeclarationContext): JsFunction {
+        val name = ctx.identifier()
+        val isGenerator = ctx.Multiply() != null
+        val paramList = ctx.formalParameterList()
+        assert(paramList.restParameterArg() == null) { "Rest parameters are not supported yet" }
+
+        return mapFunction(name?.text, ctx.functionBody(), paramList.formalParameterArg(), isGenerator)
     }
 
     override fun visitClassDeclaration(ctx: JavaScriptParser.ClassDeclarationContext): JsNode? {
@@ -260,8 +292,10 @@ class JsAstMapperVisitor(private val fileName: String, private val scopeContext:
         TODO("Not yet implemented")
     }
 
-    override fun visitFunctionBody(ctx: JavaScriptParser.FunctionBodyContext): JsNode? {
-        TODO("Not yet implemented")
+    override fun visitFunctionBody(ctx: JavaScriptParser.FunctionBodyContext): JsBlock {
+        val statements = ctx.sourceElements().sourceElement().map { it.statement() }
+
+        return mapBlock(statements)
     }
 
     override fun visitSourceElements(ctx: JavaScriptParser.SourceElementsContext): JsNode? {
@@ -317,6 +351,10 @@ class JsAstMapperVisitor(private val fileName: String, private val scopeContext:
     }
 
     override fun visitExpressionSequence(ctx: JavaScriptParser.ExpressionSequenceContext): JsNode? {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitSingleExpression(ctx: JavaScriptParser.SingleExpressionContext?): JsExpression {
         TODO("Not yet implemented")
     }
 
@@ -381,7 +419,7 @@ class JsAstMapperVisitor(private val fileName: String, private val scopeContext:
     }
 
     override fun visitFunctionExpression(ctx: JavaScriptParser.FunctionExpressionContext): JsNode? {
-        val anonymousFunction = ctx?.anonymousFunction() ?: return null
+        val anonymousFunction = ctx.anonymousFunction() ?: return null
 
         return when (anonymousFunction) {
             is JavaScriptParser.AnonymousFunctionDeclContext -> visitAnonymousFunctionDecl(anonymousFunction)
@@ -527,7 +565,7 @@ class JsAstMapperVisitor(private val fileName: String, private val scopeContext:
         TODO("Not yet implemented")
     }
 
-    override fun visitNamedFunction(ctx: JavaScriptParser.NamedFunctionContext): JsNode? {
+    override fun visitNamedFunction(ctx: JavaScriptParser.NamedFunctionContext): JsFunction {
         val declaration = ctx.functionDeclaration()
         assert(declaration.Async() == null) { "Async functions are not supported yet"}
         val isGenerator = declaration.Multiply() != null
@@ -535,7 +573,7 @@ class JsAstMapperVisitor(private val fileName: String, private val scopeContext:
         return mapFunction(null, declaration.functionBody(), declaration.formalParameterList().formalParameterArg(), isGenerator)
     }
 
-    override fun visitAnonymousFunctionDecl(ctx: JavaScriptParser.AnonymousFunctionDeclContext): JsNode? {
+    override fun visitAnonymousFunctionDecl(ctx: JavaScriptParser.AnonymousFunctionDeclContext): JsFunction {
         val isGenerator = ctx.Multiply() != null
         val paramList = ctx.formalParameterList()
         assert(paramList.restParameterArg() == null) { "Rest parameters are not supported yet" }
@@ -543,7 +581,7 @@ class JsAstMapperVisitor(private val fileName: String, private val scopeContext:
         return mapFunction(null, ctx.functionBody(), paramList.formalParameterArg(), isGenerator)
     }
 
-    override fun visitArrowFunction(ctx: JavaScriptParser.ArrowFunctionContext): JsNode? {
+    override fun visitArrowFunction(ctx: JavaScriptParser.ArrowFunctionContext): JsFunction {
         assert(ctx.Async() == null) { "Async arrow functions are not supported yet"}
         val parameters = ctx.arrowFunctionParameters()
 
@@ -603,59 +641,60 @@ class JsAstMapperVisitor(private val fileName: String, private val scopeContext:
     }
 
     override fun visitKeyword(ctx: JavaScriptParser.KeywordContext): JsNode? {
-        when (ctx?.start?.type) {
-            JavaScriptParser.Break -> return JsBreak()
-            JavaScriptParser.Do -> return JsBreak()
-            JavaScriptParser.Instanceof -> return JsBreak()
-            JavaScriptParser.Typeof -> return JsBreak()
-            JavaScriptParser.Case -> return JsBreak()
-            JavaScriptParser.Else -> return JsBreak()
-            JavaScriptParser.New -> return JsBreak()
-            JavaScriptParser.Var -> return JsBreak()
-            JavaScriptParser.Catch -> return JsBreak()
-            JavaScriptParser.Finally -> return JsBreak()
-            JavaScriptParser.Return -> return JsBreak()
-            JavaScriptParser.Void -> return JsBreak()
-            JavaScriptParser.Continue -> return JsBreak()
-            JavaScriptParser.For -> return JsBreak()
-            JavaScriptParser.Switch -> return JsBreak()
-            JavaScriptParser.While -> return JsBreak()
-            JavaScriptParser.Debugger -> return JsBreak()
-            JavaScriptParser.Function_ -> return JsBreak()
-            JavaScriptParser.This -> return JsBreak()
-            JavaScriptParser.With -> return JsBreak()
-            JavaScriptParser.Default -> return JsBreak()
-            JavaScriptParser.If -> return JsBreak()
-            JavaScriptParser.Throw -> return JsBreak()
-            JavaScriptParser.Delete -> return JsBreak()
-            JavaScriptParser.In -> return JsBreak()
-            JavaScriptParser.Try -> return JsBreak()
-            JavaScriptParser.Class -> return JsBreak()
-            JavaScriptParser.Enum -> return JsBreak()
-            JavaScriptParser.Extends -> return JsBreak()
-            JavaScriptParser.Super -> return JsBreak()
-            JavaScriptParser.Const -> return JsBreak()
-            JavaScriptParser.Export -> return JsBreak()
-            JavaScriptParser.Import -> return JsBreak()
-            JavaScriptParser.Implements -> return JsBreak()
-            JavaScriptParser.NonStrictLet -> return visitLet_(ctx.let_())
-            JavaScriptParser.StrictLet -> return visitLet_(ctx.let_())
-            JavaScriptParser.Private -> return JsBreak()
-            JavaScriptParser.Public -> return JsBreak()
-            JavaScriptParser.Interface -> return JsBreak()
-            JavaScriptParser.Package -> return JsBreak()
-            JavaScriptParser.Protected -> return JsBreak()
-            JavaScriptParser.Static -> return JsBreak()
-            JavaScriptParser.Yield -> return JsBreak()
-            JavaScriptParser.YieldStar -> return JsBreak()
-            JavaScriptParser.Async -> return JsBreak()
-            JavaScriptParser.Await -> return JsBreak()
-            JavaScriptParser.From -> return JsBreak()
-            JavaScriptParser.As -> return JsBreak()
-            JavaScriptParser.Of -> return JsBreak()
-            // For complex nodes like 'let'
-            else -> return visitChildren(ctx)
-        }
+        TODO()
+//        when (ctx?.start?.type) {
+//            JavaScriptParser.Break -> return JsBreak()
+//            JavaScriptParser.Do -> return JsBreak()
+//            JavaScriptParser.Instanceof -> return JsBreak()
+//            JavaScriptParser.Typeof -> return JsBreak()
+//            JavaScriptParser.Case -> return JsBreak()
+//            JavaScriptParser.Else -> return JsBreak()
+//            JavaScriptParser.New -> return JsBreak()
+//            JavaScriptParser.Var -> return JsBreak()
+//            JavaScriptParser.Catch -> return JsBreak()
+//            JavaScriptParser.Finally -> return JsBreak()
+//            JavaScriptParser.Return -> return JsBreak()
+//            JavaScriptParser.Void -> return JsBreak()
+//            JavaScriptParser.Continue -> return JsBreak()
+//            JavaScriptParser.For -> return JsBreak()
+//            JavaScriptParser.Switch -> return JsBreak()
+//            JavaScriptParser.While -> return JsBreak()
+//            JavaScriptParser.Debugger -> return JsBreak()
+//            JavaScriptParser.Function_ -> return JsBreak()
+//            JavaScriptParser.This -> return JsBreak()
+//            JavaScriptParser.With -> return JsBreak()
+//            JavaScriptParser.Default -> return JsBreak()
+//            JavaScriptParser.If -> return JsBreak()
+//            JavaScriptParser.Throw -> return JsBreak()
+//            JavaScriptParser.Delete -> return JsBreak()
+//            JavaScriptParser.In -> return JsBreak()
+//            JavaScriptParser.Try -> return JsBreak()
+//            JavaScriptParser.Class -> return JsBreak()
+//            JavaScriptParser.Enum -> return JsBreak()
+//            JavaScriptParser.Extends -> return JsBreak()
+//            JavaScriptParser.Super -> return JsBreak()
+//            JavaScriptParser.Const -> return JsBreak()
+//            JavaScriptParser.Export -> return JsBreak()
+//            JavaScriptParser.Import -> return JsBreak()
+//            JavaScriptParser.Implements -> return JsBreak()
+//            JavaScriptParser.NonStrictLet -> return visitLet_(ctx.let_())
+//            JavaScriptParser.StrictLet -> return visitLet_(ctx.let_())
+//            JavaScriptParser.Private -> return JsBreak()
+//            JavaScriptParser.Public -> return JsBreak()
+//            JavaScriptParser.Interface -> return JsBreak()
+//            JavaScriptParser.Package -> return JsBreak()
+//            JavaScriptParser.Protected -> return JsBreak()
+//            JavaScriptParser.Static -> return JsBreak()
+//            JavaScriptParser.Yield -> return JsBreak()
+//            JavaScriptParser.YieldStar -> return JsBreak()
+//            JavaScriptParser.Async -> return JsBreak()
+//            JavaScriptParser.Await -> return JsBreak()
+//            JavaScriptParser.From -> return JsBreak()
+//            JavaScriptParser.As -> return JsBreak()
+//            JavaScriptParser.Of -> return JsBreak()
+//            // For complex nodes like 'let'
+//            else -> return visitChildren(ctx)
+//        }
     }
 
     override fun visitLet_(ctx: JavaScriptParser.Let_Context): JsNode? {
@@ -680,6 +719,33 @@ class JsAstMapperVisitor(private val fileName: String, private val scopeContext:
 
     override fun visitErrorNode(node: ErrorNode?): JsNode? {
         TODO("Not yet implemented")
+    }
+
+    private fun mapComma(sequence: JavaScriptParser.ExpressionSequenceContext): JsBinaryOperation? {
+        fun reduce(i: Int, expressions: List<JavaScriptParser.SingleExpressionContext>): JsBinaryOperation {
+            if (i == expressions.size - 2) {
+                val left = visitSingleExpression(expressions[i])
+                val right = visitSingleExpression(expressions[i + 1])
+                return JsBinaryOperation(JsBinaryOperator.COMMA, left, right)
+            }
+
+            return JsBinaryOperation(
+                JsBinaryOperator.COMMA,
+                visitSingleExpression(expressions[i]),
+                reduce(i + 1, expressions)
+            )
+        }
+    }
+
+    private fun mapBlock(statements: List<JavaScriptParser.StatementContext>): JsBlock {
+        val block = JsBlock()
+        statements
+            // visitStatement can return null in some cases, like an empty statement (';') maps to nothing.
+            // mayeb we need to consider it including into resulting AST as it may be useful for debugging and stepping.
+            .mapNotNull { visitStatement(it) }
+            .forEach { block.statements.add(it) }
+
+        return block
     }
 
     private fun mapFunction(
@@ -707,8 +773,8 @@ class JsAstMapperVisitor(private val fileName: String, private val scopeContext:
             function.parameters.add(JsParameter(paramName).applyLocation(fileName,paramNode))
         }
 
-        val block = visitFunctionBody(body) ?: TODO("Block is missing")
-        function.body = block as JsBlock
+        val block = visitFunctionBody(body)
+        function.body = block
 
         return function.also {
             scopeContext.exitFunction()

@@ -546,6 +546,13 @@ public class JavaScriptParserBaseVisitor<T> extends AbstractParseTreeVisitor<T> 
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
+	@Override public T visitSingleExpression(JavaScriptParser.SingleExpressionContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
 	@Override public T visitTemplateStringExpression(JavaScriptParser.TemplateStringExpressionContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
