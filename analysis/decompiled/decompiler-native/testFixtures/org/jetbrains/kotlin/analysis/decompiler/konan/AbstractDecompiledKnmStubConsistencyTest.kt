@@ -52,8 +52,7 @@ abstract class AbstractDecompiledKnmStubConsistencyTest : AbstractDecompiledKnmF
     private fun checkKnmStubConsistency(knmFile: VirtualFile) {
         val decompiler = knmTestSupport.createDecompiler()
         val stubTreeBinaryFile = decompiler.stubBuilder.buildFileStub(FileContentImpl.createByFile(knmFile, environment.project))!!
-        // FIXME (KT-79973): decompiled stubs text does not have MustUseReturnValue flag.
-        val expectedText = stubTreeBinaryFile.serializeToString().replace(" MustUseReturnValue", "")
+        val expectedText = stubTreeBinaryFile.serializeToString()
 
         val fileViewProviderForDecompiledFile = decompiler.createFileViewProvider(
             knmFile, PsiManager.getInstance(project), physical = false,

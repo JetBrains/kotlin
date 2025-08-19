@@ -63,7 +63,7 @@ internal class StubBasedAnnotationDeserializer(private val session: FirSession) 
     fun loadConstant(property: KtProperty, isUnsigned: Boolean, isFromAnnotation: Boolean): FirExpression? {
         // Default values for annotation properties have constant as a workaround for KT-58137 (ee30cc04ee810fcdd719085af3a0e0c1995a73ee)
         if (!property.hasModifier(KtTokens.CONST_KEYWORD) && !isFromAnnotation) return null
-        val propertyStub: KotlinPropertyStubImpl = property.compiledStub ?: return null
+        val propertyStub: KotlinPropertyStubImpl = property.compiledStub
         val constantValue = propertyStub.constantInitializer ?: return null
         val resultValue = when {
             !isUnsigned -> constantValue
@@ -86,8 +86,8 @@ internal class StubBasedAnnotationDeserializer(private val session: FirSession) 
             return null
         }
 
-        val compiledStub: KotlinAnnotationEntryStubImpl? = ktAnnotation.compiledStub
-        val valueArguments = compiledStub?.valueArguments
+        val annotationStub: KotlinAnnotationEntryStubImpl = ktAnnotation.compiledStub
+        val valueArguments = annotationStub.valueArguments
 
         return deserializeAnnotation(
             ktAnnotation,

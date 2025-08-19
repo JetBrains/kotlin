@@ -18,9 +18,6 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.*
-import com.intellij.util.io.AbstractStringEnumerator
-import com.intellij.util.io.StringRef
-import com.intellij.util.io.UnsyncByteArrayOutputStream
 import org.jetbrains.kotlin.analysis.api.platform.KotlinDeserializedDeclarationsOrigin
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformSettings
 import org.jetbrains.kotlin.analysis.api.platform.declarations.*
@@ -29,6 +26,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInFileType
+import org.jetbrains.kotlin.analysis.decompiler.psi.file.cloneRecursively
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsClassFinder
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.name.*
@@ -36,12 +34,10 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getImportedSimpleNameByImportAlias
 import org.jetbrains.kotlin.psi.psiUtil.getSuperNames
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
-import org.jetbrains.kotlin.psi.stubs.KotlinFileStubKind
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
-import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import java.util.concurrent.ConcurrentHashMap
 
 class KotlinStandaloneDeclarationProvider internal constructor(
@@ -344,37 +340,35 @@ private class KotlinStandaloneDeclarationIndexImpl : KotlinStandaloneDeclaration
         }.add(property)
     }
 
-    fun indexStubRecursively(stub: StubElement<*>, compiledStub: KotlinFileStubImpl?): Unit = when (stub) {
+    fun indexStubRecursively(stub: StubElement<*>): Unit = when (stub) {
         is KotlinFileStubImpl -> {
             val file = stub.psi
             indexFile(file)
-            if (compiledStub != null) {
-                processMultifileClassStub(compiledStub = compiledStub, decompiledFile = file)
-            }
+            processMultifileClassStub(stub, file)
 
             // top-level declarations
-            stub.childrenStubs.forEach { indexStubRecursively(it, compiledStub) }
+            stub.childrenStubs.forEach(::indexStubRecursively)
         }
 
         is KotlinClassStubImpl -> {
             indexClassOrObject(stub.psi)
 
             // member declarations
-            stub.childrenStubs.forEach { indexStubRecursively(it, compiledStub) }
+            stub.childrenStubs.forEach(::indexStubRecursively)
         }
 
         is KotlinObjectStubImpl -> {
             indexClassOrObject(stub.psi)
 
             // member declarations
-            stub.childrenStubs.forEach { indexStubRecursively(it, compiledStub) }
+            stub.childrenStubs.forEach(::indexStubRecursively)
         }
 
         is KotlinScriptStubImpl -> {
             indexScript(stub.psi)
 
             // top-level declarations
-            stub.childrenStubs.forEach { indexStubRecursively(it, compiledStub) }
+            stub.childrenStubs.forEach(::indexStubRecursively)
         }
 
         is KotlinTypeAliasStubImpl -> indexTypeAlias(stub.psi)
@@ -383,7 +377,7 @@ private class KotlinStandaloneDeclarationIndexImpl : KotlinStandaloneDeclaration
         is KotlinPlaceHolderStubImpl if (stub.stubType == KtStubElementTypes.CLASS_BODY) -> {
             stub.childrenStubs
                 .filterIsInstance<KotlinClassOrObjectStub<*>>()
-                .forEach { indexStubRecursively(it, compiledStub) }
+                .forEach(::indexStubRecursively)
         }
 
         else -> Unit
@@ -494,9 +488,9 @@ private fun computeIndex(
     val recorder = KtDeclarationRecorder()
 
     fun indexStubRecursively(virtualFile: VirtualFile, file: KtFile) {
-        // Decompiled stub calculation
+        // Stub calculation
         if (cacheService != null) {
-            val stub = cacheService.getOrBuildDecompiledStub(virtualFile) {
+            val stub = cacheService.getOrBuildStub(virtualFile) {
                 file.calcStubTree().root as KotlinFileStubImpl
             }
 
@@ -505,12 +499,8 @@ private fun computeIndex(
                     error("`PsiFileImpl.setStubTree` method is not found")
                 }
 
-                val clonedStub = cloneStubRecursively(
-                    originalStub = stub,
-                    copyParentStub = null,
-                    buffer = UnsyncByteArrayOutputStream(),
-                    storage = StringEnumerator(),
-                ) as KotlinFileStubImpl
+                @OptIn(KtImplementationDetail::class)
+                val clonedStub = stub.cloneRecursively()
 
                 // A hack to avoid costly stub builder execution
                 setStubTreeMethod.invoke(file, clonedStub)
@@ -519,24 +509,8 @@ private fun computeIndex(
             file.calcStubTree()
         }
 
-        val compiledStubBuilder = {
-            ClsClassFinder.allowMultifileClassPart {
-                StubTreeLoader.getInstance()
-                    .build(/* project = */ null, /* vFile = */ virtualFile, /* psiFile = */ null)
-                    ?.root as KotlinFileStubImpl
-            }
-        }
-
-        val decompiledStub = file.greenStub as KotlinFileStubImpl
-
-        // Currently we are interested only in facade information, so we can skip redundant computations
-        val compiledStub = if (decompiledStub.kind is KotlinFileStubKind.WithPackage.Facade) {
-            cacheService?.getOrBuildCompiledStub(virtualFile) { compiledStubBuilder() } ?: compiledStubBuilder()
-        } else {
-            null
-        }
-
-        index.indexStubRecursively(stub = decompiledStub, compiledStub = compiledStub)
+        val stub = file.greenStub as KotlinFileStubImpl
+        index.indexStubRecursively(stub)
     }
 
     // We only need to index binary roots if we deserialize compiled symbols from stubs. When deserializing from class files, we don't
@@ -597,7 +571,7 @@ private fun computeIndex(
             if (!shouldBuildStubsForBinaryLibraries || !file.isCompiled) {
                 val stub = file.stub
                 if (stub != null) {
-                    index.indexStubRecursively(stub, compiledStub = null)
+                    index.indexStubRecursively(stub)
                 } else {
                     file.accept(recorder)
                 }
@@ -640,18 +614,12 @@ private fun computeIndex(
  * **Note**: shared stubs **MUST NOT** store psi
  */
 internal class KotlinFakeClsStubsCache {
-    private val decompiledFileStub = ConcurrentHashMap<VirtualFile, KotlinFileStubImpl>()
-    private val compiledFileStub = ConcurrentHashMap<VirtualFile, KotlinFileStubImpl>()
+    private val fileStubs = ConcurrentHashMap<VirtualFile, KotlinFileStubImpl>()
 
-    fun getOrBuildDecompiledStub(
+    fun getOrBuildStub(
         compiledFile: VirtualFile,
-        buildStub: (VirtualFile) -> KotlinFileStubImpl,
-    ): KotlinFileStubImpl = decompiledFileStub.computeIfAbsent(compiledFile, buildStub)
-
-    fun getOrBuildCompiledStub(
-        compiledFile: VirtualFile,
-        buildStub: (VirtualFile) -> KotlinFileStubImpl,
-    ): KotlinFileStubImpl = compiledFileStub.computeIfAbsent(compiledFile, buildStub)
+        stubBuilder: (VirtualFile) -> KotlinFileStubImpl,
+    ): KotlinFileStubImpl = fileStubs.computeIfAbsent(compiledFile, stubBuilder)
 }
 
 class KotlinStandaloneDeclarationProviderMerger(private val project: Project) : KotlinDeclarationProviderMerger {
@@ -664,73 +632,4 @@ class KotlinStandaloneDeclarationProviderMerger(private val project: Project) : 
                 }
             }
         }
-}
-
-/**
- * Returns a copy of [originalStub].
- *
- * @see KotlinFakeClsStubsCache
- */
-private fun <T : PsiElement> cloneStubRecursively(
-    originalStub: StubElement<T>,
-    copyParentStub: StubElement<*>?,
-    buffer: UnsyncByteArrayOutputStream,
-    storage: AbstractStringEnumerator,
-): StubElement<*> {
-    buffer.reset()
-
-    // Some specific elements are covered here as they widely used and has additional logic inside `serialize`,
-    // to it is an optimization
-    val copyStub = when (originalStub) {
-        is KotlinUserTypeStubImpl -> KotlinUserTypeStubImpl(
-            copyParentStub,
-            originalStub.upperBound,
-            originalStub.abbreviatedType,
-        )
-
-        is KotlinNameReferenceExpressionStubImpl -> KotlinNameReferenceExpressionStubImpl(
-            copyParentStub,
-            StringRef.fromString(originalStub.referencedName),
-            originalStub.isClassRef,
-        )
-
-        is PsiFileStub -> {
-            val serializer = originalStub.type
-            serializer.serialize(originalStub, StubOutputStream(buffer, storage))
-            serializer.deserialize(StubInputStream(buffer.toInputStream(), storage), copyParentStub)
-        }
-
-        else -> {
-            val serializer = originalStub.stubType
-            serializer.serialize(originalStub, StubOutputStream(buffer, storage))
-            serializer.deserialize(StubInputStream(buffer.toInputStream(), storage), copyParentStub)
-        }
-    }
-
-    for (originalChild in originalStub.childrenStubs) {
-        cloneStubRecursively(originalStub = originalChild, copyParentStub = copyStub, buffer = buffer, storage = storage)
-    }
-
-    return copyStub
-}
-
-private class StringEnumerator : AbstractStringEnumerator {
-    private val values = HashMap<String, Int>()
-    private val strings = mutableListOf<String>()
-
-    override fun enumerate(value: String?): Int {
-        if (value == null) return 0
-
-        return values.getOrPut(value) {
-            strings += value
-            values.size + 1
-        }
-    }
-
-    override fun valueOf(idx: Int): String? = if (idx == 0) null else strings[idx - 1]
-
-    override fun markCorrupted(): Unit = shouldNotBeCalled()
-    override fun close(): Unit = shouldNotBeCalled()
-    override fun isDirty(): Boolean = shouldNotBeCalled()
-    override fun force(): Unit = shouldNotBeCalled()
 }

@@ -1,7 +1,6 @@
 // FIR_IGNORE
 // Ignore reason: test runner performs run on different values of flag `useStringTable` (`true/false`), but checks dumps on the same file.
 // This value affects type alias expanding that affects dump.
-// KNM_FE10_IGNORE
 package test
 
 import dependency.*

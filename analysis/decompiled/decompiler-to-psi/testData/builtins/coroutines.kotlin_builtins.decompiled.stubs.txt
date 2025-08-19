@@ -5,7 +5,7 @@ FILE[kind=File[packageFqName=kotlin.coroutines]]
       REFERENCE_EXPRESSION[referencedName=coroutines]
   IMPORT_LIST
   FUN[fqName=kotlin.coroutines.hackToForceKotlinBuiltinsForKotlinCoroutinesPackage, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=hackToForceKotlinBuiltinsForKotlinCoroutinesPackage]
-    MODIFIER_LIST[private]
+    MODIFIER_LIST[private MustUseReturnValue]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
       USER_TYPE

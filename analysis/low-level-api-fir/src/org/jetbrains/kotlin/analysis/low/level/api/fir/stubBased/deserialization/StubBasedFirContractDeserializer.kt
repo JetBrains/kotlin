@@ -23,7 +23,7 @@ internal class StubBasedFirContractDeserializer(
     private val typeDeserializer: StubBasedFirTypeDeserializer,
 ) {
     fun loadContract(function: KtNamedFunction): FirContractDescription? {
-        val functionStub: KotlinFunctionStubImpl = function.compiledStub ?: return null
+        val functionStub: KotlinFunctionStubImpl = function.compiledStub
         val effects = functionStub.contract?.map {
             it.accept(ContractDescriptionConvertingVisitor(), null)
         }

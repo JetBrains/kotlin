@@ -439,8 +439,8 @@ internal class StubBasedFirMemberDeserializer(
                 local.memberDeserializer.loadContextReceiver(it, symbol)
             }
         }.apply {
-            val compiledStub: KotlinPropertyStubImpl? = property.compiledStub
-            compiledStub?.hasBackingField?.let { hasBackingField ->
+            val propertyStub: KotlinPropertyStubImpl = property.compiledStub
+            propertyStub.hasBackingField?.let { hasBackingField ->
                 @OptIn(FirImplementationDetail::class)
                 hasBackingFieldAttr = hasBackingField
             }
@@ -449,11 +449,9 @@ internal class StubBasedFirMemberDeserializer(
                 isDeserializedPropertyFromAnnotation = true
             }
 
-            compiledStub?.hasDelegate?.let { hasDelegate ->
-                if (hasDelegate) {
-                    @OptIn(FirImplementationDetail::class)
-                    isDelegatedPropertyAttr = true
-                }
+            if (propertyStub.hasDelegate) {
+                @OptIn(FirImplementationDetail::class)
+                isDelegatedPropertyAttr = true
             }
 
             setLazyPublishedVisibility(c.session)
@@ -675,7 +673,7 @@ internal class StubBasedFirMemberDeserializer(
     @OptIn(KtImplementationDetail::class)
     private fun FirDeclarationStatusImpl.setSpecialFlags(modifierList: KtModifierList?) {
         if (modifierList == null) return
-        val modifierListStub: KotlinModifierListStubImpl = modifierList.compiledStub ?: return
+        val modifierListStub: KotlinModifierListStubImpl = modifierList.compiledStub
         val hasMustUse = modifierListStub.hasSpecialFlag(KotlinModifierListStub.SpecialFlag.MustUseReturnValue)
         val hasIgnorable = modifierListStub.hasSpecialFlag(KotlinModifierListStub.SpecialFlag.IgnorableReturnValue)
 

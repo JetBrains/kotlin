@@ -1,4 +1,3 @@
-// KNM_FE10_IGNORE
 package foo.TopLevelMembers
 
 fun funWithBlockBody() {

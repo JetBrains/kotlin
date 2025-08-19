@@ -16,6 +16,15 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubKindImpl
 
 class KtFileStubBuilder : DefaultStubBuilder() {
+    override fun buildStubTree(file: PsiFile): StubElement<*> {
+        @OptIn(KtImplementationDetail::class)
+        (file as? KtFile)?.customStubBuilder?.let {
+            return it.buildStubTree(file)
+        }
+
+        return super.buildStubTree(file)
+    }
+
     @OptIn(KtImplementationDetail::class)
     override fun createStubForFile(file: PsiFile): StubElement<*> {
         if (file !is KtFile) {

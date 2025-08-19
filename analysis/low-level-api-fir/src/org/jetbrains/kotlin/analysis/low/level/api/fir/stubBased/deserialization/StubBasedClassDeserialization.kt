@@ -6,15 +6,9 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization
 
 import com.intellij.extapi.psi.StubBasedPsiElementBase
-import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.util.Key
-import com.intellij.psi.impl.source.tree.FileElement
 import com.intellij.psi.stubs.Stub
 import com.intellij.psi.stubs.StubElement
-import com.intellij.psi.stubs.StubTreeLoader
-import com.intellij.psi.util.PsiUtilCore
 import org.jetbrains.kotlin.KtRealPsiSourceElement
-import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsClassFinder
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -50,11 +44,9 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.elements.KotlinValueClassRepresentation
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinClassStubImpl
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
-import org.jetbrains.kotlin.utils.exceptions.buildErrorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
-import java.lang.ref.WeakReference
 
 internal val KtModifierListOwner.visibility: Visibility
     get() = with(modifierList) {
@@ -68,77 +60,39 @@ internal val KtModifierListOwner.visibility: Visibility
     }
 
 internal val KtDeclaration.modality: Modality
-    get() {
-        return when {
-            hasModifier(KtTokens.SEALED_KEYWORD) -> Modality.SEALED
-            hasModifier(KtTokens.ABSTRACT_KEYWORD) || this is KtClass && isInterface() -> Modality.ABSTRACT
-            hasModifier(KtTokens.OPEN_KEYWORD) -> Modality.OPEN
-            else -> Modality.FINAL
-        }
+    get() = when {
+        hasModifier(KtTokens.SEALED_KEYWORD) -> Modality.SEALED
+        hasModifier(KtTokens.ABSTRACT_KEYWORD) || this is KtClass && isInterface() -> Modality.ABSTRACT
+        hasModifier(KtTokens.OPEN_KEYWORD) -> Modality.OPEN
+        else -> Modality.FINAL
     }
 
-private val STUBS_KEY = Key.create<WeakReference<List<Stub>>>("STUBS")
-
 /**
- * Loads compiled stub for [this] element and casts it to [S].
+ * Gets or calculates stub for [this] element and casts it to [S].
  *
  * [S] has to be a real stub implementation class. For instance, for [KtNamedFunction] it has to be [org.jetbrains.kotlin.psi.stubs.impl.KotlinFunctionStubImpl].
  *
- * @return compiled stub or `null` if it's impossible to load stub for some reason.
+ * @return compiled stub
  */
-internal inline val <T, reified S> T.compiledStub: S? where T : StubBasedPsiElementBase<in S>, T : KtElement, S : StubElement<*>
-    get() {
-        val loadedStub = loadStubByElement(this) ?: return null
-        return loadedStub as S
-    }
+internal inline val <T, reified S> T.compiledStub: S where T : StubBasedPsiElementBase<in S>, T : KtElement, S : StubElement<*>
+    get() = (this.greenStub ?: calculateStub()) as S
 
-private fun <S, T> loadStubByElement(ktElement: T): Stub? where T : StubBasedPsiElementBase<in S>, T : KtElement, S : StubElement<*> {
-    val ktFile = ktElement.containingKtFile
+private fun <S, T> T.calculateStub(): Stub where T : StubBasedPsiElementBase<in S>, T : KtElement, S : StubElement<*> {
+    val ktFile = containingKtFile
     requireWithAttachment(ktFile.isCompiled, { "Expected compiled file" }) {
         withPsiEntry("ktFile", ktFile)
     }
 
-    val stubList = ktFile.getUserData(STUBS_KEY)?.get() ?: run {
-        val virtualFile = PsiUtilCore.getVirtualFile(ktFile) ?: return null
-        val stubTree = ClsClassFinder.allowMultifileClassPart {
-            StubTreeLoader.getInstance().readOrBuild(ktElement.project, virtualFile, null)
+    // `let` is used to hold the stub tree reference on the stack
+    return ktFile.calcStubTree().let {
+        val stub = greenStub
+        requireWithAttachment(stub != null, { "Stub should be not null" }) {
+            withPsiEntry("file", containingFile)
+            withPsiEntry("element", this@calculateStub)
         }
 
-        val stubList = stubTree?.plainList.orEmpty()
-        // We don't care about potential races as the tree would be the same
-        ktFile.putUserData(STUBS_KEY, WeakReference(stubList))
-        stubList
+        stub
     }
-
-    val nodeList = (ktFile.node as FileElement).stubbedSpine.spineNodes
-    if (stubList.size != nodeList.size) {
-        val exception = buildErrorWithAttachment("Compiled stubs are inconsistent with decompiled stubs") {
-            withPsiEntry("ktFile", ktFile)
-
-            withEntry("stubListSize", stubList.size.toString())
-            withEntry("stubList") {
-                stubList.forEachIndexed { index, stub ->
-                    this.print("$index ")
-                    this.println(stub.stubType?.toString() ?: stub::class.simpleName)
-                }
-            }
-
-            withEntry("nodeListSize", nodeList.size.toString())
-            withEntry("nodeList") {
-                nodeList.forEachIndexed { index, node ->
-                    this.print("$index ")
-                    this.println(node.elementType.toString())
-                }
-            }
-        }
-
-        Logger.getInstance("#org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.StubBasedFirDeserializer")
-            .error(exception)
-
-        return null
-    }
-
-    return stubList[nodeList.indexOf(ktElement.node)]
 }
 
 internal fun deserializeClassToSymbol(
@@ -305,16 +259,14 @@ internal fun deserializeClassToSymbol(
         contextParameters.addAll(memberDeserializer.createContextReceiversForClass(classOrObject, symbol))
     }.apply {
         if (classOrObject is KtClass) {
-            val classStub: KotlinClassStubImpl? = classOrObject.compiledStub
-            if (classStub != null) {
-                if (isInlineOrValue) {
-                    valueClassRepresentation = classStub.deserializeValueClassRepresentation(this)
-                }
+            val classStub: KotlinClassStubImpl = classOrObject.compiledStub
+            if (isInlineOrValue) {
+                valueClassRepresentation = classStub.deserializeValueClassRepresentation(this)
+            }
 
-                val clsStubCompiledToJvmDefaultImplementation = classStub.isClsStubCompiledToJvmDefaultImplementation
-                if (clsStubCompiledToJvmDefaultImplementation) {
-                    symbol.fir.isNewPlaceForBodyGeneration = true
-                }
+            val clsStubCompiledToJvmDefaultImplementation = classStub.isClsStubCompiledToJvmDefaultImplementation
+            if (clsStubCompiledToJvmDefaultImplementation) {
+                symbol.fir.isNewPlaceForBodyGeneration = true
             }
         }
 

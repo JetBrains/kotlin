@@ -472,10 +472,10 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
             deserializedContainerSourceProvider: DeserializedContainerSourceProvider,
             session: FirSession,
         ): FirPropertySymbol {
-            val compiledStub: KotlinPropertyStubImpl? = property.compiledStub
+            val propertyStub: KotlinPropertyStubImpl = property.compiledStub
             val containerSource = deserializedContainerSourceProvider.getFacadeContainerSource(
                 file = property.containingKtFile,
-                stubOrigin = compiledStub?.origin,
+                stubOrigin = propertyStub.origin,
                 declarationOrigin = propertyOrigin,
             )
 
@@ -504,10 +504,10 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
             deserializedContainerSourceProvider: DeserializedContainerSourceProvider,
             session: FirSession,
         ): FirNamedFunctionSymbol? {
-            val compiledStub: KotlinFunctionStubImpl? = function.compiledStub
+            val functionStub: KotlinFunctionStubImpl = function.compiledStub
             val containerSource = deserializedContainerSourceProvider.getFacadeContainerSource(
                 file = function.containingKtFile,
-                stubOrigin = compiledStub?.origin,
+                stubOrigin = functionStub.origin,
                 declarationOrigin = functionOrigin,
             )
 

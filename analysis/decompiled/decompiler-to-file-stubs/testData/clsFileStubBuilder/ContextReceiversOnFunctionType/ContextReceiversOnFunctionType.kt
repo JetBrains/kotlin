@@ -1,6 +1,5 @@
 // JVM_FILE_NAME: ContextReceiversOnFunctionTypeKt
 // LANGUAGE: +ContextReceivers
-// KNM_FE10_IGNORE
 
 @Target(AnnotationTarget.TYPE)
 annotation class MyAnnotation

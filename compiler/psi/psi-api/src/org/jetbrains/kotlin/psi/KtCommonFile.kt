@@ -137,6 +137,10 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
 
     override fun toString(): String = "KtFile: $name"
 
+    /** A workaround to provide the proper stub builder for decompiled files until KT-78356 is fixed */
+    @KtImplementationDetail
+    open val customStubBuilder: StubBuilder? get() = null
+
     override fun getDeclarations(): List<KtDeclaration> {
         return greenStub?.getChildrenByType(KtFile.FILE_DECLARATION_TYPES, KtDeclaration.ARRAY_FACTORY)?.toList()
             ?: PsiTreeUtil.getChildrenOfTypeAsList(this, KtDeclaration::class.java)
