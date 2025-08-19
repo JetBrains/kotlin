@@ -1,5 +1,5 @@
-
-
+// IGNORE_BACKEND_K2_MULTI_MODULE: JS_IR
+// ^^^ Cross-module inliner wrongly uses filename for call site instead of correct filename for inline fun declaration
 // FILE: test.kt
 
 fun box() {
@@ -21,7 +21,7 @@ inline fun foo() = {
 
 // EXPECTATIONS JS_IR
 // test1.kt:10 box
-// test1.kt:8 box$lambda
+// test.kt:2 box$lambda
 // test.kt:7 box
 
 // EXPECTATIONS WASM

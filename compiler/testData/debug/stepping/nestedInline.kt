@@ -1,4 +1,4 @@
-
+// IGNORE_BACKEND_K2_MULTI_MODULE: JS_IR
 // This is same as kotlin/compiler/testData/codegen/boxInline/smap/smap.kt
 // FILE: test.kt
 

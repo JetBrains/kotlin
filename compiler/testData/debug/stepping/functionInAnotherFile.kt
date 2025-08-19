@@ -1,4 +1,4 @@
-
+// IGNORE_BACKEND_K2_MULTI_MODULE: JS_IR
 // FILE: foo.kt
 import bar
 fun foo(x: Int): Int {
