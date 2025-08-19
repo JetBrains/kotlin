@@ -1313,6 +1313,59 @@ private inline fun String.skipWhile(startIndex: Int, predicate: (Char) -> Boolea
     return i
 }
 
+@kotlin.internal.InlineOnly
+private inline fun String.durationUnitByShortNameOrNull(start: Int): DurationUnit? {
+    val first = this[start]
+    val second = if (start < lastIndex) this[start + 1] else '\u0000'
+
+    return when (first) {
+        'd' -> DurationUnit.DAYS
+        'h' -> DurationUnit.HOURS
+        's' -> DurationUnit.SECONDS
+        'm' -> if (second == 's') DurationUnit.MILLISECONDS else DurationUnit.MINUTES
+        'u' -> if (second == 's') DurationUnit.MICROSECONDS else null
+        'n' -> if (second == 's') DurationUnit.NANOSECONDS else null
+        else -> null
+    }
+}
+
+@Suppress("REDUNDANT_ELSE_IN_WHEN")
+private val DurationUnit.fractionMultiplier: Double
+    get() = when (this) {
+        DurationUnit.NANOSECONDS -> 0.000000000000001
+        DurationUnit.MICROSECONDS -> 0.000000000001
+        DurationUnit.MILLISECONDS -> 0.000000001
+        DurationUnit.SECONDS -> 0.000001
+        DurationUnit.MINUTES -> 0.00006
+        DurationUnit.HOURS -> 0.0036
+        DurationUnit.DAYS -> 0.0864
+        else -> error("Unknown unit: $this")
+    }
+
+private val DurationUnit.fallbackFractionMultiplier: Long
+    get() = when (this) {
+        DurationUnit.MINUTES -> 60_000_000_000L
+        DurationUnit.HOURS -> 3_600_000_000_000L
+        DurationUnit.DAYS -> 86_400_000_000_000L
+        else -> error("Invalid unit: $this for fallback fraction multiplier")
+    }
+
+private val DurationUnit.millisMultiplier: Long
+    get() = when (this) {
+        DurationUnit.DAYS -> MILLIS_IN_DAY
+        DurationUnit.HOURS -> MILLIS_IN_HOUR
+        DurationUnit.MINUTES -> MILLIS_IN_MINUTE
+        DurationUnit.SECONDS -> MILLIS_IN_SECOND
+        DurationUnit.MILLISECONDS -> 1L
+        else -> error("Wrong unit for millisMultiplier: $this")
+    }
+
+private val DurationUnit.length: Int
+    get() = when (this) {
+        DurationUnit.MILLISECONDS, DurationUnit.MICROSECONDS, DurationUnit.NANOSECONDS -> 2
+        else -> 1
+    }
+
 
 
 
