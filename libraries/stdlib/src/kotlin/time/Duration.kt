@@ -1041,7 +1041,7 @@ private fun parseDuration(value: String, strictIso: Boolean, throwException: Boo
     val hasSign = index > 0
     val result = when {
         length <= index -> return handleError(throwException, "No components")
-        value[index] == 'P' -> parseIsoStringFormat(value, index, length, throwException)
+        value[index] == 'P' -> parseIsoStringFormat(value, index + 1, length, throwException)
         strictIso -> return handleError(throwException)
         value.regionMatches(index, INFINITY_STRING, 0, length = maxOf(length - index, INFINITY_STRING.length), ignoreCase = true) -> {
             Duration.INFINITE
@@ -1059,7 +1059,7 @@ private inline fun parseIsoStringFormat(
     throwException: Boolean,
 ): Duration {
     var index = startIndex
-    if (++index == length) return handleError(throwException)
+    if (index == length) return handleError(throwException)
 
     var totalMillis = 0L
     var totalNanos = 0L
