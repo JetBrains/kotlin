@@ -1573,9 +1573,21 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
     }
 
     @Test
+    @TestMetadata("destructuring1Old.kt")
+    public void testDestructuring1Old() {
+      runTest("compiler/testData/ir/irText/expressions/destructuring1Old.kt");
+    }
+
+    @Test
     @TestMetadata("destructuringWithUnderscore.kt")
     public void testDestructuringWithUnderscore() {
       runTest("compiler/testData/ir/irText/expressions/destructuringWithUnderscore.kt");
+    }
+
+    @Test
+    @TestMetadata("destructuringWithUnderscoreOld.kt")
+    public void testDestructuringWithUnderscoreOld() {
+      runTest("compiler/testData/ir/irText/expressions/destructuringWithUnderscoreOld.kt");
     }
 
     @Test
@@ -1672,6 +1684,12 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
     @TestMetadata("for.kt")
     public void testFor() {
       runTest("compiler/testData/ir/irText/expressions/for.kt");
+    }
+
+    @Test
+    @TestMetadata("forOld.kt")
+    public void testForOld() {
+      runTest("compiler/testData/ir/irText/expressions/forOld.kt");
     }
 
     @Test
@@ -1780,6 +1798,12 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
     @TestMetadata("implicitNotNullInDestructuringAssignment.kt")
     public void testImplicitNotNullInDestructuringAssignment() {
       runTest("compiler/testData/ir/irText/expressions/implicitNotNullInDestructuringAssignment.kt");
+    }
+
+    @Test
+    @TestMetadata("implicitNotNullInDestructuringAssignmentOld.kt")
+    public void testImplicitNotNullInDestructuringAssignmentOld() {
+      runTest("compiler/testData/ir/irText/expressions/implicitNotNullInDestructuringAssignmentOld.kt");
     }
 
     @Test
@@ -2047,6 +2071,12 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
     }
 
     @Test
+    @TestMetadata("multipleSmartCastsOld.kt")
+    public void testMultipleSmartCastsOld() {
+      runTest("compiler/testData/ir/irText/expressions/multipleSmartCastsOld.kt");
+    }
+
+    @Test
     @TestMetadata("multipleThisReferences.kt")
     public void testMultipleThisReferences() {
       runTest("compiler/testData/ir/irText/expressions/multipleThisReferences.kt");
@@ -2212,6 +2242,12 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
     @TestMetadata("smartCastsWithDestructuring.kt")
     public void testSmartCastsWithDestructuring() {
       runTest("compiler/testData/ir/irText/expressions/smartCastsWithDestructuring.kt");
+    }
+
+    @Test
+    @TestMetadata("smartCastsWithDestructuringOld.kt")
+    public void testSmartCastsWithDestructuringOld() {
+      runTest("compiler/testData/ir/irText/expressions/smartCastsWithDestructuringOld.kt");
     }
 
     @Test
@@ -4083,6 +4119,12 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
     }
 
     @Test
+    @TestMetadata("DeepCopyIrTreeOld.kt")
+    public void testDeepCopyIrTreeOld() {
+      runTest("compiler/testData/ir/irText/firProblems/DeepCopyIrTreeOld.kt");
+    }
+
+    @Test
     @TestMetadata("delegatedSetterShouldBeSpecialized.kt")
     public void testDelegatedSetterShouldBeSpecialized() {
       runTest("compiler/testData/ir/irText/firProblems/delegatedSetterShouldBeSpecialized.kt");
@@ -4218,6 +4260,12 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
     @TestMetadata("kt55458.kt")
     public void testKt55458() {
       runTest("compiler/testData/ir/irText/firProblems/kt55458.kt");
+    }
+
+    @Test
+    @TestMetadata("kt55458Old.kt")
+    public void testKt55458Old() {
+      runTest("compiler/testData/ir/irText/firProblems/kt55458Old.kt");
     }
 
     @Test
@@ -4502,6 +4550,12 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
     @TestMetadata("destructuringInLambda.kt")
     public void testDestructuringInLambda() {
       runTest("compiler/testData/ir/irText/lambdas/destructuringInLambda.kt");
+    }
+
+    @Test
+    @TestMetadata("destructuringInLambdaOld.kt")
+    public void testDestructuringInLambdaOld() {
+      runTest("compiler/testData/ir/irText/lambdas/destructuringInLambdaOld.kt");
     }
 
     @Test
@@ -5052,9 +5106,21 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
       }
 
       @Test
+      @TestMetadata("enhancedNullabilityInDestructuringAssignmentOld.kt")
+      public void testEnhancedNullabilityInDestructuringAssignmentOld() {
+        runTest("compiler/testData/ir/irText/types/nullChecks/enhancedNullabilityInDestructuringAssignmentOld.kt");
+      }
+
+      @Test
       @TestMetadata("enhancedNullabilityInForLoop.kt")
       public void testEnhancedNullabilityInForLoop() {
         runTest("compiler/testData/ir/irText/types/nullChecks/enhancedNullabilityInForLoop.kt");
+      }
+
+      @Test
+      @TestMetadata("enhancedNullabilityInForLoopOld.kt")
+      public void testEnhancedNullabilityInForLoopOld() {
+        runTest("compiler/testData/ir/irText/types/nullChecks/enhancedNullabilityInForLoopOld.kt");
       }
 
       @Test
