@@ -24,22 +24,30 @@ val repoPatch = {
     )
 }
 
-val defaultIterations = 20
+val defaultIterations = 100
 
 runBenchmarks(
     repoPatch,
     suite {
-        scenario {
-            title = "Build Js clean build"
-            iterations = defaultIterations
-
-            runTasks("jsJar")
-            runCleanupTasks("clean")
-        }
+//        scenario {
+//            title = "Build Js clean build"
+//            iterations = defaultIterations
+//
+//            useGradleArgs(
+//                "-Pkotlin.kmp.unresolvedDependenciesDiagnostic=false",
+//            )
+//
+//            runTasks("jsJar")
+//            runCleanupTasks("clean")
+//        }
 
         scenario {
             title = "Build Js IR with ABI change in ObservableList"
             iterations = defaultIterations
+
+            useGradleArgs(
+                "-Pkotlin.kmp.unresolvedDependenciesDiagnostic=false",
+            )
 
             runTasks("jsJar")
             applyAbiChangeTo("kvision-modules/kvision-state/src/jsMain/kotlin/io/kvision/state/ObservableList.kt")
@@ -49,13 +57,20 @@ runBenchmarks(
             title = "Build Js IR with non-ABI change in ObservableList"
             iterations = defaultIterations
 
+            useGradleArgs(
+                "-Pkotlin.kmp.unresolvedDependenciesDiagnostic=false",
+            )
+
             runTasks("jsJar")
             applyNonAbiChangeTo("kvision-modules/kvision-state/src/jsMain/kotlin/io/kvision/state/ObservableList.kt")
         }
 
         scenario {
             title = "Dry run configuration time"
-            useGradleArgs("-m")
+            useGradleArgs(
+                "-m",
+                "-Pkotlin.kmp.unresolvedDependenciesDiagnostic=false",
+            )
             iterations = defaultIterations
 
             runTasks("jsJar")
@@ -65,12 +80,20 @@ runBenchmarks(
             title = "No-op configuration time"
             iterations = defaultIterations
 
+            useGradleArgs(
+                "-Pkotlin.kmp.unresolvedDependenciesDiagnostic=false",
+            )
+
             runTasks("help")
         }
 
         scenario {
             title = "UP-TO-DATE configuration time"
             iterations = defaultIterations
+
+            useGradleArgs(
+                "-Pkotlin.kmp.unresolvedDependenciesDiagnostic=false",
+            )
 
             runTasks("jsJar")
         }
