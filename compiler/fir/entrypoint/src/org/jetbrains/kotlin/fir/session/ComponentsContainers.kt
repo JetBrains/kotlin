@@ -214,7 +214,6 @@ fun FirSession.registerResolveComponents(
 ) {
     register(FirQualifierResolver::class, FirQualifierResolverImpl(this))
     register(FirTypeResolver::class, FirTypeResolverImpl(this))
-    register(CheckersComponent::class, CheckersComponent())
     register(FirModuleVisibilityChecker::class, FirModuleVisibilityChecker.Standard(this))
     register(SourcesToPathsMapper::class, SourcesToPathsMapper())
     if (lookupTracker != null) {
@@ -244,6 +243,9 @@ fun FirSession.registerResolveComponents(
 @OptIn(SessionConfiguration::class)
 fun FirSession.registerCliCompilerOnlyResolveComponents() {
     register(FirNameConflictsTracker::class, FirNameConflictsTrackerImpl())
+
+    // The Analysis API uses `LLCheckersFactory`.
+    register(CheckersComponent::class, CheckersComponent())
 }
 
 @OptIn(SessionConfiguration::class)

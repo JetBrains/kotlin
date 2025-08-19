@@ -42,8 +42,6 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.FirNameConflictsTracker
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 import org.jetbrains.kotlin.fir.SessionConfiguration
-import org.jetbrains.kotlin.fir.analysis.checkersComponent
-import org.jetbrains.kotlin.fir.analysis.extensions.additionalCheckers
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
@@ -319,8 +317,6 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
 
             LLFirSessionConfigurator.configure(this)
 
-            extensionService.additionalCheckers.forEach(session.checkersComponent::register)
-
             val syntheticFunctionInterfaceProvider =
                 FirExtensionSyntheticFunctionInterfaceProvider.createIfNeeded(this, moduleData, scopeProvider)
             val switchableExtensionDeclarationsSymbolProvider =
@@ -584,8 +580,6 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             register(DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY, dependencyProvider)
 
             LLFirSessionConfigurator.configure(this)
-
-            extensionService.additionalCheckers.forEach(session.checkersComponent::register)
 
             val syntheticFunctionInterfaceProvider = FirExtensionSyntheticFunctionInterfaceProvider
                 .createIfNeeded(this, moduleData, scopeProvider)
