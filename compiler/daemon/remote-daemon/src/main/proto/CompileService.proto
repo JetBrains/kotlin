@@ -74,11 +74,13 @@ message CompilationResultGrpc{
 //  uint32 file_count = 2;
 }
 
+
+// TODO: could metadata be somewhere useful in our use case?
+//  google.protobuf.Timestamp modified_at = 3;
+//  google.protobuf.Timestamp created_at = 4;
 message FileChunkGrpc {
   string file_path = 1;
   FileTypeGrpc file_type = 2;
-//  google.protobuf.Timestamp modified_at = 3;
-//  google.protobuf.Timestamp created_at = 4;
   bytes content = 3;
   bool is_last = 4;
 }
@@ -130,10 +132,34 @@ message FileTransferRequestGrpc{
   FileTypeGrpc file_type = 3;
 }
 
+message DirectoryTransferRequestGrpc{
+  string directory_path = 1;
+  string directory_fingerprint = 2;
+  repeated FileTransferRequestGrpc directory_files = 3;
+}
+
 message FileTransferReplyGrpc{
   string file_path = 1;
   bool is_present = 2;
   FileTypeGrpc file_type = 3;
+}
+
+message DirectoryTransferReplyGrpc{
+  string directory_path = 1;
+  string directory_fingerprint = 2;
+  bool is_entire_directory_present = 3;
+  repeated FileIdentifierGrpc missing_files = 4;
+}
+
+message FileIdentifierGrpc {
+  string file_path = 1;
+  string file_fingerprint = 2;
+}
+
+message DirectoryEntryChunkGrpc{
+  string directory_path = 1;
+  bool is_last_directory_entry = 2;
+  FileChunkGrpc file_chunk = 3;
 }
 
 message CompilerMessageSourceLocationGrpc {
