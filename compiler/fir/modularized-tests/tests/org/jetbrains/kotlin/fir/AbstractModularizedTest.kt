@@ -170,6 +170,8 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
 
         println("BASE PATH: ${root.absolutePath}")
 
+        val additionalMessages = mutableListOf<String>()
+
         val filterRegex = OUTPUT_DIR_REGEX_FILTER.toRegex()
         val moduleName = MODULE_NAME_FILTER
         val moduleNameRegexOutFilter = MODULE_NAME_REGEX_OUT?.toRegex()
@@ -180,9 +182,23 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
             .sortedBy { it.lastModified() }
             .flatMap { loadModuleDumpFile(it) }
             .sortedBy { it.timestamp }
+            .also { additionalMessages += "Discovered ${it.size} modules" }
             .filter { it.rawOutputDir.matches(filterRegex) }
+            .also { additionalMessages += "Filtered by regex to ${it.size} modules" }
             .filter { (moduleName == null) || it.name == moduleName }
+            .also { additionalMessages += "Filtered by module name to ${it.size} modules" }
             .filter { !it.isCommon }
+            .also { additionalMessages += "Filtered by common flag to ${it.size} modules" }
+
+        if (modules.isEmpty() && IS_UNDER_TEAMCITY) {
+            println("------------------------ Flakiness diagnostic ------------------------")
+            println("No modules found for pattern `$OUTPUT_DIR_REGEX_FILTER` in `$testDataPath`")
+            println("TestData root exists: ${root.exists()}")
+            println(files.joinToString(prefix = "Content of testdata root:\n", separator = "\n") { it.absolutePath })
+            println()
+            additionalMessages.forEach { println(it) }
+            println("------------------------------------------------")
+        }
 
 
         for (module in modules.progress(step = 0.0) { "Analyzing ${it.qualifiedName}" }) {
