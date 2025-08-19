@@ -14,7 +14,7 @@ gradlePlugin-android = "7.3.1"
 kotlinx-coroutines = "1.7.3"
 kotlinx-collections-immutable = "0.3.6"
 kotlinx-serialization = "1.6.0"
-kotlinx-bcv = "0.13.2"
+kotlinx-bcv = "0.17.0"
 
 ktor = "2.3.11"
 

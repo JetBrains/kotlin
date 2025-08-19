@@ -787,7 +787,7 @@ internal class DokkaSymbolVisitor(
 
     private fun KtExpression.toDefaultValueExpression(): Expression? = when (node?.elementType) {
         KtNodeTypes.INTEGER_CONSTANT -> PsiLiteralUtil.parseLong(node?.text)?.let { IntegerConstant(it) }
-        KtNodeTypes.FLOAT_CONSTANT -> if (node?.text?.toLowerCase()?.endsWith('f') == true)
+        KtNodeTypes.FLOAT_CONSTANT -> if (node?.text?.lowercase()?.endsWith('f') == true)
             PsiLiteralUtil.parseFloat(node?.text)?.let { FloatConstant(it) }
         else PsiLiteralUtil.parseDouble(node?.text)?.let { DoubleConstant(it) }
 
