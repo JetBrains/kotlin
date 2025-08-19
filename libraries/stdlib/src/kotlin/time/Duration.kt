@@ -1150,11 +1150,11 @@ private inline fun parseDefaultStringFormat(
         isFirstComponent = false
 
         val longStartIndex = index
-        val (longValue, longEndIndex, sign) = value.parseLong(index, withSign = false, overflowLimit = Long.MAX_VALUE)
+        val (longValue, longEndIndex, _, hasOverflow) = value.parseLong(index, withSign = false, overflowLimit = Long.MAX_VALUE)
         if (longEndIndex == longStartIndex || longEndIndex == length) {
             return handleError(throwException)
         }
-        if (sign == -1) return handleError(throwException)
+        if (hasOverflow) return handleError(throwException)
         index = longEndIndex
 
         val hasFractionalPart = value[index] == '.'
@@ -1240,7 +1240,7 @@ private inline fun Long.addWithoutOverflow(other: Long): Long = when {
     else -> this + other
 }
 
-private data class NumericParseData(val value: Long, val index: Int, val sign: Int = 1)
+private data class NumericParseData(val value: Long, val index: Int, val sign: Int = 1, val hasOverflow: Boolean = false)
 
 @kotlin.internal.InlineOnly
 private inline fun String.parseLong(startIndex: Int, withSign: Boolean = true, overflowLimit: Long = MAX_MILLIS): NumericParseData {
@@ -1265,12 +1265,12 @@ private inline fun String.parseLong(startIndex: Int, withSign: Boolean = true, o
         val digit = ch - '0'
         if (result > overflowThreshold || (result == overflowThreshold && digit > lastDigitMax)) {
             while (index < length && this[index] in '0'..'9') index++
-            return NumericParseData(overflowLimit * sign, index, if (!withSign) -1 else sign)
+            return NumericParseData(overflowLimit * sign, index, sign, hasOverflow = true)
         }
         result = result * 10 + digit
         index++
     }
-    return NumericParseData(result * sign, index, sign)
+    return NumericParseData(result * sign, index, sign, hasOverflow = false)
 }
 
 @kotlin.internal.InlineOnly
