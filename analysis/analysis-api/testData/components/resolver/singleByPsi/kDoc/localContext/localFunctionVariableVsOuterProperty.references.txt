@@ -3,4 +3,4 @@ KDocName(80,82): 'pp'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in A) val pp: kotlin.Int
+      (in <local>: A.foo) val pp: kotlin.Int

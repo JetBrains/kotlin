@@ -4,7 +4,7 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        (in <local>: A) TT
+        Nothing (Unresolved reference)
 
 <caret_2>:
   KDocName(142,144): 'TT'

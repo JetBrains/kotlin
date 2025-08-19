@@ -22,9 +22,7 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        0: (in test.Base) fun function()
-        1: (in test) fun kotlin.Any.function()
-        2: (in test) fun test.Base.function(i: kotlin.Int)
+        (in test.Base) fun function()
 
 <caret_4>:
   KDocName(169,187): 'test.Base.function'
@@ -32,5 +30,4 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        0: (in test) fun kotlin.Any.function()
-        1: (in test) fun test.Base.function(i: kotlin.Int)
+        (in test.Base) fun function()

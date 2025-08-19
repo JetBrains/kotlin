@@ -4,7 +4,7 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        (in dependency.JavaBase) var age: kotlin.Int
+        (in dependency.JavaBase) open fun getAge(): kotlin.Int
 
 <caret_2>:
   KDocName(277,281): 'name'
@@ -12,7 +12,7 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        (in dependency.JavaBase) var name: kotlin.String!
+        (in dependency.JavaBase) open fun getName(): kotlin.String!
 
 <caret_3>:
   KDocName(299,305): 'getAge'

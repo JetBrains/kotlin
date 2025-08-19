@@ -3,4 +3,4 @@ KDocName(79,82): 'foo'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      Nothing (Unresolved reference)
+      (in Base.Companion) fun foo()

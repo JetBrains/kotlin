@@ -7,32 +7,22 @@ package org.jetbrains.kotlin.analysis.api.fir.references
 
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.components.KaScopeContext
 import org.jetbrains.kotlin.analysis.api.components.KaScopeKind
-import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver.getLongestExistingPackageScope
 import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver.getTypeQualifiedExtensions
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirTypeParameterSymbol
-import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
+import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver.resolveKdocFqName
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
-import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
-import org.jetbrains.kotlin.fir.resolve.calls.overloads.ConeSimpleConstraintSystemImpl
-import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
-import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.load.java.possibleGetMethodNames
-import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.isOneSegmentFQN
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
-import kotlin.reflect.KClass
+import org.jetbrains.kotlin.utils.yieldIfNotNull
 
 internal object KDocReferenceResolver {
     /**
@@ -45,6 +35,9 @@ internal object KDocReferenceResolver {
 
     private fun KaSymbol.toResolveResult(receiverClassReference: KaClassLikeSymbol? = null): ResolveResult =
         ResolveResult(symbol = this, receiverClassReference)
+
+    private fun Iterable<KaSymbol>.toResolveResults(receiverClassReference: KaClassLikeSymbol? = null): List<ResolveResult> =
+        this.map { it.toResolveResult(receiverClassReference) }
 
     /**
      * Resolves the [selectedFqName] of KDoc
@@ -60,7 +53,7 @@ internal object KDocReferenceResolver {
      * @param fullFqName the whole fully qualified name of the KDoc
      * @param contextElement the context element in which the KDoc is defined
      *
-     * @return the collection of [KaSymbol](s) resolved from the fully qualified name
+     * @return the set of [KaSymbol](s) resolved from the fully qualified name
      *         based on the selected FqName and context element
      */
     internal fun resolveKdocFqName(
@@ -68,15 +61,15 @@ internal object KDocReferenceResolver {
         selectedFqName: FqName,
         fullFqName: FqName,
         contextElement: KtElement,
-    ): Collection<KaSymbol> {
+    ): Set<KaSymbol> {
         with(analysisSession) {
             //ensure file context is provided for "non-physical" code as well
             val contextDeclarationOrSelf = PsiTreeUtil.getContextOfType(contextElement, KtDeclaration::class.java, false)
                 ?: contextElement
             val fullSymbolsResolved =
-                resolveKdocFqName(fullFqName, contextDeclarationOrSelf).sortedByDescending { it.symbol is KaClassLikeSymbol }
-            if (selectedFqName == fullFqName) return fullSymbolsResolved.mapTo(mutableSetOf()) { it.symbol }
-            if (fullSymbolsResolved.isEmpty()) {
+                resolveKdocFqName(fullFqName, contextDeclarationOrSelf)
+            if (selectedFqName == fullFqName) return fullSymbolsResolved.map { it.symbol }.toSet()
+            if (fullSymbolsResolved.none()) {
                 val parent = fullFqName.parent()
                 return resolveKdocFqName(analysisSession, selectedFqName, parent, contextDeclarationOrSelf)
             }
@@ -84,7 +77,7 @@ internal object KDocReferenceResolver {
             check(goBackSteps > 0) {
                 "Selected FqName ($selectedFqName) should be smaller than the whole FqName ($fullFqName)"
             }
-            return fullSymbolsResolved.mapNotNullTo(mutableSetOf()) { findParentSymbol(it, goBackSteps, selectedFqName) }
+            return fullSymbolsResolved.mapNotNull { findParentSymbol(it, goBackSteps, selectedFqName) }.toSet()
         }
     }
 
@@ -134,115 +127,176 @@ internal object KDocReferenceResolver {
         return currentSymbol
     }
 
+    /**
+     * Uses step-by-step algorithm to retrieve symbols with the given [fqName] from all the sources based on the given [contextElement].
+     * If any symbols are found on some processing stage, they are returned immediately.
+     *
+     * Firstly, if the provided [fqName] is a short name, the function tries to acquire self-declarations, i.e., declarations that are located inside the [contextElement].
+     * Such declarations include: `this` references, the name of the context declaration, type/value parameters of this context declaration, etc.
+     *
+     * Then the algorithm prepares the sequence of scopes that might contain the short name.
+     * Firstly, this sequence includes lexical scopes of the [contextElement] and its parents, i.e., a sequence of member scopes from outer classes.
+     * Then [resolveKdocFqName] uses [org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector] to collect scopes accessible from the given [contextElement],
+     * which is done via [org.jetbrains.kotlin.analysis.api.components.KaScopeProvider.scopeContext].
+     * The scope collector returns accessible local and imported scopes sorted by their locality (starting from the most local ones), see all types of provided scopes in [org.jetbrains.kotlin.analysis.api.components.KaScopeKinds].
+     * Additionally, for cases when the referred symbol is not local and not imported, the algorithm calculates the longest existing package name by [fqName] prefixes and adds the scope of this package to the scope sequence.
+     *
+     * Symbols from these scopes are retrieved based on the following priorities:
+     * 1. Classifiers
+     * 2. Functions
+     * 3. Synthetic properties
+     * 4. Variables
+     * If any symbols are found during this stage, the algorithm returns a set of symbols of the same declaration kind found in the same scope.
+     *
+     * Then, if no symbols were found on previous stages, the following symbol categories are searched:
+     * 1. Type qualified extensions
+     * 2. Package
+     * 3. Symbols provided via [AdditionalKDocResolutionProvider] extension point
+     */
     private fun KaSession.resolveKdocFqName(
         fqName: FqName,
-        contextElement: KtElement,
-        trySyntheticGetters: Boolean = true,
-    ): Collection<ResolveResult> {
-        getExtensionReceiverSymbolByThisQualifier(fqName, contextElement).ifNotEmpty { return this }
+        contextElement: KtElement
+    ): List<ResolveResult> {
+        val shortName = fqName.shortName()
+        if (fqName.isOneSegmentFQN()) {
+            // Search for symbols by `this` qualifier
+            getExtensionReceiverSymbolByThisQualifier(shortName, contextElement).ifNotEmpty { return this.toResolveResults() }
 
-        buildList {
-            getSymbolsFromScopes(fqName, contextElement).firstOrNull()?.mapTo(this) { it.toResolveResult() }
-            addAll(getTypeQualifiedExtensions(fqName, contextElement))
-            addIfNotNull(findPackage(fqName)?.toResolveResult())
-        }.ifNotEmpty { return this }
-
-        getNonImportedSymbolsByFullyQualifiedName(fqName).map { it.toResolveResult() }.ifNotEmpty { return this }
-
-        AdditionalKDocResolutionProvider.resolveKdocFqName(useSiteSession, fqName, contextElement)
-            .map { it.toResolveResult() }
-            .ifNotEmpty { return this }
-
-        if (trySyntheticGetters) {
-            getSymbolsFromSyntheticProperty(fqName, contextElement).ifNotEmpty { return this }
+            // Search for symbols from the context declaration (self-links)
+            getSymbolsFromDeclaration(
+                shortName,
+                contextElement,
+            ).ifNotEmpty { return this.toResolveResults() }
         }
+        val containingFile = contextElement.containingKtFile
+        val scopeContext = containingFile.scopeContext(contextElement)
+        val scopeContextScopes = scopeContext.scopes
+        val lexicalScopes = getLexicalScopesForPosition(contextElement)
+
+        val localScopeContextScopes = scopeContext.scopes.filter { scope ->
+            scope.kind is KaScopeKind.LocalScope ||
+                    scope.kind is KaScopeKind.TypeScope ||
+                    scope.kind is KaScopeKind.TypeParameterScope ||
+                    scope.kind is KaScopeKind.StaticMemberScope
+        }.map { it.scope }
+
+        val globalScopeContextScopes = scopeContext.scopes.filter { scope ->
+            scope.kind is KaScopeKind.PackageMemberScope ||
+                    scope.kind is KaScopeKind.ImportingScope
+        }.map { it.scope }
+
+        val visibleResolutionScopes = localScopeContextScopes + lexicalScopes + globalScopeContextScopes
+
+        val allScopesPossiblyContainingName = sequence {
+            yieldAll(visibleResolutionScopes.mapNotNull { getNestedScopePossiblyContainingShortName(fqName, it) })
+            yieldIfNotNull(getLongestExistingPackageScope(fqName))
+        }
+
+        allScopesPossiblyContainingName.firstNotNullOfOrNull { currentScope ->
+            // Search for classifiers
+            currentScope.classifiers(shortName).toSet().ifNotEmpty { return this.toResolveResults() }
+
+            val allCallables = currentScope.callables(shortName)
+
+            // Search for functions
+            allCallables.filterIsInstance<KaFunctionSymbol>().toSet().ifNotEmpty { return this.toResolveResults() }
+
+            // Search for synthetic properties
+            getSymbolsFromSyntheticProperty(
+                shortName,
+                currentScope
+            ).ifNotEmpty { return this.toResolveResults() }
+
+            // Search for variables
+            allCallables.filterIsInstance<KaVariableSymbol>().toSet().ifNotEmpty { return this.toResolveResults() }
+        }
+
+        // Search for extension functions
+        getTypeQualifiedExtensions(
+            fqName,
+            scopeContextScopes.map { it.scope },
+            visibleResolutionScopes
+        ).ifNotEmpty { return this }
+
+        // Search for package
+        findPackage(fqName)?.let {
+            return listOf(it.toResolveResult())
+        }
+
+        // Search for symbols provided via `AdditionalKDocResolutionProvider` extension point
+        AdditionalKDocResolutionProvider.resolveKdocFqName(useSiteSession, fqName, contextElement)
+            .ifNotEmpty { return this.toResolveResults() }
 
         return emptyList()
     }
 
-    private fun KaSession.getSymbolsFromSyntheticProperty(fqName: FqName, contextElement: KtElement): Collection<ResolveResult> {
-        val getterNames = possibleGetMethodNames(fqName.shortNameOrSpecial())
-        return getterNames.flatMap { getterName ->
-            resolveKdocFqName(fqName.parent().child(getterName), contextElement, trySyntheticGetters = false)
-        }.filter {
-            val symbolLocation = it.symbol.location
-            val symbolOrigin = it.symbol.origin
-            symbolLocation == KaSymbolLocation.CLASS && (symbolOrigin == KaSymbolOrigin.JAVA_LIBRARY || symbolOrigin == KaSymbolOrigin.JAVA_SOURCE)
+    /**
+     * Calculates the longest existing package name for the given [fqName] by prefixes and returns its scope.
+     * This is used to retrieve non-imported symbols from other packages by their fully qualified names.
+     *
+     * ```kotlin
+     *  package foo.bar
+     *
+     *  object Something {
+     *      fun myFun() {} // foo.bar.Something.myFun
+     *  }
+     * ```
+     *
+     * To find the package containing `foo.bar.Something.myFun`, this name is passed to [getLongestExistingPackageScope], which then returns `foo.bar` package scope.
+     */
+    private fun KaSession.getLongestExistingPackageScope(fqName: FqName): KaScope? {
+        val fqNameSegments = fqName.pathSegments()
+        for (numberOfPackageSegments in fqNameSegments.size - 1 downTo 1) {
+            val packageName = FqName.fromSegments(fqNameSegments.take(numberOfPackageSegments).map { it.toString() })
+            val declarationNameToFind = FqName.fromSegments(fqNameSegments.drop(numberOfPackageSegments).map { it.toString() })
+            val packageScope = findPackage(packageName)?.packageScope ?: continue
+            getNestedScopePossiblyContainingShortName(declarationNameToFind, packageScope)?.let { return it }
         }
+        return null
     }
 
+    /**
+     * Generates various possible getter names for the given [name] and searches for symbols in the given [scope].
+     */
+    private fun getSymbolsFromSyntheticProperty(name: Name, scope: KaScope): List<KaSymbol> {
+        val getterNames = possibleGetMethodNames(name)
+        return scope.callables { it in getterNames }.filter { symbol ->
+            val symbolLocation = symbol.location
+            val symbolOrigin = symbol.origin
+            symbolLocation == KaSymbolLocation.CLASS && (symbolOrigin == KaSymbolOrigin.JAVA_LIBRARY || symbolOrigin == KaSymbolOrigin.JAVA_SOURCE)
+        }.toList()
+    }
+
+    /**
+     * If [name] equals to `this`, returns a receiver of the callable context declaration, if any.
+     */
     private fun KaSession.getExtensionReceiverSymbolByThisQualifier(
-        fqName: FqName,
+        name: Name,
         contextElement: KtElement,
-    ): Collection<ResolveResult> {
+    ): List<KaSymbol> {
         val owner = contextElement.parentOfType<KtDeclaration>(withSelf = true) ?: return emptyList()
-        if (fqName.pathSegments().singleOrNull()?.asString() == "this") {
+        if (name.asString() == "this") {
             if (owner is KtCallableDeclaration && owner.receiverTypeReference != null) {
                 val symbol = owner.symbol as? KaCallableSymbol ?: return emptyList()
-                return listOfNotNull(symbol.receiverParameter?.toResolveResult())
+                return listOfNotNull(symbol.receiverParameter)
             }
         }
         return emptyList()
     }
 
-
-    /**
-     * Returns a sequence containing collections of gathered symbols.
-     * Each collection represents one symbol scope,
-     * coming from the closest one to [contextElement] to the farthest one.
-     * Every collection in the resulting sequence is guaranteed to be non-empty.
-     *
-     * @param fqName - The name of the symbol to search for
-     * @param contextElement - The name of the element to start search from
-     * @return The sequence containing suitable [KaSymbol] found in different scopes
-     */
-    private fun KaSession.getSymbolsFromScopes(
-        fqName: FqName,
-        contextElement: KtElement
-    ): Sequence<Collection<KaSymbol>> =
-        sequence {
-            getSymbolsFromParentMemberScopes(fqName, contextElement).ifNotEmpty { yield(this) }
-
-            val importScopeContext = contextElement.containingKtFile.importingScopeContext
-            getSymbolsFromImportingScope(
-                importScopeContext,
-                fqName,
-                KaScopeKind.ExplicitSimpleImportingScope::class,
-            ).ifNotEmpty { yield(this) }
-
-            getSymbolsFromPackageScope(fqName, contextElement).ifNotEmpty { yield(this) }
-            getSymbolsFromImportingScope(
-                importScopeContext,
-                fqName,
-                KaScopeKind.DefaultSimpleImportingScope::class,
-            ).ifNotEmpty { yield(this) }
-
-            getSymbolsFromImportingScope(
-                importScopeContext,
-                fqName,
-                KaScopeKind.ExplicitStarImportingScope::class,
-            ).ifNotEmpty { yield(this) }
-
-            getSymbolsFromImportingScope(
-                importScopeContext,
-                fqName,
-                KaScopeKind.DefaultStarImportingScope::class
-            ).ifNotEmpty { yield(this) }
-        }
-
-
-    private fun KaSession.getSymbolsFromDeclaration(name: Name, owner: KtDeclaration): List<KaSymbol> = buildList {
+    private fun KaSession.getSymbolsFromDeclaration(name: Name, owner: KtElement): List<KaSymbol> = buildList {
         if (owner is KtNamedDeclaration) {
             if (owner.nameAsName == name) {
                 add(owner.symbol)
             }
         }
 
-        owner.modifierList?.contextReceiverLists?.flatMap { it.contextParameters() }?.forEach { contextParameter ->
-            if (contextParameter.nameAsName == name) {
-                add(contextParameter.symbol)
+        (owner as? KtModifierListOwner)?.modifierList?.contextReceiverLists?.flatMap { it.contextParameters() }
+            ?.forEach { contextParameter ->
+                if (contextParameter.nameAsName == name) {
+                    add(contextParameter.symbol)
+                }
             }
-        }
 
         if (owner is KtTypeParameterListOwner) {
             for (typeParameter in owner.typeParameters) {
@@ -251,6 +305,7 @@ internal object KDocReferenceResolver {
                 }
             }
         }
+
         if (owner is KtCallableDeclaration) {
             for (typeParameter in owner.valueParameters) {
                 if (typeParameter.nameAsName == name) {
@@ -265,28 +320,23 @@ internal object KDocReferenceResolver {
     }
 
     /**
-     * Returns the [KaSymbol]s called [fqName] found in the member scope and companion object's member scope of the [KtDeclaration]s that
-     * contain the [contextElement].
-     *
-     * If [fqName] has two or more segments, e.g. `Foo.bar`, the member and companion object scope of the containing [KtDeclaration] will be
-     * queried for a class `Foo` first, and then that class `Foo` will be queried for the member `bar` by short name.
+     * Retrieves all outer declarations for [contextElement] and returns a list of their member scopes.
      */
-    private fun KaSession.getSymbolsFromParentMemberScopes(fqName: FqName, contextElement: KtElement): Collection<KaSymbol> {
+    private fun KaSession.getLexicalScopesForPosition(contextElement: KtElement): Collection<KaScope> {
         val declaration = PsiTreeUtil.getContextOfType(contextElement, KtDeclaration::class.java, false) ?: return emptyList()
+        val scopeList = mutableListOf<KaScope>()
+
+        // This is also workaround for KT-79653 allowing pointing to enum entries of the context enum class
         for (ktDeclaration in declaration.parentsOfType<KtDeclaration>(withSelf = true)) {
-            if (fqName.pathSegments().size == 1) {
-                getSymbolsFromDeclaration(fqName.shortName(), ktDeclaration).ifNotEmpty { return this }
-            }
             if (ktDeclaration is KtClassOrObject) {
                 val symbol = ktDeclaration.classSymbol ?: continue
 
                 val scope = getCompositeCombinedMemberAndCompanionObjectScope(symbol)
 
-                val symbolsFromScope = getSymbolsFromMemberScope(fqName, scope)
-                if (symbolsFromScope.isNotEmpty()) return symbolsFromScope
+                scopeList.add(scope)
             }
         }
-        return emptyList()
+        return scopeList
     }
 
     private fun KaSession.getCompositeCombinedMemberAndCompanionObjectScope(symbol: KaDeclarationContainerSymbol): KaScope =
@@ -301,44 +351,28 @@ internal object KDocReferenceResolver {
         return companionSymbol.memberScope
     }
 
-    private fun KaSession.getSymbolsFromPackageScope(fqName: FqName, contextElement: KtElement): Collection<KaDeclarationSymbol> {
-        val containingFile = contextElement.containingKtFile
-        val packageFqName = containingFile.packageFqName
-        val packageSymbol = findPackage(packageFqName) ?: return emptyList()
-        val packageScope = packageSymbol.packageScope
-        return getSymbolsFromMemberScope(fqName, packageScope)
-    }
-
-    private fun KaSession.getSymbolsFromImportingScope(
-        scopeContext: KaScopeContext,
-        fqName: FqName,
-        acceptScopeKind: KClass<out KaScopeKind>,
-    ): Collection<KaDeclarationSymbol> {
-        val importingScope = scopeContext.compositeScope { acceptScopeKind.java.isAssignableFrom(it::class.java) }
-        return getSymbolsFromMemberScope(fqName, importingScope)
-    }
-
-    private fun KaSession.getSymbolsFromMemberScope(fqName: FqName, scope: KaScope): Collection<KaDeclarationSymbol> {
+    /**
+     * Takes [scope] and [fqName] to look for, returns the final scope that might contain the short name of [fqName] or `null` when the required scope wasn't found.
+     *
+     * Does it by iterating over [fqName] segments (excluding the last one) and searching for declaration containers with the current segment's name in the current scope.
+     * When suitable declaration containers for the current segment are calculated, proceeds with a composite member scope of these containers and the next [fqName] segment.
+     */
+    private fun KaSession.getNestedScopePossiblyContainingShortName(fqName: FqName, scope: KaScope): KaScope? {
         val finalScope = fqName.pathSegments()
             .dropLast(1)
             .fold(scope) { currentScope, fqNamePart ->
-                currentScope
-                    .classifiers(fqNamePart)
-                    .filterIsInstance<KaDeclarationContainerSymbol>()
+                val currentClassifiers = currentScope
+                    .classifiers(fqNamePart).filterIsInstance<KaDeclarationContainerSymbol>()
+
+                if (currentClassifiers.none()) return null
+
+                currentClassifiers
                     .map { getCompositeCombinedMemberAndCompanionObjectScope(it) }
                     .toList()
                     .asCompositeScope()
             }
 
-        return finalScope.getAllSymbolsFromScopeByShortName(fqName)
-    }
-
-    private fun KaScope.getAllSymbolsFromScopeByShortName(fqName: FqName): Collection<KaDeclarationSymbol> {
-        val shortName = fqName.shortName()
-        return buildSet {
-            addAll(callables(shortName))
-            addAll(classifiers(shortName))
-        }
+        return finalScope
     }
 
     /**
@@ -356,148 +390,36 @@ internal object KDocReferenceResolver {
      * It does not try to resolve fully qualified or member functions, because they are dealt
      * with by the other parts of [KDocReferenceResolver].
      */
-    private fun KaSession.getTypeQualifiedExtensions(fqName: FqName, contextElement: KtElement): Collection<ResolveResult> {
+    private fun KaSession.getTypeQualifiedExtensions(
+        fqName: FqName,
+        potentialReceiverScopes: List<KaScope>,
+        potentialExtensionScopes: List<KaScope>,
+    ): List<ResolveResult> {
         if (fqName.isRoot) return emptyList()
         val extensionName = fqName.shortName()
 
         val receiverTypeName = fqName.parent()
         if (receiverTypeName.isRoot) return emptyList()
 
-        val possibleReceiversLayers = getReceiverTypeCandidates(receiverTypeName, contextElement).toList()
-        val possibleExtensionsLayers = getExtensionCallableSymbolsByShortName(extensionName, contextElement).toList()
+        val scopesContainingPossibleReceivers = sequence {
+            yieldAll(potentialReceiverScopes.mapNotNull { getNestedScopePossiblyContainingShortName(receiverTypeName, it) })
+            yieldIfNotNull(getLongestExistingPackageScope(receiverTypeName))
+        }
 
-        if (!possibleExtensionsLayers.any() || !possibleReceiversLayers.any()) return emptyList()
+        val possibleReceivers =
+            scopesContainingPossibleReceivers.flatMap { it.classifiers(receiverTypeName.shortName()) }.filterIsInstance<KaClassLikeSymbol>()
+                .toSet()
+        val possibleExtensionsByScope =
+            potentialExtensionScopes.map { scope -> scope.callables(extensionName).filter { it.isExtension }.toSet() }
 
-        return possibleReceiversLayers.first().flatMap { receiverClassSymbol ->
+        if (possibleExtensionsByScope.flatten().none() || possibleReceivers.none()) return emptyList()
+
+        return possibleReceivers.mapNotNull { receiverClassSymbol ->
             val receiverType = receiverClassSymbol.defaultType
-            possibleExtensionsLayers.map { extensionSymbolsLayer ->
-                extensionSymbolsLayer.filter { it.canBeCalledAsExtensionOn(receiverType) }
-                    .map { it.toResolveResult(receiverClassReference = receiverClassSymbol) }
-            }.firstOrNull {
-                it.isNotEmpty()
-            } ?: emptyList()
-        }
-    }
-
-    private fun KaSession.getExtensionCallableSymbolsByShortName(
-        name: Name, contextElement: KtElement
-    ): Sequence<Collection<KaCallableSymbol>> =
-        getSymbolsFromScopes(FqName.topLevel(name), contextElement).mapNotNull {
-            it.filterIsInstance<KaCallableSymbol>().filter { symbol -> symbol.isExtension }.ifEmpty { null }
-        }
-
-
-    private fun KaSession.getReceiverTypeCandidates(
-        receiverTypeName: FqName,
-        contextElement: KtElement
-    ): Sequence<Collection<KaClassLikeSymbol>> =
-        getSymbolsFromScopes(receiverTypeName, contextElement).ifEmpty {
-            sequence {
-                getNonImportedSymbolsByFullyQualifiedName(receiverTypeName).ifNotEmpty { yield(this) }
+            possibleExtensionsByScope.firstNotNullOfOrNull { extensions ->
+                extensions.filter { it.canBeCalledAsExtensionOn(receiverType) }
+                    .toResolveResults(receiverClassReference = receiverClassSymbol).ifEmpty { null }
             }
-        }.mapNotNull {
-            it.filterIsInstance<KaClassLikeSymbol>().ifEmpty { null }
-        }
-
-    private fun KaSession.getNonImportedSymbolsByFullyQualifiedName(fqName: FqName): Collection<KaSymbol> = buildSet {
-        generateNameInterpretations(fqName).forEach { interpretation ->
-            collectSymbolsByFqNameInterpretation(interpretation, this@buildSet)
-        }
-    }
-
-    private fun KaSession.collectSymbolsByFqNameInterpretation(
-        interpretation: FqNameInterpretation,
-        consumer: MutableCollection<KaSymbol>,
-    ) {
-        when (interpretation) {
-            is FqNameInterpretation.FqNameInterpretationAsCallableId -> {
-                collectSymbolsByFqNameInterpretationAsCallableId(interpretation.callableId, consumer)
-            }
-
-            is FqNameInterpretation.FqNameInterpretationAsClassId -> {
-                collectSymbolsByClassId(interpretation.classId, consumer)
-            }
-
-            is FqNameInterpretation.FqNameInterpretationAsPackage -> {
-                collectSymbolsByPackage(interpretation.packageFqName, consumer)
-            }
-        }
-    }
-
-    private fun KaSession.collectSymbolsByPackage(packageFqName: FqName, consumer: MutableCollection<KaSymbol>) {
-        val symbol = findPackage(packageFqName)
-        consumer.addIfNotNull(symbol)
-    }
-
-    private fun KaSession.collectSymbolsByClassId(classId: ClassId, consumer: MutableCollection<KaSymbol>) {
-        val symbol = findClassLike(classId)
-        consumer.addIfNotNull(symbol)
-    }
-
-    private fun KaSession.collectSymbolsByFqNameInterpretationAsCallableId(
-        callableId: CallableId,
-        consumer: MutableCollection<KaSymbol>,
-    ) {
-        when (val classId = callableId.classId) {
-            null -> {
-                consumer.addAll(findTopLevelCallables(callableId.packageName, callableId.callableName))
-            }
-
-            else -> {
-                val symbol = findClass(classId)
-                if (symbol != null) {
-                    val scope = getCompositeCombinedMemberAndCompanionObjectScope(symbol)
-                    consumer.addAll(scope.callables(callableId.callableName))
-                }
-            }
-        }
-    }
-
-
-    private fun generateNameInterpretations(fqName: FqName): Sequence<FqNameInterpretation> = sequence {
-        val parts = fqName.pathSegments()
-        if (parts.isEmpty()) {
-            yield(FqNameInterpretation.create(packageParts = emptyList(), classParts = emptyList(), callable = null))
-            return@sequence
-        }
-        for (lastPackagePartIndexExclusive in 0..parts.size) {
-            yield(
-                FqNameInterpretation.create(
-                    packageParts = parts.subList(0, lastPackagePartIndexExclusive),
-                    classParts = parts.subList(lastPackagePartIndexExclusive, parts.size),
-                    callable = null,
-                )
-            )
-
-            if (lastPackagePartIndexExclusive <= parts.size - 1) {
-                yield(
-                    FqNameInterpretation.create(
-                        packageParts = parts.subList(0, lastPackagePartIndexExclusive),
-                        classParts = parts.subList(lastPackagePartIndexExclusive, parts.size - 1),
-                        callable = parts.last(),
-                    )
-                )
-            }
-        }
-    }
-}
-
-private sealed class FqNameInterpretation {
-
-    data class FqNameInterpretationAsPackage(val packageFqName: FqName) : FqNameInterpretation()
-    data class FqNameInterpretationAsClassId(val classId: ClassId) : FqNameInterpretation()
-    data class FqNameInterpretationAsCallableId(val callableId: CallableId) : FqNameInterpretation()
-
-    companion object {
-        fun create(packageParts: List<Name>, classParts: List<Name>, callable: Name?): FqNameInterpretation {
-            val packageName = FqName.fromSegments(packageParts.map { it.asString() })
-            val relativeClassName = FqName.fromSegments(classParts.map { it.asString() })
-
-            return when {
-                classParts.isEmpty() && callable == null -> FqNameInterpretationAsPackage(packageName)
-                callable == null -> FqNameInterpretationAsClassId(ClassId(packageName, relativeClassName, isLocal = false))
-                else -> FqNameInterpretationAsCallableId(CallableId(packageName, relativeClassName.takeUnless { it.isRoot }, callable))
-            }
-        }
+        }.flatten()
     }
 }
