@@ -1,0 +1,23 @@
+<caret_1>:
+  KDocName(48,51): 'foo'
+    null
+
+<caret_2>:
+  KDocName(105,108): 'foo'
+    null
+
+<caret_3>:
+  KDocName(159,162): 'foo'
+    null
+
+<caret_4>:
+  KDocName(210,213): 'foo'
+    null
+
+<caret_5>:
+  KDocName(267,270): 'foo'
+    null
+
+<caret_6>:
+  KDocName(324,327): 'foo'
+    null

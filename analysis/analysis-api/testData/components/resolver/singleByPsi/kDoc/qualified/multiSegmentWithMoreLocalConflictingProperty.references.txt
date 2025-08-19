@@ -1,0 +1,15 @@
+<caret_1>:
+  KDocName(161,165): 'A.BB'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in A.Companion) val BB: kotlin.Int
+
+<caret_2>:
+  KDocName(303,307): 'A.BB'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in A.Companion) val BB: kotlin.Int

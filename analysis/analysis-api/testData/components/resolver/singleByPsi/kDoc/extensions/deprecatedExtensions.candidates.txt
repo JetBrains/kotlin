@@ -1,0 +1,23 @@
+<caret_1>:
+  KDocName(491,505): 'Int.funWarning'
+    NO_CANDIDATES
+
+<caret_2>:
+  KDocName(511,524): 'Int.funHidden'
+    NO_CANDIDATES
+
+<caret_3>:
+  KDocName(530,542): 'Int.funError'
+    NO_CANDIDATES
+
+<caret_4>:
+  KDocName(548,563): 'Int.propWarning'
+    NO_CANDIDATES
+
+<caret_5>:
+  KDocName(569,583): 'Int.propHidden'
+    NO_CANDIDATES
+
+<caret_6>:
+  KDocName(589,602): 'Int.propError'
+    NO_CANDIDATES

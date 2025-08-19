@@ -1,0 +1,15 @@
+<caret_1>:
+  KDocName(25,40): 'Storage.getProp'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in Storage) open fun getProp(value: kotlin.String!): kotlin.String!
+
+<caret_2>:
+  KDocName(46,58): 'Storage.prop'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in Storage) open fun getProp(value: kotlin.String!): kotlin.String!

@@ -1,0 +1,31 @@
+<caret_1>:
+  KDocName(8,22): 'conPropWarning'
+    NO_CANDIDATES
+
+<caret_2>:
+  KDocName(28,40): 'conPropError'
+    NO_CANDIDATES
+
+<caret_3>:
+  KDocName(46,59): 'conPropHidden'
+    NO_CANDIDATES
+
+<caret_4>:
+  KDocName(65,76): 'propWarning'
+    NO_CANDIDATES
+
+<caret_5>:
+  KDocName(82,91): 'propError'
+    NO_CANDIDATES
+
+<caret_6>:
+  KDocName(97,107): 'propHidden'
+    NO_CANDIDATES
+
+<caret_7>:
+  KDocName(632,634): 'AA'
+    NO_CANDIDATES
+
+<caret_8>:
+  KDocName(644,656): 'hiddenConPar'
+    NO_CANDIDATES

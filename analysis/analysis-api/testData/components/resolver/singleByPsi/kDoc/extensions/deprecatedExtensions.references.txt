@@ -1,0 +1,47 @@
+<caret_1>:
+  KDocName(491,505): 'Int.funWarning'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in ROOT) fun kotlin.Int.funWarning()
+
+<caret_2>:
+  KDocName(511,524): 'Int.funHidden'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in ROOT) fun kotlin.Int.funHidden()
+
+<caret_3>:
+  KDocName(530,542): 'Int.funError'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in ROOT) fun kotlin.Int.funError()
+
+<caret_4>:
+  KDocName(548,563): 'Int.propWarning'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in ROOT) val kotlin.Int.propWarning: kotlin.Int
+
+<caret_5>:
+  KDocName(569,583): 'Int.propHidden'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in ROOT) val kotlin.Int.propHidden: kotlin.Int
+
+<caret_6>:
+  KDocName(589,602): 'Int.propError'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in ROOT) val kotlin.Int.propError: kotlin.Int

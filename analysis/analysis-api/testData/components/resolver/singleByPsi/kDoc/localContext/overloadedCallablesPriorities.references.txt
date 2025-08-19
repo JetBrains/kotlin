@@ -1,0 +1,24 @@
+<caret_1>:
+  KDocName(5,7): 'cc'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in ROOT) fun cc(a: kotlin.String): kotlin.Int
+
+<caret_2>:
+  KDocName(39,41): 'cc'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in ROOT) fun cc(): kotlin.Int
+
+<caret_3>:
+  KDocName(65,67): 'cc'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        0: (in ROOT) fun cc(a: kotlin.String): kotlin.Int
+        1: (in ROOT) fun cc(): kotlin.Int

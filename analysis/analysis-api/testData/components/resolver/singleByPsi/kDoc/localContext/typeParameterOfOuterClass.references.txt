@@ -1,0 +1,15 @@
+<caret_1>:
+  KDocName(52,54): 'TT'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in <local>: A) TT
+
+<caret_2>:
+  KDocName(142,144): 'TT'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in <local>: A) TT

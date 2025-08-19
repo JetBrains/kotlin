@@ -1,8 +1,8 @@
 // FILE: main.kt
-val p = 10
+val pp = 10
 
 /**
- * [p<caret>p].bar]
+ * [p<caret>p.bar]
  */
 fun foo() {}
 

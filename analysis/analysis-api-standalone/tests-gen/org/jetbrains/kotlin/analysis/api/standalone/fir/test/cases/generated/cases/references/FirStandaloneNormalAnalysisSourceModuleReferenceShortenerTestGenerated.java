@@ -317,6 +317,12 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerTestGenera
   }
 
   @Test
+  @TestMetadata("kdocContextDeclarationNoShortening.kt")
+  public void testKdocContextDeclarationNoShortening() {
+    runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/kdocContextDeclarationNoShortening.kt");
+  }
+
+  @Test
   @TestMetadata("kdocQualifierSelected.kt")
   public void testKdocQualifierSelected() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/kdocQualifierSelected.kt");
@@ -326,6 +332,18 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerTestGenera
   @TestMetadata("kdocQualifierSelected_rootIdePrefix.kt")
   public void testKdocQualifierSelected_rootIdePrefix() {
     runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/kdocQualifierSelected_rootIdePrefix.kt");
+  }
+
+  @Test
+  @TestMetadata("kdocRelativeNameNoShortening.kt")
+  public void testKdocRelativeNameNoShortening() {
+    runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/kdocRelativeNameNoShortening.kt");
+  }
+
+  @Test
+  @TestMetadata("kdocRelativeNameWithShortening.kt")
+  public void testKdocRelativeNameWithShortening() {
+    runTest("analysis/analysis-api/testData/components/referenceShortener/shortenRange/kdocRelativeNameWithShortening.kt");
   }
 
   @Test

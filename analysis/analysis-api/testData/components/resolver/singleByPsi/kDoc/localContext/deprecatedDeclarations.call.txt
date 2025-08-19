@@ -1,0 +1,35 @@
+<caret_1>:
+  KDocName(652,662): 'funWarning'
+    null
+
+<caret_2>:
+  KDocName(668,677): 'funHidden'
+    null
+
+<caret_3>:
+  KDocName(683,691): 'funError'
+    null
+
+<caret_4>:
+  KDocName(697,709): 'ClassWarning'
+    null
+
+<caret_5>:
+  KDocName(715,726): 'ClassHidden'
+    null
+
+<caret_6>:
+  KDocName(732,742): 'ClassError'
+    null
+
+<caret_7>:
+  KDocName(748,759): 'propWarning'
+    null
+
+<caret_8>:
+  KDocName(765,775): 'propHidden'
+    null
+
+<caret_9>:
+  KDocName(781,790): 'propError'
+    null

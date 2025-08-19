@@ -1,0 +1,7 @@
+<caret_1>:
+  KDocName(25,40): 'Storage.getProp'
+    null
+
+<caret_2>:
+  KDocName(46,58): 'Storage.prop'
+    null

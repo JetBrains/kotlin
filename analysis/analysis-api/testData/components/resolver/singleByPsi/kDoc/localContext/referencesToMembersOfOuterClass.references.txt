@@ -1,0 +1,47 @@
+<caret_1>:
+  KDocName(48,51): 'foo'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in A) private val foo: kotlin.Int
+
+<caret_2>:
+  KDocName(105,108): 'foo'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in A) private val foo: kotlin.Int
+
+<caret_3>:
+  KDocName(159,162): 'foo'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in A) private val foo: kotlin.Int
+
+<caret_4>:
+  KDocName(210,213): 'foo'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in A) private val foo: kotlin.Int
+
+<caret_5>:
+  KDocName(267,270): 'foo'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in A) private val foo: kotlin.Int
+
+<caret_6>:
+  KDocName(324,327): 'foo'
+    KDocReference:
+      isImplicitReferenceToCompanion: false
+      usesContextSensitiveResolution: false
+      symbols:
+        (in A) private val foo: kotlin.Int

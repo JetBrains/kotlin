@@ -1,0 +1,15 @@
+<caret_1>:
+  KDocName(17,23): 'com.AA'
+    null
+
+<caret_2>:
+  KDocName(42,48): 'com.AA'
+    null
+
+<caret_3>:
+  KDocName(80,86): 'com.AA'
+    null
+
+<caret_4>:
+  KDocName(95,98): 'com'
+    null
