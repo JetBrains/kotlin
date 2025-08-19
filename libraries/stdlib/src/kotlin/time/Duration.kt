@@ -40,7 +40,7 @@ public value class Duration internal constructor(private val rawValue: Long) : C
     private val storageUnit get() = if (isInNanos()) DurationUnit.NANOSECONDS else DurationUnit.MILLISECONDS
 
     init {
-        if (durationAssertionsEnabled && rawValue != INVALID_RAW_VALUE) {
+        if (durationAssertionsEnabled && !allowInvalidDurationConstruction) {
             if (isInNanos()) {
                 if (value !in -MAX_NANOS..MAX_NANOS) throw AssertionError("$value ns is out of nanoseconds range")
             } else {
@@ -58,8 +58,17 @@ public value class Duration internal constructor(private val rawValue: Long) : C
         public val INFINITE: Duration = durationOfMillis(MAX_MILLIS)
         internal val NEG_INFINITE: Duration = durationOfMillis(-MAX_MILLIS)
 
+        private var allowInvalidDurationConstruction: Boolean = false
+
+        private inline fun <T> constructingInvalid(block: () -> T): T {
+            allowInvalidDurationConstruction = true
+            val duration = block()
+            allowInvalidDurationConstruction = false
+            return duration
+        }
+
         internal const val INVALID_RAW_VALUE = 0x7FFFFFFFFFFFC0DE
-        internal val INVALID: Duration = Duration(INVALID_RAW_VALUE)
+        internal val INVALID: Duration = constructingInvalid { Duration(INVALID_RAW_VALUE) }
 
         /** Converts the given time duration [value] expressed in the specified [sourceUnit] into the specified [targetUnit]. */
         @ExperimentalTime
