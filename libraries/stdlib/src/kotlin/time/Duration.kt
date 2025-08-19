@@ -1212,16 +1212,27 @@ private inline fun parseDefaultStringFormat(
 
         when (unit) {
             DurationUnit.MICROSECONDS -> {
+                // We extract the millisecond portion from microseconds and transfer it to totalMillis.
+                // Since totalMillis is at most MAX_MILLIS (Long.MAX_VALUE / 2) and the added value is at most Long.MAX_VALUE / 1_000,
+                // their sum (Long.MAX_VALUE / 2 + Long.MAX_VALUE / 1_000) will never overflow.
                 totalMillis += longValue / MICROS_IN_MILLIS
+                // If it's possible to represent microseconds as nanoseconds, we convert the last 3 digits of microseconds to nanoseconds.
                 if (longValue <= MAX_NANOS / NANOS_IN_MICROS) {
-                    totalNanos += (longValue % MICROS_IN_MILLIS) * NANOS_IN_MICROS
+                    // Value is at most 999_000
+                    totalNanos = (longValue % MICROS_IN_MILLIS) * NANOS_IN_MICROS
                 }
             }
             DurationUnit.NANOSECONDS -> {
+                // We extract the millisecond portion from nanoseconds and transfer it to totalMillis.
+                // Since totalMillis is at most MAX_MILLIS (Long.MAX_VALUE / 2) and the added value is at most Long.MAX_VALUE / 1_000_000,
+                // their sum (Long.MAX_VALUE / 2 + Long.MAX_VALUE / 1_000_000) will never overflow.
                 totalMillis += longValue / NANOS_IN_MILLIS
+                // Value is at most 999_000 + 999_999 = 1_998_999
                 totalNanos += longValue % NANOS_IN_MILLIS
             }
             else -> {
+                // When other time units are greater than or equal to milliseconds,
+                // we convert them to milliseconds, add them to totalMillis, and preserve any overflow.
                 val multiplier = unit.millisMultiplier
                 totalMillis = totalMillis.addWithoutOverflow(longValue.multiplyWithoutOverflow(multiplier))
             }
@@ -1234,6 +1245,7 @@ private inline fun parseDefaultStringFormat(
                 return handleError(throwException, "Fractional component must be last")
             }
 
+            // Since totalNanos is at most 1_998_999, and the added value is at most 10^15, their sum will never overflow.
             totalNanos += if (unit >= DurationUnit.MINUTES && index - fractionStartIndex > FRACTION_LIMIT)
                 value.parseFractionFallback(fractionStartIndex, index - unit.length).fractionAsDoubleToNanos(unit)
             else
