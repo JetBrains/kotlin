@@ -213,6 +213,7 @@ public fun ByteBuffer.getUuid(index: Int): Uuid {
  */
 @SinceKotlin("2.0")
 @ExperimentalUuidApi
+@IgnorableReturnValue
 public fun ByteBuffer.putUuid(uuid: Uuid): ByteBuffer = uuid.toLongs { msb, lsb ->
     if (position() + 15 >= limit()) {
         throw BufferOverflowException() // otherwise a partial write could occur
