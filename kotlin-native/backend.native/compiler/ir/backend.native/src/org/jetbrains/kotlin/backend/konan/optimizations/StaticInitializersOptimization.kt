@@ -401,20 +401,16 @@ internal object StaticInitializersOptimization {
                     return data
                 }
 
-//                private fun BitSet.withSetBit(bit: Int): BitSet =
-//                        if (this.get(bit)) this else copy().also { it.set(bit) }
+                private fun BitSet.withSetBit(bit: Int): BitSet =
+                        if (this.get(bit)) this else copy().also { it.set(bit) }
 
                 private fun getResultAfterCall(function: IrSimpleFunction, set: BitSet): BitSet {
                     val result = initializedContainers.afterCall[function]
                     if (result == null) {
                         val file = function.calledInitializer ?: return set
-                        set.set(initializedContainers.containerIds[file]!!)
-                        return set
-                        //return set.withSetBit(initializedContainers.containerIds[file]!!)
+                        return set.withSetBit(initializedContainers.containerIds[file]!!)
                     }
-                    set.or(result)
-                    return set
-                    //return result.copy().also { it.or(set) }
+                    return result.copy().also { it.or(set) }
                 }
 
                 private fun updateResultForFunction(function: IrSimpleFunction, globalSet: BitSet, threadLocalSet: BitSet) {
@@ -425,8 +421,8 @@ internal object StaticInitializersOptimization {
 
                 private fun updateResultForFunction(function: IrSimpleFunction, set: BitSet) {
                     if (analysisGoal != AnalysisGoal.ComputeInitializedBeforeCall) return
-                    intersectInitializedFiles(initializedContainers.beforeCallGlobal, function, set.also { it.or(containersWithInitializedGlobals) })
-                    intersectInitializedFiles(initializedContainers.beforeCallThreadLocal, function, set.also { it.or(containersWithInitializedThreadLocals) })
+                    intersectInitializedFiles(initializedContainers.beforeCallGlobal, function, set.copy().also { it.or(containersWithInitializedGlobals) })
+                    intersectInitializedFiles(initializedContainers.beforeCallThreadLocal, function, set.copy().also { it.or(containersWithInitializedThreadLocals) })
                 }
 
                 override fun visitGetObjectValue(expression: IrGetObjectValue, data: BitSet): BitSet {
@@ -480,11 +476,8 @@ internal object StaticInitializersOptimization {
                 }
 
                 override fun visitCall(expression: IrCall, data: BitSet): BitSet {
-                    if (expression.symbol.owner.isStaticInitializer) {
-                        data.set(initializedContainers.containerIds[expression.symbol.owner.parent as IrDeclarationContainer]!!)
-                        return data
-                        //return data.withSetBit(initializedContainers.containerIds[expression.symbol.owner.parent as IrDeclarationContainer]!!)
-                    }
+                    if (expression.symbol.owner.isStaticInitializer)
+                        return data.withSetBit(initializedContainers.containerIds[expression.symbol.owner.parent as IrDeclarationContainer]!!)
                     if (expression.symbol == executeImplSymbol)
                         return processExecuteImpl(expression, data)
                     if (expression.symbol == getContinuationSymbol)
@@ -494,7 +487,7 @@ internal object StaticInitializersOptimization {
                     val devirtualizedCallSite = virtualCallSites[expression] ?: return data
                     val arguments = expression.getArgumentsWithIr()
                     val argumentsResult = arguments.fold(data) { set, arg -> arg.second.accept(this, set) }
-                    lateinit var callResult: BitSet
+                    var callResult = BitSet()
                     var first = true
                     for (callSite in devirtualizedCallSite) {
                         val callee = callSite.actualCallee.irFunction ?: error("No IR for: ${callSite.actualCallee}")
@@ -507,7 +500,7 @@ internal object StaticInitializersOptimization {
                             callResult.and(otherSet)
                         }
                     }
-                    return argumentsResult.also { it.or(callResult) }
+                    return argumentsResult.copy().also { it.or(callResult) }
                 }
             }, BitSet())
 
