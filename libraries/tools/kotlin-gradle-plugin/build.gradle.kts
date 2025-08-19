@@ -183,7 +183,7 @@ dependencies {
     testCompileOnly(project(":kotlin-annotation-processing"))
 
     testImplementation(commonDependency("org.jetbrains.teamcity:serviceMessages"))
-    testImplementation(projectTests(":kotlin-build-common"))
+    testImplementation(testFixtures(project(":kotlin-build-common")))
     testImplementation(project(":kotlin-compiler-runner"))
     testImplementation(kotlinTest("junit"))
     testImplementation(libs.junit.jupiter.api)
