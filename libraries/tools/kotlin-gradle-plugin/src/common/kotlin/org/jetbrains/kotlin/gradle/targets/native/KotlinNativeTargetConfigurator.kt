@@ -12,6 +12,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
     createTestCompilation = true
 ) {
     object NativeArtifactFormat {
+        @Deprecated("Use KLIB instead", ReplaceWith("\"klib\""))
         const val KLIB = "org.jetbrains.kotlin.klib"
         const val FRAMEWORK = "org.jetbrains.kotlin.framework"
     }
