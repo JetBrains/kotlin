@@ -937,6 +937,45 @@ class SwiftExportUnitTests {
             actualModules.toModulesForAssertion(),
         )
     }
+
+    @Test
+    fun `test exporting two runtime modules`() {
+        val project = buildProject(
+            projectBuilder = {
+                withName("shared")
+            },
+            configureProject = {
+                configureRepositoriesForTests()
+            }
+        )
+
+        project.setupForSwiftExport(
+            multiplatform = {
+                iosSimulatorArm64()
+            },
+            swiftExport = {
+                export("app.cash.sqldelight:runtime:2.1.0")
+                export("org.jetbrains.compose.runtime:runtime:1.8.2")
+            }
+        )
+
+        project.evaluate()
+
+        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
+        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
+
+        val expectedModules = SmartSet.create<SwiftExportModuleForAssertion>().apply {
+            add(SwiftExportModuleForAssertion("AppCashSqldelightRuntime", "runtime.klib", true))
+            add(SwiftExportModuleForAssertion("OrgJetbrainsComposeRuntimeRuntime", "runtime-uikitSimArm64Main-1.8.2.klib", true))
+            add(SwiftExportModuleForAssertion("Atomicfu", "atomicfu.klib", false))
+            add(SwiftExportModuleForAssertion("KotlinxCoroutinesCore", "kotlinx-coroutines-core.klib", false))
+        }
+
+        assertEquals(
+            expectedModules,
+            actualModules.toModulesForAssertion(),
+        )
+    }
 }
 
 private fun multiModuleSwiftExportProject(
