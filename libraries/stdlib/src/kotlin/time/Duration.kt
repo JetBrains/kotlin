@@ -1091,7 +1091,10 @@ private inline fun parseIsoStringFormat(
                         'H' -> MILLIS_IN_HOUR
                         'M' -> MILLIS_IN_MINUTE
                         'S', '.' -> MILLIS_IN_SECOND
-                        else -> return handleError(throwException, "Missing unit for value $longValue")
+                        else -> return handleError(
+                            throwException,
+                            "Invalid or unsupported duration ISO non-time unit $unit for value $longValue"
+                        )
                     }
                 )
             ).also { if (it == Duration.INVALID_RAW_VALUE) return handleError(throwException) }
