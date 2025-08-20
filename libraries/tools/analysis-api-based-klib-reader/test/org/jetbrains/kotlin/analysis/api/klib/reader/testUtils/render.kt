@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.klib.reader.testUtils
 
-import org.jetbrains.kotlin.native.analysis.api.*
+import org.jetbrains.kotlin.analysis.api.klib.reader.*
 
 fun Iterable<KlibDeclarationAddress>.render() = joinToString(System.lineSeparator().repeat(2)) { it.render() }
 

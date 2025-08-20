@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.swiftexport.standalone.klib
 
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.klib.reader.*
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassifierSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
-import org.jetbrains.kotlin.native.analysis.api.*
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 
 context(ka: KaSession)
 internal fun KaLibraryModule.getAllDeclarations(): Sequence<KaDeclarationSymbol> = sequence {
