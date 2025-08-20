@@ -456,6 +456,8 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     val Kotlin_mm_releaseExternalRCRef by lazy { importRtFunction("Kotlin_mm_releaseExternalRCRef", false) }
     val Kotlin_mm_disposeExternalRCRef by lazy { importRtFunction("Kotlin_mm_disposeExternalRCRef", false) }
 
+    val Kotlin_loadTypeInfo = importRtFunction("Kotlin_loadTypeInfo", false)
+
     val createKotlinObjCClass by lazy { importRtFunction("CreateKotlinObjCClass", false) }
     val getObjCKotlinTypeInfo by lazy { importRtFunction("GetObjCKotlinTypeInfo", false) }
     val missingInitImp by lazy { importRtFunction("MissingInitImp", false) }

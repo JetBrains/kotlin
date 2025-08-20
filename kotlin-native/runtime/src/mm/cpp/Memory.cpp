@@ -477,3 +477,7 @@ void kotlin::initObjectPool() noexcept {
 void kotlin::compactObjectPoolInCurrentThread() noexcept {
     alloc::compactObjectPoolInCurrentThread();
 }
+
+PERFORMANCE_INLINE RUNTIME_NOTHROW extern "C" const TypeInfo* Kotlin_loadTypeInfo(ObjHeader* object) {
+    return object->type_info();
+}
