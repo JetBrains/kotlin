@@ -30,7 +30,7 @@ fun Scenario.moduleWithFir(
 ) = module(
     moduleName = moduleName,
     compilationConfigAction = {
-        it.compilerArguments[CommonCompilerArguments.Companion.X_USE_FIR_IC] = true
+        it.compilerArguments[CommonCompilerArguments.X_USE_FIR_IC] = true
         compilationOperationConfig(it)
     },
     icOptionsConfigAction = {
