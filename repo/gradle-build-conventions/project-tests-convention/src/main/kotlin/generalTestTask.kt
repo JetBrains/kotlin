@@ -3,20 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-import com.sun.management.OperatingSystemMXBean
 import org.gradle.api.Project
-import org.gradle.api.file.Directory
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.tasks.testing.filter.DefaultTestFilter
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.ClasspathNormalizer
-import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.PathSensitive
-import org.gradle.api.tasks.PathSensitivity
-import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.*
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.newInstance
@@ -27,11 +20,9 @@ import org.gradle.process.CommandLineArgumentProvider
 import java.io.File
 import java.lang.Character.isLowerCase
 import java.lang.Character.isUpperCase
-import java.lang.management.ManagementFactory
 import java.nio.file.Files
 import java.nio.file.Path
 import javax.inject.Inject
-import kotlin.collections.forEach
 
 
 // Mixing JUnit4 and Junit5 in one module proved to be problematic, consider using separate modules instead
@@ -39,7 +30,7 @@ enum class JUnitMode {
     JUnit4, JUnit5
 }
 
-abstract class MuteWithDatabaseArgumentProvider @Inject constructor(objects: ObjectFactory) : CommandLineArgumentProvider {
+private abstract class MuteWithDatabaseArgumentProvider @Inject constructor(objects: ObjectFactory) : CommandLineArgumentProvider {
     @get:InputFile
     @get:PathSensitive(PathSensitivity.NONE)
     val mutesFile: RegularFileProperty = objects.fileProperty()
@@ -48,7 +39,7 @@ abstract class MuteWithDatabaseArgumentProvider @Inject constructor(objects: Obj
         listOf("-Dorg.jetbrains.kotlin.test.mutes.file=${mutesFile.get().asFile.canonicalPath}")
 }
 
-fun Test.muteWithDatabase() {
+private fun Test.muteWithDatabase() {
     jvmArgumentProviders.add(
         project.objects.newInstance<MuteWithDatabaseArgumentProvider>().apply {
             mutesFile.fileValue(File(project.rootDir, "tests/mute-common.csv"))
@@ -62,7 +53,7 @@ fun Test.muteWithDatabase() {
  * Workaround for TW-92736
  * TC parallelTests.excludesFile may contain invalid entries leading to skipping large groups of tests.
  */
-fun Test.cleanupInvalidExcludePatternsForTCParallelTests(excludesFilePath: String) {
+private fun Test.cleanupInvalidExcludePatternsForTCParallelTests(excludesFilePath: String) {
     val candidateTestClassNames = mutableSetOf<String>()
     candidateClassFiles.visit {
         if (!isDirectory && name.endsWith(".class")) {
@@ -88,7 +79,7 @@ fun Test.cleanupInvalidExcludePatternsForTCParallelTests(excludesFilePath: Strin
  * @param parallel is redundant if @param jUnit5Enabled is true, because
  *   JUnit5 supports parallel test execution by itself, without gradle help
  */
-fun Project.projectTest(
+internal fun Project.createGeneralTestTask(
     taskName: String = "test",
     parallel: Boolean = false,
     jUnitMode: JUnitMode,
@@ -292,18 +283,9 @@ fun Project.projectTest(
     }.apply { configure(body) }
 }
 
-val defaultMaxMemoryPerTestWorkerMb = 1600
-val reservedMemoryMb = 9000 // system processes, gradle daemon, kotlin daemon, etc ...
+private val defaultMaxMemoryPerTestWorkerMb = 1600
 
-val totalMaxMemoryForTestsMb: Int
-    get() {
-        val mxbean = ManagementFactory.getOperatingSystemMXBean() as OperatingSystemMXBean
-        return (mxbean.totalPhysicalMemorySize / 1048576 - reservedMemoryMb).toInt()
-    }
-
-val Test.commandLineIncludePatterns: Set<String>
+private val Test.commandLineIncludePatterns: Set<String>
     get() = (filter as? DefaultTestFilter)?.commandLineIncludePatterns.orEmpty()
 
 private inline fun String.isFirstChar(f: (Char) -> Boolean) = isNotEmpty() && f(first())
-
-fun Project.ideaHomePathForTests(): Provider<Directory> = rootProject.layout.buildDirectory.dir("ideaHomeForTests")

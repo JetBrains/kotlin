@@ -203,7 +203,7 @@ abstract class ProjectTestsExtension(val project: Project) {
         if (jUnitMode == JUnitMode.JUnit5 && parallel != null) {
             project.logger.error("JUnit5 tests are parallel by default and its configured with `junit-platform.properties`, please remove `parallel=$parallel` argument")
         }
-        return project.projectTest(
+        return project.createGeneralTestTask(
             taskName,
             parallel ?: false,
             jUnitMode,
