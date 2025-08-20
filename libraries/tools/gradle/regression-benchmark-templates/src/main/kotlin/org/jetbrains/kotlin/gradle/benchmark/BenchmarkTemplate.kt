@@ -8,14 +8,29 @@ package org.jetbrains.kotlin.gradle.benchmark
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okio.IOException
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream
+import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.api.ResetCommand
+import org.eclipse.jgit.lib.Constants
 import org.eclipse.jgit.lib.TextProgressMonitor
-import org.jetbrains.kotlinx.dataframe.*
+import org.eclipse.jgit.submodule.SubmoduleWalk
+import org.eclipse.jgit.transport.URIish
+import org.jetbrains.kotlinx.dataframe.DataColumn
+import org.jetbrains.kotlinx.dataframe.DataFrame
 import org.jetbrains.kotlinx.dataframe.api.*
-import org.jetbrains.kotlinx.dataframe.io.*
+import org.jetbrains.kotlinx.dataframe.io.DisplayConfiguration
+import org.jetbrains.kotlinx.dataframe.io.read
+import org.jetbrains.kotlinx.dataframe.io.readCsv
+import org.jetbrains.kotlinx.dataframe.io.toStandaloneHtml
+import org.jetbrains.kotlinx.dataframe.io.writeCsv
+import org.jetbrains.kotlinx.dataframe.name
+import org.jetbrains.kotlinx.dataframe.values
 import java.io.File
 import java.io.InputStream
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.util.zip.GZIPInputStream
 import java.util.zip.ZipInputStream
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.api.*
@@ -32,12 +47,13 @@ abstract class BenchmarkTemplate(
     private val projectName: String,
     private val projectGitUrl: String,
     private val gitCommitSha: String,
-    private val stableKotlinVersions: String
+    private val stableKotlinVersions: String,
 ) {
     private val workingDir = File(args.first())
     val currentKotlinVersion: String = args[1]
     private val kotlinVersions = setOf(stableKotlinVersions, currentKotlinVersion)
-    private val gradleProfilerDir = workingDir.resolve("gradle-profiler")
+    private val gradleProfilerDir = workingDir.resolve("gradle-profiler-${GRADLE_PROFILER_VERSION}")
+    private val asyncProfilerDir = workingDir.resolve("async-profiler-${ASYNC_PROFILER_VERSION}")
     private val projectRepoDir = workingDir.resolve(projectName)
     private val scenariosDir = workingDir.resolve("scenarios")
     private val benchmarkOutputsDir = workingDir.resolve("outputs")
@@ -48,17 +64,20 @@ abstract class BenchmarkTemplate(
         repoPatch: (() -> List<Pair<String, T>>)?,
         suite: ScenarioSuite,
     ) {
+        val asyncProfilerConfig = asyncProfilerConfig()
         printStartingMessage()
         downloadGradleProfilerIfNotAvailable()
+        asyncProfilerConfig?.let {
+            downloadAsyncProfilerIfNotAvailable(it)
+        }
         checkoutRepository()
 
-        repoReset()
         repoPatch?.let {
             it().forEach { (patchName, patch) ->
                 repoApplyPatch(patchName, patch)
             }
         }
-        val result = runBenchmark(suite)
+        val result = runBenchmarksSplitByAsyncProfilerSupport(suite, asyncProfilerConfig)
         aggregateBenchmarkResults(result)
 
         printEndingMessage()
@@ -80,36 +99,79 @@ abstract class BenchmarkTemplate(
         }
     }
 
-    fun checkoutRepository(): File {
-        val git = if (projectRepoDir.exists()) {
-            println("Repository is available, resetting it state")
-            Git.open(projectRepoDir).also {
-                it.reset()
-                    .setMode(ResetCommand.ResetType.HARD)
-                    .setProgressMonitor(gitOperationsPrinter)
-                    .call()
-            }
+    fun downloadAsyncProfilerIfNotAvailable(asyncProfilerConfig: AsyncProfilerConfiguration) {
+        if (asyncProfilerDir.exists()) {
+            println("Async profiler has been already downloaded")
         } else {
-            println("Running git checkout for $projectGitUrl")
+            downloadAndExtractAsyncProfiler(asyncProfilerConfig)
+        }
+    }
+
+    fun checkoutRepository(): File {
+        val git = if (projectRepoDir.resolve(".git").exists()) {
+            println("Repository is available")
+            Git.open(projectRepoDir)
+        } else {
+            println("Running git init for $projectGitUrl")
             projectRepoDir.mkdirs()
-            Git.cloneRepository()
+            Git.init()
                 .setDirectory(projectRepoDir)
-                .setCloneSubmodules(true)
-                .setProgressMonitor(gitOperationsPrinter)
-                .setURI(projectGitUrl)
-                .call()
+                .call().also {
+                    it.remoteAdd()
+                        .setName(Constants.DEFAULT_REMOTE_NAME)
+                        .setUri(URIish(projectGitUrl))
+                        .call()
+                }
         }
 
-        git.checkout()
-            .setName(gitCommitSha)
-            .setProgressMonitor(gitOperationsPrinter)
-            .call()
+        git.use { git ->
+            git.cleanXffd()
+            val submodules = SubmoduleWalk.forIndex(git.repository)
+            while (submodules.next()) {
+                val repo = submodules.repository ?: continue
+                Git(repo).cleanXffd()
+            }
+
+            git.fetch()
+                .setRefSpecs(gitCommitSha)
+                .setDepth(1)
+                .setProgressMonitor(gitOperationsPrinter)
+                .call()
+
+            git.reset()
+                .setRef(gitCommitSha)
+                .setMode(ResetCommand.ResetType.HARD)
+                .setProgressMonitor(gitOperationsPrinter)
+                .call()
+
+            git.submoduleInit().call().forEach { println("Submodule init: ${it}") }
+            git.submoduleSync().call().forEach { println("Submodule sync: ${it}") }
+            git.submoduleUpdate().setProgressMonitor(gitOperationsPrinter).call().forEach { println("Submodule update: ${it}") }
+            val status = git.status().setProgressMonitor(gitOperationsPrinter).call()
+            println("Status isClean: ${status.isClean}")
+            status.untracked.forEach {
+                println("Status untracked: ${it}")
+            }
+            status.uncommittedChanges.forEach {
+                println("Status uncommitted: ${it}")
+            }
+        }
 
         return projectRepoDir
     }
 
+    private fun Git.cleanXffd() {
+        clean()
+            .setForce(true)
+            .setIgnore(true)
+            .setCleanDirectories(true)
+            .call().forEach {
+                println("Clean: ${it}")
+            }
+    }
+
     fun repoApplyPatchFromFile(
-        patchFile: String
+        patchFile: String,
     ) {
         val patch = File(patchFile)
         repoApplyPatch(patch.name, patch.inputStream())
@@ -117,38 +179,54 @@ abstract class BenchmarkTemplate(
 
     fun repoApplyPatch(
         patchName: String,
-        patch: InputStream
+        patch: InputStream,
     ) {
         println("Applying patch $patchName to repository")
-        val git = Git.open(projectRepoDir)
-        git.apply()
-            .setPatch(patch)
-            .call()
-        git.close()
+        Git.open(projectRepoDir).use { git ->
+            git.apply()
+                .setPatch(patch)
+                .call()
+        }
     }
 
-    fun repoReset() {
-        println("Hard resetting project repo")
-        val git = Git.open(projectRepoDir)
-        git.reset()
-            .setMode(ResetCommand.ResetType.HARD)
-            .setProgressMonitor(gitOperationsPrinter)
-            .call()
-        git.clean()
-            .setCleanDirectories(true)
-            .setForce(true)
-            .call()
-        git.close()
+    private fun runBenchmarksSplitByAsyncProfilerSupport(
+        scenarioSuite: ScenarioSuite,
+        asyncProfilerConfig: AsyncProfilerConfiguration?,
+        @Suppress("UNUSED_PARAMETER") dryRun: Boolean = false,
+    ): List<BenchmarkResult> {
+        /**
+         * For some reason gradle-profiler doesn't allow async-profiling scenarios that have cleanup steps
+         */
+        val scenariosWithAsyncProfilerSupport = scenarioSuite.scenarios.filter { it.cleanupTasks.isEmpty() }
+        val scenariosWithoutAsyncProfilerSupport = scenarioSuite.scenarios.filter { it.cleanupTasks.isNotEmpty() }
+
+        return listOf(
+            runBenchmark(
+                scenarioSuite = ScenarioSuite(scenariosWithoutAsyncProfilerSupport.toMutableList()),
+                scenarioSuffix = "clean",
+                asyncProfilerConfig = null,
+                dryRun = dryRun,
+            ),
+            runBenchmark(
+                scenarioSuite = ScenarioSuite(scenariosWithAsyncProfilerSupport.toMutableList()),
+                scenarioSuffix = "incremental",
+                asyncProfilerConfig = asyncProfilerConfig,
+                dryRun = dryRun,
+            ),
+        )
     }
 
     private fun runBenchmark(
         scenarioSuite: ScenarioSuite,
-        @Suppress("UNUSED_PARAMETER") dryRun: Boolean = false
+        scenarioSuffix: String,
+        asyncProfilerConfig: AsyncProfilerConfiguration?,
+        @Suppress("UNUSED_PARAMETER") dryRun: Boolean,
     ): BenchmarkResult {
-        println("Staring benchmark $projectName")
-        val normalizedBenchmarkName = projectName.normalizeTitle
+        println("Staring benchmark $projectName $scenarioSuffix")
+        val normalizedBenchmarkName = "${projectName}_${scenarioSuffix}".normalizeTitle
         if (!scenariosDir.exists()) scenariosDir.mkdirs()
         val scenarioFile = scenariosDir.resolve("$normalizedBenchmarkName.scenario")
+
         scenarioSuite.writeTo(scenarioFile)
         val benchmarkOutputDir = benchmarkOutputsDir
             .resolve(projectName)
@@ -158,6 +236,14 @@ abstract class BenchmarkTemplate(
                 it.mkdirs()
             }
 
+        val asyncProfilerArgs: Array<String> = asyncProfilerConfig?.let {
+            arrayOf(
+                "--async-profiler-home", asyncProfilerDir.path,
+                "--async-profiler-event", asyncProfilerConfig.cpuProfiler,
+                "--profile", "async-profiler",
+            )
+        } ?: emptyArray()
+
         val profilerProcessBuilder = ProcessBuilder()
             .directory(workingDir)
             .inheritIO()
@@ -165,6 +251,7 @@ abstract class BenchmarkTemplate(
                 gradleProfilerBin.absolutePath,
                 "--benchmark",
                 "--measure-config-time",
+                *asyncProfilerArgs,
                 "--project-dir",
                 projectRepoDir.absolutePath,
                 "--scenario-file",
@@ -196,10 +283,11 @@ abstract class BenchmarkTemplate(
     }
 
     // Not working as intended due to this bug: https://github.com/gradle/gradle-profiler/issues/317
-    fun aggregateBenchmarkResults(benchmarkResult: BenchmarkResult) {
+    fun aggregateBenchmarkResults(benchmarkResults: List<BenchmarkResult>) {
         println("Aggregating benchmark results...")
-        val results = DataFrame
-            .readCsv(benchmarkResult.result, allowMissingColumns = true)
+        val results = benchmarkResults.map {
+            DataFrame.readCsv(it.result, allowMissingColumns = true)
+        }.reduce { acc, frame -> acc.fullJoin(frame) }
             .drop {
                 // Removing unused rows
                 it["scenario"] in listOf("version", "tasks") ||
@@ -293,44 +381,123 @@ abstract class BenchmarkTemplate(
     }
 
     private fun downloadAndExtractGradleProfiler() {
-        println("Downloading gradle-profiler into ${gradleProfilerDir.absolutePath}")
+        zipDownloadAndExtract(
+            gradleProfilerDir,
+            GRADLE_PROFILER_URL,
+        )
+        gradleProfilerBin.setExecutable(true)
 
-        gradleProfilerDir.mkdirs()
+        println("Finished downloading gradle-profiler")
+    }
+
+    private fun downloadAndExtractAsyncProfiler(asyncProfilerConfig: AsyncProfilerConfiguration) {
+        when (asyncProfilerConfig.decompressionMethod) {
+            Decompression.TAR_GZ -> tarGzipDownloadAndExtract(
+                asyncProfilerDir,
+                asyncProfilerConfig.downloadUrl,
+            )
+            Decompression.ZIP -> zipDownloadAndExtract(
+                asyncProfilerDir,
+                asyncProfilerConfig.downloadUrl,
+            )
+        }
+
+        val asyncProfilerBin = "bin/asprof"
+        asyncProfilerDir.resolve(asyncProfilerBin).setExecutable(true)
+
+        /**
+         * 4.1 no longer has the script, so. symlink manually
+         */
+        val asyncProfilerExecutable = asyncProfilerDir.resolve("profiler.sh")
+        Files.createSymbolicLink(asyncProfilerExecutable.toPath(), Paths.get(asyncProfilerBin))
+
+        println("Finished downloading async-profiler")
+    }
+
+    private fun tarGzipDownloadAndExtract(
+        outputDir: File,
+        url: String,
+    ) = downloadAndExtract(
+        outputDir = outputDir,
+        url = url,
+        useDecompressedStream = { inputStream, action ->
+            GzipCompressorInputStream(inputStream).use { zip ->
+                TarArchiveInputStream(zip).use { tar ->
+                    action(tar)
+                }
+            }
+        },
+        nextEntry = { nextEntry },
+        name = { name },
+        size = { size },
+        isDirectory = { isDirectory },
+    )
+
+    private fun zipDownloadAndExtract(
+        outputDir: File,
+        url: String,
+    ) = downloadAndExtract(
+        outputDir = outputDir,
+        url = url,
+        useDecompressedStream = { inputStream, action ->
+            ZipInputStream(inputStream).use {
+                action(it)
+            }
+        },
+        nextEntry = { nextEntry },
+        name = { name },
+        size = { size },
+        isDirectory = { isDirectory },
+    )
+
+    private fun <
+            DecompressedStream : InputStream,
+            StreamEntry,
+            > downloadAndExtract(
+        outputDir: File,
+        url: String,
+        useDecompressedStream: (InputStream, (DecompressedStream) -> Unit) -> Unit,
+        nextEntry: DecompressedStream.() -> StreamEntry?,
+        name: StreamEntry.() -> String,
+        size: StreamEntry.() -> Long,
+        isDirectory: StreamEntry.() -> Boolean,
+    ) {
+        println("Downloading ${url} into ${outputDir.absolutePath}")
+
+        outputDir.mkdirs()
 
         val okHttpClient = OkHttpClient()
         val request = Request.Builder()
             .get()
-            .url(GRADLE_PROFILER_URL)
+            .url(url)
             .build()
         val response = okHttpClient.newCall(request).execute()
         if (!response.isSuccessful) {
-            throw IOException("Failed to download gradle-profiler, error code: ${response.code}")
+            throw IOException("Failed to download ${url}, error code: ${response.code}")
         }
 
         val contentLength = response.body!!.contentLength()
         var downloadedLength = 0L
         print("Downloading: ")
         response.body!!.byteStream().buffered().use { responseContent ->
-            ZipInputStream(responseContent).use { zip ->
-                var zipEntry = zip.nextEntry
-                while (zipEntry != null) {
-                    if (zipEntry.isDirectory) {
-                        gradleProfilerDir.resolve(zipEntry.name.dropLeadingDir).also { it.mkdirs() }
+            useDecompressedStream(responseContent) { stream ->
+                var entry = stream.nextEntry()
+                while (entry != null) {
+                    if (entry.isDirectory()) {
+                        outputDir.resolve(entry.name().dropLeadingDir).also { it.mkdirs() }
                     } else {
-                        gradleProfilerDir.resolve(zipEntry.name.dropLeadingDir).outputStream().buffered().use {
-                            zip.copyTo(it)
+                        outputDir.resolve(entry.name().dropLeadingDir).outputStream().buffered().use { outputStream ->
+                            stream.copyTo(outputStream)
                         }
                     }
-                    downloadedLength += zipEntry.compressedSize
+                    downloadedLength += entry.size()
                     print("..${downloadedLength * 100 / contentLength}%")
-                    zip.closeEntry()
-                    zipEntry = zip.nextEntry
+                    entry = stream.nextEntry()
                 }
             }
-            print("\n")
+
+            println()
         }
-        gradleProfilerBin.setExecutable(true)
-        println("Finished downloading gradle-profiler")
     }
 
     private fun ScenarioSuite.writeTo(output: File) {
@@ -416,7 +583,7 @@ abstract class BenchmarkTemplate(
 
     private fun <T : Any?> DataFrame<*>.rowToColumn(
         rowName: String,
-        typeConversion: (Any?) -> T
+        typeConversion: (Any?) -> T,
     ): List<T> =
         rows().first { it.values().first() == rowName }.values().drop(1).map { typeConversion(it) }
 
@@ -431,11 +598,40 @@ abstract class BenchmarkTemplate(
                 }
             }
 
+    enum class Decompression {
+        TAR_GZ,
+        ZIP
+    }
+    class AsyncProfilerConfiguration(
+        val downloadUrl: String,
+        val decompressionMethod: Decompression,
+        val cpuProfiler: String,
+    )
+
+    private fun asyncProfilerConfig(): BenchmarkTemplate.AsyncProfilerConfiguration? {
+        val javaOsName = System.getProperty("os.name")
+        return when {
+            javaOsName == "Mac OS X" -> BenchmarkTemplate.AsyncProfilerConfiguration(
+                "https://github.com/async-profiler/async-profiler/releases/download/v${ASYNC_PROFILER_VERSION}/async-profiler-${ASYNC_PROFILER_VERSION}-macos.zip",
+                BenchmarkTemplate.Decompression.ZIP,
+                cpuProfiler = "cpu",
+            )
+            javaOsName == "Linux" -> BenchmarkTemplate.AsyncProfilerConfiguration(
+                "https://github.com/async-profiler/async-profiler/releases/download/v${ASYNC_PROFILER_VERSION}/async-profiler-${ASYNC_PROFILER_VERSION}-linux-x64.tar.gz",
+                BenchmarkTemplate.Decompression.TAR_GZ,
+                cpuProfiler = "cpu",
+            )
+            javaOsName.startsWith("Windows") -> null
+            else -> error("Unknown OS ${javaOsName}")
+        }
+    }
+
     companion object {
         private const val STEP_SEPARATOR = "###############"
         private const val GRADLE_PROFILER_VERSION = "0.19.0"
         private const val GRADLE_PROFILER_URL: String =
             "https://repo1.maven.org/maven2/org/gradle/profiler/gradle-profiler/$GRADLE_PROFILER_VERSION/gradle-profiler-$GRADLE_PROFILER_VERSION.zip"
+        private const val ASYNC_PROFILER_VERSION = "4.1"
 
     }
 }
@@ -449,7 +645,7 @@ class BenchmarkFailedException(exitCode: Int) : Exception(
 
 class BenchmarkResult(
     val name: BenchmarkName,
-    val result: File
+    val result: File,
 )
 
 @Target(AnnotationTarget.FILE)
@@ -495,7 +691,7 @@ class BenchmarkEvaluationConfiguration : ScriptEvaluationConfiguration(
 
 internal class BenchmarkScriptConfigurator : RefineScriptCompilationConfigurationHandler {
     override fun invoke(
-        context: ScriptConfigurationRefinementContext
+        context: ScriptConfigurationRefinementContext,
     ): ResultWithDiagnostics<ScriptCompilationConfiguration> {
         val benchmarkProject = context.collectedData
             ?.get(ScriptCollectedData.foundAnnotations)
