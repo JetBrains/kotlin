@@ -29,7 +29,7 @@ fun testWhen1(sealed: Sealed, sealedAbstract: SealedAbstract) {
         is Sealed.Sub -> {}
     }
 
-    when (sealed) {
+    <!MISSING_BRANCH_FOR_NON_ABSTRACT_SEALED_CLASS!>when<!> (sealed) {
         is Sealed.Sub -> {}
         is Sealed.Sub2 -> {}
     }
@@ -68,6 +68,28 @@ fun testWhen2(sealed: Sealed, sealedAbstract: SealedAbstract) {
 fun testConstructorCall() {
     <!SEALED_CLASS_CONSTRUCTOR_CALL!>Sealed()<!>
     <!SEALED_CLASS_CONSTRUCTOR_CALL!>SealedAbstract()<!>
+}
+
+// FILE: Base.java
+public sealed class Base permits A, B {}
+
+// FILE: A.java
+public final class A extends Base {}
+
+// FILE: B.java
+public sealed class B extends Base permits B.C, B.D {
+    public static final class C extends B {}
+
+    public static non-sealed class D extends B {}
+}
+
+// FILE: main.kt
+fun test_2(base: Base): String {
+    return <!MISSING_BRANCH_FOR_NON_ABSTRACT_SEALED_CLASS!>when<!> (base) {
+        is A -> "Fail A"
+        is B.C -> "K"
+        is B.D -> "Fail B.D"
+    }
 }
 
 /* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, javaFunction, javaType, whenExpression, whenWithSubject */

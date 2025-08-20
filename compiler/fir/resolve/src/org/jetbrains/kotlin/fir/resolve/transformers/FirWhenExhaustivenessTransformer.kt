@@ -536,9 +536,15 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
             return
         }
         when {
-            fir.modality == Modality.SEALED -> fir.getSealedClassInheritors(session).forEach {
-                val symbol = session.symbolProvider.getClassLikeSymbolByClassId(it) as? FirRegularClassSymbol
-                symbol?.collectAllSubclassesTo(destination, session)
+            fir.modality == Modality.SEALED -> {
+                if (fir.isJavaNonAbstractSealed == true) {
+                    destination.add(this)
+                }
+
+                fir.getSealedClassInheritors(session).forEach {
+                    val symbol = session.symbolProvider.getClassLikeSymbolByClassId(it) as? FirRegularClassSymbol
+                    symbol?.collectAllSubclassesTo(destination, session)
+                }
             }
             fir.classKind == ClassKind.ENUM_CLASS -> fir.collectEnumEntries(session).mapTo(destination) { it.symbol }
             else -> destination.add(this)

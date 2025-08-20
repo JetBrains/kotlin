@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.modality
@@ -22,9 +24,15 @@ import org.jetbrains.kotlin.fir.expressions.ExhaustivenessStatus
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
+import org.jetbrains.kotlin.fir.isEnabled
+import org.jetbrains.kotlin.fir.isJavaNonAbstractSealed
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.isBooleanOrNullableBoolean
+import org.jetbrains.kotlin.name.ClassId
 
 object FirExhaustiveWhenChecker : FirWhenExpressionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -88,6 +96,15 @@ object FirExhaustiveWhenChecker : FirWhenExpressionChecker(MppCheckerKind.Common
         whenExpression: FirWhenExpression,
         subjectClassSymbol: FirRegularClassSymbol?,
     ) {
+        val missingCases = whenExpression.missingCases
+
+        if (missingCases.all { it is WhenMissingCase.IsTypeCheckIsMissing && it.classId.isJavaNonAbstractSealed() }
+            && !LanguageFeature.ProperExhaustivenessCheckForJavaOpenSealedClass.isEnabled()
+        ) {
+            reporter.reportOn(source, FirErrors.MISSING_BRANCH_FOR_NON_ABSTRACT_SEALED_CLASS, missingCases)
+            return
+        }
+
         val description = when (subjectClassSymbol?.isExpect) {
             true -> {
                 val declarationType = if (subjectClassSymbol.isEnumClass) "enum" else "sealed"
@@ -95,7 +112,16 @@ object FirExhaustiveWhenChecker : FirWhenExpressionChecker(MppCheckerKind.Common
             }
             else -> ""
         }
-        reporter.reportOn(source, FirErrors.NO_ELSE_IN_WHEN, whenExpression.missingCases, description)
+        reporter.reportOn(source, FirErrors.NO_ELSE_IN_WHEN, missingCases, description)
+    }
+
+    context(context: CheckerContext)
+    private fun ClassId.isJavaNonAbstractSealed(): Boolean {
+        val symbol = toSymbol(context.session) as? FirClassLikeSymbol ?: return false
+        val fullyExpandedClassSymbol = symbol.fullyExpandedClass(context.session) ?: return false
+
+        @OptIn(SymbolInternals::class)
+        return fullyExpandedClassSymbol.fir.isJavaNonAbstractSealed == true
     }
 
     private val FirWhenExpression.missingCases: List<WhenMissingCase>

@@ -5263,6 +5263,15 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.MISSING_BRANCH_FOR_NON_ABSTRACT_SEALED_CLASS) { firDiagnostic ->
+        MissingBranchForNonAbstractSealedClassImpl(
+            firDiagnostic.a.map { whenMissingCase ->
+                whenMissingCase
+            },
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.INVALID_IF_AS_EXPRESSION) { firDiagnostic ->
         InvalidIfAsExpressionImpl(
             firDiagnostic as KtPsiDiagnostic,
