@@ -36,17 +36,17 @@ internal class BtaImplGenerator(
         val apiClassName = level.name.capitalizeAsciiOnly()
         val implClassName = apiClassName + "Impl"
         val mainFileAppendable = createGeneratedFileAppendable()
-        val mainFile = FileSpec.Companion.builder(targetPackage, implClassName).apply {
+        val mainFile = FileSpec.builder(targetPackage, implClassName).apply {
             // Kotlinpoet requires these aliased imports when there's a name clash in the current context or else it calls the wrong member
             addAliasedImport(MemberName("org.jetbrains.kotlin.compilerRunner", "toArgumentStrings"), "compilerToArgumentStrings")
             addAliasedImport(MemberName(ClassName("org.jetbrains.kotlin.config", "KotlinCompilerVersion"), "VERSION"), "KC_VERSION")
 
             addAnnotation(
-                AnnotationSpec.Companion.builder(ClassName("kotlin", "OptIn"))
+                AnnotationSpec.builder(ClassName("kotlin", "OptIn"))
                     .addMember("%T::class", ANNOTATION_EXPERIMENTAL).build()
             )
             addType(
-                TypeSpec.Companion.classBuilder(implClassName).apply {
+                TypeSpec.classBuilder(implClassName).apply {
                     addModifiers(KModifier.INTERNAL)
                     if (!level.isLeaf()) {
                         addModifiers(KModifier.ABSTRACT)
@@ -320,10 +320,10 @@ private fun TypeSpec.Builder.maybeAddToArgumentsStringFun(level: KotlinCompilerA
 private fun toCompilerConverterFunBuilder(
     level: KotlinCompilerArgumentsLevel,
     parentClass: TypeName?,
-): FunSpec.Builder = FunSpec.Companion.builder("toCompilerArguments").apply {
+): FunSpec.Builder = FunSpec.builder("toCompilerArguments").apply {
     val compilerArgumentsClass = level.getCompilerArgumentsClassName()
     addParameter(
-        ParameterSpec.Companion.builder("arguments", compilerArgumentsClass).apply {
+        ParameterSpec.builder("arguments", compilerArgumentsClass).apply {
             if (level.isLeaf()) {
                 defaultValue("%T()", compilerArgumentsClass)
             }
@@ -364,7 +364,7 @@ private fun TypeSpec.Builder.maybeAddApplyArgumentStringsFun(
 private fun applyCompilerArgumentsFunBuilder(
     level: KotlinCompilerArgumentsLevel,
     parentClass: TypeName?,
-): FunSpec.Builder = FunSpec.Companion.builder("applyCompilerArguments").apply {
+): FunSpec.Builder = FunSpec.builder("applyCompilerArguments").apply {
     if (parentClass != null) {
         addStatement("super.applyCompilerArguments(arguments)")
     }
