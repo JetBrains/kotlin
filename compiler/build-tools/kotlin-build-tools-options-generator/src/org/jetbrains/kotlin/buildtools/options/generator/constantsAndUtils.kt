@@ -8,18 +8,24 @@ package org.jetbrains.kotlin.buildtools.options.generator
 import com.squareup.kotlinpoet.ClassName
 import org.jetbrains.kotlin.arguments.description.CompilerArgumentsLevelNames
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
+import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
+import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.types.ExplicitApiMode
 import org.jetbrains.kotlin.arguments.dsl.types.JvmTarget
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinVersion
 import org.jetbrains.kotlin.arguments.dsl.types.ReturnValueCheckerMode
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
+import kotlin.math.max
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 
-internal const val IMPL_PACKAGE = "org.jetbrains.kotlin.buildtools.internal.arguments"
-internal const val API_PACKAGE = "org.jetbrains.kotlin.buildtools.api.arguments"
+private const val MAX_SUPPORTED_VERSIONS_BACK = 3
 
-internal val ANNOTATION_EXPERIMENTAL = ClassName(API_PACKAGE, "ExperimentalCompilerArgument")
+internal const val IMPL_ARGUMENTS_PACKAGE = "org.jetbrains.kotlin.buildtools.internal.arguments"
+internal const val API_PACKAGE = "org.jetbrains.kotlin.buildtools.api"
+internal const val API_ARGUMENTS_PACKAGE = "$API_PACKAGE.arguments"
+
+internal val ANNOTATION_EXPERIMENTAL = ClassName(API_ARGUMENTS_PACKAGE, "ExperimentalCompilerArgument")
 internal val ANNOTATION_USE_FROM_IMPL_RESTRICTED = ClassName("org.jetbrains.kotlin.buildtools.internal", "UseFromImplModuleRestricted")
 
 internal const val KDOC_SINCE_2_3_0 = "@since 2.3.0"
@@ -76,5 +82,14 @@ internal val enumNameAccessors = mutableMapOf(
 internal fun KClass<*>.accessor(): KProperty1<Any, String> = enumNameAccessors[this] as? KProperty1<Any, String>
     ?: error("Unknown enum in compiler arguments. Must be one of: ${enumNameAccessors.keys.joinToString()}.")
 
-fun createGeneratedFileAppendable(): StringBuilder = StringBuilder(GeneratorsFileUtil.GENERATED_MESSAGE_PREFIX)
+internal fun createGeneratedFileAppendable(): StringBuilder = StringBuilder(GeneratorsFileUtil.GENERATED_MESSAGE_PREFIX)
     .appendLine("the README.md file").appendLine(GeneratorsFileUtil.GENERATED_MESSAGE_SUFFIX).appendLine()
+
+internal fun getOldestSupportedVersion(kotlinVersion: KotlinReleaseVersion): KotlinReleaseVersion =
+    KotlinReleaseVersion.entries.filter { it.patch == 0 }.let { majorVersionsReleases ->  // only get major releases
+        majorVersionsReleases.indexOfFirst { it.major == kotlinVersion.major && it.minor == kotlinVersion.minor }.let {
+            majorVersionsReleases[max(it - MAX_SUPPORTED_VERSIONS_BACK, 0)]
+        }
+    }
+
+internal fun KotlinCompilerArgumentsLevel.isLeaf(): Boolean = nestedLevels.isEmpty()

@@ -9,6 +9,7 @@ import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
+import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
 import org.jetbrains.kotlin.generators.kotlinpoet.annotation
 import org.jetbrains.kotlin.generators.kotlinpoet.function
@@ -21,10 +22,14 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.isSubclassOf
 
-internal class BtaApiGenerator(private val targetPackage: String) : BtaGenerator {
+internal class BtaApiGenerator(
+    private val targetPackage: String,
+    private val skipXX: Boolean,
+    private val kotlinVersion: KotlinReleaseVersion
+) : BtaGenerator {
     private val outputs = mutableListOf<Pair<Path, String>>()
 
-    override fun generateArgumentsForLevel(level: KotlinCompilerArgumentsLevel, parentClass: TypeName?, skipXX: Boolean): GeneratorOutputs {
+    override fun generateArgumentsForLevel(level: KotlinCompilerArgumentsLevel, parentClass: TypeName?): GeneratorOutputs {
         val className = level.name.capitalizeAsciiOnly()
         val mainFileAppendable = createGeneratedFileAppendable()
         val mainFile = FileSpec.builder(targetPackage, className).apply {
@@ -40,11 +45,11 @@ internal class BtaApiGenerator(private val targetPackage: String) : BtaGenerator
                     val argumentTypeName = ClassName(targetPackage, className, argument)
                     if (parentClass == null) {
                         addToArgumentStringsFun()
-                        addApplyArgumentStringsFun()
+                        maybeAddApplyArgumentStringsFun()
                     }
                     generateGetPutFunctions(argumentTypeName)
                     addType(TypeSpec.companionObjectBuilder().apply {
-                        generateOptions(level.filterOutDroppedArguments(), argumentTypeName, skipXX)
+                        generateOptions(level.filterOutDroppedArguments(), argumentTypeName)
                     }.build())
                 }.build()
             )
@@ -57,7 +62,6 @@ internal class BtaApiGenerator(private val targetPackage: String) : BtaGenerator
     private fun TypeSpec.Builder.generateOptions(
         arguments: Collection<KotlinCompilerArgument>,
         argumentTypeName: ClassName,
-        skipXX: Boolean,
     ) {
         val enumsToGenerate = mutableMapOf<KClass<*>, TypeSpec.Builder>()
         val enumsExperimental = mutableMapOf<KClass<*>, Boolean>()
@@ -67,9 +71,21 @@ internal class BtaApiGenerator(private val targetPackage: String) : BtaGenerator
             if (skipXX && name.startsWith("XX_")) return@forEach
             val experimental = name.startsWith("XX_") || name.startsWith("X_")
 
-            if (argument.releaseVersionsMetadata.removedVersion != null) {
+
+            // argument is newer than current version
+            if (argument.releaseVersionsMetadata.introducedVersion > kotlinVersion) {
                 return@forEach
             }
+
+            // argument was removed in or before current version - 3
+            argument.releaseVersionsMetadata.removedVersion?.let { removedVersion ->
+                if (removedVersion <= getOldestSupportedVersion(kotlinVersion)) {
+                    return@forEach
+                }
+            }
+
+            val wasDeprecatedInVersion =
+                argument.releaseVersionsMetadata.deprecatedVersion?.takeIf { it <= kotlinVersion }
 
             val argumentTypeParameter =
                 argument.valueType::class.supertypes.single { it.classifier == KotlinArgumentValueType::class }.arguments.first().type!!.let {
@@ -96,10 +112,9 @@ internal class BtaApiGenerator(private val targetPackage: String) : BtaGenerator
                 // KT-28979 Need a way to escape /* in kdoc comments
                 // inserting a zero-width space is not ideal, but we do actually have one compiler argument that breaks the KDoc without it
                 addKdoc(argument.description.current.replace("/*", "/\u200B*").replace("*/", "*\u200B/"))
-                if (experimental) {
-                    addAnnotation(ANNOTATION_EXPERIMENTAL)
-                    addKdoc("\n\nWARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.")
-                }
+                maybeAddExperimentalAnnotation(experimental)
+                maybeAddDeprecatedAnnotation(argument.releaseVersionsMetadata.removedVersion, wasDeprecatedInVersion)
+
                 initializer("%T(%S)", argumentTypeName, name)
             }
         }
@@ -109,6 +124,26 @@ internal class BtaApiGenerator(private val targetPackage: String) : BtaGenerator
                 typeSpecBuilder.addAnnotation(ANNOTATION_EXPERIMENTAL)
             }
             writeEnumFile(typeSpecBuilder.build(), type)
+        }
+    }
+
+    private fun PropertySpec.Builder.maybeAddExperimentalAnnotation(experimental: Boolean) {
+        if (experimental) {
+            addAnnotation(ANNOTATION_EXPERIMENTAL)
+            addKdoc("\n\nWARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.")
+        }
+    }
+
+    private fun PropertySpec.Builder.maybeAddDeprecatedAnnotation(
+        removedVersion: KotlinReleaseVersion?,
+        wasDeprecatedInVersion: KotlinReleaseVersion?,
+    ) {
+        if (removedVersion != null && removedVersion <= kotlinVersion) {
+            annotation(ClassName(API_PACKAGE, "RemovedCompilerArgument")) {}
+            addKdoc("\n\nRemoved in Kotlin version ${removedVersion.releaseName}.")
+        } else if (wasDeprecatedInVersion != null) {
+            addKdoc("\n\nDeprecated in Kotlin version ${wasDeprecatedInVersion.releaseName}.")
+            annotation(ClassName(API_PACKAGE, "DeprecatedCompilerArgument")) {}
         }
     }
 
@@ -184,7 +219,7 @@ internal fun TypeSpec.Builder.generateArgumentType(argumentsClassName: String, k
     return argumentTypeName
 }
 
-private fun TypeSpec.Builder.addApplyArgumentStringsFun() {
+private fun TypeSpec.Builder.maybeAddApplyArgumentStringsFun() {
     function("applyArgumentStrings") {
         addKdoc("Takes a list of string arguments in the format recognized by the Kotlin CLI compiler and applies the options parsed from them into this instance.")
         addParameter(
