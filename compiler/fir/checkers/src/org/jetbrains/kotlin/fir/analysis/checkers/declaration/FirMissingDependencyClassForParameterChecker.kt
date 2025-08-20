@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.typeAnnotations
 import org.jetbrains.kotlin.name.Name
 
 /**
@@ -61,6 +62,8 @@ object FirMissingDependencyClassForParameterChecker : FirValueParameterChecker(M
                 parameter.name.takeIf { !it.isSpecial } ?: Name.identifier("_")
             )
         )
+
+        FirImplicitReturnTypeAnnotationMissingDependencyChecker.check(parameter.returnTypeRef, parameter.returnTypeRef.source)
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
