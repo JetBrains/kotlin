@@ -119,6 +119,7 @@ abstract class KtLightClassForSourceDeclaration(
 
     override fun getUseScope(): SearchScope = kotlinOrigin.useScope
 
+    @Suppress("OVERRIDE_DEPRECATION", "DEPRECATION")
     override fun getElementType(): IStubElementType<out StubElement<*>, *>? = classOrObject.elementType
     override fun getStub(): KotlinClassOrObjectStub<out KtClassOrObject>? = classOrObject.stub
 

@@ -24,9 +24,11 @@ abstract class KotlinStubBaseImpl<T : KtElementImplStub<*>>(parent: StubElement<
     @KtImplementationDetail
     abstract override fun copyInto(newParent: StubElement<*>?): KotlinStubBaseImpl<T>
 
+    @Suppress("OVERRIDE_DEPRECATION", "DEPRECATION")
     override fun getStubType(): IStubElementType<out StubElement<*>, *> =
         super.getStubType() as IStubElementType<out StubElement<*>, *>
 
+    @Suppress("DEPRECATION")
     override fun toString(): String {
         val stubInterface = this::class.java.interfaces.single { it.name.contains("Stub") }
         val propertiesValues = renderPropertyValues(stubInterface)

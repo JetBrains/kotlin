@@ -48,6 +48,7 @@ public class KtEnumEntry extends KtClass implements KtDeclarationWithReturnType 
     }
 
     @Nullable
+    @SuppressWarnings("deprecation")
     public KtInitializerList getInitializerList() {
         return getStubOrPsiChild(KtStubBasedElementTypes.INITIALIZER_LIST);
     }

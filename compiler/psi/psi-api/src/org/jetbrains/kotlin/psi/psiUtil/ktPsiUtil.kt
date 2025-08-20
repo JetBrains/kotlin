@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import java.util.*
+import kotlin.Suppress
 
 // NOTE: in this file we collect only Kotlin-specific methods working with PSI and not modifying it
 
@@ -233,7 +234,9 @@ fun KtAnnotationsContainer.collectAnnotationEntriesFromStubOrPsi(): List<KtAnnot
 
 private fun StubElement<*>.collectAnnotationEntriesFromStubElement(): List<KtAnnotationEntry> {
     return childrenStubs.flatMap { child ->
-        when (child.stubType) {
+        @Suppress("DEPRECATION")
+        val stubType = child.stubType
+        when (stubType) {
             KtNodeTypes.ANNOTATION_ENTRY -> listOf(child.psi as KtAnnotationEntry)
             KtNodeTypes.ANNOTATION -> (child.psi as KtAnnotation).entries
             else -> emptyList()

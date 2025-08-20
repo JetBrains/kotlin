@@ -46,11 +46,13 @@ public class KtAnnotationEntry extends KtElementImplStub<KotlinAnnotationEntrySt
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public KtConstructorCalleeExpression getCalleeExpression() {
         return getStubOrPsiChild(KtStubBasedElementTypes.CONSTRUCTOR_CALLEE);
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public KtValueArgumentList getValueArgumentList() {
         KotlinAnnotationEntryStub stub = getStub();
         if (stub == null && getGreenStub() != null) {
@@ -108,6 +110,7 @@ public class KtAnnotationEntry extends KtElementImplStub<KotlinAnnotationEntrySt
     }
 
     @Nullable
+    @SuppressWarnings("deprecation")
     public KtAnnotationUseSiteTarget getUseSiteTarget() {
         KtAnnotationUseSiteTarget target = getStubOrPsiChild(KtStubBasedElementTypes.ANNOTATION_TARGET);
 
