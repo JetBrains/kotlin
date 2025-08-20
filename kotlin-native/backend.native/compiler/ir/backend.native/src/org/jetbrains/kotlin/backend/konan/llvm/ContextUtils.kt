@@ -349,6 +349,7 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
 
         val functionType = getGlobalFunctionType(externalFunction)
         val function = LLVMAddFunction(module, name, functionType)!!
+        check(name != "")
 
         attributesCopier.addFunctionAttributes(function)
 
@@ -365,6 +366,7 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
 
     private fun llvmIntrinsic(name: String, type: LLVMTypeRef, vararg attributes: String): LlvmCallable {
         val result = LLVMAddFunction(module, name, type)!!
+        check(name != "")
         attributes.forEach {
             val kindId = getLlvmAttributeKindId(it)
             addLlvmFunctionEnumAttribute(result, kindId)

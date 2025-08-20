@@ -200,6 +200,7 @@ internal class LlvmFunctionProto(
 
     fun createLlvmFunction(context: Context, llvmModule: LLVMModuleRef): LlvmCallable {
         val function = LLVMAddFunction(llvmModule, name, signature.llvmFunctionType)!!
+        check(name != "")
         addDefaultLlvmFunctionAttributes(context, function)
         addTargetCpuAndFeaturesAttributes(context, function)
         signature.addFunctionAttributes(function)
