@@ -36,7 +36,7 @@ abstract class AbstractLexerTest(private val lexer: Lexer) : TestCase() {
         val tokenType = lexer.tokenType
 
         if (tokenType is TokenWrapper)
-            return tokenType.value
+            return tokenType.text
 
         val result = lexer.bufferSequence.subSequence(lexer.tokenStart, lexer.tokenEnd).toString()
 
