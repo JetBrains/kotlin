@@ -1142,6 +1142,8 @@ private fun parseIsoStringFormat(
 
 /**
  * Parses default duration format (e.g., "1h 30m", "45s", "500ms").
+ * Note: While "Infinity" is part of the default format specification, this method
+ * does not handle it - infinite values handled separately before calling this method.
  * @param value the input string
  * @param startIndex starting position for parsing
  * @param hasSign whether the duration had a leading sign
