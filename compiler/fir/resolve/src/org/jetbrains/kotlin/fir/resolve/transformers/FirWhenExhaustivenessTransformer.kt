@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.collectEnumEntries
 import org.jetbrains.kotlin.fir.declarations.getSealedClassInheritors
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
@@ -87,16 +86,16 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
         }
 
         private fun ConeKotlinType.unwrapTypeParameterAndIntersectionTypes(session: FirSession): Collection<ConeKotlinType> {
-            return when {
-                this is ConeIntersectionType -> intersectedTypes
-                this is ConeTypeParameterType && session.languageVersionSettings.supportsFeature(LanguageFeature.ImprovedExhaustivenessChecksIn21)
+            return when (this) {
+                is ConeIntersectionType -> intersectedTypes
+                is ConeTypeParameterType if session.languageVersionSettings.supportsFeature(LanguageFeature.ImprovedExhaustivenessChecksIn21)
                     -> buildList {
                     lookupTag.typeParameterSymbol.resolvedBounds.flatMapTo(this) {
                         it.coneType.unwrapTypeParameterAndIntersectionTypes(session)
                     }
                     add(this@unwrapTypeParameterAndIntersectionTypes)
                 }
-                this is ConeDefinitelyNotNullType && session.languageVersionSettings.supportsFeature(LanguageFeature.ImprovedExhaustivenessChecksIn21)
+                is ConeDefinitelyNotNullType if session.languageVersionSettings.supportsFeature(LanguageFeature.ImprovedExhaustivenessChecksIn21)
                     -> original.unwrapTypeParameterAndIntersectionTypes(session)
                     .map { it.makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext) }
                 else -> listOf(this)
@@ -107,7 +106,7 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
             subjectType: ConeKotlinType,
             session: FirSession
         ): List<WhenExhaustivenessChecker> {
-            return buildList<WhenExhaustivenessChecker> {
+            return buildList {
                 exhaustivenessCheckers.filterTo(this) {
                     it.isApplicable(subjectType, session)
                 }
