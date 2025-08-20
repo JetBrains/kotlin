@@ -23,7 +23,7 @@ dependencies {
     implementation(project(":analysis:analysis-api"))
     implementation(project(":analysis:analysis-api-standalone"))
 
-    implementation(project(":native:analysis-api-klib-reader"))
+    implementation(project(":libraries:tools:analysis-api-based-klib-reader"))
 }
 
 sourceSets {

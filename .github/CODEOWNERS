@@ -287,6 +287,7 @@
 /libraries/stdlib/wasm/js/internal @JetBrains/kotlin-wasm
 
 /libraries/tools/abi-comparator @JetBrains/kotlin-jvm
+/libraries/tools/analysis-api-based-klib-reader/ @JetBrains/kotlin-native @JetBrains/kotlin-js
 /libraries/tools/atomicfu/ @JetBrains/kotlin-libraries
 /libraries/tools/binary-compatibility-validator/ @JetBrains/kotlin-libraries
 /libraries/tools/abi-validation/ @JetBrains/kotlin-libraries
@@ -371,7 +372,6 @@
 /license/ @JetBrains/kotlin-build-infrastructure
 
 /native/ @JetBrains/kotlin-native
-/native/analysis-api-klib-reader/ @JetBrains/kotlin-native
 /native/commonizer/ @JetBrains/kotlin-frontend
 /native/commonizer-api/ @JetBrains/kotlin-frontend
 /native/commonizer-embeddable/ @JetBrains/kotlin-frontend

@@ -64,7 +64,7 @@
     </dependency>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>analysis-api-klib-reader</artifactId>
+      <artifactId>analysis-api-based-klib-reader</artifactId>
       <version>ArtifactsTest.version</version>
       <scope>runtime</scope>
     </dependency>

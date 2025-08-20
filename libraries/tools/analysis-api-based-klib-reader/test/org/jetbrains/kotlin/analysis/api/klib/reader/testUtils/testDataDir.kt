@@ -7,4 +7,4 @@ package org.jetbrains.kotlin.analysis.api.klib.reader.testUtils
 
 import kotlin.io.path.Path
 
-val testDataDir = Path("native/analysis-api-klib-reader/testData")
+val testDataDir = Path("libraries/tools/analysis-api-based-klib-reader/testData")

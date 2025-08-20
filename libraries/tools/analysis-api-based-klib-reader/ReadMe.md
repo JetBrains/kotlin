@@ -1,11 +1,11 @@
-# Native Analysis Api based Klib reader
+# Analysis API-based KLIB reader
 
 ## Tasks
 
 **Run Tests**
 
 ``` 
-./gradlew :native:analysis-api-klib-reader:check
+./gradlew :libraries:tools:analysis-api-based-klib-reader:check
 ```
 
 ## Usage: Reading symbols from a given klib module

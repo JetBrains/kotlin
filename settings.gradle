@@ -177,11 +177,9 @@ include ":benchmarks",
         ":native:executors",
         ":native:base",
         ":native:binary-options",
-        ":native:analysis-api-klib-reader",
         ":native:analysis-api-based-test-utils",
         ":native:analysis-api-based-export-common",
         ":native:external-projects-test-utils",
-        ":native:analysis-api-klib-reader:testProject",
         ":native:objcexport-header-generator",
         ":native:objcexport-header-generator-k1",
         ":native:objcexport-header-generator-analysis-api",
@@ -375,6 +373,9 @@ include ":libraries:tools:abi-comparator"
 include ":libraries:tools:abi-validation:abi-tools",
         ":libraries:tools:abi-validation:abi-tools-api",
         ":libraries:tools:abi-validation:kgp-integration-tests"
+
+include ":libraries:tools:analysis-api-based-klib-reader",
+        ":libraries:tools:analysis-api-based-klib-reader:testProject"
 
 include ":kotlin-atomicfu-compiler-plugin",
         ":kotlin-atomicfu-compiler-plugin-embeddable",

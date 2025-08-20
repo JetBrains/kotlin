@@ -380,7 +380,7 @@ val projectsUsedInIntelliJKotlinPlugin =
             ) +
             arrayOf(
                 ":compiler:ir.serialization.native",
-                ":native:analysis-api-klib-reader",
+                ":libraries:tools:analysis-api-based-klib-reader",
                 ":native:base",
                 ":native:objcexport-header-generator",
                 ":native:objcexport-header-generator-analysis-api",
@@ -745,8 +745,14 @@ tasks.register("createIdeaHomeForTests") {
 
 tasks {
     register("compileAll") {
+        val excludedNativePrefixes = listOf(
+            ":native",
+            ":libraries:tools:analysis-api-based-klib-reader:testProject",
+        )
         allprojects
-            .filter { !it.path.startsWith(":native") || kotlinBuildProperties.isKotlinNativeEnabled }
+            .filter {
+                excludedNativePrefixes.none(it.path::startsWith) || kotlinBuildProperties.isKotlinNativeEnabled
+            }
             .forEach {
                 dependsOn(it.tasks.withType<KotlinCompilationTask<*>>())
                 dependsOn(it.tasks.withType<JavaCompile>())
@@ -848,7 +854,7 @@ tasks {
     // ...
     register("nativeCompilerTest") {
         dependsOn(":kotlin-atomicfu-compiler-plugin:nativeTest")
-        dependsOn(":native:analysis-api-klib-reader:check")
+        dependsOn(":libraries:tools:analysis-api-based-klib-reader:check")
         dependsOn(":native:native.tests:test")
         dependsOn(":native:native.tests:cli-tests:check")
         dependsOn(":native:native.tests:codegen-box:check")
