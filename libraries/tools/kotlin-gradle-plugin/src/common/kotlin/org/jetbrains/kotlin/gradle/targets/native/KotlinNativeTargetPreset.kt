@@ -10,8 +10,12 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
-import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
+import org.jetbrains.kotlin.gradle.plugin.KotlinNativeTargetConfigurator
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.internal.KotlinProjectSharedDataProvider
+import org.jetbrains.kotlin.gradle.plugin.internal.kotlinSecondaryVariantsDataSharing
 import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
 import org.jetbrains.kotlin.gradle.targets.native.internal.getOrRegisterDownloadKotlinNativeDistributionTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.setupCInteropCommonizerDependencies
@@ -122,13 +126,25 @@ internal val KonanTarget.isCurrentHost: Boolean
 @Deprecated("Use crossCompilationOnCurrentHostSupported instead")
 internal fun KonanTarget.enabledOnCurrentHostForKlibCompilation(
     provider: PropertiesProvider,
-) = if (provider.enableKlibsCrossCompilation) {
-    // If cross-compilation is enabled, allow compilation for all targets
-    true
+) = if (HostManager.hostOrNull != null) {
+    if (provider.enableKlibsCrossCompilation) {
+        // If cross-compilation is enabled, allow compilation for all targets
+        true
+    } else {
+        // If cross-compilation is disabled use standard HostManager enablement check
+        HostManager().isEnabled(this)
+    }
 } else {
-    // If cross-compilation is disabled use standard HostManager enablement check
-    HostManager().isEnabled(this)
+    false
 }
+
+internal val AbstractKotlinNativeCompilation.crossCompilationSharedData: KotlinProjectSharedDataProvider<CrossCompilationData>
+    get() = project.kotlinSecondaryVariantsDataSharing.consumeCrossCompilationMetadata(
+        compilation.configurations.compileDependencyConfiguration
+    )
+
+internal val AbstractKotlinNativeCompilation.crossCompilationDependenciesSupported: Boolean
+    get() = crossCompilationSharedData.dataForAllDependencies.all { it.crossCompilationSupported }
 
 internal val AbstractKotlinNativeCompilation.crossCompilationOnCurrentHostSupported: Boolean
     get() = when (this) {
