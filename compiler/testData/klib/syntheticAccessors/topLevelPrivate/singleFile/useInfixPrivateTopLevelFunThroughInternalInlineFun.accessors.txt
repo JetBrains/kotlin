@@ -1,0 +1,11 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=useInfixPrivateTopLevelFunThroughInternalInlineFun.kt */
+
+/* TARGET declaration */ private infix fun String.plus(that: String): String
+internal inline fun internalFun(): String
+    /* ACCESSOR use-site */ access$plus$tUseInfixPrivateTopLevelFunThroughInternalInlineFunKt($receiver = "O", that = "K")
+public fun box(): String
+    /* ACCESSOR use-site */ access$plus$tUseInfixPrivateTopLevelFunThroughInternalInlineFunKt($receiver = "O", that = "K")
+/* ACCESSOR declaration */ internal fun access$plus$tUseInfixPrivateTopLevelFunThroughInternalInlineFunKt($receiver: String, that: String): String
+    /* TARGET use-site */ plus(/* <this> = $receiver, */ that = that)

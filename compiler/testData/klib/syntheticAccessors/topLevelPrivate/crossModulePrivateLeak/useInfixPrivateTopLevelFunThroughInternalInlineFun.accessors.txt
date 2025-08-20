@@ -1,0 +1,17 @@
+/* MODULE name=<lib> */
+
+/* FILE package=<root> fileName=A.kt */
+
+/* TARGET declaration */ private infix fun String.plus(that: String): String
+internal inline fun internalFun(): String
+    /* ACCESSOR use-site */ access$plus$tAKt($receiver = "O", that = "K")
+/* ACCESSOR declaration */ internal fun access$plus$tAKt($receiver: String, that: String): String
+    /* TARGET use-site */ plus(/* <this> = $receiver, */ that = that)
+
+
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=B.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$plus$tAKt($receiver = "O", that = "K")
