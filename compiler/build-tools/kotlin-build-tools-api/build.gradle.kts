@@ -53,6 +53,7 @@ generatedSourcesTask(
     argsProvider = { generationRoot ->
         listOf(
             generationRoot.toString(),
+            version.toString(),
             "api",
             "jvmCompilerArguments",
         )
