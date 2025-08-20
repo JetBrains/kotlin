@@ -6836,6 +6836,24 @@ public class IrBlackBoxInlineCodegenTestGenerated extends AbstractIrBlackBoxInli
         }
 
         @Test
+        @TestMetadata("usePrivateMethodFromInternalInlineFakeOverride.kt")
+        public void testUsePrivateMethodFromInternalInlineFakeOverride() {
+          runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/usePrivateMethodFromInternalInlineFakeOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("usePrivateMethodFromInternalInlineFakeOverrideInChainOfInheritors.kt")
+        public void testUsePrivateMethodFromInternalInlineFakeOverrideInChainOfInheritors() {
+          runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/usePrivateMethodFromInternalInlineFakeOverrideInChainOfInheritors.kt");
+        }
+
+        @Test
+        @TestMetadata("usePrivateMethodFromInternalInlineGenericFakeOverride.kt")
+        public void testUsePrivateMethodFromInternalInlineGenericFakeOverride() {
+          runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/usePrivateMethodFromInternalInlineGenericFakeOverride.kt");
+        }
+
+        @Test
         @TestMetadata("usePrivateVarFromLocalClassInsideInternalInlineFun.kt")
         public void testUsePrivateVarFromLocalClassInsideInternalInlineFun() {
           runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/usePrivateVarFromLocalClassInsideInternalInlineFun.kt");
@@ -7180,6 +7198,24 @@ public class IrBlackBoxInlineCodegenTestGenerated extends AbstractIrBlackBoxInli
         public void testUsePrivateConstValFromInternalInline() {
           runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/usePrivateConstValFromInternalInline.kt");
         }
+
+        @Test
+        @TestMetadata("usePrivateMethodFromInternalInlineFakeOverride.kt")
+        public void testUsePrivateMethodFromInternalInlineFakeOverride() {
+          runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/usePrivateMethodFromInternalInlineFakeOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("usePrivateMethodFromInternalInlineFakeOverrideInChainOfInheritors.kt")
+        public void testUsePrivateMethodFromInternalInlineFakeOverrideInChainOfInheritors() {
+          runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/usePrivateMethodFromInternalInlineFakeOverrideInChainOfInheritors.kt");
+        }
+
+        @Test
+        @TestMetadata("usePrivateMethodFromInternalInlineGenericFakeOverride.kt")
+        public void testUsePrivateMethodFromInternalInlineGenericFakeOverride() {
+          runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/usePrivateMethodFromInternalInlineGenericFakeOverride.kt");
+        }
       }
 
       @Nested
@@ -7339,6 +7375,12 @@ public class IrBlackBoxInlineCodegenTestGenerated extends AbstractIrBlackBoxInli
         @TestMetadata("usePrivateMethodFromInternalInlineFakeOverride.kt")
         public void testUsePrivateMethodFromInternalInlineFakeOverride() {
           runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/usePrivateMethodFromInternalInlineFakeOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("usePrivateMethodFromInternalInlineFakeOverrideInChainOfInheritors.kt")
+        public void testUsePrivateMethodFromInternalInlineFakeOverrideInChainOfInheritors() {
+          runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/usePrivateMethodFromInternalInlineFakeOverrideInChainOfInheritors.kt");
         }
 
         @Test
