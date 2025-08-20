@@ -19,7 +19,7 @@ dependencies {
     testApi(intellijCore())
 
     testRuntimeOnly(libs.xerces)
-    testRuntimeOnly(commonDependency("commons-lang:commons-lang"))
+    testRuntimeOnly(commonDependency("commons-lang:commons-lang3"))
 
     testImplementation(libs.junit4)
     testCompileOnly(kotlinTest("junit"))

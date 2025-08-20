@@ -22,7 +22,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.3")
 
     compileOnly(intellijCore())
-    compileOnly(commonDependency("commons-lang:commons-lang"))
+    compileOnly(commonDependency("commons-lang:commons-lang3"))
 }
 
 sourceSets {
