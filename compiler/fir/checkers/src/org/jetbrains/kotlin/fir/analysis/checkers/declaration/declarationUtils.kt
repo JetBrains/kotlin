@@ -127,6 +127,7 @@ internal val FirBasedSymbol<*>.isLocalMember: Boolean
         is FirNamedFunctionSymbol -> this.isLocal
         // Anonymous functions and lambdas use DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS which has visibility public.
         is FirAnonymousFunctionSymbol -> true
+        is FirBackingFieldSymbol -> this.propertySymbol.isLocal
         else -> false
     }
 
