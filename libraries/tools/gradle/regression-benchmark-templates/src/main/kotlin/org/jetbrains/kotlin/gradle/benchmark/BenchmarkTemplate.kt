@@ -20,6 +20,7 @@ import org.jetbrains.kotlinx.dataframe.DataColumn
 import org.jetbrains.kotlinx.dataframe.DataFrame
 import org.jetbrains.kotlinx.dataframe.api.*
 import org.jetbrains.kotlinx.dataframe.io.DisplayConfiguration
+import org.jetbrains.kotlinx.dataframe.io.read
 import org.jetbrains.kotlinx.dataframe.io.readCsv
 import org.jetbrains.kotlinx.dataframe.io.toStandaloneHtml
 import org.jetbrains.kotlinx.dataframe.io.writeCsv
@@ -76,7 +77,7 @@ abstract class BenchmarkTemplate(
                 repoApplyPatch(patchName, patch)
             }
         }
-        val result = runBenchmark(suite, asyncProfilerConfig)
+        val result = runBenchmarksSplitByAsyncProfilerSupport(suite, asyncProfilerConfig)
         aggregateBenchmarkResults(result)
 
         printEndingMessage()
@@ -188,15 +189,44 @@ abstract class BenchmarkTemplate(
         }
     }
 
-    private fun runBenchmark(
+    private fun runBenchmarksSplitByAsyncProfilerSupport(
         scenarioSuite: ScenarioSuite,
         asyncProfilerConfig: AsyncProfilerConfiguration?,
         @Suppress("UNUSED_PARAMETER") dryRun: Boolean = false,
+    ): List<BenchmarkResult> {
+        /**
+         * For some reason gradle-profiler doesn't allow async-profiling scenarios that have cleanup steps
+         */
+        val scenariosWithAsyncProfilerSupport = scenarioSuite.scenarios.filter { it.cleanupTasks.isEmpty() }
+        val scenariosWithoutAsyncProfilerSupport = scenarioSuite.scenarios.filter { it.cleanupTasks.isNotEmpty() }
+
+        return listOf(
+            runBenchmark(
+                scenarioSuite = ScenarioSuite(scenariosWithoutAsyncProfilerSupport.toMutableList()),
+                scenarioSuffix = "clean",
+                asyncProfilerConfig = null,
+                dryRun = dryRun,
+            ),
+            runBenchmark(
+                scenarioSuite = ScenarioSuite(scenariosWithAsyncProfilerSupport.toMutableList()),
+                scenarioSuffix = "incremental",
+                asyncProfilerConfig = asyncProfilerConfig,
+                dryRun = dryRun,
+            ),
+        )
+    }
+
+    private fun runBenchmark(
+        scenarioSuite: ScenarioSuite,
+        scenarioSuffix: String,
+        asyncProfilerConfig: AsyncProfilerConfiguration?,
+        @Suppress("UNUSED_PARAMETER") dryRun: Boolean,
     ): BenchmarkResult {
-        println("Staring benchmark $projectName")
-        val normalizedBenchmarkName = projectName.normalizeTitle
+        println("Staring benchmark $projectName $scenarioSuffix")
+        val normalizedBenchmarkName = "${projectName}_${scenarioSuffix}".normalizeTitle
         if (!scenariosDir.exists()) scenariosDir.mkdirs()
         val scenarioFile = scenariosDir.resolve("$normalizedBenchmarkName.scenario")
+
         scenarioSuite.writeTo(scenarioFile)
         val benchmarkOutputDir = benchmarkOutputsDir
             .resolve(projectName)
@@ -253,10 +283,11 @@ abstract class BenchmarkTemplate(
     }
 
     // Not working as intended due to this bug: https://github.com/gradle/gradle-profiler/issues/317
-    fun aggregateBenchmarkResults(benchmarkResult: BenchmarkResult) {
+    fun aggregateBenchmarkResults(benchmarkResults: List<BenchmarkResult>) {
         println("Aggregating benchmark results...")
-        val results = DataFrame
-            .readCsv(benchmarkResult.result, allowMissingColumns = true)
+        val results = benchmarkResults.map {
+            DataFrame.readCsv(it.result, allowMissingColumns = true)
+        }.reduce { acc, frame -> acc.fullJoin(frame) }
             .drop {
                 // Removing unused rows
                 it["scenario"] in listOf("version", "tasks") ||
