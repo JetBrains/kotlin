@@ -10,6 +10,7 @@ import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.DokkaException
 import org.jetbrains.dokka.Timer
 import org.jetbrains.dokka.base.DokkaBase
+import org.jetbrains.dokka.base.resolvers.shared.PackageList
 import org.jetbrains.dokka.generation.Generation
 import org.jetbrains.dokka.generation.exitGenerationGracefully
 import org.jetbrains.dokka.model.DModule
@@ -23,7 +24,7 @@ import org.jetbrains.dokka.utilities.report
 
 public class SingleModuleGeneration(private val context: DokkaContext) : Generation {
 
-    override fun Timer.generate() {
+    override fun Timer.generate(): Unit = try {
         report("Validity check")
         validityCheck(context)
 
@@ -56,6 +57,8 @@ public class SingleModuleGeneration(private val context: DokkaContext) : Generat
         runPostActions()
 
         reportAfterRendering()
+    } finally {
+        PackageList.clearCache()
     }
 
     override val generationName: String = "documentation for ${context.configuration.moduleName}"
