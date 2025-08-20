@@ -10,8 +10,12 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
-import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
+import org.jetbrains.kotlin.gradle.plugin.KotlinNativeTargetConfigurator
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.internal.KotlinProjectSharedDataProvider
+import org.jetbrains.kotlin.gradle.plugin.internal.kotlinSecondaryVariantsDataSharing
 import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
 import org.jetbrains.kotlin.gradle.targets.native.internal.getOrRegisterDownloadKotlinNativeDistributionTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.setupCInteropCommonizerDependencies
@@ -131,6 +135,16 @@ internal fun KonanTarget.enabledOnCurrentHostForKlibCompilation(
     // If cross-compilation is disabled use standard HostManager enablement check
     HostManager().isEnabled(this)
 }
+
+internal val AbstractKotlinNativeCompilation.crossCompilationSharedData: KotlinProjectSharedDataProvider<CrossCompilationData>
+    get() = project.kotlinSecondaryVariantsDataSharing.consumeCrossCompilationMetadata(
+        compilation.configurations.compileDependencyConfiguration
+    )
+
+internal val AbstractKotlinNativeCompilation.crossCompilationDependenciesSupported: Future<Boolean>
+    get() = project.future {
+        crossCompilationSharedData.dataForAllDependencies.all { it.crossCompilationSupported }
+    }
 
 internal val AbstractKotlinNativeCompilation.crossCompilationOnCurrentHostSupported: Future<Boolean>
     get() = when (this) {
