@@ -31,6 +31,7 @@ public class KtFunctionTypeReceiver extends KtElementImplStub<KotlinPlaceHolderS
     }
 
     @NotNull
+    @SuppressWarnings("deprecation")
     public KtTypeReference getTypeReference() {
         return getRequiredStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE);
     }

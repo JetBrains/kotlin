@@ -38,6 +38,7 @@ public class KtElementImplStub<T extends StubElement<?>> extends StubBasedPsiEle
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public String toString() {
         return getElementType().toString();
     }
@@ -114,6 +115,7 @@ public class KtElementImplStub<T extends StubElement<?>> extends StubBasedPsiEle
     }
 
     @NotNull
+    @SuppressWarnings("deprecation")
     protected <PsiT extends KtElementImplStub<?>, StubT extends StubElement<?>> List<PsiT> getStubOrPsiChildrenAsList(
             @NotNull KtStubElementType<StubT, PsiT> elementType
     ) {

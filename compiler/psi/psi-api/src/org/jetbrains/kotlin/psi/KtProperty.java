@@ -88,6 +88,7 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
 
     @Override
     @Nullable
+    @SuppressWarnings("deprecation")
     public KtTypeReference getReceiverTypeReference() {
         KotlinPropertyStub stub = getGreenStub();
         if (stub != null) {
