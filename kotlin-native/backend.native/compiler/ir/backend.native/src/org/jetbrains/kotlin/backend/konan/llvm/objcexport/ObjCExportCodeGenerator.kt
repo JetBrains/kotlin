@@ -441,7 +441,7 @@ internal class ObjCExportCodeGenerator(
                 codegen.staticData.cStringLiteral(namer.topLevelNamePrefix)
         )
 
-        emitSelectorsHolder()
+        emitSelectorsHolder("kfunselectorsholder:smth")
 
         emitKt42254Hint()
     }
@@ -539,9 +539,9 @@ internal class ObjCExportCodeGenerator(
             superClassNotAny = null
     )
 
-    private fun emitSelectorsHolder() {
+    private fun emitSelectorsHolder(name: String) {
         val impProto = LlvmFunctionSignature(LlvmRetType(llvm.voidType, isObjectType = false)).toProto(
-                name = "",
+                name = name,
                 origin = null,
                 linkage = LLVMLinkage.LLVMInternalLinkage
         )

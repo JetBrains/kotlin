@@ -395,7 +395,8 @@ internal class CodeGeneratorVisitor(
         val scopeState = llvm.initializersGenerationState.reset(oldScopeState)
         scopeState.takeIf { !it.isEmpty() }?.let {
             buildInitializerFunctions(it)
-            val runtimeInitializer = createInitBody(it)
+            val name = konanLibrary?.uniqueName ?: "main"
+            val runtimeInitializer = createInitBody("kfuninit:${name}", it)
             llvm.irStaticInitializers.add(IrStaticInitializer(konanLibrary, runtimeInitializer))
         }
     }
@@ -448,8 +449,8 @@ internal class CodeGeneratorVisitor(
     val FILE_NOT_INITIALIZED = 0
     val FILE_INITIALIZED = 2
 
-    private fun createInitBody(state: ScopeInitializersGenerationState): RuntimeInitializer {
-        return generateRuntimeInitializer {
+    private fun createInitBody(name: String, state: ScopeInitializersGenerationState): RuntimeInitializer {
+        return generateRuntimeInitializer(name) {
             using(FunctionScope(function, this)) {
                 val bbInit = basicBlock("init", null)
                 val bbLocalInit = basicBlock("local_init", null)
@@ -512,7 +513,7 @@ internal class CodeGeneratorVisitor(
         }
     }
 
-    private fun mergeRuntimeInitializers(runtimeInitializers: List<RuntimeInitializer>): RuntimeInitializer? {
+    private fun mergeRuntimeInitializers(name: String, runtimeInitializers: List<RuntimeInitializer>): RuntimeInitializer? {
         if (runtimeInitializers.size <= 1) return runtimeInitializers.singleOrNull()
 
         // It would be natural to generate a single runtime initializer function
@@ -521,8 +522,8 @@ internal class CodeGeneratorVisitor(
         // So, this natural solution can lead to generating huge LLVM functions triggering slow compilation.
         // Apply a cheap trick -- merge them by chunks recursively.
 
-        val chunkInitializers = runtimeInitializers.chunked(100) { chunk ->
-            generateRuntimeInitializer {
+        val chunkInitializers = runtimeInitializers.chunked(100).mapIndexed { index, chunk ->
+            generateRuntimeInitializer("${name}_${index}") {
                 chunk.forEach {
                     this.call(it.llvmCallable, listOf(param(0), param(1)), exceptionHandler = ExceptionHandler.Caller)
                 }
@@ -530,11 +531,11 @@ internal class CodeGeneratorVisitor(
             }
         }
 
-        return mergeRuntimeInitializers(chunkInitializers)
+        return mergeRuntimeInitializers(name, chunkInitializers)
     }
 
-    private fun generateRuntimeInitializer(block: FunctionGenerationContext.() -> Unit): RuntimeInitializer {
-        val initFunctionProto = kInitFuncType.toProto("", null, LLVMLinkage.LLVMPrivateLinkage)
+    private fun generateRuntimeInitializer(name: String, block: FunctionGenerationContext.() -> Unit): RuntimeInitializer {
+        val initFunctionProto = kInitFuncType.toProto(name, null, LLVMLinkage.LLVMPrivateLinkage)
         return RuntimeInitializer(generateFunction(codegen, initFunctionProto, code = block))
     }
 
@@ -553,8 +554,8 @@ internal class CodeGeneratorVisitor(
 
     //-------------------------------------------------------------------------//
 
-    private fun createInitCtor(initNodePtr: LLVMValueRef): LlvmCallable {
-        val ctorProto = ctorFunctionSignature.toProto("", null, LLVMLinkage.LLVMPrivateLinkage)
+    private fun createInitCtor(name: String, initNodePtr: LLVMValueRef): LlvmCallable {
+        val ctorProto = ctorFunctionSignature.toProto(name, null, LLVMLinkage.LLVMPrivateLinkage)
         val ctor = generateFunctionNoRuntime(codegen, ctorProto) {
             call(llvm.appendToInitalizersTail, listOf(initNodePtr))
             ret(null)
@@ -2743,8 +2744,9 @@ internal class CodeGeneratorVisitor(
 
         val ctorFunctions = dependencies.flatMap { dependency ->
             val library = dependency?.library
-            val initializer = mergeRuntimeInitializers(libraryToInitializers.getValue(library))
-                    ?.let { createInitCtor(createInitNode(it)) }
+            val name = library?.uniqueName ?: "main"
+            val initializer = mergeRuntimeInitializers("kfuninit:$name", libraryToInitializers.getValue(library))
+                    ?.let { createInitCtor("${name}_ctor", createInitNode(it)) }
 
             val ctorName = when {
                 // TODO: Try to not use moduleId.
