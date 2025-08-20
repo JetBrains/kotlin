@@ -1,7 +1,7 @@
 plugins {
     kotlin("jvm")
     id("jps-compatible")
-    id("compiler-tests-convention")
+    id("project-tests-convention")
     id("test-inputs-check")
 }
 
@@ -50,7 +50,7 @@ val specConsistencyTests by task<Test> {
     useJUnitPlatform()
 }
 
-compilerTests {
+projectTests {
     testData(isolated, "testData")
     testData(project(":compiler").isolated, "testData")
     withScriptRuntime()

@@ -3,7 +3,7 @@ import kotlin.io.path.createTempDirectory
 plugins {
     kotlin("jvm")
     id("jps-compatible")
-    id("compiler-tests-convention")
+    id("project-tests-convention")
     id("test-inputs-check")
     id("java-test-fixtures")
 }
@@ -32,7 +32,7 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
-compilerTests {
+projectTests {
     testData(project(":compiler").isolated, "testData/loadJava")
     testData(project(":compiler").isolated, "testData/loadJava8")
     testData(project(":compiler").isolated, "testData/resolvedCalls/enhancedSignatures")

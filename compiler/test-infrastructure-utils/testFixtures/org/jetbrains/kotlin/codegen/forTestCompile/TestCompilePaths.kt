@@ -3,7 +3,7 @@ package org.jetbrains.kotlin.codegen.forTestCompile/*
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-// This file is duplicated at repo/gradle-build-conventions/compiler-tests-convention/src/main/kotlin/TestCompilePaths.kt
+// This file is duplicated at repo/gradle-build-conventions/project-tests-convention/src/main/kotlin/TestCompilePaths.kt
 object TestCompilePaths {
     const val KOTLIN_FULL_STDLIB_PATH: String = "kotlin.full.stdlib.path"
     const val KOTLIN_MINIMAL_STDLIB_PATH: String = "kotlin.minimal.stdlib.path"

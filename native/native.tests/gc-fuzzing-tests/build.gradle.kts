@@ -1,6 +1,6 @@
 plugins {
     kotlin("jvm")
-    id("compiler-tests-convention")
+    id("project-tests-convention")
 }
 
 dependencies {
@@ -19,7 +19,7 @@ sourceSets {
     }
 }
 
-compilerTests {
+projectTests {
     testData(project.isolated, "testData")
 }
 

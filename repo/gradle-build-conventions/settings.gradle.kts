@@ -28,7 +28,7 @@ dependencyResolutionManagement {
 include(":buildsrc-compat")
 include(":prepare-deps")
 include(":generators")
-include(":compiler-tests-convention")
+include(":project-tests-convention")
 include(":android-sdk-provisioner")
 include(":asm-deprecating-transformer")
 include(":binary-compatibility-extended")

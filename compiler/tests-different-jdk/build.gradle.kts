@@ -1,7 +1,7 @@
 plugins {
     kotlin("jvm")
     id("jps-compatible")
-    id("compiler-tests-convention")
+    id("project-tests-convention")
 }
 
 dependencies {
@@ -27,7 +27,7 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-compilerTests {
+projectTests {
     testData(project(":compiler").isolated, "testData/codegen")
     testData(project(":compiler").isolated, "testData/klib")
     withScriptRuntime()

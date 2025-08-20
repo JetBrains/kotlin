@@ -2,7 +2,7 @@ import org.gradle.internal.os.OperatingSystem
 
 plugins {
     kotlin("jvm")
-    id("compiler-tests-convention")
+    id("project-tests-convention")
     id("test-inputs-check")
 }
 
@@ -22,7 +22,7 @@ sourceSets {
     }
 }
 
-compilerTests {
+projectTests {
     testData(project.isolated, "testData")
 }
 

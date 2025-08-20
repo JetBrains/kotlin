@@ -17,7 +17,7 @@ import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.project
 import java.io.File
 
-abstract class CompilerTestsExtension(private val project: Project) {
+abstract class ProjectTestsExtension(private val project: Project) {
     abstract val allowFlaky: Property<Boolean>
 
     val stdlibRuntimeForTests: Configuration = project.configurations.create("stdlibRuntimeForTests") {

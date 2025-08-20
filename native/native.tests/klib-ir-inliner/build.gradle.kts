@@ -3,7 +3,7 @@ import org.gradle.internal.os.OperatingSystem
 plugins {
     kotlin("jvm")
     id("java-test-fixtures")
-    id("compiler-tests-convention")
+    id("project-tests-convention")
     id("test-inputs-check")
 }
 
@@ -30,7 +30,7 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
-compilerTests {
+projectTests {
     testData(project(":compiler").isolated, "testData/klib")
     testData(project(":compiler").isolated, "testData/codegen")
     testData(project(":compiler").isolated, "testData/ir")

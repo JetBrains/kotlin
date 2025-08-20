@@ -1,7 +1,7 @@
 plugins {
     kotlin("jvm")
     id("jps-compatible")
-    id("compiler-tests-convention")
+    id("project-tests-convention")
     id("test-inputs-check")
     id("share-foreign-java-nullability-annotations")
     id("java-test-fixtures")
@@ -103,7 +103,7 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
-compilerTests {
+projectTests {
     testData(project(":compiler").isolated, "testData/diagnostics")
     testData(project(":compiler").isolated, "testData/codegen")
     testData(project(":compiler").isolated, "testData/debug")

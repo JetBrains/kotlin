@@ -3,7 +3,7 @@ import org.gradle.internal.os.OperatingSystem
 plugins {
     kotlin("jvm")
     id("jps-compatible")
-    id("compiler-tests-convention")
+    id("project-tests-convention")
     id("test-inputs-check")
 }
 
@@ -23,7 +23,7 @@ sourceSets {
     }
 }
 
-compilerTests {
+projectTests {
     testData(project(":compiler").isolated, "testData/codegen")
 }
 

@@ -1,4 +1,4 @@
-# compiler-test-convention
+# proejct-test-convention
 
 ## Description
 
@@ -13,13 +13,13 @@ This plugin is key for:
 Apply it: 
 ```kotlin
 plugins {
-    id("compiler-test-convention")
+    id("project-tests-convention")
 }
 ```
 
 Add dependencies to the test classpath (`kotlin-stdlib`, `kotlin-stdlib-jvm-minimal-for-test`, and `kotlin-reflect` are always added):
 ```kotlin
-compilerTests {
+projectTests {
     withStdlibCommon()
     withTestJar()
     withAnnotations()

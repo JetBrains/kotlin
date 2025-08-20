@@ -1,7 +1,7 @@
 plugins {
     kotlin("jvm")
     id("jps-compatible")
-    id("compiler-tests-convention")
+    id("project-tests-convention")
     id("test-inputs-check")
     id("java-test-fixtures")
 }
@@ -26,7 +26,7 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
-compilerTests {
+projectTests {
     // only 2 files are really needed:
     // - compiler/testData/codegen/boxKlib/properties.kt
     // - compiler/testData/codegen/boxKlib/simple.kt

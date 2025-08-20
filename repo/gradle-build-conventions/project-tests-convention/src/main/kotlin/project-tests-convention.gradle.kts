@@ -1,4 +1,4 @@
-val extension = extensions.create("compilerTests", CompilerTestsExtension::class)
+val extension = extensions.create("projectTests", ProjectTestsExtension::class)
 
 val provider = objects.newInstance<TestCompilerRuntimeArgumentProvider>().apply {
     stdlibRuntimeForTests.from(extension.stdlibRuntimeForTests)
