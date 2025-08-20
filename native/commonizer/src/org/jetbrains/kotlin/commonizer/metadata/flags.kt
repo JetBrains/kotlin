@@ -7,7 +7,6 @@
 package org.jetbrains.kotlin.commonizer.metadata
 
 import org.jetbrains.kotlin.commonizer.cir.*
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -120,12 +119,12 @@ private inline val CirHasModality.kmModality: KmModality
         Modality.SEALED -> KmModality.SEALED
     }
 
-private inline val CallableMemberDescriptor.Kind.kmMemberKind: MemberKind
+private inline val CirFunctionOrProperty.Kind.kmMemberKind: MemberKind
     get() = when (this) {
-        CallableMemberDescriptor.Kind.DECLARATION -> MemberKind.DECLARATION
-        CallableMemberDescriptor.Kind.FAKE_OVERRIDE -> MemberKind.FAKE_OVERRIDE
-        CallableMemberDescriptor.Kind.DELEGATION -> MemberKind.DELEGATION
-        CallableMemberDescriptor.Kind.SYNTHESIZED -> MemberKind.SYNTHESIZED
+        CirFunctionOrProperty.Kind.DECLARATION -> MemberKind.DECLARATION
+        CirFunctionOrProperty.Kind.FAKE_OVERRIDE -> MemberKind.FAKE_OVERRIDE
+        CirFunctionOrProperty.Kind.DELEGATION -> MemberKind.DELEGATION
+        CirFunctionOrProperty.Kind.SYNTHESIZED -> MemberKind.SYNTHESIZED
     }
 
 private inline val CirClass.kmClassKind: KmClassKind

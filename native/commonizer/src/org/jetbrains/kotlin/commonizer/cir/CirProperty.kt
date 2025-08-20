@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.commonizer.cir
 
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 
@@ -18,7 +17,7 @@ data class CirProperty(
     override val containingClass: CirContainingClass?,
     override val extensionReceiver: CirExtensionReceiver?,
     override val returnType: CirType,
-    override val kind: CallableMemberDescriptor.Kind,
+    override val kind: CirFunctionOrProperty.Kind,
     val isVar: Boolean,
     val isLateInit: Boolean,
     val isConst: Boolean,

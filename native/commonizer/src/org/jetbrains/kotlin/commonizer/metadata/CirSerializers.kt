@@ -182,7 +182,7 @@ internal fun CirFunction.serializeFunction(
 ): KmFunction = KmFunction(
     name = name.name
 ).also { function ->
-    function.modifiersFrom(this, isExpect = context.isCommon && kind != CallableMemberDescriptor.Kind.SYNTHESIZED)
+    function.modifiersFrom(this, isExpect = context.isCommon && kind != CirFunctionOrProperty.Kind.SYNTHESIZED)
     annotations.mapTo(function.annotations) { it.serializeAnnotation() }
     typeParameters.serializeTypeParameters(context, output = function.typeParameters)
     valueParameters.mapTo(function.valueParameters) { it.serializeValueParameter(context) }
