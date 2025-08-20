@@ -169,7 +169,7 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
 
         // May not need to calculate the status of the minimum bound if there is an else branch for a platform type subject.
         // In that case, only the upper bound of the platform type needs to be calculated.
-        val minimumStatus by lazy { computeExhaustivenessStatus(whenExpression, minimumBound) }
+        val minimumStatus by lazy(LazyThreadSafetyMode.NONE) { computeExhaustivenessStatus(whenExpression, minimumBound) }
 
         fun computeUpperBoundStatus(): ExhaustivenessStatus {
             val upperBound = subjectType.upperBoundIfFlexible()
