@@ -44,6 +44,12 @@ public class FirPsiJsOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiJ
   }
 
   @Test
+  @TestMetadata("extensionFunctionInExternalDeclarationPositioning.kt")
+  public void testExtensionFunctionInExternalDeclarationPositioning() {
+    runTest("compiler/testData/diagnostics/testsWithJsStdLib/extensionFunctionInExternalDeclarationPositioning.kt");
+  }
+
+  @Test
   @TestMetadata("externalFunctionsWithContextParameters.kt")
   public void testExternalFunctionsWithContextParameters() {
     runTest("compiler/testData/diagnostics/testsWithJsStdLib/externalFunctionsWithContextParameters.kt");
