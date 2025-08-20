@@ -154,5 +154,18 @@ class ReturnValueCheckerModeType(
     }
 }
 
+/**
+ * A value which accepts [KlibIrInlinerMode] type.
+ */
+@Serializable
+class KlibIrInlinerModeType(
+    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(false),
+    override val defaultValue: ReleaseDependent<KlibIrInlinerMode?> = ReleaseDependent(KlibIrInlinerMode.disabled),
+) : KotlinArgumentValueType<KlibIrInlinerMode> {
+    override fun stringRepresentation(value: KlibIrInlinerMode?): String {
+        return value?.modeState.valueOrNullStringLiteral
+    }
+}
+
 private val String?.valueOrNullStringLiteral: String
     get() = "\"${this}\""
