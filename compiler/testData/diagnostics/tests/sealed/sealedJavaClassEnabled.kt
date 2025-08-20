@@ -67,7 +67,7 @@ fun testWhen2(sealed: Sealed, sealedAbstract: SealedAbstract) {
 }
 
 fun testConstructorCall() {
-    <!SEALED_CLASS_CONSTRUCTOR_CALL!>Sealed()<!>
+    Sealed()
     <!SEALED_CLASS_CONSTRUCTOR_CALL!>SealedAbstract()<!>
 }
 

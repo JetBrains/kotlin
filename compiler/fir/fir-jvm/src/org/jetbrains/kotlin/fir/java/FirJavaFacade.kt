@@ -197,6 +197,10 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
                         classifier?.let { JavaToKotlinClassMap.mapJavaToKotlin(it.fqName!!) ?: it.classId }
                     }
                 }
+
+                if (classKind == ClassKind.CLASS && !javaClass.isAbstract) {
+                    isJavaNonAbstractSealed = true
+                }
             }
 
             if (javaClass.isRecord) {

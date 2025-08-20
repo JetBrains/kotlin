@@ -5,19 +5,24 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.isEnabled
+import org.jetbrains.kotlin.fir.isJavaNonAbstractSealed
 import org.jetbrains.kotlin.fir.references.toResolvedConstructorSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.classLikeLookupTagIfAny
-import org.jetbrains.kotlin.fir.types.coneType
 
 object FirSealedClassConstructorCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -28,8 +33,14 @@ object FirSealedClassConstructorCallChecker : FirQualifiedAccessExpressionChecke
             .classLikeLookupTagIfAny?.toRegularClassSymbol(context.session)
             ?: return
 
-        if (typeSymbol.modality == Modality.SEALED) {
+        if (typeSymbol.modality == Modality.SEALED && !typeSymbol.isAllowedJavaNonAbstractSealedClass()) {
             reporter.reportOn(expression.source, FirErrors.SEALED_CLASS_CONSTRUCTOR_CALL)
         }
+    }
+
+    @OptIn(SymbolInternals::class)
+    context(c: SessionHolder)
+    private fun FirRegularClassSymbol.isAllowedJavaNonAbstractSealedClass(): Boolean {
+        return fir.isJavaNonAbstractSealed == true && LanguageFeature.AllowCallingJavaOpenSealedClassConstructor.isEnabled()
     }
 }
