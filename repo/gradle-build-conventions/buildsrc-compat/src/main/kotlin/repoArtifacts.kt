@@ -329,12 +329,26 @@ fun Project.publishJarsForIde(projects: List<String>, libraryDependencies: List<
     }
 }
 
-fun Project.publishTestJarsForIde(projectNames: List<String>, projectWithFixturesNames: List<String> = emptyList()) {
+/**
+ * If you need to pack both tests and test fixtures for some module (i.e. xyz) you need to:
+ * - use `testsJarToBeUsedAlongWithFixtures()` instead of `testsJar()` utility in the `build.gradle.kts` of `xyz` project
+ * - pass `xyz` both to [projectWithFixturesNames] and [projectWithRenamedTestJarNames]
+ */
+fun Project.publishTestJarsForIde(
+    projectNames: List<String>,
+    projectWithFixturesNames: List<String> = emptyList(),
+    projectWithRenamedTestJarNames: List<String> = emptyList(),
+) {
     idePluginDependency {
         // Compiler test infrastructure should not affect test running in IDE.
         // If required, the components should be registered on the IDE plugin side.
         val excludedPaths = listOf("junit-platform.properties", "META-INF/services/**/*")
-        publishTestJar(projectNames, projectWithFixturesNames, excludedPaths)
+        publishTestJar(
+            projectNames,
+            projectWithFixturesNames,
+            projectWithRenamedTestJarNames,
+            excludedPaths,
+        )
     }
     configurations.all {
         // Don't allow `ideaIC` from compiler to leak into Kotlin plugin modules. Compiler and
@@ -342,11 +356,18 @@ fun Project.publishTestJarsForIde(projectNames: List<String>, projectWithFixture
         exclude(module = ideModuleName())
     }
     dependencies {
+        fun declareDependency(notation: Any) {
+            jpsLikeJarDependency(notation, JpsDepScope.COMPILE, exported = true)
+        }
+
         for (projectName in projectNames) {
-            jpsLikeJarDependency(projectTests(projectName), JpsDepScope.COMPILE, exported = true)
+            declareDependency(projectTests(projectName))
         }
         for (projectName in projectWithFixturesNames) {
-            jpsLikeJarDependency(testFixtures(project(projectName)), JpsDepScope.COMPILE, exported = true)
+            declareDependency(testFixtures(project(projectName)))
+        }
+        for (projectName in projectWithRenamedTestJarNames) {
+            declareDependency(project(projectName, "testsJarConfig"))
         }
     }
 }
@@ -396,7 +417,12 @@ fun Project.publishProjectJars(projects: List<String>, libraryDependencies: List
     javadocJar()
 }
 
-fun Project.publishTestJar(projects: List<String>, projectWithFixturesNames: List<String>, excludedPaths: List<String>) {
+private fun Project.publishTestJar(
+    projects: List<String>,
+    projectWithFixturesNames: List<String>,
+    projectWithRenamedTestJarNames: List<String>,
+    excludedPaths: List<String>,
+) {
     apply<JavaPlugin>()
 
     val fatJarContents by configurations.creating
@@ -408,6 +434,10 @@ fun Project.publishTestJar(projects: List<String>, projectWithFixturesNames: Lis
 
         for (projectName in projectWithFixturesNames) {
             fatJarContents(testFixtures(project(projectName)) as ModuleDependency) { isTransitive = false }
+        }
+
+        for (projectName in projectWithRenamedTestJarNames) {
+            fatJarContents(project(projectName, configuration = "testsJarConfig")) { isTransitive = false }
         }
     }
 

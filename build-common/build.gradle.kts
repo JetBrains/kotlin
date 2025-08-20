@@ -49,7 +49,8 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
-testsJar()
+// test jar is used for ide dependencies (`kotlin-build-common-tests-for-ide` and `kotlin-jps-plugin-tests-for-ide`)
+testsJarToBeUsedAlongWithFixtures()
 
 projectTest(parallel = true)
 
