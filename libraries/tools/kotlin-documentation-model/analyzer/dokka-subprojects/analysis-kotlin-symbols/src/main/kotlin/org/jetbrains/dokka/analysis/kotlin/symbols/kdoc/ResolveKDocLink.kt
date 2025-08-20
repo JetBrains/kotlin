@@ -4,7 +4,6 @@
 
 package org.jetbrains.dokka.analysis.kotlin.symbols.kdoc
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.dokka.analysis.kotlin.symbols.translators.getDRIFromSymbol
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.utilities.DokkaLogger
@@ -33,25 +32,29 @@ internal inline fun DRI?.ifUnresolved(action: () -> Unit): DRI? = this ?: run {
 }
 
 /**
- * Resolves KDoc link via creating PSI.
+ * Resolves KDoc link via creating PSI in the context of a module provided by [KaSession]
+ *
  * If the [link] is ambiguous, i.e. leads to more than one declaration,
  * it returns deterministically any declaration.
  *
+ * @param contextPackageFQN FQN of a context package
  * @return [DRI] or null if the [link] is unresolved
  */
-internal fun KaSession.resolveKDocTextLinkToDRI(link: String, context: PsiElement? = null): DRI? {
-    val kDocLink = createKDocLink(link, context)
+internal fun KaSession.resolveKDocTextLinkToDRI(link: String, contextPackageFQN: String? = null): DRI? {
+    val kDocLink = createKDocLink(link, contextPackageFQN)
     return kDocLink?.let { resolveKDocLinkToDRI(it) }
 }
 
 /**
+ * Resolves KDoc link via creating PSI in the context of a module provided by [KaSession]
+ *
  * If the [link] is ambiguous, i.e. leads to more than one declaration,
  * it returns deterministically any declaration.
  *
  * @return [KaSymbol] or null if the [link] is unresolved
  */
-internal fun KaSession.resolveKDocTextLinkToSymbol(link: String, context: PsiElement? = null): KaSymbol? {
-    val kDocLink = createKDocLink(link, context)
+internal fun KaSession.resolveKDocTextLinkToSymbol(link: String): KaSymbol? {
+    val kDocLink = createKDocLink(link, null)
     return kDocLink?.let {
         /**
          *  Get [KaSession] is associated with [a dangling module][org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule]
@@ -60,7 +63,7 @@ internal fun KaSession.resolveKDocTextLinkToSymbol(link: String, context: PsiEle
     }
 }
 
-private fun KaSession.createKDocLink(link: String, context: PsiElement?): KDocLink? {
+private fun KaSession.createKDocLink(link: String, contextPackageFQN: String?): KDocLink? {
     /**
      * Creates a dangling file stored in-memory
      * A such file belongs to [a separate module][org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule]
@@ -68,35 +71,44 @@ private fun KaSession.createKDocLink(link: String, context: PsiElement?): KDocLi
      * Additional information: https://kotlin.github.io/analysis-api/in-memory-file-analysis.html#stand-alone-file-analysis
      * @see [org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule]
      */
-    val psiFactory = if (context != null) KtPsiFactory.contextual(context) else {
-        val currentModule: KaSourceModule = useSiteModule as? KaSourceModule
-            ?: throw IllegalStateException("Resolving KDoc links can be done only in a source module, not $useSiteModule")
 
-        // To pass context (dependencies) from the current source module to a dangling module,
-        // a random source file is selected as the context file
-        val randomKtSourceFile: KtFile =
-            @OptIn(KaExperimentalApi::class) currentModule.psiRoots.filterIsInstance<KtFile>().firstOrNull()
-                ?: return null
+    val currentModule: KaSourceModule = useSiteModule as? KaSourceModule
+        ?: throw IllegalStateException("Resolving KDoc links can be done only in a source module, not $useSiteModule")
 
-        KtPsiFactory.contextual(randomKtSourceFile)
-    }
+    // To pass context (dependencies) from the current source module to a dangling module,
+    // a random source file is selected as the context file
+    val randomKtSourceFile: KtFile =
+        @OptIn(KaExperimentalApi::class) currentModule.psiRoots.filterIsInstance<KtFile>().firstOrNull()
+            ?: return null
 
-    val kDoc = psiFactory.createComment(
-        """
+    val psiFactory = KtPsiFactory.contextual(randomKtSourceFile)
+
+    // creates dummy.kt file
+    val dummyFileText = if (contextPackageFQN != null && contextPackageFQN.isNotBlank()) """
+    package $contextPackageFQN
+    
     /**
     * [$link]
     */
     """.trimIndent()
-    ) as? KDoc
+    else """
+    /**
+    * [$link]
+    */
+    """
 
-    return kDoc?.getDefaultSection()?.children?.filterIsInstance<KDocLink>()?.singleOrNull()
+    val dummyFile = psiFactory.createFile(dummyFileText)
+    val comments = dummyFile.children.filterIsInstance<KDoc>()
+    val kDoc = comments.single()
+
+    return kDoc.getDefaultSection().children.filterIsInstance<KDocLink>().singleOrNull()
 }
 
 /**
- * If the [link] is ambiguous, i.e. leads to more than one declaration,
+ * If the [kDocLink] is ambiguous, i.e. leads to more than one declaration,
  * it returns deterministically any declaration.
  *
- * @return [DRI] or null if the [link] is unresolved
+ * @return [DRI] or null if the [kDocLink] is unresolved
  */
 internal fun resolveKDocLinkToDRI(kDocLink: KDocLink): DRI? {
     /**

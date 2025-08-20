@@ -1204,6 +1204,55 @@ class LinkTest : BaseAbstractTest() {
         }
     }
 
+    @Test
+    fun `should resolve KDoc links in package documentation`() {
+        val configuration = dokkaConfiguration {
+            sourceSets {
+                sourceSet {
+                    name = "moduleA"
+                    sourceRoots = listOf("src/")
+                    classpath = listOfNotNull(jvmStdlibPath)
+                    includes = listOf("module.md")
+                }
+            }
+        }
+        testInline(
+            """
+            |/module.md
+            |# Module root
+            |
+            |Link to [example.Foo]
+            |
+            |# Package example
+            |
+            |Link to [example.Foo] and [Bar]
+            |
+            |/src/main/kotlin/Testing.kt
+            |package example
+            |
+            |class Foo
+            |class Bar
+        """.trimMargin(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                assertEquals(
+                    listOf(
+                        "example.Foo" to DRI("example", "Foo"),
+                    ),
+                    module.getAllLinkDRIFrom("root")
+                )
+                assertEquals(
+                    listOf(
+                        "example.Foo" to DRI("example", "Foo"),
+                        "Bar" to DRI("example", "Bar"),
+                    ),
+                    module.getAllLinkDRIFrom("example")
+                )
+            }
+        }
+    }
+
     private fun DModule.getLinkDRIFrom(name: String): DRI? {
         val doc = this.dfs { it.name == name }?.documentation?.values?.single()
             ?: throw IllegalStateException("Can't find documentation for declaration '$name'")
