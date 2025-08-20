@@ -15,10 +15,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.SubpluginEnvironment
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
-import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.crossCompilationOnCurrentHostSupported
+import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.crossCompilationSharedData
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinCrossCompilationMetrics
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.chooseKotlinNativeProvider
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
@@ -34,6 +32,7 @@ internal val KotlinCreateNativeCompileTasksSideEffect = KotlinCompilationSideEff
     val extension = project.topLevelExtension
     val compilationInfo = KotlinCompilationInfo(compilation)
     val isMetadataCompilation = compilationInfo.compilation is KotlinMetadataCompilation<*>
+    val crossCompilationSharedData = compilation.crossCompilationSharedData
 
     val kotlinNativeCompile = project.registerTask<KotlinNativeCompile>(
         compilation.compileKotlinTaskName,
@@ -46,8 +45,16 @@ internal val KotlinCreateNativeCompileTasksSideEffect = KotlinCompilationSideEff
         val enabledOnCurrentHost = project.provider {
             compilation.crossCompilationOnCurrentHostSupported
         }
-        task.onlyIf { enabledOnCurrentHost.get() }
 
+        task.onlyIf("Cross compilation should be supported on host") {
+            enabledOnCurrentHost.get()
+        }
+
+        task.onlyIf("Cross compilation should be possible with project dependencies") {
+            crossCompilationSharedData.dataForAllDependencies.all { it.crossCompilationSupported }
+        }
+
+        task.crossCompilationMetadata.setFrom(crossCompilationSharedData.files)
         task.destinationDirectory.set(project.klibOutputDirectory(compilationInfo).dir("klib"))
         task.runViaBuildToolsApi.value(false).disallowChanges() // K/N is not yet supported
 
