@@ -34,5 +34,6 @@ private fun getQualifiedName(userType: KtUserType): String? {
     return getQualifiedName(qualifier) + "." + userType.referencedName
 }
 
+@Suppress("DEPRECATION")
 fun KtElementImplStub<*>.getAllModifierLists(): Array<out KtDeclarationModifierList> =
     getStubOrPsiChildren(KtStubElementTypes.MODIFIER_LIST, KtStubElementTypes.MODIFIER_LIST.arrayFactory)

@@ -27,12 +27,14 @@ public abstract class KtTypeParameterListOwnerStub<T extends KotlinStubWithFqNam
 
     @Override
     @Nullable
+    @SuppressWarnings("deprecation")
     public KtTypeParameterList getTypeParameterList() {
         return getStubOrPsiChild(KtStubBasedElementTypes.TYPE_PARAMETER_LIST);
     }
 
     @Override
     @Nullable
+    @SuppressWarnings("deprecation")
     public KtTypeConstraintList getTypeConstraintList() {
         return getStubOrPsiChild(KtStubBasedElementTypes.TYPE_CONSTRAINT_LIST);
     }

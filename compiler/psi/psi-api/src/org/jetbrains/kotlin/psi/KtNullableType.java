@@ -60,6 +60,7 @@ public class KtNullableType extends KtElementImplStub<KotlinPlaceHolderStub<KtNu
     }
 
     @Nullable
+    @SuppressWarnings("deprecation")
     public KtModifierList getModifierList() {
         return getStubOrPsiChild(KtStubBasedElementTypes.MODIFIER_LIST);
     }

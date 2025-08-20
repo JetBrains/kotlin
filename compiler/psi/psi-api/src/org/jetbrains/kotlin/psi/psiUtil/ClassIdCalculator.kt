@@ -12,12 +12,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.utils.hasIllegallyPositionedUnderscore
-import org.jetbrains.kotlin.psi.utils.hasLongNumericLiteralSuffix
-import org.jetbrains.kotlin.psi.utils.hasUnsignedLongNumericLiteralSuffix
-import org.jetbrains.kotlin.psi.utils.hasUnsignedNumericLiteralSuffix
-import org.jetbrains.kotlin.psi.utils.parseBooleanLiteral
-import org.jetbrains.kotlin.psi.utils.parseNumericLiteral
+import org.jetbrains.kotlin.psi.utils.*
 
 internal object ClassIdCalculator {
     fun calculateClassId(declaration: KtClassLikeDeclaration): ClassId? {
@@ -65,7 +60,9 @@ internal object ClassIdCalculator {
      * A best-effort way to get the class id of expression's type without resolve.
      */
     fun inferConstantExpressionClassIdByPsi(expression: KtConstantExpression): ClassId? {
-        val elementType = expression.elementType
+        val elementType =
+            @Suppress("DEPRECATION")
+            expression.elementType
 
         val convertedText: Any? = when (elementType) {
             KtNodeTypes.INTEGER_CONSTANT, KtNodeTypes.FLOAT_CONSTANT -> {
