@@ -460,6 +460,7 @@ enum class LanguageFeature(
     ForbidExposingPackagePrivateInInternal(KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-271"),
     CheckPackageInfoNullnessAnnotations(KOTLIN_2_4, enabledInProgressiveMode = true, "KT-77729"),
     ForbidTypeAliasWithMissingDependencyType(KOTLIN_2_4, enabledInProgressiveMode = true, "KT-79781"),
+    ForbidImplicitTypeAnnotationWithMissingDependency(KOTLIN_2_4, enabledInProgressiveMode = true, "KT-80247"),
 
     // 2.5
 

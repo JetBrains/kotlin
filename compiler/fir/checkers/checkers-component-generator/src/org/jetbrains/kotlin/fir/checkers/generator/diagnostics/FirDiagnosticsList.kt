@@ -189,6 +189,12 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("missingType")
             parameter<ConeKotlinType>("declarationType")
         }
+        val MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION by deprecationError<PsiElement>(
+            LanguageFeature.ForbidImplicitTypeAnnotationWithMissingDependency,
+            PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED
+        ) {
+            parameter<ConeKotlinType>("type")
+        }
     }
 
     val CALL_RESOLUTION by object : DiagnosticGroup("Call resolution") {
