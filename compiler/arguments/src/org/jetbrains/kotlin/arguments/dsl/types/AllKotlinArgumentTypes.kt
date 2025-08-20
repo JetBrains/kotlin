@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.arguments.dsl.types
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.serialization.json.AllDetailsExplicitApiModeSerializer
 import org.jetbrains.kotlin.arguments.serialization.json.AllDetailsJvmTargetSerializer
+import org.jetbrains.kotlin.arguments.serialization.json.AllDetailsKlibIrInlinerModeSerializer
 import org.jetbrains.kotlin.arguments.serialization.json.AllDetailsReturnValueCheckerModeSerializer
 import org.jetbrains.kotlin.arguments.serialization.json.AllDetailsKotlinVersionSerializer
 
@@ -28,4 +29,7 @@ class AllKotlinArgumentTypes {
 
     @Serializable(with = AllDetailsReturnValueCheckerModeSerializer::class)
     val returnValueCheckerMode = ReturnValueCheckerMode.entries.toSet()
+
+    @Serializable(with = AllDetailsKlibIrInlinerModeSerializer::class)
+    val klibIrInlinerMode = KlibIrInlinerMode.entries.toSet()
 }
