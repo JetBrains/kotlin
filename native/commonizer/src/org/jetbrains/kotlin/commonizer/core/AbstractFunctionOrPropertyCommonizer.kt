@@ -9,9 +9,8 @@ import org.jetbrains.kotlin.commonizer.CommonizerSettings
 import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
 import org.jetbrains.kotlin.commonizer.utils.singleDistinctValueOrNull
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED
+import org.jetbrains.kotlin.commonizer.cir.CirFunctionOrProperty.Kind.DELEGATION
+import org.jetbrains.kotlin.commonizer.cir.CirFunctionOrProperty.Kind.SYNTHESIZED
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 
@@ -25,7 +24,7 @@ class FunctionOrPropertyBaseCommonizer(
 
     data class FunctionOrProperty(
         val name: CirName,
-        val kind: CallableMemberDescriptor.Kind,
+        val kind: CirFunctionOrProperty.Kind,
         val modality: Modality,
         val visibility: Visibility,
         val extensionReceiver: CirExtensionReceiver?,
