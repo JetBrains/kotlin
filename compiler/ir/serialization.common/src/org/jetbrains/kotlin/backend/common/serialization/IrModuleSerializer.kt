@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.packageFragmentDescriptor
-import org.jetbrains.kotlin.ir.util.erasedTopLevelInlineFunctions
+import org.jetbrains.kotlin.ir.util.preparedInlineFunctionCopies
 import org.jetbrains.kotlin.library.SerializedIrFile
 import org.jetbrains.kotlin.library.SerializedIrModule
 
@@ -50,7 +50,7 @@ abstract class IrModuleSerializer<Serializer : IrFileSerializer>(
             globalDeclarationTable.clashDetector.reportErrorsTo(diagnosticReporter)
         }
 
-        val inlinableFunctionsFile = module.erasedTopLevelInlineFunctions?.let {
+        val inlinableFunctionsFile = module.preparedInlineFunctionCopies?.let {
             serializePreparedInlinableFunctions(it)
         }
         return SerializedIrModule(serializedFiles, inlinableFunctionsFile)

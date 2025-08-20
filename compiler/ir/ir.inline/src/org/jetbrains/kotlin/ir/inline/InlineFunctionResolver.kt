@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.serialization.NonLinkingIrInlineFunctionDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -90,7 +91,7 @@ internal class PreSerializationNonPrivateInlineFunctionResolver(
 
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
         val declarationMaybeFromOtherModule = super.getFunctionDeclaration(symbol) ?: return null
-        if (declarationMaybeFromOtherModule.body != null) {
+        if (declarationMaybeFromOtherModule.body != null || declarationMaybeFromOtherModule !is IrSimpleFunction) {
             return declarationMaybeFromOtherModule
         }
         if (inlineMode != InlineMode.ALL_INLINE_FUNCTIONS) return null

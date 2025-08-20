@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
@@ -47,7 +48,7 @@ class NonLinkingIrInlineFunctionDeserializer(
     private val moduleDeserializers = hashMapOf<KotlinLibrary, ModuleDeserializer?>()
     private val modules = hashMapOf<KotlinLibrary, IrModuleFragment>()
 
-    fun deserializeInlineFunction(function: IrFunction): IrFunction? {
+    fun deserializeInlineFunction(function: IrSimpleFunction): IrSimpleFunction? {
         check(function.isInline) { "Non-inline function: ${function.render()}" }
         check(!function.isFakeOverride) { "Deserialization of fake overrides is not supported: ${function.render()}" }
 
@@ -72,9 +73,9 @@ class NonLinkingIrInlineFunctionDeserializer(
 
         val functionSignature: IdSignature = signatureComputer.computeSignature(function)
         // Inside the module deserializer "functionSignature" will be mapped to erased copy of inline function and this copy will be returned.
-        val deserializedFunction: IrFunction =
+        val deserializedFunction: IrSimpleFunction =
             moduleDeserializer.deserializeInlineFunction(functionSignature, function.getPackageFragment()) ?: return null
-        deserializedFunction.originalOfErasedTopLevelCopy = function
+        deserializedFunction.originalOfPreparedInlineFunctionCopy = function
         (deserializedFunction.parent as IrFile).module = modules.getOrPut(library) { IrModuleFragmentImpl(function.module) }
         return deserializedFunction
     }
@@ -134,13 +135,13 @@ class NonLinkingIrInlineFunctionDeserializer(
             val maxSignatureIndex = IrArrayReader(library.signaturesOfInlineableFuns()).entryCount() - 1
             (0..maxSignatureIndex).associateBy { symbolDeserializer.deserializeIdSignature(it) }
         }
-        private val deserializedFunctionCache = mutableMapOf<IdSignature, IrFunction?>()
+        private val deserializedFunctionCache = mutableMapOf<IdSignature, IrSimpleFunction?>()
 
-        fun deserializeInlineFunction(signature: IdSignature, originalFunctionPackage: IrPackageFragment): IrFunction? =
+        fun deserializeInlineFunction(signature: IdSignature, originalFunctionPackage: IrPackageFragment): IrSimpleFunction? =
             deserializedFunctionCache.getOrPut(signature) {
                 val idSigIndex = reversedSignatureIndex[signature] ?: return@getOrPut null
                 val functionProto = fileReader.declaration(idSigIndex)
-                val function = declarationDeserializer.deserializeDeclaration(functionProto) as IrFunction
+                val function = declarationDeserializer.deserializeDeclaration(functionProto) as IrSimpleFunction
 
                 val fileEntryProto = fileReader.fileEntry(functionProto.irFunction.preparedInlineFunctionFileEntryId)!!
                 val fileEntry = deserializeFileEntry(fileEntryProto)
