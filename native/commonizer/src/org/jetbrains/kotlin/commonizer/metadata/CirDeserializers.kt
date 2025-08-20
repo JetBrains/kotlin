@@ -142,12 +142,12 @@ object CirDeserializers {
     }
 
     @Suppress("NOTHING_TO_INLINE")
-    private inline fun callableKind(memberKind: MemberKind): CallableMemberDescriptor.Kind =
+    private inline fun callableKind(memberKind: MemberKind): CirFunctionOrProperty.Kind =
         when (memberKind) {
-            MemberKind.DECLARATION -> CallableMemberDescriptor.Kind.DECLARATION
-            MemberKind.FAKE_OVERRIDE -> CallableMemberDescriptor.Kind.FAKE_OVERRIDE
-            MemberKind.DELEGATION -> CallableMemberDescriptor.Kind.DELEGATION
-            MemberKind.SYNTHESIZED -> CallableMemberDescriptor.Kind.SYNTHESIZED
+            MemberKind.DECLARATION -> CirFunctionOrProperty.Kind.DECLARATION
+            MemberKind.FAKE_OVERRIDE -> CirFunctionOrProperty.Kind.FAKE_OVERRIDE
+            MemberKind.DELEGATION -> CirFunctionOrProperty.Kind.DELEGATION
+            MemberKind.SYNTHESIZED -> CirFunctionOrProperty.Kind.SYNTHESIZED
         }
 
     fun function(name: CirName, source: KmFunction, containingClass: CirContainingClass?, typeResolver: CirTypeResolver): CirFunction =
