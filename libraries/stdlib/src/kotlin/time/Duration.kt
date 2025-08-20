@@ -1056,12 +1056,12 @@ private fun parseDuration(value: String, strictIso: Boolean, throwException: Boo
     val hasSign = index > 0
     val result = when {
         value.length <= index -> return handleError(throwException, "No components")
-        value[index] == 'P' -> parseIsoStringFormat(value, index + 1, value.length, throwException)
+        value[index] == 'P' -> parseIsoStringFormat(value, index + 1, throwException)
         strictIso -> return handleError(throwException)
         value.regionMatches(index, INFINITY_STRING, 0, length = maxOf(value.length - index, INFINITY_STRING.length), ignoreCase = true) -> {
             Duration.INFINITE
         }
-        else -> parseDefaultStringFormat(value, index, value.length, hasSign, throwException)
+        else -> parseDefaultStringFormat(value, index, hasSign, throwException)
     }
     return if (isNegative && result != Duration.INVALID) -result else result
 }
@@ -1070,28 +1070,26 @@ private fun parseDuration(value: String, strictIso: Boolean, throwException: Boo
  * Parses ISO-8601 duration format (e.g., "PT1H30M45S").
  * @param value the full input string
  * @param startIndex index after 'P' prefix
- * @param length total length of the string
  * @param throwException if true, throws on error; if false, returns Duration.INVALID
  * @return parsed Duration or Duration.INVALID on error
  */
 private fun parseIsoStringFormat(
     value: String,
     startIndex: Int,
-    length: Int,
     throwException: Boolean,
 ): Duration {
     var index = startIndex
-    if (index == length) return handleError(throwException)
+    if (index == value.length) return handleError(throwException)
 
     var totalMillis = 0L
     var totalNanos = 0L
     var isTimeComponent = false
     var prevUnit = '\u0000'
 
-    while (index < length) {
+    while (index < value.length) {
         val ch = value[index]
         if (ch == 'T') {
-            if (isTimeComponent || ++index == length) return handleError(throwException)
+            if (isTimeComponent || ++index == value.length) return handleError(throwException)
             isTimeComponent = true
             continue
         }
@@ -1099,7 +1097,7 @@ private fun parseIsoStringFormat(
         val longStartIndex = index
         val (longValue, longEndIndex, sign) = value.parseLong(index)
         index = longEndIndex
-        if (index == length || index == longStartIndex + if (ch == '-' || ch == '+') 1 else 0) return handleError(throwException)
+        if (index == value.length || index == longStartIndex + if (ch == '-' || ch == '+') 1 else 0) return handleError(throwException)
 
         var unit = value[index]
 
@@ -1127,7 +1125,7 @@ private fun parseIsoStringFormat(
                 val fractionStartIndex = index
                 val (fractionValue, fractionEndIndex) = value.parseFraction(index)
                 index = fractionEndIndex
-                if (index == fractionStartIndex || index == length || value[index] != 'S') return handleError(throwException)
+                if (index == fractionStartIndex || index == value.length || value[index] != 'S') return handleError(throwException)
                 totalNanos = sign * fractionValue.fractionDigitsToNanos(DurationUnit.SECONDS)
                 unit = 'S'
             }
@@ -1146,7 +1144,6 @@ private fun parseIsoStringFormat(
  * Parses default duration format (e.g., "1h 30m", "45s", "500ms").
  * @param value the input string
  * @param startIndex starting position for parsing
- * @param initialLength effective length of the string (may exclude closing parenthesis)
  * @param hasSign whether the duration had a leading sign
  * @param throwException if true, throws on error; if false, returns Duration.INVALID
  * @return parsed Duration or Duration.INVALID on error
@@ -1154,12 +1151,11 @@ private fun parseIsoStringFormat(
 private fun parseDefaultStringFormat(
     value: String,
     startIndex: Int,
-    initialLength: Int,
     hasSign: Boolean,
     throwException: Boolean,
 ): Duration {
     var index = startIndex
-    var length = initialLength
+    var length = value.length
     var allowSpaces = !hasSign
 
     if (hasSign && value[index] == '(' && value[length - 1] == ')') {
