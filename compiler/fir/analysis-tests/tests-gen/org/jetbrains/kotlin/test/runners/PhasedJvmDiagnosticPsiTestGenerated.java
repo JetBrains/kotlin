@@ -27487,6 +27487,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Test
+      @TestMetadata("inaccessibleAnnotationInInferredReturnType.kt")
+      public void testInaccessibleAnnotationInInferredReturnType() {
+        runTest("compiler/testData/diagnostics/tests/multimodule/inaccessibleAnnotationInInferredReturnType.kt");
+      }
+
+      @Test
       @TestMetadata("InaccessibleGenericTypeVariousCases.kt")
       public void testInaccessibleGenericTypeVariousCases() {
         runTest("compiler/testData/diagnostics/tests/multimodule/InaccessibleGenericTypeVariousCases.kt");
