@@ -529,6 +529,7 @@ class NativeSecondStageCompilationConfig(
     private fun StringBuilder.appendCommonCacheFlavor() {
         append(target.toString())
         if (debug) append("-g")
+        if (optimizationsEnabled) append("-opt")
         append("STATIC")
 
         if (perFileCacheForStdlib != defaultPerFileCacheForStdlib)

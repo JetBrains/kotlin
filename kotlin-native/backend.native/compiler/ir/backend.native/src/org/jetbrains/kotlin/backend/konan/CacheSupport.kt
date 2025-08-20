@@ -192,11 +192,6 @@ class CacheSupport(
                         "that is already cached in '${cache.path}'")
             }
         }
-
-        if ((libraryToCache != null || cachedLibraries.hasDynamicCaches || cachedLibraries.hasStaticCaches)
-                && configuration.optimization) {
-            configuration.reportCompilationErrorAndThrow("Cache cannot be used in optimized compilation")
-        }
     }
 }
 

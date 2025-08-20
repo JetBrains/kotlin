@@ -510,34 +510,35 @@ internal fun <Context, Output, P> PhaseEngine<Context>.runAndMeasurePhase(phase:
  */
 private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragment, irBuiltIns: IrBuiltIns) {
     val optimize = context.shouldOptimize()
-    val enablePreCodegenInliner = context.config.preCodegenInlineThreshold != 0U && optimize
+    val runGlobalOptimizations = optimize && !context.config.cachedLibraries.hasStaticCaches// && !context.config.produce.isCache
+    val enablePreCodegenInliner = context.config.preCodegenInlineThreshold != 0U && runGlobalOptimizations
     module.files.forEach {
         // Have to run after link dependencies phase, because fields from dependencies can be changed during lowerings.
         // Inline accessors only in optimized builds due to separate compilation and possibility to get broken debug information.
         runAndMeasurePhase(PropertyAccessorInlinePhase, it, disable = !optimize)
         runAndMeasurePhase(InlineClassPropertyAccessorsPhase, it, disable = !optimize)
     }
-    val moduleDFG = runAndMeasurePhase(BuildDFGPhase, module, disable = !optimize)
+    val moduleDFG = runAndMeasurePhase(BuildDFGPhase, module, disable = !runGlobalOptimizations)
     runAndMeasurePhase(RemoveRedundantCallsToStaticInitializersPhase, RedundantCallsInput(moduleDFG, module), disable = !enablePreCodegenInliner)
     runAndMeasurePhase(PreCodegenInlinerPhase, PreCodegenInlinerInput(module, moduleDFG), disable = !enablePreCodegenInliner)
-    runAndMeasurePhase(DevirtualizationAnalysisPhase, DevirtualizationAnalysisInput(module, moduleDFG), disable = !optimize)
+    runAndMeasurePhase(DevirtualizationAnalysisPhase, DevirtualizationAnalysisInput(module, moduleDFG), disable = !runGlobalOptimizations)
     // KT-72336: This is more optimal but contradicts with the pre-codegen inliner.
-    runAndMeasurePhase(RemoveRedundantCallsToStaticInitializersPhase, RedundantCallsInput(moduleDFG, module), disable = enablePreCodegenInliner || !optimize)
-    runAndMeasurePhase(DevirtualizationPhase, DevirtualizationInput(module, moduleDFG), disable = !optimize)
+    runAndMeasurePhase(RemoveRedundantCallsToStaticInitializersPhase, RedundantCallsInput(moduleDFG, module), disable = enablePreCodegenInliner || !runGlobalOptimizations)
+    runAndMeasurePhase(DevirtualizationPhase, DevirtualizationInput(module, moduleDFG), disable = !runGlobalOptimizations)
     module.files.forEach {
         runAndMeasurePhase(RedundantCoercionsCleaningPhase, it)
         // depends on redundantCoercionsCleaningPhase
         runAndMeasurePhase(UnboxInlinePhase, it, disable = !optimize)
     }
     runAndMeasurePhase(PreCodegenInlinerPhase, PreCodegenInlinerInput(module, moduleDFG), disable = !enablePreCodegenInliner)
-    val dceResult = runAndMeasurePhase(DCEPhase, DCEInput(module, moduleDFG), disable = !optimize)
+    val dceResult = runAndMeasurePhase(DCEPhase, DCEInput(module, moduleDFG), disable = !runGlobalOptimizations)
     module.files.forEach {
         runAndMeasurePhase(CoroutinesVarSpillingPhase, it)
     }
     runAndMeasurePhase(CreateLLVMDeclarationsPhase, module)
-    runAndMeasurePhase(GHAPhase, module, disable = !optimize)
+    runAndMeasurePhase(GHAPhase, module, disable = !runGlobalOptimizations || context.config.produce.isCache)
     runAndMeasurePhase(RTTIPhase, RTTIInput(module, dceResult))
-    val lifetimes = runAndMeasurePhase(EscapeAnalysisPhase, EscapeAnalysisInput(module, moduleDFG), disable = !optimize)
+    val lifetimes = runAndMeasurePhase(EscapeAnalysisPhase, EscapeAnalysisInput(module, moduleDFG), disable = !runGlobalOptimizations)
     runAndMeasurePhase(CodegenPhase, CodegenInput(module, irBuiltIns, lifetimes))
 }
 
