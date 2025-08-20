@@ -5,6 +5,7 @@
 
 #include <chrono>
 #include <iostream>
+#include <set>
 #include <sstream>
 
 #include <llvm/ADT/StringMap.h>
@@ -54,9 +55,11 @@ PassesProfile PassesProfileHandler::serialize() const {
             }
         }
 
+        #if 0
         for (const auto& [name, duration] : events_per_function_) {
             std::cerr << "FUN " << std::string_view(name) << " " << std::chrono::duration_cast<std::chrono::microseconds>(duration).count() << " us\n";
         }
+        #endif
     }
 
     if (!pending_events_stack_.empty()) {
@@ -109,9 +112,23 @@ void PassesProfileHandler::registerCallbacks(PassInstrumentationCallbacks &PIC) 
             [this](StringRef P, Any IR) { runAfterPass(P, unwrapFunction(IR)); }, true);
 }
 
+namespace {
+
+std::set<const Function*> knownFunctions;
+
+}
+
 void PassesProfileHandler::runBeforePass(StringRef P, const Function* F) {
     if (F) {
         auto name = F->getName().str();
+        if (name.empty()) {
+            auto [ignored, inserted] = knownFunctions.insert(F);
+            if (inserted) {
+                errs() << "FUN EMPTY: ";
+                F->print(errs());
+                errs() << "\n";
+            }
+        }
         auto [iter, ignored] = pending_events_per_function_.insert(std::make_pair(name, std::vector<PendingEvent>()));
         auto& pending_events_stack = iter->second;
 
