@@ -109,7 +109,7 @@ internal class Info(output: KlibToolOutput, args: KlibToolArguments) : KlibToolC
         }
         output.appendLine("Has IR: ${library.hasIr}")
         val irInfo = KlibIrInfoLoader(library).loadIrInfo()
-        irInfo?.meaningfulInlineFunctionNumber?.let { output.appendLine("  Non-local inline functions: $it") }
+        irInfo?.preparedInlineFunctionCopyNumber?.let { output.appendLine("  Inlinable function copies: $it") }
         output.appendLine("Has FileEntries table: ${library.hasFileEntriesTable}")
         output.appendLine("Has LLVM bitcode: ${library.hasBitcode}")
         output.appendLine("Has ABI: ${library.hasAbi}")
@@ -117,7 +117,7 @@ internal class Info(output: KlibToolOutput, args: KlibToolArguments) : KlibToolC
         manifestProperties.entries.forEach { (key, value) ->
             output.appendLine("  $key=$value")
         }
-        library.loadSizeInfo(irInfo)?.renderTo(output)
+        library.loadSizeInfo()?.renderTo(output)
     }
 
     companion object {

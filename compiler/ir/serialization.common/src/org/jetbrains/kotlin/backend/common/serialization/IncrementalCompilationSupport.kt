@@ -116,6 +116,7 @@ class ICKotlinLibrary(private val icData: List<SerializedIrFile>) : IrLibrary {
     override fun bodyOfInlineableFuns(index: Int): ByteArray = shouldNotBeCalled()
     override fun debugInfoOfInlineableFuns(index: Int): ByteArray? = shouldNotBeCalled()
     override fun fileEntryOfInlineableFuns(index: Int): ByteArray = shouldNotBeCalled()
+    override fun declarationsOfInlineableFuns(): ByteArray = shouldNotBeCalled()
     override fun signaturesOfInlineableFuns(): ByteArray = shouldNotBeCalled()
 }
 
