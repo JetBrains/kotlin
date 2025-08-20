@@ -192,10 +192,10 @@ class CacheSupport(
             }
         }
 
-        if ((libraryToCache != null || cachedLibraries.hasDynamicCaches || cachedLibraries.hasStaticCaches)
-                && configuration.getBoolean(KonanConfigKeys.OPTIMIZATION)) {
-            configuration.reportCompilationError("Cache cannot be used in optimized compilation")
-        }
+//        if ((libraryToCache != null || cachedLibraries.hasDynamicCaches || cachedLibraries.hasStaticCaches)
+//                && configuration.getBoolean(KonanConfigKeys.OPTIMIZATION)) {
+//            configuration.reportCompilationError("Cache cannot be used in optimized compilation")
+//        }
     }
 }
 

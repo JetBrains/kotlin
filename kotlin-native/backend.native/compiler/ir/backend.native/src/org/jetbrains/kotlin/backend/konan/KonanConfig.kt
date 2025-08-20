@@ -490,6 +490,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     private fun StringBuilder.appendCommonCacheFlavor() {
         append(target.toString())
         if (debug) append("-g")
+        if (optimizationsEnabled) append("-opt")
         append("STATIC")
 
         if (propertyLazyInitialization != defaultPropertyLazyInitialization)
@@ -551,7 +552,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     internal val incrementalCacheDirectory = incrementalCacheRootDirectory?.child(userCacheFlavorString)?.also { it.mkdirs() }
 
     internal val ignoreCacheReason = when {
-        optimizationsEnabled -> "for optimized compilation"
+        //optimizationsEnabled -> "for optimized compilation"
         runtimeLogsEnabled -> "with runtime logs"
         else -> null
     }
