@@ -470,6 +470,5 @@ void compactObjectPoolInCurrentThread() noexcept;
 RUNTIME_NOTHROW extern "C" void Kotlin_processObjectInMark(void* state, ObjHeader* object);
 RUNTIME_NOTHROW extern "C" void Kotlin_processArrayInMark(void* state, ObjHeader* object);
 RUNTIME_NOTHROW extern "C" void Kotlin_processEmptyObjectInMark(void* state, ObjHeader* object);
-RUNTIME_NOTHROW extern "C" const TypeInfo* Kotlin_loadTypeInfo(ObjHeader* object);
 
 #endif // RUNTIME_MEMORY_H

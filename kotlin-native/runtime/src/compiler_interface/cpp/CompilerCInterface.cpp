@@ -86,8 +86,6 @@ touchFunction(Kotlin_mm_createRetainedExternalRCRef)
 touchFunction(Kotlin_mm_releaseExternalRCRef)
 touchFunction(Kotlin_mm_disposeExternalRCRef)
 
-touchFunction(Kotlin_loadTypeInfo)
-
 #ifdef __cplusplus
 } // extern "C"
 #endif
