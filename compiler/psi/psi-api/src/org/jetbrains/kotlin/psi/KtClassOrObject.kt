@@ -30,7 +30,9 @@ abstract class KtClassOrObject :
 
     fun getColon(): PsiElement? = findChildByType(KtTokens.COLON)
 
-    fun getSuperTypeList(): KtSuperTypeList? = getStubOrPsiChild(KtStubBasedElementTypes.SUPER_TYPE_LIST)
+    fun getSuperTypeList(): KtSuperTypeList? =
+        @Suppress("DEPRECATION")
+        getStubOrPsiChild(KtStubBasedElementTypes.SUPER_TYPE_LIST)
 
     override fun getSuperTypeListEntries(): List<KtSuperTypeListEntry> = getSuperTypeList()?.entries.orEmpty()
 
@@ -62,7 +64,9 @@ abstract class KtClassOrObject :
 
     fun getAnonymousInitializers(): List<KtAnonymousInitializer> = getBody()?.anonymousInitializers.orEmpty()
 
-    override fun getBody(): KtClassBody? = getStubOrPsiChild(KtStubBasedElementTypes.CLASS_BODY)
+    override fun getBody(): KtClassBody? =
+        @Suppress("DEPRECATION")
+        getStubOrPsiChild(KtStubBasedElementTypes.CLASS_BODY)
 
     inline fun <reified T : KtDeclaration> addDeclaration(declaration: T): T {
         val body = getOrCreateBody()
@@ -113,7 +117,9 @@ abstract class KtClassOrObject :
 
     override fun getPresentation(): ItemPresentation? = ItemPresentationProviders.getItemPresentation(this)
 
-    override fun getPrimaryConstructor(): KtPrimaryConstructor? = getStubOrPsiChild(KtStubBasedElementTypes.PRIMARY_CONSTRUCTOR)
+    override fun getPrimaryConstructor(): KtPrimaryConstructor? =
+        @Suppress("DEPRECATION")
+        getStubOrPsiChild(KtStubBasedElementTypes.PRIMARY_CONSTRUCTOR)
 
     override fun getPrimaryConstructorModifierList(): KtModifierList? = primaryConstructor?.modifierList
 

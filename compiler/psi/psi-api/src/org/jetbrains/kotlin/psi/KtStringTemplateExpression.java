@@ -50,6 +50,7 @@ public class KtStringTemplateExpression extends KtElementImplStub<KotlinPlaceHol
      * @see KtStringInterpolationPrefix
      */
     @Nullable
+    @SuppressWarnings("deprecation")
     public KtStringInterpolationPrefix getInterpolationPrefix() {
         return getStubOrPsiChild(KtStubBasedElementTypes.STRING_INTERPOLATION_PREFIX);
     }

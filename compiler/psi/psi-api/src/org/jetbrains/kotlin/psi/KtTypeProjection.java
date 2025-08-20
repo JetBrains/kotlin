@@ -47,6 +47,7 @@ public class KtTypeProjection extends KtModifierListOwnerStub<KotlinTypeProjecti
     }
 
     @Nullable
+    @SuppressWarnings("deprecation")
     public KtTypeReference getTypeReference() {
         return getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE);
     }
