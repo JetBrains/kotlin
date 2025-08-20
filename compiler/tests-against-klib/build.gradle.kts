@@ -31,6 +31,8 @@ projectTests {
     // - compiler/testData/codegen/boxKlib/properties.kt
     // - compiler/testData/codegen/boxKlib/simple.kt
     testData(project(":compiler").isolated, "testData/codegen/boxKlib")
+
+    withJvmStdlibAndReflect()
 }
 
 projectTest(parallel = true) {

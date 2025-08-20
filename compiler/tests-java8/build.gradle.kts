@@ -37,6 +37,8 @@ projectTests {
     testData(project(":compiler").isolated, "testData/loadJava8")
     testData(project(":compiler").isolated, "testData/resolvedCalls/enhancedSignatures")
     testData(project(":compiler").isolated, "testData/builtin-classes")
+
+    withJvmStdlibAndReflect()
     withScriptRuntime()
     withScriptingPlugin()
     withTestJar()

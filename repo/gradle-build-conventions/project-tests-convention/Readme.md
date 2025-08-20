@@ -17,9 +17,10 @@ plugins {
 }
 ```
 
-Add dependencies to the test classpath (`kotlin-stdlib`, `kotlin-stdlib-jvm-minimal-for-test`, and `kotlin-reflect` are always added):
+Add dependencies to the test classpath:
 ```kotlin
 projectTests {
+    withJvmStdlibAndReflect()
     withStdlibCommon()
     withTestJar()
     withAnnotations()

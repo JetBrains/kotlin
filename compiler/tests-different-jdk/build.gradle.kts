@@ -30,6 +30,8 @@ sourceSets {
 projectTests {
     testData(project(":compiler").isolated, "testData/codegen")
     testData(project(":compiler").isolated, "testData/klib")
+
+    withJvmStdlibAndReflect()
     withScriptRuntime()
     withScriptingPlugin()
     withAnnotations()

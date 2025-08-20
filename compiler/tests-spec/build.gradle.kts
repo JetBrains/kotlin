@@ -53,6 +53,8 @@ val specConsistencyTests by task<Test> {
 projectTests {
     testData(isolated, "testData")
     testData(project(":compiler").isolated, "testData")
+
+    withJvmStdlibAndReflect()
     withScriptRuntime()
     withTestJar()
     withMockJdkAnnotationsJar()

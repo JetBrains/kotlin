@@ -58,14 +58,6 @@ abstract class ProjectTestsExtension(private val project: Project) {
         }
     }
 
-    init {
-        project.dependencies {
-            add(stdlibRuntimeForTests) { project(":kotlin-stdlib") }
-            add(stdlibMinimalRuntimeForTests) { project(":kotlin-stdlib-jvm-minimal-for-test") }
-            add(kotlinReflectJarForTests) { project(":kotlin-reflect") }
-        }
-    }
-
     internal abstract val testDataFiles: ListProperty<Directory>
     internal val testDataMap: MutableMap<String, String> = mutableMapOf<String, String>()
 
@@ -76,6 +68,12 @@ abstract class ProjectTestsExtension(private val project: Project) {
             testDataDirectory.asFile.relativeTo(project.rootDir).path.replace("\\", "/"),
             testDataDirectory.asFile.canonicalPath.replace("\\", "/")
         )
+    }
+
+    fun withJvmStdlibAndReflect() {
+        add(stdlibRuntimeForTests) { project(":kotlin-stdlib") }
+        add(stdlibMinimalRuntimeForTests) { project(":kotlin-stdlib-jvm-minimal-for-test") }
+        add(kotlinReflectJarForTests) { project(":kotlin-reflect") }
     }
 
     fun withStdlibCommon() {
