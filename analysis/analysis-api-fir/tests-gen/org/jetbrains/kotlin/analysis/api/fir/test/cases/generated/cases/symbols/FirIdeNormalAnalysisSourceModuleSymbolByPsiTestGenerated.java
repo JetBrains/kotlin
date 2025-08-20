@@ -107,6 +107,18 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByPsiTestGenerated extends Ab
   }
 
   @Test
+  @TestMetadata("classWithExplicitlyActualConstructorAndProperty.kt")
+  public void testClassWithExplicitlyActualConstructorAndProperty() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByPsi/classWithExplicitlyActualConstructorAndProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("classWithImplicitlyActualConstructor.kt")
+  public void testClassWithImplicitlyActualConstructor() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByPsi/classWithImplicitlyActualConstructor.kt");
+  }
+
+  @Test
   @TestMetadata("classWithTypeParams.kt")
   public void testClassWithTypeParams() {
     runTest("analysis/analysis-api/testData/symbols/symbolByPsi/classWithTypeParams.kt");
@@ -446,6 +458,18 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByPsiTestGenerated extends Ab
   @TestMetadata("typeParametersStressTest.kt")
   public void testTypeParametersStressTest() {
     runTest("analysis/analysis-api/testData/symbols/symbolByPsi/typeParametersStressTest.kt");
+  }
+
+  @Test
+  @TestMetadata("valueClassWithImplicitlyActualConstructorAndProperty.kt")
+  public void testValueClassWithImplicitlyActualConstructorAndProperty() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByPsi/valueClassWithImplicitlyActualConstructorAndProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("valueClassWithImplicitlyActualProperty.kt")
+  public void testValueClassWithImplicitlyActualProperty() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByPsi/valueClassWithImplicitlyActualProperty.kt");
   }
 
   @Test
