@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.swiftexport.standalone
 
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.analysis.api.klib.reader.createKaModulesForStandaloneAnalysis
+import org.jetbrains.kotlin.library.metadata.KlibInputModule
 import org.jetbrains.kotlin.sir.SirModule
 import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.sir.providers.SirTypeProvider
@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.sir.providers.impl.SirEnumGeneratorImpl
 import org.jetbrains.kotlin.sir.providers.utils.SilentUnsupportedDeclarationReporter
 import org.jetbrains.kotlin.sir.providers.utils.SimpleUnsupportedDeclarationReporter
 import org.jetbrains.kotlin.sir.providers.utils.UnsupportedDeclarationReporter
-import org.jetbrains.kotlin.swiftexport.standalone.builders.createKaModulesForStandaloneAnalysis
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftExportConfig
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
 import org.jetbrains.kotlin.swiftexport.standalone.translation.TranslationResult
@@ -26,8 +25,6 @@ import org.jetbrains.kotlin.swiftexport.standalone.writer.dumpTextAtPath
 import org.jetbrains.sir.printer.SirPrinter
 import java.io.Serializable
 import java.nio.file.Path
-import kotlin.collections.filter
-import kotlin.collections.plus
 import kotlin.io.path.div
 
 public enum class UnsupportedDeclarationReporterKind {
@@ -49,11 +46,7 @@ public enum class ErrorTypeStrategy {
     }
 }
 
-public class InputModule(
-    public val name: String,
-    public val path: Path,
-    public val config: SwiftModuleConfig,
-)
+public typealias InputModule = KlibInputModule<SwiftModuleConfig>
 
 public sealed class SwiftExportModule(
     public val name: String,
