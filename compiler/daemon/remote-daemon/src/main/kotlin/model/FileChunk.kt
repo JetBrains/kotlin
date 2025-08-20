@@ -10,16 +10,15 @@ import org.jetbrains.kotlin.server.FileChunkGrpc
 
 class FileChunk(
     val filePath: String,
-    val fileType: FileType,
+    val artifactType: ArtifactType,
     val content: ByteArray,
-    val isLast: Boolean,
-
+    val isLast: Boolean
 ) : CompileRequest, CompileResponse
 
 fun FileChunk.toGrpc(): FileChunkGrpc {
     return FileChunkGrpc.newBuilder()
         .setFilePath(filePath)
-        .setFileType(fileType.toGrpc())
+        .setFileType(artifactType.toGrpc())
         .setContent(content.toByteString())
         .setIsLast(isLast)
         .build()

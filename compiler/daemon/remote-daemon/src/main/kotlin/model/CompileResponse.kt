@@ -14,6 +14,7 @@ fun CompileResponseGrpc.toDomain(): CompileResponse = when {
     hasFileTransferReply() -> fileTransferReply.toDomain()
     hasCompiledFileChunk() -> compiledFileChunk.toDomain()
     hasCompilerMessage() -> compilerMessage.toDomain()
+    hasDirectoryTransferReply() -> directoryTransferReply.toDomain()
     else -> throw IllegalStateException("Unknown CompileResponseGrpc type") // TODO fix
 }
 
@@ -22,4 +23,5 @@ fun CompileResponse.toGrpc(): CompileResponseGrpc = when (this) {
     is FileTransferReply -> CompileResponseGrpc.newBuilder().setFileTransferReply(toGrpc()).build()
     is FileChunk -> CompileResponseGrpc.newBuilder().setCompiledFileChunk(toGrpc()).build()
     is CompilerMessage -> CompileResponseGrpc.newBuilder().setCompilerMessage(toGrpc()).build()
+    is DirectoryTransferReply -> CompileResponseGrpc.newBuilder().setDirectoryTransferReply(toGrpc()).build()
 }

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.server.DirectoryTransferRequestGrpc
 data class DirectoryTransferRequest(
     val directoryPath: String,
     val directoryFingerprint: String,
+    val artifactType: ArtifactType,
     val directoryFiles: List<FileTransferRequest>
 ) : CompileRequest
 
@@ -17,6 +18,7 @@ fun DirectoryTransferRequest.toGrpc(): DirectoryTransferRequestGrpc {
     return DirectoryTransferRequestGrpc.newBuilder()
         .setDirectoryPath(directoryPath)
         .setDirectoryFingerprint(directoryFingerprint)
+        .setArtifactType(artifactType.toGrpc())
         .addAllDirectoryFiles(directoryFiles.map { it.toGrpc() })
         .build()
 }
@@ -25,6 +27,7 @@ fun DirectoryTransferRequestGrpc.toDomain(): DirectoryTransferRequest {
     return DirectoryTransferRequest(
         directoryPath,
         directoryFingerprint,
+        artifactType.toDomain(),
         directoryFilesList.map { it.toDomain() }
     )
 }

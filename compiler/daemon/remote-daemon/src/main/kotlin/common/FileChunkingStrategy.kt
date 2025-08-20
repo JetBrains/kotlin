@@ -7,47 +7,34 @@ package common
 
 import kotlinx.coroutines.flow.Flow
 import model.FileChunk
-import model.FileType
+import model.ArtifactType
 import java.io.File
 
 abstract class FileChunkingStrategy {
 
-    // TODO: we are currently using filePath as the key, but using fileHash might be less error prone
-    private val chunks = mutableMapOf<String, MutableList<ByteArray>>()
+    abstract fun chunk(file: File, artifactType: ArtifactType): Flow<FileChunk>
 
-    fun addChunks(filePath:String, chunk: ByteArray) {
-        chunks.getOrPut(filePath) { mutableListOf() }.add(chunk)
-    }
-
-    fun addChunks(filePath: String, chunks: List<ByteArray>) {
-        this.chunks.getOrPut(filePath) { mutableListOf() }.addAll(chunks)
-    }
-
-    fun getChunks(filePath:String): List<ByteArray> = chunks[filePath] ?: emptyList()
-
-    abstract fun chunk(file: File, fileType: FileType): Flow<FileChunk>
-
-    fun reconstruct(fileChunks: List<ByteArray>, newFilePath: String): File {
+    fun reconstruct(fileChunks: Collection<FileChunk>, newFilePath: String): File {
         try {
             // TODO here we are basically return empty file, would it be better to return null?
             val newFile = File(newFilePath)
             if (fileChunks.isEmpty()) return newFile
             // TODO consider sending filesize in metadata
-            val totalSize = fileChunks.sumOf { it.size }
+            val totalSize = fileChunks.sumOf { it.content.size }
             val completeContent = ByteArray(totalSize)
 
             var offset = 0
             fileChunks.forEach { chunk ->
                 // chunk is already ByteArray, no need for conversion
-                chunk.copyInto(completeContent, offset)
-                offset += chunk.size
+                chunk.content.copyInto(completeContent, offset)
+                offset += chunk.content.size
             }
 
             newFile.writeBytes(completeContent)
             // TODO maybe cleanup chunks from the hashmap
             println("File $newFilePath has been successfully reconstructed")
             return newFile
-        }catch (e: Exception){
+        } catch (e: Exception) {
             println("Error while reconstructing file $fileChunks")
             throw e
         }

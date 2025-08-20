@@ -23,10 +23,12 @@ import model.CompilationResult
 import model.CompileRequest
 import model.CompileResponse
 import model.CompilerMessage
+import model.DirectoryTransferReply
+import model.DirectoryTransferRequest
 import model.FileChunk
 import model.FileTransferReply
 import model.FileTransferRequest
-import model.FileType
+import model.ArtifactType
 import org.jetbrains.kotlin.daemon.common.CompilationOptions
 import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.CompilerMode
@@ -48,6 +50,8 @@ class RemoteCompilationClient(
         val sourceFiles = CompilerUtils.getSourceFiles(compilerArgumentsMap)
         val dependencyFiles = CompilerUtils.getDependencyFiles(compilerArgumentsMap)
         val compilerPluginFiles = CompilerUtils.getCompilerPluginFiles(compilerArgumentsMap)
+
+        val fileChunks = mutableMapOf<String, MutableList<FileChunk>>()
 
 //        for (sf in sourceFiles) {
 //            println("source file: ${sf.path}")
@@ -83,20 +87,22 @@ class RemoteCompilationClient(
                         is FileTransferReply -> {
                             if (!it.isPresent) {
                                 launch {
-                                    val file
-                                    fileChunkStrategy.chunk(File(it.filePath), it.fileType).collect { chunk ->
+                                    fileChunkStrategy.chunk(File(it.filePath), it.artifactType).collect { chunk ->
                                         requestChannel.send(chunk)
                                     }
                                 }
                             }
                         }
+                        is DirectoryTransferReply -> {
+                            // TODO implement directory transfer
+                        }
                         is FileChunk -> {
                             launch {
                                 val fileName = it.filePath.split("/").last()
-                                fileChunkStrategy.addChunks(it.filePath, it.content)
+                                fileChunks.getOrPut(it.filePath) { mutableListOf() }.add(it)
                                 if (it.isLast) {
                                     fileChunkStrategy.reconstruct(
-                                        fileChunkStrategy.getChunks(it.filePath),
+                                        fileChunks.getOrDefault(it.filePath, listOf()),
                                         buildAbsPath("$CLIENT_COMPILED_DIR/$fileName")
                                     )
                                 }
@@ -132,20 +138,33 @@ class RemoteCompilationClient(
                         FileTransferRequest(
                             it.path,
                             computeSha256(it),
-                            FileType.SOURCE
+                            ArtifactType.SOURCE
                         )
                     )
                 }
 
                 dependencyFiles.forEach {
                     if (it.isDirectory) {
-
+                        requestChannel.send(
+                            DirectoryTransferRequest(
+                                it.path,
+                                computeSha256(it),
+                                ArtifactType.DEPENDENCY,
+                                it.walkTopDown().filter { file -> file.isFile }.map { file ->
+                                    FileTransferRequest(
+                                        file.path,
+                                        computeSha256(file),
+                                        ArtifactType.DEPENDENCY
+                                    )
+                                }.toList()
+                            )
+                        )
                     } else {
                         requestChannel.send(
                             FileTransferRequest(
                                 it.path,
                                 computeSha256(it),
-                                FileType.DEPENDENCY
+                                ArtifactType.DEPENDENCY
                             )
                         )
                     }
@@ -157,7 +176,7 @@ class RemoteCompilationClient(
                         FileTransferRequest(
                             it.path,
                             computeSha256(it),
-                            FileType.COMPILER_PLUGIN
+                            ArtifactType.COMPILER_PLUGIN
                         )
                     )
                 }

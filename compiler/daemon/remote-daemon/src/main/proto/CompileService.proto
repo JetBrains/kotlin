@@ -9,34 +9,17 @@ import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
 
 service CompileService {
-//  rpc Connect (ConnectRequestGrpc) returns (stream ConnectResponseGrpc) {}
   rpc Compile (stream CompileRequestGrpc) returns (stream CompileResponseGrpc) {}
   rpc Cleanup (google.protobuf.Empty) returns (google.protobuf.Empty);
 }
-
-//message ConnectRequestGrpc {
-//  DaemonJVMOptionsConfiguratorGrpc daemon_jvm_options_configurator = 1;
-//}
-
-//message ConnectResponseGrpc {
-//  oneof response_payload {
-//    uint32 session_id = 1;
-//    DaemonMessageGrpc daemon_message = 2;
-//  }
-//}
-
-//message DaemonJVMOptionsConfiguratorGrpc{
-//  bool inherit_memory_limits = 1;
-//  bool inherit_other_jvm_options = 2;
-//  bool inherit_additional_properties = 3;
-//  repeated string additional_params = 4;
-//}
 
 message CompileRequestGrpc {
   oneof request_payload {
     CompilationMetadataGrpc metadata = 1;
     FileTransferRequestGrpc file_transfer_request = 2;
     FileChunkGrpc source_file_chunk = 3;
+    DirectoryTransferRequestGrpc directory_transfer_request = 4;
+    DirectoryEntryChunkGrpc directory_entry_chunk = 5;
   }
 }
 
@@ -45,7 +28,8 @@ message CompileResponseGrpc {
     CompilerMessageGrpc compiler_message = 1;
     FileChunkGrpc compiled_file_chunk = 2;
     FileTransferReplyGrpc file_transfer_reply = 3;
-    CompilationResultGrpc compilation_result = 4;
+    DirectoryTransferReplyGrpc directory_transfer_reply = 4;
+    CompilationResultGrpc compilation_result = 5;
   }
 }
 
@@ -80,7 +64,7 @@ message CompilationResultGrpc{
 //  google.protobuf.Timestamp created_at = 4;
 message FileChunkGrpc {
   string file_path = 1;
-  FileTypeGrpc file_type = 2;
+  ArtifactTypeGrpc file_type = 2;
   bytes content = 3;
   bool is_last = 4;
 }
@@ -91,7 +75,7 @@ message CompilerMessageGrpc{
   optional CompilerMessageSourceLocationGrpc compiler_message_source_location = 3;
 }
 
-enum FileTypeGrpc {
+enum ArtifactTypeGrpc {
   SOURCE = 0;
   DEPENDENCY = 1;
   COMPILER_PLUGIN = 2;
@@ -129,26 +113,28 @@ enum CompilationResultSourceGrpc {
 message FileTransferRequestGrpc{
   string file_path = 1;
   string file_fingerprint = 2;
-  FileTypeGrpc file_type = 3;
+  ArtifactTypeGrpc artifact_type = 3;
 }
 
 message DirectoryTransferRequestGrpc{
   string directory_path = 1;
   string directory_fingerprint = 2;
-  repeated FileTransferRequestGrpc directory_files = 3;
+  ArtifactTypeGrpc artifact_type = 3;
+  repeated FileTransferRequestGrpc directory_files = 4;
 }
 
 message FileTransferReplyGrpc{
   string file_path = 1;
   bool is_present = 2;
-  FileTypeGrpc file_type = 3;
+  ArtifactTypeGrpc file_type = 3;
 }
 
 message DirectoryTransferReplyGrpc{
   string directory_path = 1;
   string directory_fingerprint = 2;
   bool is_entire_directory_present = 3;
-  repeated FileIdentifierGrpc missing_files = 4;
+  ArtifactTypeGrpc artifact_type = 4;
+  repeated FileIdentifierGrpc missing_files = 5;
 }
 
 message FileIdentifierGrpc {

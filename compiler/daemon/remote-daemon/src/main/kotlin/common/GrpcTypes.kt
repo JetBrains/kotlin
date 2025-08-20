@@ -28,11 +28,12 @@ import org.jetbrains.kotlin.server.TargetPlatformGrpc
  */
 
 
-// You'll need these extension functions:
 fun CompileRequestGrpc.toDomain(): CompileRequest = when {
     hasMetadata() -> metadata.toDomain()
     hasSourceFileChunk() -> sourceFileChunk.toDomain()
     hasFileTransferRequest() -> fileTransferRequest.toDomain()
+    hasDirectoryTransferRequest() -> directoryTransferRequest.toDomain()
+    hasDirectoryEntryChunk() -> directoryEntryChunk.toDomain()
     else -> error("Unknown CompileRequestGrpc type") // TODO fix
 }
 

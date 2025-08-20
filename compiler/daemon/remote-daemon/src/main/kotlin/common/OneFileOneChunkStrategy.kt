@@ -8,14 +8,14 @@ package common
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import model.FileChunk
-import model.FileType
+import model.ArtifactType
 import java.io.File
 
 class OneFileOneChunkStrategy : FileChunkingStrategy() {
 
-    override fun chunk(file: File, fileType: FileType): Flow<FileChunk> {
+    override fun chunk(file: File, artifactType: ArtifactType): Flow<FileChunk> {
         return flow {
-            emit(FileChunk(file.path, fileType, file.readBytes(), isLast = true))
+            emit(FileChunk(file.path, artifactType, file.readBytes(), isLast = true))
         }
     }
 }

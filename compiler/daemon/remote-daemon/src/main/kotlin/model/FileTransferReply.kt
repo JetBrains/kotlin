@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.server.FileTransferReplyGrpc
 data class FileTransferReply(
     val filePath: String,
     val isPresent: Boolean,
-    val fileType: FileType
+    val artifactType: ArtifactType
 ) : CompileResponse
 
 fun FileTransferReplyGrpc.toDomain(): FileTransferReply {
@@ -21,6 +21,6 @@ fun FileTransferReply.toGrpc(): FileTransferReplyGrpc {
     return FileTransferReplyGrpc.newBuilder()
         .setFilePath(filePath)
         .setIsPresent(isPresent)
-        .setFileType(fileType.toGrpc())
+        .setFileType(artifactType.toGrpc())
         .build()
 }

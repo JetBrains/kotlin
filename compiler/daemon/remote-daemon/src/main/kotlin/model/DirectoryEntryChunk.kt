@@ -11,7 +11,7 @@ data class DirectoryEntryChunk(
     val directoryPath: String,
     val isLastDirectoryEntry: Boolean,
     val fileChunk: FileChunk,
-)
+) : CompileRequest
 
 fun DirectoryEntryChunk.toGrpc(): DirectoryEntryChunkGrpc {
     return DirectoryEntryChunkGrpc.newBuilder()
