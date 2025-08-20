@@ -1999,6 +1999,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/js/compilationErrorK2.args");
     }
 
+    @TestMetadata("compilationWarningCrossInlinerWithoutIntraModuleInliner.args")
+    public void testCompilationWarningCrossInlinerWithoutIntraModuleInliner() {
+      runTest("compiler/testData/cli/js/compilationWarningCrossInlinerWithoutIntraModuleInliner.args");
+    }
+
     @TestMetadata("compilationWarningExposureOfReferencesToInvisibleEntities.args")
     public void testCompilationWarningExposureOfReferencesToInvisibleEntities() {
       runTest("compiler/testData/cli/js/compilationWarningExposureOfReferencesToInvisibleEntities.args");
