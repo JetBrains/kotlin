@@ -1,0 +1,27 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=leakingPrivateConstructorInInnerClassThroughReference.kt */
+
+public class A
+    public inner class Inner
+        /* TARGET declaration */ private constructor(s: String) /* primary */
+        public constructor()
+            /* TARGET use-site */ <this>
+            /* TARGET use-site */ <this>.Inner(s = "")
+        internal inline fun internalInlineMethod(): KFunction1<String, Inner>
+            /* ACCESSOR use-site */ access$<outer-this-0>($this = <this>)
+            /* LOCAL declaration @0 */ local fun <init>(<this>: A, p0: String): Inner
+                /* ACCESSOR use-site */ access$<init>($this = <this>, s = p0)
+            /* INVOKE @0 */ local fun <init>(<this>: A, p0: String): Inner
+        /* ACCESSOR declaration */ private fun <outer-this-0>(): A
+            /* TARGET use-site */ <this>
+        /* ACCESSOR declaration */ internal /* static */ fun access$<init>($this: A, s: String): Inner
+            /* TARGET use-site */ $this.Inner(s = s)
+        /* ACCESSOR declaration */ internal /* static */ fun access$<outer-this-0>($this: Inner): A
+            /* ACCESSOR use-site */ $this.<outer-this-0>()
+    /* TARGET declaration */ <this>: A
+public fun box(): String
+    /* ACCESSOR use-site */ access$<outer-this-0>($this = this)
+    /* LOCAL declaration @1 */ local fun <init>(<this>: A, p0: String): Inner
+        /* ACCESSOR use-site */ access$<init>($this = <this>, s = p0)
+    /* INVOKE @1 */ local fun <init>(<this>: A, p0: String): Inner

@@ -1,0 +1,29 @@
+/* MODULE name=<lib> */
+
+/* FILE package=<root> fileName=A.kt */
+
+public class A
+    public inner class Inner<T : Any?>
+        /* TARGET declaration */ private constructor(s: T) /* primary */
+        public constructor()
+            /* TARGET use-site */ <this>
+            /* TARGET use-site */ <this>.Inner<T>(s = "" as T)
+        internal inline fun internalInlineMethod(s: T): Inner<T>
+            /* ACCESSOR use-site */ access$<outer-this-0>($this = <this>)
+            /* ACCESSOR use-site */ access$<init><T>($this = access$<outer-this-0>($this = <this>), s = s)
+        /* ACCESSOR declaration */ private fun <outer-this-0>(): A
+            /* TARGET use-site */ <this>
+        /* ACCESSOR declaration */ internal /* static */ fun <T : Any?> access$<init>($this: A, s: T): Inner<T>
+            /* TARGET use-site */ $this.Inner<T>(s = s)
+        /* ACCESSOR declaration */ internal /* static */ fun access$<outer-this-0>($this: Inner<T>): A
+            /* ACCESSOR use-site */ $this.<outer-this-0>()
+    /* TARGET declaration */ <this>: A
+
+
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=B.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$<outer-this-0>($this = this)
+    /* ACCESSOR use-site */ access$<init><Any?>($this = access$<outer-this-0>($this = this), s = s)
