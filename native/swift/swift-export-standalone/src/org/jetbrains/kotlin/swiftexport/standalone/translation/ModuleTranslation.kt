@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportLogger
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportModule
 import org.jetbrains.kotlin.swiftexport.standalone.builders.KaModules
 import org.jetbrains.kotlin.swiftexport.standalone.builders.buildSirSession
+import org.jetbrains.kotlin.swiftexport.standalone.builders.configFor
 import org.jetbrains.kotlin.swiftexport.standalone.builders.translateModule
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftExportConfig
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
