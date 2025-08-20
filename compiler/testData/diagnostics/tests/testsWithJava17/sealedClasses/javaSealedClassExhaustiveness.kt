@@ -4,22 +4,22 @@
 // ISSUE: KT-41215, KT-43551
 
 // FILE: Base.java
-public sealed class Base permits A, B {}
+public abstract sealed class Base permits A, B {}
 
 // FILE: A.java
 public final class A extends Base {}
 
 // FILE: B.java
-public sealed class B extends Base permits B.C, B.D {
+public abstract sealed class B extends Base permits B.C, B.D {
     public static final class C extends B {}
 
     public static non-sealed class D extends B {}
 }
 
 // FILE: SameFile.java
-public sealed class SameFile {
+public abstract sealed class SameFile {
     public static final class A extends SameFile {}
-    public static sealed class B extends SameFile {
+    public static abstract sealed class B extends SameFile {
         public static final class C extends B {}
         public static non-sealed class D extends B {}
     }
