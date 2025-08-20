@@ -1,0 +1,18 @@
+/* MODULE name=<lib> */
+
+/* FILE package=<root> fileName=A.kt */
+
+public open class A<T : Any?>
+    /* TARGET declaration */ private fun <U : Any?> privateMethod(o: T, k: U): String
+    internal inline fun <U : Any?> internalInlineMethod(o: T, k: U): String
+        /* ACCESSOR use-site */ access$privateMethod<U>($this = <this>, o = o, k = k)
+    /* ACCESSOR declaration */ internal /* static */ fun <U : Any?> access$privateMethod($this: A<T>, o: T, k: U): String
+        /* TARGET use-site */ $this.privateMethod<U>(o = o, k = k)
+
+
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=B.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$privateMethod<Any?>($this = this, o = o, k = k)
