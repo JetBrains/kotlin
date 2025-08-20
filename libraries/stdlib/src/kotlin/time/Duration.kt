@@ -1074,8 +1074,7 @@ private fun parseDuration(value: String, strictIso: Boolean, throwException: Boo
  * @param throwException if true, throws on error; if false, returns Duration.INVALID
  * @return parsed Duration or Duration.INVALID on error
  */
-@kotlin.internal.InlineOnly
-private inline fun parseIsoStringFormat(
+private fun parseIsoStringFormat(
     value: String,
     startIndex: Int,
     length: Int,
@@ -1152,8 +1151,7 @@ private inline fun parseIsoStringFormat(
  * @param throwException if true, throws on error; if false, returns Duration.INVALID
  * @return parsed Duration or Duration.INVALID on error
  */
-@kotlin.internal.InlineOnly
-private inline fun parseDefaultStringFormat(
+private fun parseDefaultStringFormat(
     value: String,
     startIndex: Int,
     initialLength: Int,
