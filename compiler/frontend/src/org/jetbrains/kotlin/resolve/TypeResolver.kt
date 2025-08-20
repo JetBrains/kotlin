@@ -145,6 +145,7 @@ class TypeResolver(
         return type
     }
 
+    @Suppress("DEPRECATION")
     internal fun KtElementImplStub<*>.getAllModifierLists(): Array<out KtDeclarationModifierList> =
         getStubOrPsiChildren(KtStubElementTypes.MODIFIER_LIST, KtStubElementTypes.MODIFIER_LIST.arrayFactory)
 

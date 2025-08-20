@@ -34,6 +34,7 @@ public class KtValueArgumentName extends KtElementImplStub<KotlinPlaceHolderStub
 
     @Override
     @NotNull
+    @SuppressWarnings("deprecation")
     public KtSimpleNameExpression getReferenceExpression() {
         return getStubOrPsiChild(KtStubBasedElementTypes.REFERENCE_EXPRESSION);
     }

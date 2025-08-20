@@ -19,14 +19,17 @@ open class KtCallExpression : KtExpressionImplStub<KotlinPlaceHolderStub<KtCallE
     }
 
     override fun getCalleeExpression(): KtExpression? {
+        @Suppress("DEPRECATION")
         return getStubOrPsiChild(KtStubBasedElementTypes.REFERENCE_EXPRESSION) ?: findChildByClass(KtExpression::class.java)
     }
 
     override fun getValueArgumentList(): KtValueArgumentList? {
+        @Suppress("DEPRECATION")
         return getStubOrPsiChild(KtStubBasedElementTypes.VALUE_ARGUMENT_LIST)
     }
 
     override fun getTypeArgumentList(): KtTypeArgumentList? {
+        @Suppress("DEPRECATION")
         return getStubOrPsiChild(KtStubBasedElementTypes.TYPE_ARGUMENT_LIST)
     }
 
