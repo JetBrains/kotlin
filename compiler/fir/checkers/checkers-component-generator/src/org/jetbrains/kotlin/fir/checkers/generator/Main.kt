@@ -172,7 +172,9 @@ fun main(args: Array<String>) {
             alias<FirWhileLoop>("WhileLoopChecker")
             alias<FirThrowExpression>("ThrowExpressionChecker")
             alias<FirDoWhileLoop>("DoWhileLoopChecker")
-            alias<FirArrayLiteral>("ArrayLiteralChecker")
+            alias<FirArrayLiteral>("ArrayLiteralChecker").let {
+                visitAlso<FirCollectionLiteralCall>(it)
+            }
             alias<FirClassReferenceExpression>("ClassReferenceExpressionChecker")
             alias<FirInaccessibleReceiverExpression>("InaccessibleReceiverChecker")
         }
