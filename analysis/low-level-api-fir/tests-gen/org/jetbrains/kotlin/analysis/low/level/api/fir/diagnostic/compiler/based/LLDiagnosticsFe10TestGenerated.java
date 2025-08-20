@@ -40297,6 +40297,18 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("sealedJavaClass.kt")
+      public void testSealedJavaClass() {
+        runTest("compiler/testData/diagnostics/tests/sealed/sealedJavaClass.kt");
+      }
+
+      @Test
+      @TestMetadata("sealedJavaClassEnabled.kt")
+      public void testSealedJavaClassEnabled() {
+        runTest("compiler/testData/diagnostics/tests/sealed/sealedJavaClassEnabled.kt");
+      }
+
+      @Test
       @TestMetadata("TreeWhen.kt")
       public void testTreeWhen() {
         runTest("compiler/testData/diagnostics/tests/sealed/TreeWhen.kt");
