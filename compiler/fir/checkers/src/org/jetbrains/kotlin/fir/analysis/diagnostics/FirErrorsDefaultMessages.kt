@@ -81,6 +81,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_SUPER_CA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACCESSOR_FOR_DELEGATED_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_IGNORABILITY_NOT_MATCH_EXPECT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_MISSING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_TYPEALIAS_TO_SPECIAL_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_TYPE_ALIAS_NOT_TO_CLASS
@@ -2974,6 +2975,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             FirExpectActualAnnotationIncompatibilityDiagnosticRenderers.SYMBOL_RENDERER,
             NOT_RENDERED,
             FirExpectActualAnnotationIncompatibilityDiagnosticRenderers.INCOMPATIBILITY,
+        )
+        map.put(
+            ACTUAL_IGNORABILITY_NOT_MATCH_EXPECT,
+            "Ignorability statuses for expect declaration ''{0}'' and actual declaration ''{1}'' do not match. @IgnorableReturnValue declaration cannot be actualized with Must-Use declaration, and vice versa.",
+            SYMBOL_WITH_CONTAINING_DECLARATION, SYMBOL_WITH_CONTAINING_DECLARATION, EMPTY
         )
         map.put(
             OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY,

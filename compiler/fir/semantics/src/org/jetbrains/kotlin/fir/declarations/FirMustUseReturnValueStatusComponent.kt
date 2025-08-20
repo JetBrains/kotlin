@@ -10,13 +10,17 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.ReturnValueCheckerMode
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.getContainingDeclaration
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -51,6 +55,13 @@ abstract class FirMustUseReturnValueStatusComponent : FirSessionComponent {
     )
 
     fun hasIgnorableLikeAnnotation(list: List<ClassId>?): Boolean = list.orEmpty().any { it in ignorableReturnValueLikeAnnotations }
+
+    open fun isExpectActualIgnorabilityCompatible(
+        session: FirSession,
+        expect: FirCallableSymbol<*>,
+        actual: FirCallableSymbol<*>,
+        containingExpectClass: FirRegularClassSymbol?,
+    ): Boolean = true
 
     companion object {
         fun create(languageVersionSettings: LanguageVersionSettings): FirMustUseReturnValueStatusComponent {
@@ -142,6 +153,36 @@ abstract class FirMustUseReturnValueStatusComponent : FirSessionComponent {
             // In case no annotations are provided, we inherit status from the parent.
             return overriddenFlag ?: ReturnValueStatus.Unspecified
 
+        }
+
+        override fun isExpectActualIgnorabilityCompatible(
+            session: FirSession,
+            expect: FirCallableSymbol<*>,
+            actual: FirCallableSymbol<*>,
+            containingExpectClass: FirRegularClassSymbol?,
+        ): Boolean {
+            val relaxedRules = actual.isNotDirectMember(containingExpectClass, session) || expect.isNotDirectMember(containingExpectClass, session)
+            val expectStatus = expect.resolvedStatus.returnValueStatus
+            val actualStatus = actual.resolvedStatus.returnValueStatus
+            if (relaxedRules && (expectStatus == ReturnValueStatus.Unspecified || actualStatus == ReturnValueStatus.Unspecified)) return true
+            return when (expectStatus) {
+                ReturnValueStatus.MustUse -> actualStatus == ReturnValueStatus.MustUse
+                ReturnValueStatus.ExplicitlyIgnorable, ReturnValueStatus.Unspecified -> actualStatus != ReturnValueStatus.MustUse
+            }
+        }
+
+        /**
+         * Same as FirExpectActualMatchingContextImpl.isFakeOverride, but also is able to handle constructors
+         */
+        fun FirCallableSymbol<*>.isNotDirectMember(containingExpectClass: FirRegularClassSymbol?, session: FirSession): Boolean {
+            if (containingExpectClass == null) {
+                return false
+            }
+            return when (this) {
+                is FirConstructorSymbol -> this.getConstructedClass(session)?.classId != containingExpectClass.classId
+                else if (dispatchReceiverType?.classId != containingExpectClass.classId) -> true
+                else -> isSubstitutionOrIntersectionOverride
+            }
         }
 
         private fun findMustUseAmongContainers(

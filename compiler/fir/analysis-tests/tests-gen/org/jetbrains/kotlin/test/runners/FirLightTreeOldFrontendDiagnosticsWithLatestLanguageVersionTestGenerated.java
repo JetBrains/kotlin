@@ -9862,6 +9862,64 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
       }
 
       @Nested
+      @TestMetadata("compiler/testData/diagnostics/tests/crv/expectActual")
+      @TestDataPath("$PROJECT_ROOT")
+      public class ExpectActual {
+        @Test
+        @TestMetadata("actualizeInheritance.kt")
+        public void testActualizeInheritance() {
+          runTest("compiler/testData/diagnostics/tests/crv/expectActual/actualizeInheritance.kt");
+        }
+
+        @Test
+        @TestMetadata("actualizeInheritanceUnspecified.kt")
+        public void testActualizeInheritanceUnspecified() {
+          runTest("compiler/testData/diagnostics/tests/crv/expectActual/actualizeInheritanceUnspecified.kt");
+        }
+
+        @Test
+        @TestMetadata("actualizeSpecified.kt")
+        public void testActualizeSpecified() {
+          runTest("compiler/testData/diagnostics/tests/crv/expectActual/actualizeSpecified.kt");
+        }
+
+        @Test
+        @TestMetadata("actualizeTypealias.kt")
+        public void testActualizeTypealias() {
+          runTest("compiler/testData/diagnostics/tests/crv/expectActual/actualizeTypealias.kt");
+        }
+
+        @Test
+        @TestMetadata("actualizeTypealiasToUnspecified.kt")
+        public void testActualizeTypealiasToUnspecified() {
+          runTest("compiler/testData/diagnostics/tests/crv/expectActual/actualizeTypealiasToUnspecified.kt");
+        }
+
+        @Test
+        @TestMetadata("actualizeUnspecified.kt")
+        public void testActualizeUnspecified() {
+          runTest("compiler/testData/diagnostics/tests/crv/expectActual/actualizeUnspecified.kt");
+        }
+
+        @Test
+        public void testAllFilesPresentInExpectActual() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/crv/expectActual"), Pattern.compile("^(.+)\\.(kt)$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
+        }
+
+        @Test
+        @TestMetadata("inheritanceInCommon.kt")
+        public void testInheritanceInCommon() {
+          runTest("compiler/testData/diagnostics/tests/crv/expectActual/inheritanceInCommon.kt");
+        }
+
+        @Test
+        @TestMetadata("noMemberInExpect.kt")
+        public void testNoMemberInExpect() {
+          runTest("compiler/testData/diagnostics/tests/crv/expectActual/noMemberInExpect.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/testData/diagnostics/tests/crv/otherAnnotations")
       @TestDataPath("$PROJECT_ROOT")
       public class OtherAnnotations {

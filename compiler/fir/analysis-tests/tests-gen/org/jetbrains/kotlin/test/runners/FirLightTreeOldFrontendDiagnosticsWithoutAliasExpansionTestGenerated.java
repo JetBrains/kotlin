@@ -422,6 +422,23 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
       public void testIgnorabilityOnClassMembers() {
         runTest("compiler/testData/diagnostics/tests/crv/ignorabilityOnClassMembers.kt");
       }
+
+      @Nested
+      @TestMetadata("compiler/testData/diagnostics/tests/crv/expectActual")
+      @TestDataPath("$PROJECT_ROOT")
+      public class ExpectActual {
+        @Test
+        @TestMetadata("actualizeTypealias.kt")
+        public void testActualizeTypealias() {
+          runTest("compiler/testData/diagnostics/tests/crv/expectActual/actualizeTypealias.kt");
+        }
+
+        @Test
+        @TestMetadata("actualizeTypealiasToUnspecified.kt")
+        public void testActualizeTypealiasToUnspecified() {
+          runTest("compiler/testData/diagnostics/tests/crv/expectActual/actualizeTypealiasToUnspecified.kt");
+        }
+      }
     }
 
     @Nested

@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.resolve.calls.mpp
 
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.ReturnValueCheckerMode
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.mpp.*
 import org.jetbrains.kotlin.name.Name
@@ -400,6 +402,12 @@ object AbstractExpectActualChecker {
             sizesAreEqualAndElementsNotEqualBy(expectedContextParameters, actualContextParameters) { nameOf(it) }
         ) {
             add(ExpectActualIncompatibility.ContextParameterNames)
+        }
+
+        if (languageVersionSettings.getFlag(AnalysisFlags.returnValueCheckerMode) != ReturnValueCheckerMode.DISABLED) {
+            if (mustUseMatcher?.matches(expectDeclaration, actualDeclaration, expectContainingClass) == false) {
+                add(ExpectActualIncompatibility.IgnorabilityIsDifferent)
+            }
         }
 
         if (sizesAreEqualAndElementsNotEqualBy(expectedTypeParameters, actualTypeParameters) { nameOf(it) }) {

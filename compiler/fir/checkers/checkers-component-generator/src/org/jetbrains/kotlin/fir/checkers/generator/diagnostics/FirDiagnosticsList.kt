@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
+import org.jetbrains.kotlin.resolve.ReturnValueStatus
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
@@ -1679,6 +1680,13 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Symbol>("actualSymbol")
             parameter<KtSourceElement?>("actualAnnotationTargetSourceElement")
             parameter<ExpectActualAnnotationsIncompatibilityType<FirAnnotation>>("incompatibilityType")
+        }
+
+        // Same as expectActualIncompatibilityError, but warning
+        val ACTUAL_IGNORABILITY_NOT_MATCH_EXPECT by warning<KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME_ONLY) {
+            parameter<Symbol>("expectDeclaration")
+            parameter<Symbol>("actualDeclaration")
+            parameter<String>("reason")
         }
 
         val OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY by error<PsiElement>()
