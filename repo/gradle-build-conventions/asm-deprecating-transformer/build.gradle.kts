@@ -12,6 +12,8 @@ repositories {
     maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies") {
         content {
             includeGroupByRegex("org\\.jetbrains\\.intellij\\.deps(\\..+)?")
+            includeGroupByRegex("com.intellij.platform.*")
+            includeGroupByRegex("org.jetbrains.jps.*")
         }
     }
 }
