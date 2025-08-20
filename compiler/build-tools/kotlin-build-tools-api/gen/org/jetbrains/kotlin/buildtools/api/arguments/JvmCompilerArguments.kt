@@ -8,6 +8,8 @@ import kotlin.Boolean
 import kotlin.Int
 import kotlin.String
 import kotlin.jvm.JvmField
+import org.jetbrains.kotlin.buildtools.api.DeprecatedCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.RemovedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmTarget
 
 /**
@@ -371,9 +373,12 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      * -Xjvm-default=all                -> -jvm-default=no-compatibility
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Deprecated in Kotlin version 2.2.0.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @DeprecatedCompilerArgument
     public val X_JVM_DEFAULT: JvmCompilerArgument<String?> = JvmCompilerArgument("X_JVM_DEFAULT")
 
     /**
@@ -650,9 +655,12 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      * It has no effect when -language-version is 2.0 or higher.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Deprecated in Kotlin version 2.0.0.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @DeprecatedCompilerArgument
     public val X_LINK_VIA_SIGNATURES: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_LINK_VIA_SIGNATURES")
 
@@ -699,6 +707,18 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
         JvmCompilerArgument("X_VALUE_CLASSES")
 
     /**
+     * Inline functions using the IR inliner instead of the bytecode inliner.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Removed in Kotlin version 2.3.0.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    @RemovedCompilerArgument
+    public val X_IR_INLINER: JvmCompilerArgument<Boolean> = JvmCompilerArgument("X_IR_INLINER")
+
+    /**
      * Use inline scopes numbers for inline marker variables.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
@@ -707,6 +727,18 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
     @ExperimentalCompilerArgument
     public val X_USE_INLINE_SCOPES_NUMBERS: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_USE_INLINE_SCOPES_NUMBERS")
+
+    /**
+     * Enable the experimental support for K2 KAPT.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Removed in Kotlin version 2.3.0.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    @RemovedCompilerArgument
+    public val X_USE_K2_KAPT: JvmCompilerArgument<Boolean?> = JvmCompilerArgument("X_USE_K2_KAPT")
 
     /**
      * Enable behaviour needed to compile builtins as part of JVM stdlib

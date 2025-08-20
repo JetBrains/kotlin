@@ -7,6 +7,7 @@ import kotlin.Array
 import kotlin.Boolean
 import kotlin.String
 import kotlin.jvm.JvmField
+import org.jetbrains.kotlin.buildtools.api.DeprecatedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.ExplicitApiMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.KotlinVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.ReturnValueCheckerMode
@@ -352,9 +353,12 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Enable experimental frontend IR checkers that are not yet ready for production.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Deprecated in Kotlin version 2.2.20.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @DeprecatedCompilerArgument
     public val X_USE_FIR_EXPERIMENTAL_CHECKERS: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_USE_FIR_EXPERIMENTAL_CHECKERS")
 
