@@ -11,6 +11,7 @@ import com.intellij.psi.*
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.descendants
+import com.intellij.psi.util.elementType
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -1088,6 +1089,17 @@ object PositioningStrategies {
                 return markElement(element.typeParameterList ?: element)
             }
             return markElement(element)
+        }
+    }
+
+    val FUNCTION_TYPE_RECEIVER: PositioningStrategy<KtElement> = object : PositioningStrategy<KtElement>() {
+        override fun mark(element: KtElement): List<TextRange> {
+            val target = element.takeIf { it.elementType == KtNodeTypes.VALUE_PARAMETER }
+                ?.getChildOfType<KtTypeReference>()
+                ?.children?.firstOrNull()?.takeIf { it.elementType == KtNodeTypes.FUNCTION_TYPE }
+                ?.getChildOfType<KtFunctionTypeReceiver>()
+                ?: element
+            return markElement(target)
         }
     }
 

@@ -1033,6 +1033,22 @@ object LightTreePositioningStrategies {
         }
     }
 
+    val FUNCTION_TYPE_RECEIVER: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            val target = node.takeIf { it.tokenType == KtNodeTypes.VALUE_PARAMETER }
+                ?.getChildren(tree)?.find { it.tokenType == KtNodeTypes.TYPE_REFERENCE }
+                ?.getChildren(tree)?.firstOrNull()?.takeIf { it.tokenType == KtNodeTypes.FUNCTION_TYPE }
+                ?.getChildren(tree)?.find { it.tokenType == KtNodeTypes.FUNCTION_TYPE_RECEIVER }
+                ?: node
+            return markElement(target, startOffset, endOffset, tree, node)
+        }
+    }
+
     val NAME_IDENTIFIER: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
         override fun mark(
             node: LighterASTNode,

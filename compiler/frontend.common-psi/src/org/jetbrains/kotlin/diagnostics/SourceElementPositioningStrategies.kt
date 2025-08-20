@@ -291,6 +291,11 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.TYPE_PARAMETERS_LIST
     )
 
+    val FUNCTION_TYPE_RECEIVER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.FUNCTION_TYPE_RECEIVER,
+        PositioningStrategies.FUNCTION_TYPE_RECEIVER
+    )
+
     val NAME_IDENTIFIER = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.NAME_IDENTIFIER,
         PositioningStrategies.NAME_IDENTIFIER
