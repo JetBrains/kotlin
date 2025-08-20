@@ -60,6 +60,17 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
     val CallableSymbolMarker.modality: Modality?
     val CallableSymbolMarker.visibility: Visibility
 
+    val mustUseMatcher: MustUseMatcher?
+        get() = null
+
+    interface MustUseMatcher {
+        fun matches(
+            expectCallable: CallableSymbolMarker,
+            actualCallable: CallableSymbolMarker,
+            containingExpectClass: RegularClassSymbolMarker?,
+        ): Boolean
+    }
+
     val RegularClassSymbolMarker.superTypes: List<KotlinTypeMarker>
     val RegularClassSymbolMarker.superTypesRefs: List<TypeRefMarker>
     val RegularClassSymbolMarker.defaultType: KotlinTypeMarker
