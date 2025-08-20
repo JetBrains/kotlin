@@ -1,0 +1,18 @@
+/* MODULE name=<lib> */
+
+/* FILE package=<root> fileName=A.kt */
+
+/* TARGET declaration */ private lateinit fun sum(x: Int): Int
+    /* TARGET use-site */ sum(x = x.minus(other = 1))
+internal inline fun internalFun(x: Int): Int
+    /* ACCESSOR use-site */ access$sum$tAKt(x = x)
+/* ACCESSOR declaration */ internal fun access$sum$tAKt(x: Int): Int
+    /* TARGET use-site */ sum(x = x)
+
+
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=B.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$sum$tAKt(x = x)

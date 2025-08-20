@@ -1,0 +1,12 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=useTailrecPrivateTopLevelFunThroughInternalInlineFun.kt */
+
+/* TARGET declaration */ private lateinit fun sum(x: Int): Int
+    /* TARGET use-site */ sum(x = x.minus(other = 1))
+internal inline fun internalFun(x: Int): Int
+    /* ACCESSOR use-site */ access$sum$tUseTailrecPrivateTopLevelFunThroughInternalInlineFunKt(x = x)
+public fun box(): String
+    /* ACCESSOR use-site */ access$sum$tUseTailrecPrivateTopLevelFunThroughInternalInlineFunKt(x = x)
+/* ACCESSOR declaration */ internal fun access$sum$tUseTailrecPrivateTopLevelFunThroughInternalInlineFunKt(x: Int): Int
+    /* TARGET use-site */ sum(x = x)

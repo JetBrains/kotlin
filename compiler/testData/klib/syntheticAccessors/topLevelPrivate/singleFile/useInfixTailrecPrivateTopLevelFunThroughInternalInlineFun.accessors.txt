@@ -1,0 +1,12 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=useInfixTailrecPrivateTopLevelFunThroughInternalInlineFun.kt */
+
+/* TARGET declaration */ private lateinit infix fun Int.sum(that: Int): Int
+    /* TARGET use-site */ sum(/* <this> = <this>, */ that = that.minus(other = 1))
+internal inline fun internalFun(x: Int): Int
+    /* ACCESSOR use-site */ access$sum$tUseInfixTailrecPrivateTopLevelFunThroughInternalInlineFunKt($receiver = x.minus(other = 2), that = x)
+public fun box(): String
+    /* ACCESSOR use-site */ access$sum$tUseInfixTailrecPrivateTopLevelFunThroughInternalInlineFunKt($receiver = x.minus(other = 2), that = x)
+/* ACCESSOR declaration */ internal fun access$sum$tUseInfixTailrecPrivateTopLevelFunThroughInternalInlineFunKt($receiver: Int, that: Int): Int
+    /* TARGET use-site */ sum(/* <this> = $receiver, */ that = that)

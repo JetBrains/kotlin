@@ -1,0 +1,16 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=A.kt */
+
+/* TARGET declaration */ private lateinit infix fun Int.sum(that: Int): Int
+    /* TARGET use-site */ sum(/* <this> = <this>, */ that = that.minus(other = 1))
+internal inline fun internalFun(x: Int): Int
+    /* ACCESSOR use-site */ access$sum$tAKt($receiver = x.minus(other = 2), that = x)
+/* ACCESSOR declaration */ internal fun access$sum$tAKt($receiver: Int, that: Int): Int
+    /* TARGET use-site */ sum(/* <this> = $receiver, */ that = that)
+
+
+/* FILE package=<root> fileName=B.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$sum$tAKt($receiver = x.minus(other = 2), that = x)
