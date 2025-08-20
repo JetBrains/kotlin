@@ -28288,6 +28288,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
     public void testLambda_kt78666() {
       runTest("compiler/testData/codegen/box/lambda/lambda_kt78666.kt");
     }
+
+    @Test
+    @TestMetadata("lambda_kt80285.kt")
+    public void testLambda_kt80285() {
+      runTest("compiler/testData/codegen/box/lambda/lambda_kt80285.kt");
+    }
   }
 
   @Nested

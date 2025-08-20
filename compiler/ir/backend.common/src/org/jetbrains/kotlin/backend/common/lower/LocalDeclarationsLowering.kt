@@ -128,7 +128,7 @@ open class LocalDeclarationsLowering(
     val newParameterToOld: MutableMap<IrValueParameter, IrValueParameter> = mutableMapOf(),
     val oldParameterToNew: MutableMap<IrValueParameter, IrValueParameter> = mutableMapOf(),
 ) : BodyLoweringPass {
-    internal val declarationScopesWithCounter: MutableMap<IrClass, MutableMap<Name, ScopeWithCounter>> = mutableMapOf()
+    internal val declarationScopesWithCounter: MutableMap<IrClass, MutableMap<SanitizedName, ScopeWithCounter>> = mutableMapOf()
 
     open val invalidChars: Set<Char>
         get() = emptySet()
@@ -173,6 +173,20 @@ open class LocalDeclarationsLowering(
     protected open fun IrClass.getConstructorsThatCouldCaptureParamsWithoutFieldCreating(): Iterable<IrConstructor> =
         listOfNotNull(primaryConstructor)
 
+    internal inner class SanitizedName(val name: Name) {
+        val sanitizedName: String = localNameSanitizer(name.asString())
+
+        override fun hashCode(): Int = if (name.isSpecial) name.hashCode() else sanitizedName.hashCode()
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other !is SanitizedName) return false
+            return when {
+                name.isSpecial -> name == other.name
+                else -> sanitizedName == other.sanitizedName
+            }
+        }
+    }
+
     internal class ScopeWithCounter(val irElement: IrElement) {
         // Continuous numbering across all declarations in the container.
         var counter: Int = 0
@@ -186,13 +200,13 @@ open class LocalDeclarationsLowering(
     private fun IrField.getOrCreateScopeWithCounter(): ScopeWithCounter? {
         val klass = parentClassOrNull ?: return null
         return declarationScopesWithCounter.getOrPut(klass, ::mutableMapOf)
-            .getOrPut(this.name) { ScopeWithCounter(this) }
+            .getOrPut(SanitizedName(this.name)) { ScopeWithCounter(this) }
     }
 
     private fun IrFunction.getOrCreateScopeWithCounter(): ScopeWithCounter? {
         val klass = parentClassOrNull ?: return null
         return declarationScopesWithCounter.getOrPut(klass, ::mutableMapOf)
-            .getOrPut(this.name) { ScopeWithCounter(this) }
+            .getOrPut(SanitizedName(this.name)) { ScopeWithCounter(this) }
     }
 
     abstract class LocalContext {
