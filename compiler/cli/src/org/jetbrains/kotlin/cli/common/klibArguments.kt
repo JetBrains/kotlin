@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.customKlibAbiVersion
 import org.jetbrains.kotlin.config.duplicatedUniqueNameStrategy
+import org.jetbrains.kotlin.config.headerCompilation
 import org.jetbrains.kotlin.config.klibAbiCompatibilityLevel
 import org.jetbrains.kotlin.config.klibNormalizeAbsolutePath
 import org.jetbrains.kotlin.config.klibRelativePathBases
@@ -76,6 +77,9 @@ fun CompilerConfiguration.copyCommonKlibArgumentsFrom(source: CompilerConfigurat
 
     // ABI compatibility level (the one that actually affects the KLIB serialization).
     klibAbiCompatibilityLevel = source.klibAbiCompatibilityLevel
+
+    // Header compilation mode needs to be propagated to KLIB compilation.
+    headerCompilation = source.headerCompilation
 }
 
 private fun parseCustomKotlinAbiVersion(customKlibAbiVersion: String?, collector: MessageCollector): KotlinAbiVersion? {

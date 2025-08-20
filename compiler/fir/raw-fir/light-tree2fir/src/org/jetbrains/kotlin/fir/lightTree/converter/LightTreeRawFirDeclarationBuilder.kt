@@ -2002,8 +2002,7 @@ class LightTreeRawFirDeclarationBuilder(
             }
 
             if (headerCompilationMode) {
-                val functionVisibility = calculatedModifiers.getVisibility()
-                if (functionVisibility == Visibilities.Private || functionVisibility == Visibilities.Protected) {
+                if (calculatedModifiers.getVisibility() == Visibilities.Private) {
                     return null
                 }
             }

@@ -351,6 +351,8 @@ internal open class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
 
     public val KOTLIN_HOME: CommonCompilerArgument<String?> = CommonCompilerArgument("KOTLIN_HOME")
 
+    public val HEADER: CommonCompilerArgument<Boolean> = CommonCompilerArgument("HEADER")
+
     public val PROGRESSIVE: CommonCompilerArgument<Boolean> = CommonCompilerArgument("PROGRESSIVE")
 
     public val OPT_IN: CommonCompilerArgument<Array<String>?> = CommonCompilerArgument("OPT_IN")
