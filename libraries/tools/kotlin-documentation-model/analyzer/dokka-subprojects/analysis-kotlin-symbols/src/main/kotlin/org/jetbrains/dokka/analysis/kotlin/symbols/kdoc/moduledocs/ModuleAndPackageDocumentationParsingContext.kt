@@ -15,7 +15,6 @@ import org.jetbrains.dokka.analysis.markdown.jb.MarkdownParser
 import org.jetbrains.dokka.model.doc.DocumentationNode
 import org.jetbrains.dokka.utilities.DokkaLogger
 import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.name.FqName
 
 internal fun interface ModuleAndPackageDocumentationParsingContext {
     fun markdownParserFor(fragment: ModuleAndPackageDocumentationFragment, location: String): MarkdownParser
@@ -37,19 +36,17 @@ internal fun ModuleAndPackageDocumentationParsingContext(
         MarkdownParser(externalDri = { null }, sourceLocation)
     } else {
         val sourceModule = kotlinAnalysis.getModule(sourceSet)
-        val contextPsi = analyze(sourceModule) {
-            val contextSymbol = when (fragment.classifier) {
-                Module -> rootPackageSymbol
-                Package -> findPackage(FqName(fragment.name))
-            }
-            contextSymbol?.psi
+        val contextPackageFQN = when (fragment.classifier) {
+            Module -> null
+            Package -> fragment.name
         }
+
         MarkdownParser(
             externalDri = { link ->
                 analyze(sourceModule) {
                     resolveKDocTextLinkToDRI(
                         link,
-                        contextPsi
+                        contextPackageFQN
                     ).ifUnresolved {
                         logger.logUnresolvedLink(link, fragment.name.ifBlank { "module documentation" })
                     }
