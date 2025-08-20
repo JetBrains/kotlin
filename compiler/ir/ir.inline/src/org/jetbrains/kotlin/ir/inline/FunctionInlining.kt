@@ -97,7 +97,7 @@ private class CallInlining(
         inlineFunction(
             callSite = callSite,
             callee = callee,
-            inlinedFunctionSymbol = (callee.originalOfErasedTopLevelCopy ?: callee).symbol
+            inlinedFunctionSymbol = ((callee as? IrSimpleFunction)?.originalOfPreparedInlineFunctionCopy ?: callee).symbol
         ).patchDeclarationParents(parent)
 
     private fun inlineFunction(

@@ -300,7 +300,7 @@ open class IrFileSerializer(
                 // Prefer a real inline function over its prepared copy - the latter is only used store inlinable body,
                 // and only the former has the correct declaration shape (such as parameters) allowing to compute
                 // a valid signature of the function.
-                (symbolOwner as? IrSimpleFunction)?.originalOfErasedTopLevelCopy?.let {
+                (symbolOwner as? IrSimpleFunction)?.originalOfPreparedInlineFunctionCopy?.let {
                     symbolOwner = it
                 }
 
@@ -1222,7 +1222,7 @@ open class IrFileSerializer(
         declaration.overriddenSymbols.forEach {
             proto.addOverridden(serializeIrSymbol(it))
         }
-        declaration.originalOfErasedTopLevelCopy?.let { original ->
+        declaration.originalOfPreparedInlineFunctionCopy?.let { original ->
             proto.preparedInlineFunctionFileEntryId = serializeFileEntryId(original.fileEntry)
         }
 
@@ -1585,7 +1585,7 @@ open class IrFileSerializer(
         val topLevelDeclarations = preparedFunctions.map { function ->
             val byteArray = serializeDeclaration(function).toByteArray()
             val idSig = declarationTable.signatureByDeclaration(
-                function.originalOfErasedTopLevelCopy!!,
+                function.originalOfPreparedInlineFunctionCopy!!,
                 compatibleMode = false,
                 recordInSignatureClashDetector = false
             )
