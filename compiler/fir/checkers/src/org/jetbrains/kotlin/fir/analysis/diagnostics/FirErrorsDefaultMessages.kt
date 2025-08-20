@@ -23,8 +23,10 @@ import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.NAME
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.RENDER_POSITION_VARIANCE
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.STRING
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.commaSeparated
+import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticParameterRenderer
 import org.jetbrains.kotlin.diagnostics.rendering.LanguageFeatureMessageRenderer
 import org.jetbrains.kotlin.diagnostics.rendering.Renderer
+import org.jetbrains.kotlin.diagnostics.rendering.RenderingContext
 import org.jetbrains.kotlin.diagnostics.rendering.appendVersion
 import org.jetbrains.kotlin.diagnostics.rendering.toDeprecationWarningMessage
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.CALLABLES_FQ_NAMES
@@ -868,6 +870,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_NUMBER_OF_T
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_SETTER_PARAMETER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_SETTER_RETURN_TYPE
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.fir.types.renderReadable
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 
 /**
@@ -3242,13 +3246,34 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             RECEIVER_SHADOWED_BY_CONTEXT_PARAMETER,
             "Call to {0} uses an implicit receiver shadowed by a context parameter. {1}",
             SYMBOL_WITH_CONTAINING_DECLARATION,
-            Renderer { isDispatchOfMemberExtension ->
-                if (isDispatchOfMemberExtension) {
-                    "Disambiguate the receiver by wrapping the call in 'with(this) { ... }' or 'with(contextOf<...>()) { ... }'."
-                } else {
-                    "Make the receiver explicit using 'this' or 'contextOf'."
+            object : DiagnosticParameterRenderer<Boolean> {
+                val contextParametersKey: RenderingContext.Key<List<String>> =
+                    object : RenderingContext.Key<List<String>>("contextParameters") {
+                        override fun compute(objectsToRender: Collection<Any?>): List<String> {
+                            @Suppress("UNCHECKED_CAST")
+                            val symbols = objectsToRender.last() as? List<FirValueParameterSymbol> ?: return emptyList()
+
+                            return symbols
+                                .map { if (it.name.isSpecial) "contextOf<${it.resolvedReturnType.renderReadable()}>()" else it.name.identifier }
+                                .distinct()
+                        }
+                    }
+
+                override fun render(
+                    obj: Boolean,
+                    renderingContext: RenderingContext,
+                ): String {
+                    val renderedContextParameters = renderingContext[contextParametersKey]
+                    return if (obj) {
+                        val contextParameterOptions = renderedContextParameters.joinToString(separator = " / ") { "'with($it) { ... }'" }
+                        "Disambiguate the receiver by wrapping the call in 'with(this) { ... }' or $contextParameterOptions."
+                    } else {
+                        val contextParameterOptions = renderedContextParameters.joinToString(separator = " / ") { "'$it'" }
+                        "Make the receiver explicit using 'this' or $contextParameterOptions."
+                    }
                 }
-            }
+            },
+            NOT_RENDERED,
         )
 
         // Type alias

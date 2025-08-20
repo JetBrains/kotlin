@@ -933,7 +933,7 @@ object FirErrors : KtDiagnosticsContainer() {
     val INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtDestructuringDeclaration::class, getRendererFactory())
     val NOT_FUNCTION_AS_OPERATOR: KtDiagnosticFactory2<String, FirBasedSymbol<*>> = KtDiagnosticFactory2("NOT_FUNCTION_AS_OPERATOR", ERROR, SourceElementPositioningStrategies.OPERATOR, PsiElement::class, getRendererFactory())
     val DSL_SCOPE_VIOLATION: KtDiagnosticFactory1<FirBasedSymbol<*>> = KtDiagnosticFactory1("DSL_SCOPE_VIOLATION", ERROR, SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED, PsiElement::class, getRendererFactory())
-    val RECEIVER_SHADOWED_BY_CONTEXT_PARAMETER: KtDiagnosticFactory2<FirBasedSymbol<*>, Boolean> = KtDiagnosticFactory2("RECEIVER_SHADOWED_BY_CONTEXT_PARAMETER", ERROR, SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED, PsiElement::class, getRendererFactory())
+    val RECEIVER_SHADOWED_BY_CONTEXT_PARAMETER: KtDiagnosticFactory3<FirBasedSymbol<*>, Boolean, List<FirValueParameterSymbol>> = KtDiagnosticFactory3("RECEIVER_SHADOWED_BY_CONTEXT_PARAMETER", ERROR, SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED, PsiElement::class, getRendererFactory())
 
     // Type alias
     val TOPLEVEL_TYPEALIASES_ONLY: KtDiagnosticFactory0 = KtDiagnosticFactory0("TOPLEVEL_TYPEALIASES_ONLY", ERROR, SourceElementPositioningStrategies.DEFAULT, KtTypeAlias::class, getRendererFactory())

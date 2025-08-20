@@ -1928,6 +1928,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val RECEIVER_SHADOWED_BY_CONTEXT_PARAMETER by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
             parameter<FirBasedSymbol<*>>("calleeSymbol")
             parameter<Boolean>("isDispatchOfMemberExtension")
+            parameter<List<FirValueParameterSymbol>>("contextParameterSymbols")
         }
     }
 

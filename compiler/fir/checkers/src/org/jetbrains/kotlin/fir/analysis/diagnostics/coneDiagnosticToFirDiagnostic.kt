@@ -528,6 +528,7 @@ private fun mapInapplicableCandidateError(
                     source,
                     rootCause.calleeSymbol,
                     rootCause.isDispatchOfMemberExtension,
+                    rootCause.compatibleContextParameters,
                     session
                 )
             }

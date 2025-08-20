@@ -605,12 +605,19 @@ private object CheckReceiverShadowedByContextParameter {
 
         val potentialReceiverType = starProjectedReceiverType(candidate, kind) ?: return
 
-        if (closerOrOnTheSameLevelContextParameters.any { implicitValue ->
-                candidate.system.isSubtypeConstraintCompatible(implicitValue.type, potentialReceiverType)
-            }) {
+        val compatibleContextParameters = closerOrOnTheSameLevelContextParameters.filter { implicitValue ->
+            candidate.system.isSubtypeConstraintCompatible(implicitValue.type, potentialReceiverType)
+        }
+        if (compatibleContextParameters.isNotEmpty()) {
             val isDispatchOfMemberExtension = kind == ImplicitKind.DispatchReceiver &&
                     (candidate.symbol as? FirCallableSymbol)?.receiverParameterSymbol != null
-            sink.reportDiagnostic(ReceiverShadowedByContextParameter(candidate.symbol, isDispatchOfMemberExtension))
+            sink.reportDiagnostic(
+                ReceiverShadowedByContextParameter(
+                    candidate.symbol,
+                    isDispatchOfMemberExtension,
+                    compatibleContextParameters.map { it.boundSymbol }
+                )
+            )
         }
     }
 

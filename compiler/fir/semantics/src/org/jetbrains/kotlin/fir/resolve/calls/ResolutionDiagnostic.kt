@@ -169,7 +169,8 @@ class DslScopeViolation(val calleeSymbol: FirBasedSymbol<*>) : ResolutionDiagnos
 
 class ReceiverShadowedByContextParameter(
     val calleeSymbol: FirBasedSymbol<*>,
-    val isDispatchOfMemberExtension: Boolean
+    val isDispatchOfMemberExtension: Boolean,
+    val compatibleContextParameters: List<FirValueParameterSymbol>
 ) : ResolutionDiagnostic(RESOLVED_WITH_ERROR)
 
 class MultipleContextReceiversApplicableForExtensionReceivers : ResolutionDiagnostic(INAPPLICABLE)

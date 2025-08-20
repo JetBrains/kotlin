@@ -5550,6 +5550,9 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
         ReceiverShadowedByContextParameterImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firDiagnostic.b,
+            firDiagnostic.c.map { firValueParameterSymbol ->
+                firSymbolBuilder.buildSymbol(firValueParameterSymbol)
+            },
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
