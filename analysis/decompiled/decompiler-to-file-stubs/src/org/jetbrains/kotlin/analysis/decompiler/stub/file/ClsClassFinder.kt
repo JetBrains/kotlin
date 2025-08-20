@@ -36,6 +36,7 @@ object ClsClassFinder {
      * which should NOT be decompiled (and, as a result, shown under the library in the Project view, be searchable via Find class, etc.)
      */
     @JvmOverloads
+    @Suppress("DEPRECATION")
     fun isKotlinInternalCompiledFile(
         file: VirtualFile,
         fileContent: ByteArray? = null,

@@ -43,6 +43,7 @@ public class KtUserType extends KtElementImplStub<KotlinUserTypeStub> implements
     }
 
     @Nullable
+    @SuppressWarnings("deprecation")
     public KtTypeArgumentList getTypeArgumentList() {
         return getStubOrPsiChild(KtStubBasedElementTypes.TYPE_ARGUMENT_LIST);
     }
@@ -65,12 +66,14 @@ public class KtUserType extends KtElementImplStub<KotlinUserTypeStub> implements
     }
 
     @Nullable @IfNotParsed
+    @SuppressWarnings("deprecation")
     public KtSimpleNameExpression getReferenceExpression() {
         KtNameReferenceExpression nameRefExpr = getStubOrPsiChild(KtStubBasedElementTypes.REFERENCE_EXPRESSION);
         return nameRefExpr != null ? nameRefExpr : getStubOrPsiChild(KtStubBasedElementTypes.ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION);
     }
 
     @Nullable
+    @SuppressWarnings("deprecation")
     public KtUserType getQualifier() {
         return getStubOrPsiChild(KtStubBasedElementTypes.USER_TYPE);
     }

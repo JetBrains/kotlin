@@ -98,6 +98,7 @@ open class PsiRawFirBuilder(
         return this.toKtPsiSourceElement(actualKind)
     }
 
+    @Suppress("DEPRECATION")
     override val PsiElement.elementType: IElementType
         get() {
             val stubBasedElement = this as? StubBasedPsiElementBase<*>
@@ -2563,6 +2564,7 @@ open class PsiRawFirBuilder(
             // 2. `(suspend @A () -> Int)?` is a nullable suspend function type, but the modifier list is on the child KtNullableType
             //
             // `getModifierList()` only returns the first one, so we have to get all modifier list children.
+            @Suppress("DEPRECATION")
             fun KtElementImplStub<*>.getAllModifierLists(): Array<out KtDeclarationModifierList> =
                 getStubOrPsiChildren(KtStubElementTypes.MODIFIER_LIST, KtStubElementTypes.MODIFIER_LIST.arrayFactory)
 

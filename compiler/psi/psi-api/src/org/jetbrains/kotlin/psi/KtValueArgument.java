@@ -72,6 +72,7 @@ public class KtValueArgument extends KtElementImplStub<KotlinValueArgumentStub<?
 
     @Override
     @Nullable
+    @SuppressWarnings("deprecation")
     public KtValueArgumentName getArgumentName() {
         return getStubOrPsiChild(KtStubBasedElementTypes.VALUE_ARGUMENT_NAME);
     }
