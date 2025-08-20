@@ -74,9 +74,10 @@ abstract class CommonKlibBasedCompilerArguments : CommonCompilerArguments() {
 
     @Argument(
         value = "-Xklib-ir-inliner",
+        valueDescription = "{intra-module|full|disabled}",
         description = "Enable experimental support to invoke IR Inliner before Klib serialization.",
     )
-    var irInlinerBeforeKlibSerialization: Boolean = false
+    var irInlinerBeforeKlibSerialization: String = "disabled"
         set(value) {
             checkFrozen()
             field = value

@@ -77,11 +77,16 @@ open class CommonCompilerArgumentsConfigurator {
                 configureLanguageFeaturesFromInternalArgs(arguments, collector)
             }
 
-            configureExtraLanguageFeatures(arguments, this)
+            configureExtraLanguageFeatures(arguments, this, collector)
         }
     }
 
-    protected open fun configureExtraLanguageFeatures(arguments: CommonCompilerArguments, map: HashMap<LanguageFeature, LanguageFeature.State>) {}
+    protected open fun configureExtraLanguageFeatures(
+        arguments: CommonCompilerArguments,
+        map: HashMap<LanguageFeature, LanguageFeature.State>,
+        collector: MessageCollector,
+    ) {
+    }
 
     private fun HashMap<LanguageFeature, LanguageFeature.State>.configureLanguageFeaturesFromInternalArgs(
         arguments: CommonCompilerArguments,
