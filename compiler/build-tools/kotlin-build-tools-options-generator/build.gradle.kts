@@ -11,6 +11,7 @@ dependencies {
     implementation(project(":compiler:build-tools:util-kotlinpoet"))
     implementation(project(":generators"))
     implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect"))
+    testImplementation(kotlinTest("junit"))
 }
 
 application {
@@ -19,6 +20,9 @@ application {
 
 sourceSets {
     "main" {
+        projectDefault()
+    }
+    "test" {
         projectDefault()
     }
 }

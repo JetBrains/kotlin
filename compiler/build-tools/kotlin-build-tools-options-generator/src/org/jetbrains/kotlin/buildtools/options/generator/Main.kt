@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.buildtools.options.generator
 import com.squareup.kotlinpoet.TypeName
 import org.jetbrains.kotlin.arguments.description.kotlinCompilerArguments
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
+import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import org.jetbrains.kotlin.utils.addToStdlib.popLast
 import java.nio.file.Path
@@ -18,21 +19,29 @@ import kotlin.io.path.walk
 /**
  * Arguments are as follows:
  * 1. `<path>` - Output directory for generated classes
- * 2. `"api"` - (optional) turns on API classes generation and marks the start of parameters for the API generator:
+ * 1. `<kotlin-version>` - the release of Kotlin for which arguments should be generated, e.g. "2.2.0"
+ * 1. `"api"` - (optional) turns on API classes generation and marks the start of parameters for the API generator:
  *     1. `"*"` or `<argumentsLevelName1,argumentsLevelName2>` -
  *     generate classes for all levels (`*`) or only generate classes for the specified list of argument level names and their parents
  *     (see CompilerArgumentsLevelNames.kt)
- *     2. `<package>` - (optional) the target package for generated arguments
- * 2. `"impl"` - (optional) turns on implementation classes generator and marks the start of parameters for the implementation generator:
+ *     1. `<package>` - (optional) the target package for generated arguments
+ * 1. `"impl"` - (optional) turns on implementation classes generator and marks the start of parameters for the implementation generator:
  *     1. `"*"` or `<argumentsLevelName1,argumentsLevelName2>` -
  *     generate classes for all levels (`*`) or only generate classes for the specified list of argument level names and their parents
  *     (see CompilerArgumentsLevelNames.kt)
- *     2. `<package>` - (optional) the target package for generated arguments
+ *     1. `<package>` - (optional) the target package for generated arguments
  *
  * You must specify at least one of "api" or "impl", and if both are specified "api" must come before "impl".
  */
 fun main(args: Array<String>) {
     val genDir = Paths.get(args[0])
+    val kotlinVersion = args[1].let { argVersionString ->
+        try {
+            KotlinReleaseVersion.valueOf(argVersionString)
+        } catch (_: IllegalArgumentException) {
+            parseLastKotlinReleaseVersion(argVersionString)
+        }
+    }.also { println("Generating BTA compiler arguments for Kotlin version $it") }
     val apiArgsStart = args.indexOf("api").let { if (it == -1) null else it }
     val implArgsStart = args.indexOf("impl").let { if (it == -1) null else it }
 
@@ -51,10 +60,10 @@ fun main(args: Array<String>) {
         } else null
         when (localArgs[0]) {
             "api" -> {
-                BtaApiGenerator(targetPackage ?: API_PACKAGE) to allowedLevels
+                BtaApiGenerator(targetPackage ?: API_ARGUMENTS_PACKAGE, skipXX = true, kotlinVersion) to allowedLevels
             }
             "impl" -> {
-                BtaImplGenerator(targetPackage ?: IMPL_PACKAGE) to allowedLevels
+                BtaImplGenerator(targetPackage ?: IMPL_ARGUMENTS_PACKAGE, skipXX = false, kotlinVersion) to allowedLevels
             }
             else -> {
                 error("Only `api` and `impl` are supported as arguments for the main function of the options generator")
@@ -88,7 +97,6 @@ internal interface BtaGenerator {
     fun generateArgumentsForLevel(
         level: KotlinCompilerArgumentsLevel,
         parentClass: TypeName? = null,
-        skipXX: Boolean = true,
     ): GeneratorOutputs
 }
 
@@ -107,4 +115,22 @@ private fun KotlinCompilerArgumentsLevel.findPathToLeaf(leafName: String): Set<K
         }
     }
     return emptySet()
+}
+
+private fun parseLastKotlinReleaseVersion(kotlinVersionString: String): KotlinReleaseVersion {
+    val baseVersion = kotlinVersionString.split("-", limit = 2)[0]
+
+    val baseVersionSplit = baseVersion.split(".")
+
+    val majorVersion =
+        baseVersionSplit[0].toIntOrNull() ?: error("Invalid Kotlin version: $kotlinVersionString (Failed parsing major version)")
+    val minorVersion =
+        baseVersionSplit.getOrNull(1)?.toIntOrNull() ?: error("Invalid Kotlin version: $kotlinVersionString (Failed parsing minor version)")
+    val patchVersion = baseVersionSplit.getOrNull(2)?.toIntOrNull() ?: 0
+
+    return KotlinReleaseVersion.entries.last { releaseVersion ->
+        releaseVersion.major < majorVersion ||
+                (releaseVersion.major == majorVersion && releaseVersion.minor < minorVersion) ||
+                (releaseVersion.major == majorVersion && releaseVersion.minor == minorVersion && releaseVersion.patch <= patchVersion)
+    }
 }

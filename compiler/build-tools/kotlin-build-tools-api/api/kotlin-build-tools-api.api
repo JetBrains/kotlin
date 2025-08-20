@@ -47,6 +47,9 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/CompilerExec
 	public abstract fun useInProcessStrategy ()Lorg/jetbrains/kotlin/buildtools/api/CompilerExecutionStrategyConfiguration;
 }
 
+public abstract interface annotation class org/jetbrains/kotlin/buildtools/api/DeprecatedCompilerArgument : java/lang/annotation/Annotation {
+}
+
 public abstract interface class org/jetbrains/kotlin/buildtools/api/ExecutionPolicy {
 }
 
@@ -128,6 +131,9 @@ public final class org/jetbrains/kotlin/buildtools/api/ProjectId$ProjectUUID : o
 	public final fun getUuid ()Ljava/util/UUID;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface annotation class org/jetbrains/kotlin/buildtools/api/RemovedCompilerArgument : java/lang/annotation/Annotation {
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/SharedApiClassesClassLoader {
@@ -288,6 +294,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/Jv
 	public static final field X_GENERATE_STRICT_METADATA_VERSION Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
 	public static final field X_INDY_ALLOW_ANNOTATED_LAMBDAS Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
 	public static final field X_IR_DO_NOT_CLEAR_BINDING_CONTEXT Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
+	public static final field X_IR_INLINER Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
 	public static final field X_JAVA_PACKAGE_PREFIX Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
 	public static final field X_JAVA_SOURCE_ROOTS Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
 	public static final field X_JDK_RELEASE Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
@@ -324,6 +331,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/Jv
 	public static final field X_USE_14_INLINE_CLASSES_MANGLING_SCHEME Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
 	public static final field X_USE_FAST_JAR_FILE_SYSTEM Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
 	public static final field X_USE_INLINE_SCOPES_NUMBERS Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
+	public static final field X_USE_K2_KAPT Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
 	public static final field X_USE_OLD_CLASS_FILES_READING Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
 	public static final field X_USE_TYPE_TABLE Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
 	public static final field X_VALIDATE_BYTECODE Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
