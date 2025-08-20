@@ -6571,6 +6571,24 @@ public class IrBlackBoxInlineCodegenTestGenerated extends AbstractIrBlackBoxInli
         }
 
         @Test
+        @TestMetadata("leakingPrivateConstructorInInnerClass.kt")
+        public void testLeakingPrivateConstructorInInnerClass() {
+          runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateConstructorInInnerClass.kt");
+        }
+
+        @Test
+        @TestMetadata("leakingPrivateConstructorInInnerClassThroughReference.kt")
+        public void testLeakingPrivateConstructorInInnerClassThroughReference() {
+          runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateConstructorInInnerClassThroughReference.kt");
+        }
+
+        @Test
+        @TestMetadata("leakingPrivateConstructorInInnerClassWithTypeParameter.kt")
+        public void testLeakingPrivateConstructorInInnerClassWithTypeParameter() {
+          runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateConstructorInInnerClassWithTypeParameter.kt");
+        }
+
+        @Test
         @TestMetadata("leakingPrivateConstructorThroughInternalInlineFun.kt")
         public void testLeakingPrivateConstructorThroughInternalInlineFun() {
           runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateConstructorThroughInternalInlineFun.kt");
@@ -6947,6 +6965,24 @@ public class IrBlackBoxInlineCodegenTestGenerated extends AbstractIrBlackBoxInli
         }
 
         @Test
+        @TestMetadata("leakingPrivateConstructorInInnerClass.kt")
+        public void testLeakingPrivateConstructorInInnerClass() {
+          runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateConstructorInInnerClass.kt");
+        }
+
+        @Test
+        @TestMetadata("leakingPrivateConstructorInInnerClassThroughReference.kt")
+        public void testLeakingPrivateConstructorInInnerClassThroughReference() {
+          runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateConstructorInInnerClassThroughReference.kt");
+        }
+
+        @Test
+        @TestMetadata("leakingPrivateConstructorInInnerClassWithTypeParameter.kt")
+        public void testLeakingPrivateConstructorInInnerClassWithTypeParameter() {
+          runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateConstructorInInnerClassWithTypeParameter.kt");
+        }
+
+        @Test
         @TestMetadata("leakingPrivateConstructorThroughInternalInlineFun.kt")
         public void testLeakingPrivateConstructorThroughInternalInlineFun() {
           runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateConstructorThroughInternalInlineFun.kt");
@@ -7284,6 +7320,24 @@ public class IrBlackBoxInlineCodegenTestGenerated extends AbstractIrBlackBoxInli
         @Test
         public void testAllFilesPresentInSingleFile() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/privateMember/singleFile"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("leakingPrivateConstructorInInnerClass.kt")
+        public void testLeakingPrivateConstructorInInnerClass() {
+          runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/leakingPrivateConstructorInInnerClass.kt");
+        }
+
+        @Test
+        @TestMetadata("leakingPrivateConstructorInInnerClassThroughReference.kt")
+        public void testLeakingPrivateConstructorInInnerClassThroughReference() {
+          runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/leakingPrivateConstructorInInnerClassThroughReference.kt");
+        }
+
+        @Test
+        @TestMetadata("leakingPrivateConstructorInInnerClassWithTypeParameter.kt")
+        public void testLeakingPrivateConstructorInInnerClassWithTypeParameter() {
+          runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/leakingPrivateConstructorInInnerClassWithTypeParameter.kt");
         }
 
         @Test
