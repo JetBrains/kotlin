@@ -1257,7 +1257,6 @@ internal abstract class FunctionGenerationContext(
     }
 
     fun loadTypeInfo(objPtr: LLVMValueRef): LLVMValueRef {
-        val typeInfoOrMetaPtr = structGep(runtime.objHeaderType, objPtr, 0  /* typeInfoOrMeta_ */)
 
         /**
          * Formally, this ordering is too weak, and doesn't prevent data race with installing extra object.
@@ -1265,14 +1264,11 @@ internal abstract class FunctionGenerationContext(
          */
         val memoryOrder = LLVMAtomicOrdering.LLVMAtomicOrderingMonotonic
 
-        // TODO: Get rid of the bitcast here by supplying the type in the GEP above.
-        val typeInfoOrMetaPtrRaw = bitcast(pointerType(codegen.intPtrType), typeInfoOrMetaPtr)
-        val typeInfoOrMetaWithFlags = load(codegen.intPtrType, typeInfoOrMetaPtrRaw, memoryOrder = memoryOrder)
+        val typeInfoOrMetaWithFlags = load(codegen.intPtrType, objPtr, memoryOrder = memoryOrder)
         // Clear two lower bits.
         val typeInfoOrMetaRaw = and(typeInfoOrMetaWithFlags, codegen.immTypeInfoMask)
         val typeInfoOrMeta = intToPtr(typeInfoOrMetaRaw, kTypeInfoPtr)
-        val typeInfoPtrPtr = structGep(runtime.typeInfoType, typeInfoOrMeta, 0 /* typeInfo */)
-        return load(codegen.kTypeInfoPtr, typeInfoPtrPtr, memoryOrder = LLVMAtomicOrdering.LLVMAtomicOrderingMonotonic)
+        return load(codegen.kTypeInfoPtr, typeInfoOrMeta, memoryOrder = LLVMAtomicOrdering.LLVMAtomicOrderingMonotonic)
     }
 
     /**
