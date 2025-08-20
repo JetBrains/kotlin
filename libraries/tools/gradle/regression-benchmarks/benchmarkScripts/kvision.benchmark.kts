@@ -24,55 +24,78 @@ val repoPatch = {
     )
 }
 
-val defaultIterations = 20
+val defaultIterations = 1
 
 runBenchmarks(
     repoPatch,
     suite {
-        scenario {
-            title = "Build Js clean build"
-            iterations = defaultIterations
+//        scenario {
+//            title = "Build Js clean build"
+//            iterations = defaultIterations
+//
+//            useGradleArgs(
+//                "-Pkotlin.kmp.unresolvedDependenciesDiagnostic=false",
+//            )
+//
+//            runTasks("jsJar")
+//            runCleanupTasks("clean")
+//        }
 
-            runTasks("jsJar")
-            runCleanupTasks("clean")
-        }
-
-        scenario {
-            title = "Build Js IR with ABI change in ObservableList"
-            iterations = defaultIterations
-
-            runTasks("jsJar")
-            applyAbiChangeTo("kvision-modules/kvision-state/src/jsMain/kotlin/io/kvision/state/ObservableList.kt")
-        }
-
-        scenario {
-            title = "Build Js IR with non-ABI change in ObservableList"
-            iterations = defaultIterations
-
-            runTasks("jsJar")
-            applyNonAbiChangeTo("kvision-modules/kvision-state/src/jsMain/kotlin/io/kvision/state/ObservableList.kt")
-        }
+//        scenario {
+//            title = "Build Js IR with ABI change in ObservableList"
+//            iterations = defaultIterations
+//
+//            useGradleArgs(
+////                "-Pkotlin.kmp.unresolvedDependenciesDiagnostic=false",
+//            )
+//
+//            runTasks("jsJar")
+//            applyAbiChangeTo("kvision-modules/kvision-state/src/jsMain/kotlin/io/kvision/state/ObservableList.kt")
+//        }
+//
+//        scenario {
+//            title = "Build Js IR with non-ABI change in ObservableList"
+//            iterations = defaultIterations
+//
+//            useGradleArgs(
+////                "-Pkotlin.kmp.unresolvedDependenciesDiagnostic=false",
+//            )
+//
+//            runTasks("jsJar")
+//            applyNonAbiChangeTo("kvision-modules/kvision-state/src/jsMain/kotlin/io/kvision/state/ObservableList.kt")
+//        }
 
         scenario {
             title = "Dry run configuration time"
-            useGradleArgs("-m")
+            useGradleArgs(
+                "-m",
+//                "-Pkotlin.kmp.unresolvedDependenciesDiagnostic=false",
+            )
             iterations = defaultIterations
 
             runTasks("jsJar")
         }
 
-        scenario {
-            title = "No-op configuration time"
-            iterations = defaultIterations
-
-            runTasks("help")
-        }
-
-        scenario {
-            title = "UP-TO-DATE configuration time"
-            iterations = defaultIterations
-
-            runTasks("jsJar")
-        }
+//        scenario {
+//            title = "No-op configuration time"
+//            iterations = defaultIterations
+//
+//            useGradleArgs(
+////                "-Pkotlin.kmp.unresolvedDependenciesDiagnostic=false",
+//            )
+//
+//            runTasks("help")
+//        }
+//
+//        scenario {
+//            title = "UP-TO-DATE configuration time"
+//            iterations = defaultIterations
+//
+//            useGradleArgs(
+////                "-Pkotlin.kmp.unresolvedDependenciesDiagnostic=false",
+//            )
+//
+//            runTasks("jsJar")
+//        }
     }
 )
