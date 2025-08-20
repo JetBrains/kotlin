@@ -51,7 +51,6 @@ dependencies {
     api(project(":analysis:analysis-api"))
 
     implementation(project(":core:compiler.common"))
-    implementation(project(":core:compiler.common.native"))
     implementation(project(":kotlin-tooling-core"))
 
     compileOnly(project(":analysis:analysis-api-standalone"))
