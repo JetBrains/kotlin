@@ -285,6 +285,7 @@ class TransactionOutputsRegistrar(
     }
 
     override fun addOutputFileGeneratedForPlugin(outputFile: File) {
+        transaction.registerAddedOrChangedFile(outputFile.toPath())
         origin.addOutputFileGeneratedForPlugin(outputFile)
     }
 }

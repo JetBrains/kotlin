@@ -9,7 +9,9 @@ import com.intellij.util.io.KeyDescriptor
 import org.jetbrains.kotlin.build.report.debug
 import org.jetbrains.kotlin.incremental.storage.AbstractBasicMap
 import org.jetbrains.kotlin.incremental.storage.BasicMapsOwner
+import org.jetbrains.kotlin.incremental.storage.IntExternalizer
 import org.jetbrains.kotlin.incremental.storage.ListExternalizer
+import org.jetbrains.kotlin.incremental.storage.toDescriptor
 import java.io.DataInput
 import java.io.DataOutput
 import java.io.File
@@ -66,12 +68,12 @@ private class ListLikeMap(
     icContext: IncrementalCompilationContext,
 ) : AbstractBasicMap<Int, List<File>>(
     storageFile,
-    keyDescriptor = IntKeyDescriptor,
+    keyDescriptor = IntExternalizer.toDescriptor(),
     valueExternalizer = ListExternalizer(fileDescriptor),
     icContext,
 ) {
     fun getValue(): List<File> {
-        return get(0) ?: emptyList()
+        return get(0).orEmpty()
     }
 
     fun getAndRemoveValue(): List<File> {
@@ -80,23 +82,5 @@ private class ListLikeMap(
 
     fun setValue(value: List<File>) {
         set(0, value)
-    }
-}
-
-private object IntKeyDescriptor : KeyDescriptor<Int> {
-    override fun getHashCode(value: Int): Int {
-        return value
-    }
-
-    override fun save(out: DataOutput, value: Int) {
-        out.writeInt(value)
-    }
-
-    override fun isEqual(val1: Int, val2: Int): Boolean {
-        return val1 == val2
-    }
-
-    override fun read(input: DataInput): Int {
-        return input.readInt()
     }
 }
