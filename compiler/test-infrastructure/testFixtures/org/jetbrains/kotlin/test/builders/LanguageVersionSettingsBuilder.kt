@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.services.AbstractEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.DefaultsDsl
-import org.jetbrains.kotlin.test.util.LANGUAGE_FEATURE_PATTERN
+import org.jetbrains.kotlin.test.util.parseLanguageFeature
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 @DefaultsDsl
@@ -135,23 +135,7 @@ class LanguageVersionSettingsBuilder {
     }
 
     private fun parseLanguageFeature(featureString: String) {
-        val matcher = LANGUAGE_FEATURE_PATTERN.matcher(featureString)
-        if (!matcher.find()) {
-            error(
-                """Wrong syntax in the '// ${LanguageSettingsDirectives.LANGUAGE.name}: ...' directive:
-                   found: '$featureString'
-                   Must be '((+|-)LanguageFeatureName)+'
-                   where '+' means 'enable', '-' means 'disable', 'warn:' means 'enable with warning'
-                   and language feature names are names of enum entries in LanguageFeature enum class"""
-            )
-        }
-        val mode = when (val mode = matcher.group(1)) {
-            "+" -> LanguageFeature.State.ENABLED
-            "-" -> LanguageFeature.State.DISABLED
-            else -> error("Unknown mode for language feature: $mode")
-        }
-        val name = matcher.group(2)
-        val feature = LanguageFeature.fromString(name) ?: error("Language feature with name \"$name\" not found")
+        val (feature, mode) = featureString.parseLanguageFeature()
         specificFeatures[feature] = mode
     }
 
