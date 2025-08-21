@@ -77,8 +77,8 @@ abstract class BenchmarkTemplate(
                 repoApplyPatch(patchName, patch)
             }
         }
-        val result = runBenchmarksSplitByAsyncProfilerSupport(suite, asyncProfilerConfig)
-        aggregateBenchmarkResults(result)
+        val results = runBenchmarksSplitByAsyncProfilerSupport(suite, asyncProfilerConfig)
+        aggregateBenchmarkResults(results)
 
         printEndingMessage()
     }
@@ -125,29 +125,18 @@ abstract class BenchmarkTemplate(
         }
 
         git.use { git ->
-            git.cleanXffd()
             git.fetch()
                 .setRefSpecs(gitCommitSha)
                 .setDepth(1)
                 .setProgressMonitor(gitOperationsPrinter)
                 .call()
 
-            git.reset()
-                .setRef(gitCommitSha)
-                .setMode(ResetCommand.ResetType.HARD)
-                .setProgressMonitor(gitOperationsPrinter)
-                .call()
+            git.resetRepositoryState(gitCommitSha)
+            git.updateSubmodules()
 
-            git.submoduleInit().call().forEach { println("Submodule init: ${it}") }
-            git.submoduleSync().call().forEach { println("Submodule sync: ${it}") }
-            git.submoduleUpdate().setProgressMonitor(gitOperationsPrinter).call().forEach { println("Submodule update: ${it}") }
-
-            val submodules = SubmoduleWalk.forIndex(git.repository)
-            while (submodules.next()) {
-                val repo = submodules.repository ?: continue
-                git.submoduleInit().call().forEach { println("Submodule init: ${it}") }
-                git.submoduleSync().call().forEach { println("Submodule sync: ${it}") }
-                Git(repo).cleanXffd()
+            git.walkSubmodulesRecursively { submodule ->
+                submodule.resetRepositoryState("HEAD")
+                submodule.updateSubmodules()
             }
 
             val status = git.status().setProgressMonitor(gitOperationsPrinter).call()
@@ -163,13 +152,40 @@ abstract class BenchmarkTemplate(
         return projectRepoDir
     }
 
+    private fun Git.walkSubmodulesRecursively(action: (Git) -> Unit) {
+        val submodules = SubmoduleWalk.forIndex(repository)
+        while (submodules.next()) {
+            val submodule = submodules.repository ?: continue
+            Git(submodule).use { submoduleGit ->
+                println("Submodule walk: ${submoduleGit}")
+                action(submoduleGit)
+                submoduleGit.walkSubmodulesRecursively(action)
+            }
+        }
+    }
+
+    private fun Git.resetRepositoryState(ref: String) {
+        cleanXffd()
+        reset()
+            .setRef(ref)
+            .setMode(ResetCommand.ResetType.HARD)
+            .setProgressMonitor(gitOperationsPrinter)
+            .call()
+    }
+
+    private fun Git.updateSubmodules() {
+        submoduleInit().call().forEach { println("$this submodule init: $it") }
+        submoduleSync().call().forEach { println("$this submodule sync: $it") }
+        submoduleUpdate().setProgressMonitor(gitOperationsPrinter).call().forEach { println("$this submodule update: $it") }
+    }
+
     private fun Git.cleanXffd() {
         clean()
             .setForce(true)
             .setIgnore(true)
             .setCleanDirectories(true)
             .call().forEach {
-                println("Clean: ${it}")
+                println("Clean ${this.repository}: ${it}")
             }
     }
 
@@ -611,17 +627,18 @@ abstract class BenchmarkTemplate(
         val cpuProfiler: String,
     )
 
-    private fun asyncProfilerConfig(): BenchmarkTemplate.AsyncProfilerConfiguration? {
+    private fun asyncProfilerConfig(): AsyncProfilerConfiguration? {
         val javaOsName = System.getProperty("os.name")
         return when {
             javaOsName == "Mac OS X" -> BenchmarkTemplate.AsyncProfilerConfiguration(
                 "https://github.com/async-profiler/async-profiler/releases/download/v${ASYNC_PROFILER_VERSION}/async-profiler-${ASYNC_PROFILER_VERSION}-macos.zip",
-                BenchmarkTemplate.Decompression.ZIP,
+                Decompression.ZIP,
                 cpuProfiler = "cpu",
             )
             javaOsName == "Linux" -> BenchmarkTemplate.AsyncProfilerConfiguration(
                 "https://github.com/async-profiler/async-profiler/releases/download/v${ASYNC_PROFILER_VERSION}/async-profiler-${ASYNC_PROFILER_VERSION}-linux-x64.tar.gz",
-                BenchmarkTemplate.Decompression.TAR_GZ,
+                Decompression.TAR_GZ,
+                // On CI this will implicitly run in "ctimer" mode because we run containerized builds which don't have access to perf_events
                 cpuProfiler = "cpu",
             )
             javaOsName.startsWith("Windows") -> null
