@@ -18,6 +18,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.*
+import com.intellij.util.containers.CollectionFactory
 import org.jetbrains.kotlin.analysis.api.platform.KotlinDeserializedDeclarationsOrigin
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformSettings
 import org.jetbrains.kotlin.analysis.api.platform.declarations.*
@@ -38,7 +39,6 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
-import java.util.concurrent.ConcurrentHashMap
 
 class KotlinStandaloneDeclarationProvider internal constructor(
     private val index: KotlinStandaloneDeclarationIndex,
@@ -412,6 +412,27 @@ private fun findInheritableSimpleNames(typeElement: KtTypeElement): List<String>
     }
 }
 
+private class IndexableFile(
+    /**
+     * The virtual file of the file that is being indexed.
+     */
+    val virtualFile: VirtualFile,
+
+    /**
+     * The [KtFile] associated with the [virtualFile].
+     */
+    val ktFile: KtFile,
+
+    /**
+     * Whether the file is shared between multiple projects.
+     */
+    val isShared: Boolean,
+) {
+    override fun equals(other: Any?): Boolean = this === other || other is IndexableFile && virtualFile == other.virtualFile
+    override fun hashCode(): Int = virtualFile.hashCode()
+    override fun toString(): String = virtualFile.toString()
+}
+
 private fun computeIndex(
     project: Project,
     sourceKtFiles: Collection<KtFile>,
@@ -425,14 +446,20 @@ private fun computeIndex(
 
     val psiManager = PsiManager.getInstance(project)
     val cacheService = ApplicationManager.getApplication().serviceOrNull<KotlinFakeClsStubsCache>()
-    val setStubTreeMethod = PsiFileImpl::class
-        .java
-        .declaredMethods
-        .find { it.name == "setStubTree" && it.parameterCount == 1 }
 
-    setStubTreeMethod?.isAccessible = true
+    // Synchronization is not needed since either this code is executed in a single thread right away or guarded by the next synchronized `lazyIndex` property
+    val setStubTreeMethod by lazy(LazyThreadSafetyMode.NONE) {
+        val setStubTreeMethodName = "setStubTree"
 
-    fun MutableMap<VirtualFile, KtFile>.collectDecompiledFilesFromBinaryRoot(binaryRoot: VirtualFile) {
+        PsiFileImpl::class
+            .java
+            .declaredMethods
+            .find { it.name == setStubTreeMethodName && it.parameterCount == 1 }
+            ?.also { it.isAccessible = true }
+            ?: error("'${PsiFileImpl::class.simpleName}.$setStubTreeMethodName' method is not found")
+    }
+
+    fun MutableSet<IndexableFile>.collectDecompiledFilesFromBinaryRoot(binaryRoot: VirtualFile, isSharedRoot: Boolean) {
         VfsUtilCore.visitChildrenRecursively(binaryRoot, object : VirtualFileVisitor<Void>() {
             override fun visitFile(file: VirtualFile): Boolean {
                 if (!file.isDirectory) {
@@ -440,7 +467,7 @@ private fun computeIndex(
                     // Synthetic class parts are not supposed to be indexed to avoid duplicates
                     // The information about virtual files are already cached after the previous line
                     if (ktFile != null && !ClsClassFinder.isMultifileClassPartFile(file)) {
-                        put(file, ktFile)
+                        add(IndexableFile(file, ktFile, isShared = isSharedRoot))
                     }
                 }
 
@@ -487,50 +514,45 @@ private fun computeIndex(
 
     val recorder = KtDeclarationRecorder()
 
-    fun indexStubRecursively(virtualFile: VirtualFile, file: KtFile) {
+    fun indexStubRecursively(indexableFile: IndexableFile) {
+        val virtualFile = indexableFile.virtualFile
+        val ktFile = indexableFile.ktFile
+
         // Stub calculation
-        if (cacheService != null) {
+        if (indexableFile.isShared && cacheService != null) {
             val stub = cacheService.getOrBuildStub(virtualFile) {
-                file.calcStubTree().root as KotlinFileStubImpl
+                ktFile.calcStubTree().root as KotlinFileStubImpl
             }
 
-            if (stub.psi != file) {
-                if (setStubTreeMethod == null) {
-                    error("`PsiFileImpl.setStubTree` method is not found")
-                }
-
+            if (stub.psi != ktFile) {
                 @OptIn(KtImplementationDetail::class)
                 val clonedStub = stub.cloneRecursively()
 
                 // A hack to avoid costly stub builder execution
-                setStubTreeMethod.invoke(file, clonedStub)
+                setStubTreeMethod.invoke(ktFile, clonedStub)
             }
         } else {
-            file.calcStubTree()
+            ktFile.calcStubTree()
         }
 
-        val stub = file.greenStub as KotlinFileStubImpl
+        val stub = ktFile.greenStub as KotlinFileStubImpl
         index.indexStubRecursively(stub)
     }
 
     // We only need to index binary roots if we deserialize compiled symbols from stubs. When deserializing from class files, we don't
     // need these symbols in the declaration provider.
-    val decompiledFilesFromBinaryRoots: Map<VirtualFile, KtFile> = if (shouldBuildStubsForBinaryLibraries) {
-        buildMap {
+    val decompiledFilesFromBinaryRoots: Set<IndexableFile> = if (shouldBuildStubsForBinaryLibraries) {
+        buildSet {
             for (root in sharedBinaryRoots) {
-                collectDecompiledFilesFromBinaryRoot(root)
+                collectDecompiledFilesFromBinaryRoot(root, isSharedRoot = true)
             }
 
             for (root in binaryRoots) {
-                collectDecompiledFilesFromBinaryRoot(root)
+                collectDecompiledFilesFromBinaryRoot(root, isSharedRoot = false)
             }
         }
     } else {
-        emptyMap()
-    }
-
-    val (decompiledBuiltinsFilesFromBinaryRoots, decompiledFilesFromOtherFiles) = decompiledFilesFromBinaryRoots.entries.partition { entry ->
-        entry.key.fileType == KotlinBuiltInFileType
+        emptySet()
     }
 
     val decompiledFilesFromBuiltins = if (!skipBuiltins) {
@@ -538,7 +560,7 @@ private fun computeIndex(
             .getBuiltinVirtualFiles()
             .mapNotNull { virtualFile ->
                 (psiManager.findFile(virtualFile) as? KtFile)?.let {
-                    virtualFile to it
+                    IndexableFile(virtualFile, it, isShared = true)
                 }
             }
     } else {
@@ -547,24 +569,22 @@ private fun computeIndex(
 
     // indexing
     fun buildIndex(): KotlinStandaloneDeclarationIndexImpl {
-        decompiledFilesFromBuiltins.forEach { (virtualFile, file) ->
-            indexStubRecursively(virtualFile, file)
+        decompiledFilesFromBuiltins.forEach(::indexStubRecursively)
+
+        val (decompiledBuiltinsFilesFromBinaryRoots, decompiledFilesFromOtherFiles) = decompiledFilesFromBinaryRoots.partition { entry ->
+            entry.virtualFile.fileType == KotlinBuiltInFileType
         }
 
-        decompiledFilesFromOtherFiles.forEach { (virtualFile, file) ->
-            indexStubRecursively(virtualFile, file)
-        }
+        decompiledFilesFromOtherFiles.forEach(::indexStubRecursively)
 
         // Due to KT-78748, we have to index builtin declarations last so that class declarations are preferred. Note that this currently
         // only affects Analysis API tests, since production Standalone doesn't index binary declarations as stubs.
-        decompiledBuiltinsFilesFromBinaryRoots.forEach { (virtualFile, file) ->
-            indexStubRecursively(virtualFile, file)
-        }
+        decompiledBuiltinsFilesFromBinaryRoots.forEach(::indexStubRecursively)
 
         for (file in sourceKtFiles) {
             if (!file.isCompiled) continue
 
-            indexStubRecursively(file.virtualFile, file)
+            indexStubRecursively(IndexableFile(file.virtualFile, file, isShared = false))
         }
 
         sourceKtFiles.forEach { file ->
@@ -588,7 +608,7 @@ private fun computeIndex(
     }
 
     return IndexData(
-        fakeKtFiles = decompiledFilesFromBuiltins.map { it.second } + decompiledFilesFromOtherFiles.map { it.value } + decompiledBuiltinsFilesFromBinaryRoots.map { it.value },
+        fakeKtFiles = decompiledFilesFromBuiltins.map(IndexableFile::ktFile) + decompiledFilesFromBinaryRoots.map(IndexableFile::ktFile),
         index = object : KotlinStandaloneDeclarationIndex {
             private val computedIndex: KotlinStandaloneDeclarationIndexImpl get() = lazyIndex.value
 
@@ -606,15 +626,16 @@ private fun computeIndex(
 }
 
 /**
- * Test application service to store stubs of shared between tests libraries.
+ * Test application service to store stubs of libraries shared between tests.
  *
- * Otherwise, each test would start indexing of stdlib from scratch,
- * and under the lock which makes tests extremely slow
+ * Otherwise, each test would start indexing of stdlib from scratch and under the lock, which makes tests extremely slow.
  *
- * **Note**: shared stubs **MUST NOT** store psi
+ * The cache shouldn't be stored on hard references to avoid problems with memory leaks.
+ *
+ * **Note**: shared stubs might store psi, but **MUST NOT** reuse it for different files
  */
 internal class KotlinFakeClsStubsCache {
-    private val fileStubs = ConcurrentHashMap<VirtualFile, KotlinFileStubImpl>()
+    private val fileStubs = CollectionFactory.createConcurrentWeakKeySoftValueMap<VirtualFile, KotlinFileStubImpl>()
 
     fun getOrBuildStub(
         compiledFile: VirtualFile,
