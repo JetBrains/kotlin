@@ -193,6 +193,7 @@ public abstract class JpsBuildTestCase extends UsefulTestCase {
     return StringUtil.decapitalize(StringUtil.trimStart(getName(), "test"));
   }
 
+  @SuppressWarnings("deprecation")
   protected ProjectDescriptor createProjectDescriptor(final BuildLoggingManager buildLoggingManager) {
     try {
       BuildTargetRegistryImpl targetRegistry = new BuildTargetRegistryImpl(myModel);
@@ -246,7 +247,7 @@ public abstract class JpsBuildTestCase extends UsefulTestCase {
   }
 
   protected <T extends JpsElement> JpsModule addModule(@NotNull String moduleName,
-                                                       String @NotNull [] srcPaths,
+                                                       @NotNull String[] srcPaths,
                                                        @Nullable String outputPath,
                                                        @Nullable String testOutputPath,
                                                        @Nullable JpsSdk<T> sdk) {

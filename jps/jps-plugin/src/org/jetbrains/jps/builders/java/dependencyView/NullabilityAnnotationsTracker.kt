@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.load.java.NOT_NULL_ANNOTATIONS
 import org.jetbrains.kotlin.load.java.NULLABLE_ANNOTATIONS
 import java.util.*
 
+@Suppress("DEPRECATION")
 internal class NullabilityAnnotationsTracker : AnnotationsChangeTracker() {
     private val annotations =
         (NOT_NULL_ANNOTATIONS + NULLABLE_ANNOTATIONS + JAVAX_NONNULL_ANNOTATION_FQ_NAME)

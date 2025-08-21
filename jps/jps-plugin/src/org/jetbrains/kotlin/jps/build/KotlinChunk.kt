@@ -155,6 +155,7 @@ class KotlinChunk internal constructor(val context: KotlinCompileContext, val ta
         return false
     }
 
+    @Suppress("DEPRECATION")
     fun compilerArgumentsFile(target: ModuleBuildTarget): Path = context.dataPaths
         .getTargetDataRoot(target)
         .toPath()

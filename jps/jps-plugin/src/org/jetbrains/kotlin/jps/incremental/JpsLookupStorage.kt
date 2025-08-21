@@ -39,6 +39,7 @@ class JpsLookupStorageManager(
             try {
                 buildDataManager.cleanTargetStorages(KotlinDataContainerTarget)
             } catch (e: IOException) {
+                @Suppress("DEPRECATION")
                 if (!buildDataManager.dataPaths.getTargetDataRoot(KotlinDataContainerTarget).deleteRecursively()) {
                     log.debug("Could not clear lookup storage caches", e)
                 }
@@ -60,6 +61,7 @@ class JpsLookupStorageManager(
     private class JpsLookupStorageProvider(
         private val icContext: IncrementalCompilationContext
     ) : StorageProvider<JpsLookupStorage>() {
+        @Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")
         override fun createStorage(targetDataDir: File): JpsLookupStorage =
             JpsLookupStorage(targetDataDir, icContext)
     }

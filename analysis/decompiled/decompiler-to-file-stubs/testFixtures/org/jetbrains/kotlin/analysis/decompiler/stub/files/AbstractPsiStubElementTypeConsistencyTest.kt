@@ -37,6 +37,7 @@ abstract class AbstractPsiStubElementTypeConsistencyTest : AbstractDecompiledCla
     private fun checkPsiElementTypeConsistency(stubElement: StubElement<*>) {
         val psi = stubElement.psi as? StubBasedPsiElement<*>
         if (psi != null) {
+            @Suppress("DEPRECATION")
             assertEquals(
                 "Expected the PSI of `$stubElement` to have the same element type. Instead got: `${psi.elementType}`.",
                 stubElement.stubType,

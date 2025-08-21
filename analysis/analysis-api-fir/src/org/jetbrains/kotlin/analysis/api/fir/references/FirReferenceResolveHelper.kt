@@ -178,6 +178,7 @@ internal object FirReferenceResolveHelper {
     private fun collectTypeReferences(qualified: KtUserType): MutableList<KtNameReferenceExpression> {
         val refs = mutableListOf<KtNameReferenceExpression>()
         fun collectFragments(type: KtUserType) {
+            @Suppress("DEPRECATION")
             type.qualifier?.let { collectFragments(it) }
             refs.add(type.referenceExpression as? KtNameReferenceExpression ?: return)
         }
