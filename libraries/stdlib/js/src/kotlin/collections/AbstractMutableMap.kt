@@ -36,6 +36,7 @@ public actual abstract class AbstractMutableMap<K, V> protected actual construct
         entries.clear()
     }
 
+    @IgnorableReturnValue
     actual abstract override fun put(key: K, value: V): V?
 
     actual override fun putAll(from: Map<out K, V>) {
@@ -45,6 +46,7 @@ public actual abstract class AbstractMutableMap<K, V> protected actual construct
         }
     }
 
+    @IgnorableReturnValue
     actual override fun remove(key: K): V? {
         checkIsMutable()
         val iter = entries.iterator()

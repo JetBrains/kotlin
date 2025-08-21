@@ -22,7 +22,7 @@ fun Foo() {
 
 TestKt {
     higherOrderFunction (Lkotlin/jvm/functions/Function1;)V null
-    Foo (Landroidx/compose/runtime/Composer;I)V null
+    Foo (Landroidx/compose/runtime/Composer;I)V [key=-607362160, startOffset=112, endOffset=178]
 }
 
 TestKt$Foo$1 {

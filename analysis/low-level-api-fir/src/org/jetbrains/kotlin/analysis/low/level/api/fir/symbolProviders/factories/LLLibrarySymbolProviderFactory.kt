@@ -47,6 +47,12 @@ internal interface LLLibrarySymbolProviderFactory {
         scope: GlobalSearchScope,
     ): List<FirSymbolProvider>
 
+    /**
+     * Creates a symbol provider for a [fallback builtins module][org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule].
+     *
+     * Since fallback builtins don't have any class ID ambiguities, their symbol providers don't have to implement
+     * [LLPsiAwareSymbolProvider][org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLPsiAwareSymbolProvider].
+     */
     fun createBuiltinsSymbolProvider(session: LLFirSession): List<FirSymbolProvider>
 
     companion object {

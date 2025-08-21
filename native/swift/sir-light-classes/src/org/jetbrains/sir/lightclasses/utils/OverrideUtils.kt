@@ -18,7 +18,7 @@ internal inline val <reified T : SirClassMemberDeclaration> T.overridableCandida
             .toList()
 
 
-internal val SirClassInhertingDeclaration.superClassDeclaration: SirClass? get() = (superClass as? SirNominalType)?.typeDeclaration as? SirClass
+internal val SirClassInhertingDeclaration.superClassDeclaration: SirClass? get() = superClass?.typeDeclaration as? SirClass
 
 internal fun SirType.isSubtypeOf(other: SirType): Boolean = when (this) {
     is SirOptionalType -> (other as? SirOptionalType)?.let { wrappedType.isSubtypeOf(it.wrappedType) } ?: false
@@ -29,6 +29,12 @@ internal fun SirType.isSubtypeOf(other: SirType): Boolean = when (this) {
         } else {
             this.typeDeclaration.isSubclassOf(other.typeDeclaration)
         }
+        is SirExistentialType -> this.typeArguments.isEmpty() && this.typeDeclaration == other.protocols.singleOrNull()
+        else -> false
+    }
+    is SirExistentialType -> when (other) {
+        is SirExistentialType -> this.protocols == other.protocols
+        is SirNominalType -> other.isSubtypeOf(this)
         else -> false
     }
     is SirFunctionalType -> other is SirFunctionalType
@@ -38,7 +44,7 @@ internal fun SirType.isSubtypeOf(other: SirType): Boolean = when (this) {
     else -> false
 }
 
-private fun SirDeclaration.isSubclassOf(other: SirDeclaration): Boolean = this == other || this is SirClass && (superClass as? SirNominalType)?.typeDeclaration?.isSubclassOf(other) ?: false
+private fun SirDeclaration.isSubclassOf(other: SirDeclaration): Boolean = this == other || this is SirClass && superClass?.typeDeclaration?.isSubclassOf(other) ?: false
 
 private fun SirInit.bestOverrideCandidate(): SirInit? = (this.parent as? SirClass)?.superClassDeclaration?.let { cls ->
     cls.overrideableInitializers.firstOrNull { other -> this.parameters.isSuitableForOverrideOf(other.parameters) }

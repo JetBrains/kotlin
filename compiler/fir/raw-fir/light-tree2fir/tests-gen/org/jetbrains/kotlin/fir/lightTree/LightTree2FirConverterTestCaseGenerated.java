@@ -371,6 +371,11 @@ public class LightTree2FirConverterTestCaseGenerated extends AbstractLightTree2F
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/localImplicitType.kt");
     }
 
+    @TestMetadata("localTypeAliasInsideLocalClass.kt")
+    public void testLocalTypeAliasInsideLocalClass() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/localTypeAliasInsideLocalClass.kt");
+    }
+
     @TestMetadata("multiDeclarations.kt")
     public void testMultiDeclarations() {
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/multiDeclarations.kt");
@@ -557,6 +562,54 @@ public class LightTree2FirConverterTestCaseGenerated extends AbstractLightTree2F
         public void testContractDescription() {
           runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts/oldSyntax/contractDescription.kt");
         }
+      }
+    }
+
+    @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/destructuring")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Destructuring extends AbstractLightTree2FirConverterTestCase {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+      }
+
+      public void testAllFilesPresentInDestructuring() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/destructuring"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+      }
+
+      @TestMetadata("nameBasedDestructuringFullForm.kt")
+      public void testNameBasedDestructuringFullForm() {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/destructuring/nameBasedDestructuringFullForm.kt");
+      }
+
+      @TestMetadata("nameBasedDestructuringScript.kts")
+      public void testNameBasedDestructuringScript() {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/destructuring/nameBasedDestructuringScript.kts");
+      }
+
+      @TestMetadata("nameBasedDestructuringShortFormAfter.kt")
+      public void testNameBasedDestructuringShortFormAfter() {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/destructuring/nameBasedDestructuringShortFormAfter.kt");
+      }
+
+      @TestMetadata("nameBasedDestructuringShortFormBefore.kt")
+      public void testNameBasedDestructuringShortFormBefore() {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/destructuring/nameBasedDestructuringShortFormBefore.kt");
+      }
+
+      @TestMetadata("positionalDestructuringFullForm.kt")
+      public void testPositionalDestructuringFullForm() {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/destructuring/positionalDestructuringFullForm.kt");
+      }
+
+      @TestMetadata("positionalDestructuringScript.kts")
+      public void testPositionalDestructuringScript() {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/destructuring/positionalDestructuringScript.kts");
+      }
+
+      @TestMetadata("positionalDestructuringShortForm.kt")
+      public void testPositionalDestructuringShortForm() {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/destructuring/positionalDestructuringShortForm.kt");
       }
     }
 
@@ -852,6 +905,16 @@ public class LightTree2FirConverterTestCaseGenerated extends AbstractLightTree2F
     @TestMetadata("super.kt")
     public void testSuper() {
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/super.kt");
+    }
+
+    @TestMetadata("suspendLambda.kt")
+    public void testSuspendLambda() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/suspendLambda.kt");
+    }
+
+    @TestMetadata("suspendLambdaScript.kts")
+    public void testSuspendLambdaScript() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/suspendLambdaScript.kts");
     }
 
     @TestMetadata("these.kt")

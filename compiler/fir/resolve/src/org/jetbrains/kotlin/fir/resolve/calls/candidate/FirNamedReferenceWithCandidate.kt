@@ -40,16 +40,3 @@ class FirErrorReferenceWithCandidate(
 ) : FirNamedReferenceWithCandidate(source, name, candidate) {
     override val isError: Boolean get() = true
 }
-
-class FirPropertyWithExplicitBackingFieldResolvedNamedReference(
-    override val source: KtSourceElement?,
-    override val name: Name,
-    override val resolvedSymbol: FirBasedSymbol<*>,
-    val hasVisibleBackingField: Boolean,
-) : FirResolvedNamedReference() {
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirPropertyWithExplicitBackingFieldResolvedNamedReference {
-        return this
-    }
-}

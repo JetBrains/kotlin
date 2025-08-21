@@ -7,11 +7,12 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.types.model.isNullableType
 
 /**
  * Collects the upper bounds as [ConeClassLikeType].
  */
-fun ConeKotlinType?.collectUpperBounds(): Set<ConeClassLikeType> {
+fun ConeKotlinType?.collectUpperBounds(typeContext: ConeTypeContext): Set<ConeClassLikeType> {
     if (this == null) return emptySet()
 
     val upperBounds = mutableSetOf<ConeClassLikeType>()
@@ -25,7 +26,11 @@ fun ConeKotlinType?.collectUpperBounds(): Set<ConeClassLikeType> {
                 is ConeClassLikeType -> upperBounds.add(type)
                 is ConeTypeParameterType -> {
                     val symbol = type.lookupTag.typeParameterSymbol
-                    symbol.resolvedBounds.forEach { collect(it.coneType) }
+                    symbol.resolvedBounds.forEach {
+                        with(typeContext) {
+                            collect(it.coneType.withNullability(it.coneType.isNullableType() || type.isMarkedNullable, typeContext))
+                        }
+                    }
                 }
                 else -> error("missing branch for ${javaClass.name}")
             }

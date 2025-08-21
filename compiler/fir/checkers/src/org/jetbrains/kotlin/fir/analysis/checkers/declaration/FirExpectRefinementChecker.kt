@@ -15,11 +15,10 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.expectForActual
-import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
-import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 
@@ -46,7 +45,7 @@ object FirExpectRefinementChecker : FirBasicDeclarationChecker(MppCheckerKind.Co
                     FirErrors.EXPECT_REFINEMENT_ANNOTATION_MISSING
                 )
             }
-            if (!context.languageVersionSettings.supportsFeature(LanguageFeature.ExpectRefinement)) {
+            if (!LanguageFeature.ExpectRefinement.isEnabled()) {
                 reporter.reportOn(
                     declaration.source,
                     FirErrors.UNSUPPORTED_FEATURE,

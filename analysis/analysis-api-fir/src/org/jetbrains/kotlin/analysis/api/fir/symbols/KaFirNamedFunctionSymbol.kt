@@ -115,19 +115,26 @@ internal class KaFirNamedFunctionSymbol private constructor(
         get() = withValidityAssertion { psiOrSymbolAnnotationList() }
 
     override val isSuspend: Boolean
-        get() = withValidityAssertion {
-            psiHasModifierIfNotInherited(KtTokens.SUSPEND_KEYWORD) ?: firSymbol.isSuspend
-        }
+        get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.SUSPEND_KEYWORD) ?: firSymbol.isSuspend }
 
     /**
-     * Some modifiers can be inherited, so we cannot check them by PSI in this case.
+     * Some modifiers can be inherited, so we cannot guarantee **false** value for them by PSI in this case.
      *
      * Returns not null output of [org.jetbrains.kotlin.psi.KtModifierListOwnerStub.hasModifier]
-     * if [backingPsi] is not null and the symbol is not [isOverride].
+     * if [backingPsi] is not null and the modifier is not affected by [isOverride] check.
      */
-    private fun psiHasModifierIfNotInherited(modifierToken: KtModifierKeywordToken): Boolean? {
-        if (backingPsi == null || isOverride) return null
-        return backingPsi.hasModifier(modifierToken)
+    private fun psiHasModifierConsideringInheritance(modifierToken: KtModifierKeywordToken): Boolean? {
+        if (backingPsi == null) return null
+
+        val hasModifier = backingPsi.hasModifier(modifierToken)
+        return when {
+            // The modifier is explicitly declared, so it shouldn't be changed
+            hasModifier -> true
+            // The modifier is inherited, so it might be changed
+            isOverride -> null
+            // The modifier is not explicitly declared and not inherited, so it should be false
+            else -> false
+        }
     }
 
     override val isOverride: Boolean
@@ -137,7 +144,7 @@ internal class KaFirNamedFunctionSymbol private constructor(
 
     override val isInfix: Boolean
         get() = withValidityAssertion {
-            psiHasModifierIfNotInherited(KtTokens.INFIX_KEYWORD) ?: firSymbol.isInfix
+            psiHasModifierConsideringInheritance(KtTokens.INFIX_KEYWORD) ?: firSymbol.isInfix
         }
 
     override val isStatic: Boolean
@@ -154,7 +161,7 @@ internal class KaFirNamedFunctionSymbol private constructor(
 
     override val isOperator: Boolean
         get() = withValidityAssertion {
-            psiHasModifierIfNotInherited(KtTokens.OPERATOR_KEYWORD) ?: firSymbol.isOperator
+            psiHasModifierConsideringInheritance(KtTokens.OPERATOR_KEYWORD) ?: firSymbol.isOperator
         }
 
     override val isExternal: Boolean

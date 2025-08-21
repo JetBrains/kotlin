@@ -11,29 +11,29 @@ typealias AFloat = Float
 typealias ADouble = Double
 
 fun main() {
-    <!INVISIBLE_REFERENCE!>ABoolean<!>(false)
-    <!INVISIBLE_REFERENCE!>Boolean<!>(false)
+    ABoolean(<!TOO_MANY_ARGUMENTS!>false<!>)
+    Boolean(<!TOO_MANY_ARGUMENTS!>false<!>)
 
-    <!INVISIBLE_REFERENCE!>AChar<!>('c')
-    <!INVISIBLE_REFERENCE!>Char<!>('c')
+    AChar(<!TOO_MANY_ARGUMENTS!>'c'<!>)
+    Char(<!TOO_MANY_ARGUMENTS!>'c'<!>)
 
-    <!INVISIBLE_REFERENCE!>AInt<!>(42)
-    <!INVISIBLE_REFERENCE!>Int<!>(42)
+    AInt(<!TOO_MANY_ARGUMENTS!>42<!>)
+    Int(<!TOO_MANY_ARGUMENTS!>42<!>)
 
-    <!INVISIBLE_REFERENCE!>ALong<!>(42)
-    <!INVISIBLE_REFERENCE!>Long<!>(42)
+    ALong(<!TOO_MANY_ARGUMENTS!>42<!>)
+    Long(<!TOO_MANY_ARGUMENTS!>42<!>)
 
-    <!INVISIBLE_REFERENCE!>AShort<!>(42)
-    <!INVISIBLE_REFERENCE!>Short<!>(42)
+    AShort(<!TOO_MANY_ARGUMENTS!>42<!>)
+    Short(<!TOO_MANY_ARGUMENTS!>42<!>)
 
-    <!INVISIBLE_REFERENCE!>AByte<!>(42)
-    <!INVISIBLE_REFERENCE!>Byte<!>(42)
+    AByte(<!TOO_MANY_ARGUMENTS!>42<!>)
+    Byte(<!TOO_MANY_ARGUMENTS!>42<!>)
 
-    <!INVISIBLE_REFERENCE!>AFloat<!>(4.2f)
-    <!INVISIBLE_REFERENCE!>Float<!>(4.2f)
+    AFloat(<!TOO_MANY_ARGUMENTS!>4.2f<!>)
+    Float(<!TOO_MANY_ARGUMENTS!>4.2f<!>)
 
-    <!INVISIBLE_REFERENCE!>ADouble<!>(4.2)
-    <!INVISIBLE_REFERENCE!>Double<!>(4.2)
+    ADouble(<!TOO_MANY_ARGUMENTS!>4.2<!>)
+    Double(<!TOO_MANY_ARGUMENTS!>4.2<!>)
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, typeAliasDeclaration */

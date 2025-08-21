@@ -340,6 +340,18 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
       }
 
       @Test
+      @TestMetadata("strings.kt")
+      public void testStrings() {
+        runTest("native/native.tests/testData/codegen/cinterop/basics/strings.kt");
+      }
+
+      @Test
+      @TestMetadata("stringsWithLatin1.kt")
+      public void testStringsWithLatin1() {
+        runTest("native/native.tests/testData/codegen/cinterop/basics/stringsWithLatin1.kt");
+      }
+
+      @Test
       @TestMetadata("structAnonRecordMember_ExplicitAlignment.kt")
       public void testStructAnonRecordMember_ExplicitAlignment() {
         runTest("native/native.tests/testData/codegen/cinterop/basics/structAnonRecordMember_ExplicitAlignment.kt");

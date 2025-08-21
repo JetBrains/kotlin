@@ -43,9 +43,7 @@ class CocoaPodsSyntheticIT : KGPBaseTest() {
         nativeProject(
             cocoapodsSingleKtPod,
             gradleVersion,
-            environmentVariables = environmentVariables,
-            // KT-78387 Kotlin Cocoapods Gradle Plugin is not compatible with Gradle isolated projects
-            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
+            environmentVariables = environmentVariables
         ) {
             buildGradleKts.addCocoapodsBlock(
                 """

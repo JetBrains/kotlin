@@ -8,21 +8,20 @@ package org.jetbrains.kotlin.cli.plugins
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.argumentAnnotation
-import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 
 data class PluginClasspathAndOptions(
     val rawArgument: String,
     val classpath: List<String>,
-    val options: List<CliOptionValue>
+    val options: List<CliOptionValue>,
 )
 
 private const val regularDelimiter = ","
 private const val classpathOptionsDelimiter = "="
 
 fun extractPluginClasspathAndOptions(pluginConfigurations: Iterable<String>): List<PluginClasspathAndOptions> {
-    return pluginConfigurations.map { extractPluginClasspathAndOptions(it)}
+    return pluginConfigurations.map { extractPluginClasspathAndOptions(it) }
 }
 
 fun extractPluginClasspathAndOptions(pluginConfiguration: String): PluginClasspathAndOptions {
@@ -39,7 +38,7 @@ fun extractPluginClasspathAndOptions(pluginConfiguration: String): PluginClasspa
 fun processCompilerPluginsOptions(
     configuration: CompilerConfiguration,
     pluginOptions: Iterable<String>?,
-    commandLineProcessors: List<CommandLineProcessor>
+    commandLineProcessors: List<CommandLineProcessor>,
 ) {
     val optionValuesByPlugin = pluginOptions?.map(::parseLegacyPluginOption)?.groupBy {
         if (it == null) throw CliOptionProcessingException("Wrong plugin option format: $it, should be ${CommonCompilerArguments::pluginOptions.argumentAnnotation.valueDescription}")
@@ -55,7 +54,7 @@ fun processCompilerPluginsOptions(
 fun processCompilerPluginOptions(
     processor: CommandLineProcessor,
     pluginOptions: List<CliOptionValue>,
-    configuration: CompilerConfiguration
+    configuration: CompilerConfiguration,
 ) {
     val declaredOptions = processor.pluginOptions.associateBy { it.optionName }
     val optionsToValues = MultiMap<AbstractCliOption, CliOptionValue>()
@@ -87,4 +86,16 @@ fun processCompilerPluginOptions(
             processor.processOption(option, value.value, configuration)
         }
     }
+}
+
+data class PluginOrderConstraint(
+    val before: String,
+    val after: String,
+    val rawArgument: String,
+)
+
+fun extractPluginOrderConstraint(pluginOrderConstraint: String): PluginOrderConstraint? {
+    val split = pluginOrderConstraint.split(">")
+    if (split.size != 2) return null
+    return PluginOrderConstraint(split[0].trim(), split[1].trim(), pluginOrderConstraint)
 }

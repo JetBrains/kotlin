@@ -65,11 +65,19 @@ public value class Duration internal constructor(private val rawValue: Long) : C
 
         // Duration construction extension properties in Duration companion scope
 
-        /** Returns a [Duration] equal to this [Int] number of nanoseconds. */
+        /**
+         * Returns a [Duration] equal to this [Int] number of nanoseconds.
+         *
+         * @sample samples.time.Durations.fromNanoseconds
+         */
         @kotlin.internal.InlineOnly
         public inline val Int.nanoseconds: Duration get() = toDuration(DurationUnit.NANOSECONDS)
 
-        /** Returns a [Duration] equal to this [Long] number of nanoseconds. */
+        /**
+         * Returns a [Duration] equal to this [Long] number of nanoseconds.
+         *
+         * @sample samples.time.Durations.fromNanoseconds
+         */
         @kotlin.internal.InlineOnly
         public inline val Long.nanoseconds: Duration get() = toDuration(DurationUnit.NANOSECONDS)
 
@@ -79,16 +87,25 @@ public value class Duration internal constructor(private val rawValue: Long) : C
          * Depending on its magnitude, the value is rounded to an integer number of nanoseconds or milliseconds.
          *
          * @throws IllegalArgumentException if this [Double] value is `NaN`.
+         * @sample samples.time.Durations.fromNanoseconds
          */
         @kotlin.internal.InlineOnly
         public inline val Double.nanoseconds: Duration get() = toDuration(DurationUnit.NANOSECONDS)
 
 
-        /** Returns a [Duration] equal to this [Int] number of microseconds. */
+        /**
+         * Returns a [Duration] equal to this [Int] number of microseconds.
+         *
+         * @sample samples.time.Durations.fromMicroseconds
+         */
         @kotlin.internal.InlineOnly
         public inline val Int.microseconds: Duration get() = toDuration(DurationUnit.MICROSECONDS)
 
-        /** Returns a [Duration] equal to this [Long] number of microseconds. */
+        /**
+         * Returns a [Duration] equal to this [Long] number of microseconds.
+         *
+         * @sample samples.time.Durations.fromMicroseconds
+         */
         @kotlin.internal.InlineOnly
         public inline val Long.microseconds: Duration get() = toDuration(DurationUnit.MICROSECONDS)
 
@@ -98,16 +115,25 @@ public value class Duration internal constructor(private val rawValue: Long) : C
          * Depending on its magnitude, the value is rounded to an integer number of nanoseconds or milliseconds.
          *
          * @throws IllegalArgumentException if this [Double] value is `NaN`.
+         * @sample samples.time.Durations.fromMicroseconds
          */
         @kotlin.internal.InlineOnly
         public inline val Double.microseconds: Duration get() = toDuration(DurationUnit.MICROSECONDS)
 
 
-        /** Returns a [Duration] equal to this [Int] number of milliseconds. */
+        /**
+         * Returns a [Duration] equal to this [Int] number of milliseconds.
+         *
+         * @sample samples.time.Durations.fromMilliseconds
+         */
         @kotlin.internal.InlineOnly
         public inline val Int.milliseconds: Duration get() = toDuration(DurationUnit.MILLISECONDS)
 
-        /** Returns a [Duration] equal to this [Long] number of milliseconds. */
+        /**
+         * Returns a [Duration] equal to this [Long] number of milliseconds.
+         *
+         * @sample samples.time.Durations.fromMilliseconds
+         */
         @kotlin.internal.InlineOnly
         public inline val Long.milliseconds: Duration get() = toDuration(DurationUnit.MILLISECONDS)
 
@@ -117,16 +143,25 @@ public value class Duration internal constructor(private val rawValue: Long) : C
          * Depending on its magnitude, the value is rounded to an integer number of nanoseconds or milliseconds.
          *
          * @throws IllegalArgumentException if this [Double] value is `NaN`.
+         * @sample samples.time.Durations.fromMilliseconds
          */
         @kotlin.internal.InlineOnly
         public inline val Double.milliseconds: Duration get() = toDuration(DurationUnit.MILLISECONDS)
 
 
-        /** Returns a [Duration] equal to this [Int] number of seconds. */
+        /**
+         * Returns a [Duration] equal to this [Int] number of seconds.
+         *
+         * @sample samples.time.Durations.fromSeconds
+         */
         @kotlin.internal.InlineOnly
         public inline val Int.seconds: Duration get() = toDuration(DurationUnit.SECONDS)
 
-        /** Returns a [Duration] equal to this [Long] number of seconds. */
+        /**
+         * Returns a [Duration] equal to this [Long] number of seconds.
+         *
+         * @sample samples.time.Durations.fromSeconds
+         */
         @kotlin.internal.InlineOnly
         public inline val Long.seconds: Duration get() = toDuration(DurationUnit.SECONDS)
 
@@ -136,16 +171,25 @@ public value class Duration internal constructor(private val rawValue: Long) : C
          * Depending on its magnitude, the value is rounded to an integer number of nanoseconds or milliseconds.
          *
          * @throws IllegalArgumentException if this [Double] value is `NaN`.
+         * @sample samples.time.Durations.fromSeconds
          */
         @kotlin.internal.InlineOnly
         public inline val Double.seconds: Duration get() = toDuration(DurationUnit.SECONDS)
 
 
-        /** Returns a [Duration] equal to this [Int] number of minutes. */
+        /**
+         * Returns a [Duration] equal to this [Int] number of minutes.
+         *
+         * @sample samples.time.Durations.fromMinutes
+         */
         @kotlin.internal.InlineOnly
         public inline val Int.minutes: Duration get() = toDuration(DurationUnit.MINUTES)
 
-        /** Returns a [Duration] equal to this [Long] number of minutes. */
+        /**
+         * Returns a [Duration] equal to this [Long] number of minutes.
+         *
+         * @sample samples.time.Durations.fromMinutes
+         */
         @kotlin.internal.InlineOnly
         public inline val Long.minutes: Duration get() = toDuration(DurationUnit.MINUTES)
 
@@ -155,16 +199,25 @@ public value class Duration internal constructor(private val rawValue: Long) : C
          * Depending on its magnitude, the value is rounded to an integer number of nanoseconds or milliseconds.
          *
          * @throws IllegalArgumentException if this [Double] value is `NaN`.
+         * @sample samples.time.Durations.fromMinutes
          */
         @kotlin.internal.InlineOnly
         public inline val Double.minutes: Duration get() = toDuration(DurationUnit.MINUTES)
 
 
-        /** Returns a [Duration] equal to this [Int] number of hours. */
+        /**
+         * Returns a [Duration] equal to this [Int] number of hours.
+         *
+         * @sample samples.time.Durations.fromHours
+         */
         @kotlin.internal.InlineOnly
         public inline val Int.hours: Duration get() = toDuration(DurationUnit.HOURS)
 
-        /** Returns a [Duration] equal to this [Long] number of hours. */
+        /**
+         * Returns a [Duration] equal to this [Long] number of hours.
+         *
+         * @sample samples.time.Durations.fromHours
+         */
         @kotlin.internal.InlineOnly
         public inline val Long.hours: Duration get() = toDuration(DurationUnit.HOURS)
 
@@ -174,16 +227,33 @@ public value class Duration internal constructor(private val rawValue: Long) : C
          * Depending on its magnitude, the value is rounded to an integer number of nanoseconds or milliseconds.
          *
          * @throws IllegalArgumentException if this [Double] value is `NaN`.
+         * @sample samples.time.Durations.fromHours
          */
         @kotlin.internal.InlineOnly
         public inline val Double.hours: Duration get() = toDuration(DurationUnit.HOURS)
 
 
-        /** Returns a [Duration] equal to this [Int] number of days. */
+        /**
+         * Returns a [Duration] equal to this [Int] number of days.
+         *
+         * Note that a day in this conversion always represents exactly 24 hours.
+         * This is different from calendar days which may be longer or shorter
+         * than 24 hours when a daylight saving transition happens on that day.
+         *
+         * @sample samples.time.Durations.fromDays
+         */
         @kotlin.internal.InlineOnly
         public inline val Int.days: Duration get() = toDuration(DurationUnit.DAYS)
 
-        /** Returns a [Duration] equal to this [Long] number of days. */
+        /**
+         * Returns a [Duration] equal to this [Long] number of days.
+         *
+         * Note that a day in this conversion always represents exactly 24 hours.
+         * This is different from calendar days which may be longer or shorter
+         * than 24 hours when a daylight saving transition happens on that day.
+         *
+         * @sample samples.time.Durations.fromDays
+         */
         @kotlin.internal.InlineOnly
         public inline val Long.days: Duration get() = toDuration(DurationUnit.DAYS)
 
@@ -192,7 +262,12 @@ public value class Duration internal constructor(private val rawValue: Long) : C
          *
          * Depending on its magnitude, the value is rounded to an integer number of nanoseconds or milliseconds.
          *
+         * Note that a day in this conversion always represents exactly 24 hours.
+         * This is different from calendar days which may be longer or shorter
+         * than 24 hours when a daylight saving transition happens on that day.
+         *
          * @throws IllegalArgumentException if this [Double] value is `NaN`.
+         * @sample samples.time.Durations.fromDays
          */
         @kotlin.internal.InlineOnly
         public inline val Double.days: Duration get() = toDuration(DurationUnit.DAYS)
@@ -492,6 +567,10 @@ public value class Duration internal constructor(private val rawValue: Long) : C
      * - `hours` represents the whole number of hours in this duration, and its absolute value is less than 24;
      * - `days` represents the whole number of days in this duration.
      *
+     * Note that a day in this conversion always represents exactly 24 hours.
+     * This is different from calendar days which may be longer or shorter
+     * than 24 hours when a daylight saving transition happens on that day.
+     *
      *   Infinite durations are represented as either [Long.MAX_VALUE] days, or [Long.MIN_VALUE] days (depending on the sign of infinity),
      *   and zeroes in the lower components.
      */
@@ -577,6 +656,8 @@ public value class Duration internal constructor(private val rawValue: Long) : C
      * The operation may involve rounding when the result cannot be represented exactly with a [Double] number.
      *
      * An infinite duration value is converted either to [Double.POSITIVE_INFINITY] or [Double.NEGATIVE_INFINITY] depending on its sign.
+     *
+     * @sample samples.time.Durations.toDoubleUnits
      */
     public fun toDouble(unit: DurationUnit): Double {
         return when (rawValue) {
@@ -592,11 +673,16 @@ public value class Duration internal constructor(private val rawValue: Long) : C
     /**
      * Returns the value of this duration expressed as a [Long] number of the specified [unit].
      *
+     * The part of this duration that is smaller than the specified unit
+     * becomes a fractional part of the result and then is truncated (rounded towards zero).
+     *
      * If the result doesn't fit in the range of [Long] type, it is coerced into that range:
      * - [Long.MIN_VALUE] is returned if it's less than `Long.MIN_VALUE`,
      * - [Long.MAX_VALUE] is returned if it's greater than `Long.MAX_VALUE`.
      *
      * An infinite duration value is converted either to [Long.MAX_VALUE] or [Long.MIN_VALUE] depending on its sign.
+     *
+     * @sample samples.time.Durations.toLongUnits
      */
     public fun toLong(unit: DurationUnit): Long {
         return when (rawValue) {
@@ -609,11 +695,16 @@ public value class Duration internal constructor(private val rawValue: Long) : C
     /**
      * Returns the value of this duration expressed as an [Int] number of the specified [unit].
      *
+     * The part of this duration that is smaller than the specified unit
+     * becomes a fractional part of the result and then is truncated (rounded towards zero).
+     *
      * If the result doesn't fit in the range of [Int] type, it is coerced into that range:
      * - [Int.MIN_VALUE] is returned if it's less than `Int.MIN_VALUE`,
      * - [Int.MAX_VALUE] is returned if it's greater than `Int.MAX_VALUE`.
      *
      * An infinite duration value is converted either to [Int.MAX_VALUE] or [Int.MIN_VALUE] depending on its sign.
+     *
+     * @sample samples.time.Durations.toIntUnits
      */
     public fun toInt(unit: DurationUnit): Int =
         toLong(unit).coerceIn(Int.MIN_VALUE.toLong(), Int.MAX_VALUE.toLong()).toInt()
@@ -622,7 +713,16 @@ public value class Duration internal constructor(private val rawValue: Long) : C
     /**
      * The value of this duration expressed as a [Long] number of days.
      *
+     * The part of this duration that is smaller than a day
+     * becomes a fractional part of the result and then is truncated (rounded towards zero).
+     *
+     * Note that a day in this conversion always represents exactly 24 hours.
+     * This is different from calendar days which may be longer or shorter
+     * than 24 hours when a daylight saving transition happens on that day.
+     *
      * An infinite duration value is converted either to [Long.MAX_VALUE] or [Long.MIN_VALUE] depending on its sign.
+     *
+     * @sample samples.time.Durations.inWholeDays
      */
     public val inWholeDays: Long
         get() = toLong(DurationUnit.DAYS)
@@ -630,7 +730,12 @@ public value class Duration internal constructor(private val rawValue: Long) : C
     /**
      * The value of this duration expressed as a [Long] number of hours.
      *
+     * The part of this duration that is smaller than an hour
+     * becomes a fractional part of the result and then is truncated (rounded towards zero).
+     *
      * An infinite duration value is converted either to [Long.MAX_VALUE] or [Long.MIN_VALUE] depending on its sign.
+     *
+     * @sample samples.time.Durations.inWholeHours
      */
     public val inWholeHours: Long
         get() = toLong(DurationUnit.HOURS)
@@ -638,7 +743,12 @@ public value class Duration internal constructor(private val rawValue: Long) : C
     /**
      * The value of this duration expressed as a [Long] number of minutes.
      *
+     * The part of this duration that is smaller than a minute
+     * becomes a fractional part of the result and then is truncated (rounded towards zero).
+     *
      * An infinite duration value is converted either to [Long.MAX_VALUE] or [Long.MIN_VALUE] depending on its sign.
+     *
+     * @sample samples.time.Durations.inWholeMinutes
      */
     public val inWholeMinutes: Long
         get() = toLong(DurationUnit.MINUTES)
@@ -646,7 +756,12 @@ public value class Duration internal constructor(private val rawValue: Long) : C
     /**
      * The value of this duration expressed as a [Long] number of seconds.
      *
+     * The part of this duration that is smaller than a second
+     * becomes a fractional part of the result and then is truncated (rounded towards zero).
+     *
      * An infinite duration value is converted either to [Long.MAX_VALUE] or [Long.MIN_VALUE] depending on its sign.
+     *
+     * @sample samples.time.Durations.inWholeSeconds
      */
     public val inWholeSeconds: Long
         get() = toLong(DurationUnit.SECONDS)
@@ -654,7 +769,12 @@ public value class Duration internal constructor(private val rawValue: Long) : C
     /**
      * The value of this duration expressed as a [Long] number of milliseconds.
      *
+     * The part of this duration that is smaller than a millisecond
+     * becomes a fractional part of the result and then is truncated (rounded towards zero).
+     *
      * An infinite duration value is converted either to [Long.MAX_VALUE] or [Long.MIN_VALUE] depending on its sign.
+     *
+     * @sample samples.time.Durations.inWholeMilliseconds
      */
     public val inWholeMilliseconds: Long
         get() {
@@ -664,11 +784,16 @@ public value class Duration internal constructor(private val rawValue: Long) : C
     /**
      * The value of this duration expressed as a [Long] number of microseconds.
      *
+     * The part of this duration that is smaller than a microsecond
+     * becomes a fractional part of the result and then is truncated (rounded towards zero).
+     *
      * If the result doesn't fit in the range of [Long] type, it is coerced into that range:
      * - [Long.MIN_VALUE] is returned if it's less than `Long.MIN_VALUE`,
      * - [Long.MAX_VALUE] is returned if it's greater than `Long.MAX_VALUE`.
      *
      * An infinite duration value is converted either to [Long.MAX_VALUE] or [Long.MIN_VALUE] depending on its sign.
+     *
+     * @sample samples.time.Durations.inWholeMicroseconds
      */
     public val inWholeMicroseconds: Long
         get() = toLong(DurationUnit.MICROSECONDS)
@@ -681,6 +806,8 @@ public value class Duration internal constructor(private val rawValue: Long) : C
      * - [Long.MAX_VALUE] is returned if it's greater than `Long.MAX_VALUE`.
      *
      * An infinite duration value is converted either to [Long.MAX_VALUE] or [Long.MIN_VALUE] depending on its sign.
+     *
+     * @sample samples.time.Durations.inWholeNanoseconds
      */
     public val inWholeNanoseconds: Long
         get() {

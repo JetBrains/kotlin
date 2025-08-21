@@ -28,7 +28,6 @@ import androidx.compose.runtime.NonRestartableComposable
 
 @Composable
 @ComposableInferredTarget(scheme = "[0[0]]")
-@FunctionKeyMeta(key = -836429150, startOffset = 281, endOffset = 343)
 fun Example(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   sourceInformationMarkerStart(%composer, <>, "CC(Example)<conten...>:Test.kt#2487m")
   content(%composer, 0b1110 and %changed)
@@ -36,7 +35,6 @@ fun Example(content: Function2<Composer, Int, Unit>, %composer: Composer?, %chan
 }
 @NonRestartableComposable
 @Composable
-@FunctionKeyMeta(key = 1047912774, startOffset = 383, endOffset = 412)
 fun Test(%composer: Composer?, %changed: Int) {
   sourceInformationMarkerStart(%composer, <>, "C(Test)<Exampl...>:Test.kt#2487m")
   if (isTraceInProgress()) {

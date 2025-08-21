@@ -1,7 +1,7 @@
 KT element: KtProperty
 KT element text:
 public val foo: kotlin.String /* compiled code */ /* hasBackingField: false */
-    public final get() {/* compiled code */ }
+    public final get() { /* compiled code */ }
 FIR element: FirPropertyImpl
 FIR source kind: KtRealSourceElementKind
 

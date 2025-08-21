@@ -68,7 +68,6 @@ fun Test10(): Unit? {
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = -801210939, startOffset = 47, endOffset = 86)
 fun Test(%composer: Composer?, %changed: Int): String? {
   sourceInformationMarkerStart(%composer, <>, "C(Test):Test.kt")
   if (isTraceInProgress()) {
@@ -82,7 +81,6 @@ fun Test(%composer: Composer?, %changed: Int): String? {
   return tmp0
 }
 @Composable
-@FunctionKeyMeta(key = -1416008805, startOffset = 99, endOffset = 174)
 fun Test2(b: Boolean, %composer: Composer?, %changed: Int): String? {
   %composer.startReplaceGroup(<>)
   sourceInformation(%composer, "C(Test2):Test.kt")
@@ -105,7 +103,6 @@ fun Test2(b: Boolean, %composer: Composer?, %changed: Int): String? {
   return tmp0
 }
 @Composable
-@FunctionKeyMeta(key = 45571194, startOffset = 187, endOffset = 295)
 fun Test3(b: Boolean, %composer: Composer?, %changed: Int): String? {
   %composer.startReplaceGroup(<>)
   sourceInformation(%composer, "C(Test3):Test.kt")
@@ -133,7 +130,6 @@ fun Test3(b: Boolean, %composer: Composer?, %changed: Int): String? {
   %composer.endReplaceGroup()
 }
 @Composable
-@FunctionKeyMeta(key = 1507151193, startOffset = 308, endOffset = 409)
 fun Test4(b: Boolean, %composer: Composer?, %changed: Int): String? {
   sourceInformationMarkerStart(%composer, <>, "C(Test4):Test.kt")
   if (isTraceInProgress()) {
@@ -151,7 +147,6 @@ fun Test4(b: Boolean, %composer: Composer?, %changed: Int): String? {
   return tmp0
 }
 @Composable
-@FunctionKeyMeta(key = 1500981626, startOffset = 422, endOffset = 488)
 fun Test5(%composer: Composer?, %changed: Int): String? {
   sourceInformationMarkerStart(%composer, <>, "C(Test5):Test.kt")
   if (isTraceInProgress()) {
@@ -166,7 +161,6 @@ fun Test5(%composer: Composer?, %changed: Int): String? {
   return tmp0
 }
 @Composable
-@FunctionKeyMeta(key = -682695301, startOffset = 501, endOffset = 536)
 fun Test6(%composer: Composer?, %changed: Int): String? {
   sourceInformationMarkerStart(%composer, <>, "C(Test6):Test.kt")
   if (isTraceInProgress()) {
@@ -179,7 +173,6 @@ fun Test6(%composer: Composer?, %changed: Int): String? {
   sourceInformationMarkerEnd(%composer)
 }
 @Composable
-@FunctionKeyMeta(key = 1596923894, startOffset = 549, endOffset = 641)
 fun Test7(b: Boolean, %composer: Composer?, %changed: Int): String? {
   %composer.startReplaceGroup(<>)
   sourceInformation(%composer, "C(Test7):Test.kt")
@@ -202,7 +195,6 @@ fun Test7(b: Boolean, %composer: Composer?, %changed: Int): String? {
   return tmp0
 }
 @Composable
-@FunctionKeyMeta(key = -1892618192, startOffset = 654, endOffset = 739)
 fun Test8(%composer: Composer?, %changed: Int): Unit? {
   sourceInformationMarkerStart(%composer, <>, "C(Test8)<Test6(...>:Test.kt")
   if (isTraceInProgress()) {
@@ -218,7 +210,6 @@ fun Test8(%composer: Composer?, %changed: Int): Unit? {
   return tmp0
 }
 @Composable
-@FunctionKeyMeta(key = -1541818255, startOffset = 752, endOffset = 843)
 fun Test9(%composer: Composer?, %changed: Int): Unit? {
   sourceInformationMarkerStart(%composer, <>, "C(Test9)<Test6(...>:Test.kt")
   if (isTraceInProgress()) {
@@ -234,7 +225,6 @@ fun Test9(%composer: Composer?, %changed: Int): Unit? {
   return tmp0
 }
 @Composable
-@FunctionKeyMeta(key = 2030188631, startOffset = 856, endOffset = 907)
 fun Test10(%composer: Composer?, %changed: Int): Unit? {
   sourceInformationMarkerStart(%composer, <>, "C(Test10)<Test6(...>:Test.kt")
   if (isTraceInProgress()) {

@@ -69,8 +69,8 @@ fun IrFrameMap.leave(irDeclaration: IrSymbolOwner): Int {
 }
 
 fun JvmBackendContext.getSourceMapper(declaration: IrClass): SourceMapper {
-    val irFile = declaration.fileParentBeforeInline
-    val type = declaration.getAttributeOwnerBeforeInline()?.localClassType ?: defaultTypeMapper.mapClass(declaration)
+    val irFile = declaration.fileParent
+    val type = defaultTypeMapper.mapClass(declaration)
 
     val fileEntry = irFile.fileEntry
     // NOTE: apparently inliner requires the source range to cover the

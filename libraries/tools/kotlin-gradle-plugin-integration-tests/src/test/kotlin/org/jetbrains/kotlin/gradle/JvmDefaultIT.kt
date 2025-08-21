@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
-import org.jetbrains.kotlin.gradle.testbase.ReturnFromBuildScriptAfterExecution.Companion.buildWithAssertions
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Path
 import kotlin.io.path.appendText
@@ -69,7 +68,7 @@ internal class JvmDefaultIT : KGPBaseTest() {
                 id("kotlin-dsl")
             }
 
-            overrideLanguageVersion14(gradleVersion)
+            overrideOldGradleBoundLanguageVersionsWith19()
             kotlinSourcesDir().also { it.createDirectories() }.writeMainFun()
 
             checkJvmDefaultReplacement(
@@ -106,7 +105,7 @@ internal class JvmDefaultIT : KGPBaseTest() {
                     compilerVersion.value("2.2.0-RC")
                 }
             }
-            overrideLanguageVersion14(gradleVersion)
+            overrideOldGradleBoundLanguageVersionsWith19()
             kotlinSourcesDir().also { it.createDirectories() }.writeMainFun()
 
             build(":compileKotlin") {
@@ -133,7 +132,7 @@ internal class JvmDefaultIT : KGPBaseTest() {
                 """.trimIndent()
             )
 
-            overrideLanguageVersion14(gradleVersion)
+            overrideOldGradleBoundLanguageVersionsWith19()
             kotlinSourcesDir().also { it.createDirectories() }.writeMainFun()
 
             checkJvmDefaultReplacement(
@@ -166,7 +165,7 @@ internal class JvmDefaultIT : KGPBaseTest() {
                     }
                 }
             }
-            overrideLanguageVersion14(gradleVersion)
+            overrideOldGradleBoundLanguageVersionsWith19()
 
             kotlinSourcesDir().also { it.createDirectories() }.writeMainFun()
 
@@ -193,19 +192,25 @@ internal class JvmDefaultIT : KGPBaseTest() {
         """.trimMargin()
     )
 
-    // Applied in Gradle 7.6.3 by 'kotlin-dsl' plugin language version '1.4' is not supported by the latest Kotlin compiler
-    private fun TestProject.overrideLanguageVersion14(gradleVersion: GradleVersion) {
-        if (gradleVersion <= GradleVersion.version(TestVersions.Gradle.G_8_0)) {
-            buildScriptInjection {
+    // Gradle versions 8.* and before use either LV 1.4 or 1.8, but they both are currently disabled
+    private fun TestProject.overrideOldGradleBoundLanguageVersionsWith19() {
+        buildScriptInjection {
+            project.afterEvaluate {
                 project.afterEvaluate {
-                    project.afterEvaluate {
-                        project.tasks.named("compileKotlin", KotlinJvmCompile::class.java) {
-                            it.compilerOptions {
-                                @Suppress("DEPRECATION")
-                                languageVersion.set(KotlinVersion.KOTLIN_1_8)
-                                @Suppress("DEPRECATION")
-                                apiVersion.set(KotlinVersion.KOTLIN_1_8)
-                            }
+                    project.tasks.named("compileKotlin", KotlinJvmCompile::class.java) {
+                        @Suppress("DEPRECATION")
+                        it.compilerOptions {
+                            // Note: with LV 2.0 here, the test notOverrideKotlinDslPluginOnUsingBtaWithOlderCompilerVersion
+                            // fails on Gradle 8.14 with CNFE: KtDiagnosticsContainer
+                            // Probably some conflict arises between compiler version 2.2.0-RC used in the test
+                            // and current master (KtDiagnosticsContainer was introduced in 2.2.0-Beta1 timeframe)
+                            // Error disappears if we comment the last line in FirAssignmentPluginExtensionRegistrar
+                            // With LV 1.9, this class isn't actual at all.
+                            // This is a very specific case that is caused by usage of KGP 2.3 but with Kotlin compiler 2.2 through BTA.
+                            // The problem is that compiler plugins are not yet aligned with the version of compiler configured for BTA,
+                            // so it's compiler 2.2 + assignment compiler plugin 2.3. See KT-68107.
+                            languageVersion.set(KotlinVersion.KOTLIN_1_9)
+                            apiVersion.set(KotlinVersion.KOTLIN_1_9)
                         }
                     }
                 }
@@ -222,9 +227,10 @@ internal class JvmDefaultIT : KGPBaseTest() {
             kotlinJvm.target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).compileTaskProvider.map {
                 (it as KotlinCompile).createCompilerArguments(KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.default)
             }
-        }.buildAndReturn(":compileKotlin", buildAction = buildWithAssertions(buildOutputAssertions))
+        }.buildAndReturn(":compileKotlin", buildAction = BuildActions.buildWithAssertions(buildOutputAssertions))
 
         assertEquals(expectedJvmDefaultStable, jvmArgs.jvmDefaultStable)
+        @Suppress("DEPRECATION")
         assertEquals(expectedJvmDefaultDeprecated, jvmArgs.jvmDefault)
     }
 }

@@ -2,7 +2,7 @@
 interface T
 interface T2
 
-fun foo() {
+fun f<caret>oo() {
     open class A : T
     class B : A(), T2
 

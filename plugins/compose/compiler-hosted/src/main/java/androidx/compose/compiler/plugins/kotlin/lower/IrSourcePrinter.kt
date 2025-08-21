@@ -379,15 +379,15 @@ class IrSourcePrinterVisitor(
                     print(" $opSymbol ")
                     expression.arguments[1]?.print()
                 }
-                "iterator", "hasNext", "next",
-                "noWhenBranchMatchedException" -> {
+                "iterator", "hasNext", "next" -> {
                     expression.printReceiver()
                     print(".")
                     print(opSymbol)
                     print("()")
                 }
-                "THROW_ISE" -> {
+                "THROW_ISE", "noWhenBranchMatchedException" -> {
                     print(opSymbol)
+                    print("()")
                 }
                 else -> {
                     if (name.startsWith("component")) {
@@ -625,7 +625,7 @@ class IrSourcePrinterVisitor(
             IrTypeOperator.INSTANCEOF -> {
                 expression.argument.print()
                 print(" is ")
-                print(expression.type.renderSrc())
+                print(expression.typeOperand.renderSrc())
             }
             else -> error("Unknown type operator: ${expression.operator}")
         }
@@ -1425,32 +1425,11 @@ class IrSourcePrinterVisitor(
                 if (isMarkedNullable()) {
                     append('?')
                 }
-                abbreviation?.let {
-                    append(it.renderTypeAbbreviation())
-                }
             }
         }
 
     private inline fun buildTrimEnd(fn: StringBuilder.() -> Unit): String =
         buildString(fn).trimEnd()
-
-    private fun IrTypeAbbreviation.renderTypeAbbreviation(): String =
-        buildString {
-            append("{ ")
-            append(renderTypeAnnotations(annotations))
-            append(typeAlias.renderTypeAliasFqn())
-            if (arguments.isNotEmpty()) {
-                append(
-                    arguments.joinToString(prefix = "<", postfix = ">", separator = ", ") {
-                        it.renderTypeArgument()
-                    }
-                )
-            }
-            if (hasQuestionMark) {
-                append('?')
-            }
-            append(" }")
-        }
 
     private fun IrTypeArgument.renderTypeArgument(): String =
         when (this) {

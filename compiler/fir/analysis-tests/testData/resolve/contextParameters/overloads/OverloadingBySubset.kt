@@ -107,14 +107,14 @@ context(old: ContextParameterSuperType) val ReceiverType.<!EXTENSION_SHADOWED_BY
 
 fun localScope() {
     context(old: ContextParameterSuperType) fun conflictingLocalFunction1(): ReturnType = null!!
-    context(old: ContextParameterSubType, new: ContextParameterType) fun conflictingLocalFunction1(): ReturnType = null!!
+    context(old: ContextParameterSubType, new: ContextParameterType) <!CONTEXTUAL_OVERLOAD_SHADOWED!>fun conflictingLocalFunction1(): ReturnType<!> = null!!
 
     // local callables (w/ hidden deprecated declarations)
 
     @Deprecated("", level = DeprecationLevel.HIDDEN)
     context(old: ContextParameterSuperType) fun validLocalFunctionViaHidingDeprecation1(): ReturnType = null!!
 
-    context(old: ContextParameterSubType, new: ContextParameterType) fun validLocalFunctionViaHidingDeprecation1(): ReturnType = null!!
+    context(old: ContextParameterSubType, new: ContextParameterType) <!CONTEXTUAL_OVERLOAD_SHADOWED!>fun validLocalFunctionViaHidingDeprecation1(): ReturnType<!> = null!!
 }
 
 

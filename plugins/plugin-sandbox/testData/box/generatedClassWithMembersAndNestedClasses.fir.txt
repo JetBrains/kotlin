@@ -22,7 +22,7 @@ FILE: generatedClassWithMembersAndNestedClasses.kt
         R|bar/testConstructor|()
         ^box R|bar/testNestedClasses|()
     }
-FILE: __GENERATED DECLARATIONS__.kt
+FILE: foo/AllOpenGenerated.kt
     package foo
 
     public final class AllOpenGenerated : R|kotlin/Any| {

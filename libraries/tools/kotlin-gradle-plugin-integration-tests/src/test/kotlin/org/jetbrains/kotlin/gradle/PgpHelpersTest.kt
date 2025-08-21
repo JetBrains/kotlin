@@ -6,13 +6,11 @@
 package org.jetbrains.kotlin.gradle
 
 import io.ktor.http.*
-import io.ktor.server.application.*
 import io.ktor.server.cio.*
 import io.ktor.server.engine.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import io.ktor.util.pipeline.*
 import kotlinx.coroutines.runBlocking
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.kotlin.dsl.*
@@ -107,16 +105,17 @@ class PgpHelpersTest : KGPBaseTest() {
             val parameters = mutableListOf<Parameters>()
 
             runWithKtorService(
-                {
-                    val formParameters: Parameters = call.receiveParameters()
-                    parameters += formParameters
-                    call.respond(HttpStatusCode.OK)
-                }
-            ) { port ->
+                routingSetup = {
+                    post("/pks/add") {
+                        val formParameters: Parameters = call.receiveParameters()
+                        parameters += formParameters
+                        call.respond(HttpStatusCode.OK)
+                    }
+                }) { port ->
                 build(
                     "uploadPublicPgpKey",
                     "--keyring",
-                    findGeneratedPublicKeyAsc().absolutePathString(),
+                    findGeneratedKey().absolutePathString(),
                     "--keyserver",
                     "http://localhost:$port",
                 )
@@ -124,7 +123,7 @@ class PgpHelpersTest : KGPBaseTest() {
             assert(parameters.size == 1) { "Exactly one request must be sent to the server, but the number of requests was: ${parameters.size}" }
             val params = parameters.single()
             assertEquals("nm", params["options"])
-            assertEquals(findGeneratedPublicKeyAsc().readText(), params["keytext"])
+            assertEquals(findGeneratedKey().readText(), params["keytext"])
         }
     }
 
@@ -138,14 +137,15 @@ class PgpHelpersTest : KGPBaseTest() {
                 "-Psigning.password=abc",
             )
             runWithKtorService(
-                {
-                    call.respond(HttpStatusCode.BadRequest, "Some reason")
-                }
-            ) { port ->
+                routingSetup = {
+                    post("/pks/add") {
+                        call.respond(HttpStatusCode.BadRequest, "Some reason")
+                    }
+                }) { port ->
                 buildAndFail(
                     "uploadPublicPgpKey",
                     "--keyring",
-                    findGeneratedPublicKeyAsc().absolutePathString(),
+                    findGeneratedKey().absolutePathString(),
                     "--keyserver",
                     "http://localhost:$port",
                 ) {
@@ -210,24 +210,23 @@ class PgpHelpersTest : KGPBaseTest() {
         }
     }
 
-    private fun TestProject.findGeneratedPublicKeyAsc(): Path {
+    private fun TestProject.findGeneratedKey(prefix: String = "public_", suffix: String = ".asc"): Path {
         return projectPath.resolve("build/pgp").listDirectoryEntries()
-            .single { it.fileName.toString().startsWith("public_") && it.fileName.toString().endsWith(".asc") }
+            .single { it.fileName.toString().startsWith(prefix) && it.fileName.toString().endsWith(suffix) }
     }
 
     private fun runWithKtorService(
-        handler: suspend RoutingContext.() -> Unit,
+        routingSetup: Routing.() -> Unit,
         action: (Int) -> Unit,
     ) {
         var server: EmbeddedServer<CIOApplicationEngine, CIOApplicationEngine.Configuration>? = null
         try {
-            server = embeddedServer(CIO, host = "localhost", port = 0)
-            {
+            server = embeddedServer(CIO, host = "localhost", port = 0) {
                 routing {
                     get("/isReady") {
                         call.respond(HttpStatusCode.OK)
                     }
-                    post("/pks/add", handler)
+                    routingSetup()
                 }
             }.start()
             val port = runBlocking { server.engine.resolvedConnectors().single().port }

@@ -28,6 +28,9 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 
 sealed class FirFunctionSymbol<out D : FirFunction>(override val callableId: CallableId) : FirCallableSymbol<D>(), FunctionSymbolMarker {
+    override val name: Name
+        get() = callableId.callableName
+
     val valueParameterSymbols: List<FirValueParameterSymbol>
         get() = fir.valueParameters.map { it.symbol }
 
@@ -105,7 +108,7 @@ class FirConstructorSymbol(callableId: CallableId) : FirFunctionSymbol<FirConstr
  * a property (which never exists in sources) and
  * a getter which exists in sources and is either from Java or overrides another getter from Java.
  */
-abstract class FirSyntheticPropertySymbol(propertyId: CallableId, val getterId: CallableId) : FirPropertySymbol(propertyId) {
+abstract class FirSyntheticPropertySymbol(propertyId: CallableId, val getterId: CallableId) : FirRegularPropertySymbol(propertyId) {
     abstract fun copy(): FirSyntheticPropertySymbol
 
     @SymbolInternals

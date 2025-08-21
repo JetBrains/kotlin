@@ -50,26 +50,39 @@ internal fun PhaseEngine<PhaseContext>.runFrontend(config: KonanConfig, environm
 }
 
 internal fun PhaseEngine<PhaseContext>.runPsiToIr(
-        frontendOutput: FrontendPhaseOutput.Full,
-        isProducingLibrary: Boolean,
-): PsiToIrOutput = runPsiToIr(frontendOutput, isProducingLibrary, {}).first
-
-internal fun <T> PhaseEngine<PhaseContext>.runPsiToIr(
-        frontendOutput: FrontendPhaseOutput.Full,
-        isProducingLibrary: Boolean,
-        produceAdditionalOutput: (PhaseEngine<out PsiToIrContext>) -> T
-): Pair<PsiToIrOutput, T> {
+        frontendOutput: FrontendPhaseOutput.Full
+): PsiToIrOutput {
     val config = this.context.config
     val psiToIrContext = PsiToIrContextImpl(config, frontendOutput.moduleDescriptor, frontendOutput.bindingContext)
-    val (psiToIrOutput, additionalOutput) = useContext(psiToIrContext) { psiToIrEngine ->
-        val additionalOutput = produceAdditionalOutput(psiToIrEngine)
-        val psiToIrInput = PsiToIrInput(frontendOutput.moduleDescriptor, frontendOutput.environment, isProducingLibrary)
+    val psiToIrOutput = useContext(psiToIrContext) { psiToIrEngine ->
+        val psiToIrInput = PsiToIrInput(frontendOutput.moduleDescriptor, frontendOutput.environment)
         val output = psiToIrEngine.runPhase(PsiToIrPhase, psiToIrInput)
+        psiToIrEngine.runSpecialBackendChecks(output.irModule, output.irBuiltIns, output.symbols)
+        output
+    }
+    runPhase(CopyDefaultValuesToActualPhase, Pair(psiToIrOutput.irModule, psiToIrOutput.irBuiltIns))
+    return psiToIrOutput
+}
+
+internal fun PhaseEngine<PhaseContext>.linkKlibs(
+        frontendOutput: FrontendPhaseOutput.Full,
+): LinkKlibsOutput = linkKlibs(frontendOutput, {}).first
+
+internal fun <T> PhaseEngine<PhaseContext>.linkKlibs(
+        frontendOutput: FrontendPhaseOutput.Full,
+        produceAdditionalOutput: (PhaseEngine<out LinkKlibsContext>) -> T
+): Pair<LinkKlibsOutput, T> {
+    val config = this.context.config
+    val psiToIrContext = LinkKlibsContextImpl(config, frontendOutput.moduleDescriptor, frontendOutput.bindingContext)
+    val (linkKlibsOutput, additionalOutput) = useContext(psiToIrContext) { psiToIrEngine ->
+        val additionalOutput = produceAdditionalOutput(psiToIrEngine)
+        val linkKlibsInput = LinkKlibsInput(frontendOutput.moduleDescriptor, frontendOutput.environment)
+        val output = psiToIrEngine.runPhase(LinkKlibsPhase, linkKlibsInput)
         psiToIrEngine.runSpecialBackendChecks(output.irModule, output.irBuiltIns, output.symbols)
         output to additionalOutput
     }
-    runPhase(CopyDefaultValuesToActualPhase, psiToIrOutput)
-    return psiToIrOutput to additionalOutput
+    runPhase(CopyDefaultValuesToActualPhase, Pair(linkKlibsOutput.irModule, linkKlibsOutput.irBuiltIns))
+    return linkKlibsOutput to additionalOutput
 }
 
 internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Context, irModule: IrModuleFragment, performanceManager: PerformanceManager?) {
@@ -116,14 +129,14 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
         fun NativeGenerationState.runSpecifiedLowerings(fragment: BackendJobFragment, loweringsToLaunch: LoweringList) {
             runEngineForLowerings {
                 val module = fragment.irModule
-                partiallyLowerModuleWithDependencies(module, loweringsToLaunch)
+                partiallyLowerModuleWithDependencies(module, loweringsToLaunch, performanceManager)
             }
         }
 
         fun NativeGenerationState.runSpecifiedLowerings(fragment: BackendJobFragment, moduleLowering: ModuleLowering) {
             runEngineForLowerings {
                 val module = fragment.irModule
-                partiallyLowerModuleWithDependencies(module, moduleLowering)
+                partiallyLowerModuleWithDependencies(module, moduleLowering, performanceManager)
             }
         }
 
@@ -162,9 +175,6 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                 fragmentWithState.forEach { (fragment, state) -> state.runSpecifiedLowerings(fragment, validateIrAfterInliningOnlyPrivateFunctions) }
                 fragmentWithState.forEach { (fragment, state) -> state.runSpecifiedLowerings(fragment, listOf(inlineAllFunctionsPhase)) }
                 fragmentWithState.forEach { (fragment, state) -> state.runSpecifiedLowerings(fragment, listOf(specialObjCValidationPhase)) }
-                if (context.config.configuration[KlibConfigurationKeys.SYNTHETIC_ACCESSORS_DUMP_DIR] != null) {
-                    fragmentWithState.forEach { (fragment, state) -> state.runSpecifiedLowerings(fragment, dumpSyntheticAccessorsPhase) }
-                }
             }
 
             fragmentWithState.forEach { (fragment, state) -> state.runSpecifiedLowerings(fragment, validateIrAfterInliningAllFunctions) }
@@ -426,22 +436,30 @@ internal fun <C : PhaseContext> PhaseEngine<C>.compileAndLink(
     }
 }
 
-internal fun PhaseEngine<NativeGenerationState>.partiallyLowerModuleWithDependencies(module: IrModuleFragment, loweringList: LoweringList) {
+internal fun PhaseEngine<NativeGenerationState>.partiallyLowerModuleWithDependencies(
+        module: IrModuleFragment,
+        loweringList: LoweringList,
+        performanceManager: PerformanceManager?,
+) {
     val dependenciesToCompile = findDependenciesToCompile()
     // TODO: KonanLibraryResolver.TopologicalLibraryOrder actually returns libraries in the reverse topological order.
     // TODO: Does the order of files really matter with the new MM? (and with lazy top-levels initialization?)
     val allModulesToLower = listOf(module) + dependenciesToCompile.reversed()
 
-    runLowerings(loweringList, allModulesToLower)
+    runLowerings(loweringList, allModulesToLower, performanceManager)
 }
 
-internal fun PhaseEngine<NativeGenerationState>.partiallyLowerModuleWithDependencies(module: IrModuleFragment, lowering: ModuleLowering) {
+internal fun PhaseEngine<NativeGenerationState>.partiallyLowerModuleWithDependencies(
+        module: IrModuleFragment,
+        lowering: ModuleLowering,
+        performanceManager: PerformanceManager?,
+) {
     val dependenciesToCompile = findDependenciesToCompile()
     // TODO: KonanLibraryResolver.TopologicalLibraryOrder actually returns libraries in the reverse topological order.
     // TODO: Does the order of files really matter with the new MM? (and with lazy top-levels initialization?)
     val allModulesToLower = listOf(module) + dependenciesToCompile.reversed()
 
-    runModuleWisePhase(lowering, allModulesToLower)
+    runModuleWisePhase(lowering, allModulesToLower, performanceManager)
 }
 
 internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModuleFragment, irBuiltIns: IrBuiltIns, cExportFiles: CExportFiles?) {

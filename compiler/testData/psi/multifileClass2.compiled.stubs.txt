@@ -1,5 +1,5 @@
 MultifileClass.class:
-  PsiJetFileStubImpl[package=test]
+  FILE[kind=MultifileClass[packageFqName=test, facadeFqName=test.MultifileClass, facadePartSimpleNames=[MultifileClass__MultifileClassKt, MultifileClass__MultifileClass__PartKt, MultifileClass__PartKt]]]
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
@@ -22,7 +22,7 @@ MultifileClass.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
+      PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
     PROPERTY[fqName=test.p1Var, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=true, name=p1Var]
@@ -47,7 +47,7 @@ MultifileClass.class:
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
       REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
-    FUN[fqName=test.p1Fun, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p1Fun]
+    FUN[fqName=test.p1Fun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p1Fun]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
@@ -55,7 +55,7 @@ MultifileClass.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
-    FUN[fqName=test.p1ExtFun, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=p1ExtFun]
+    FUN[fqName=test.p1ExtFun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=p1ExtFun]
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -68,7 +68,7 @@ MultifileClass.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
-    FUN[fqName=test.p1ExprFun, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p1ExprFun]
+    FUN[fqName=test.p1ExprFun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p1ExprFun]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
@@ -76,7 +76,7 @@ MultifileClass.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
-    FUN[fqName=test.p1FunWithParams, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p1FunWithParams]
+    FUN[fqName=test.p1FunWithParams, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p1FunWithParams]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
@@ -109,10 +109,10 @@ MultifileClass.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
+      PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
-    FUN[fqName=test.p3Fun, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p3Fun]
+    FUN[fqName=test.p3Fun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p3Fun]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
@@ -120,7 +120,7 @@ MultifileClass.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
-    FUN[fqName=test.p3ExtFun, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=p3ExtFun]
+    FUN[fqName=test.p3ExtFun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=p3ExtFun]
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -152,10 +152,10 @@ MultifileClass.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
+      PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
-    FUN[fqName=test.p2Fun, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p2Fun]
+    FUN[fqName=test.p2Fun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p2Fun]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
@@ -163,7 +163,7 @@ MultifileClass.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
-    FUN[fqName=test.p2ExtFun, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=p2ExtFun]
+    FUN[fqName=test.p2ExtFun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=p2ExtFun]
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -179,7 +179,7 @@ MultifileClass.class:
 
 
 MultifileClass__MultifileClassKt.class:
-  PsiJetFileStubImpl[package=test]
+  FILE[kind=Facade[packageFqName=test, facadeFqName=test.MultifileClass__MultifileClassKt]]
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
@@ -202,7 +202,7 @@ MultifileClass__MultifileClassKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
+      PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
     PROPERTY[fqName=test.p1Var, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=true, name=p1Var]
@@ -226,7 +226,7 @@ MultifileClass__MultifileClassKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
-    FUN[fqName=test.p1Fun, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p1Fun]
+    FUN[fqName=test.p1Fun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p1Fun]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
@@ -234,7 +234,7 @@ MultifileClass__MultifileClassKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
-    FUN[fqName=test.p1ExtFun, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=p1ExtFun]
+    FUN[fqName=test.p1ExtFun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=p1ExtFun]
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -247,7 +247,7 @@ MultifileClass__MultifileClassKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
-    FUN[fqName=test.p1ExprFun, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p1ExprFun]
+    FUN[fqName=test.p1ExprFun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p1ExprFun]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
@@ -255,7 +255,7 @@ MultifileClass__MultifileClassKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
-    FUN[fqName=test.p1FunWithParams, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p1FunWithParams]
+    FUN[fqName=test.p1FunWithParams, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p1FunWithParams]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
@@ -272,7 +272,7 @@ MultifileClass__MultifileClassKt.class:
 
 
 MultifileClass__MultifileClass__PartKt.class:
-  PsiJetFileStubImpl[package=test]
+  FILE[kind=Facade[packageFqName=test, facadeFqName=test.MultifileClass__MultifileClass__PartKt]]
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
@@ -295,10 +295,10 @@ MultifileClass__MultifileClass__PartKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
+      PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
-    FUN[fqName=test.p3Fun, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p3Fun]
+    FUN[fqName=test.p3Fun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p3Fun]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
@@ -306,7 +306,7 @@ MultifileClass__MultifileClass__PartKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
-    FUN[fqName=test.p3ExtFun, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=p3ExtFun]
+    FUN[fqName=test.p3ExtFun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=p3ExtFun]
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -322,7 +322,7 @@ MultifileClass__MultifileClass__PartKt.class:
 
 
 MultifileClass__PartKt.class:
-  PsiJetFileStubImpl[package=test]
+  FILE[kind=Facade[packageFqName=test, facadeFqName=test.MultifileClass__PartKt]]
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
@@ -345,10 +345,10 @@ MultifileClass__PartKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
+      PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
-    FUN[fqName=test.p2Fun, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p2Fun]
+    FUN[fqName=test.p2Fun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p2Fun]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
@@ -356,7 +356,7 @@ MultifileClass__PartKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
-    FUN[fqName=test.p2ExtFun, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=p2ExtFun]
+    FUN[fqName=test.p2ExtFun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=p2ExtFun]
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE

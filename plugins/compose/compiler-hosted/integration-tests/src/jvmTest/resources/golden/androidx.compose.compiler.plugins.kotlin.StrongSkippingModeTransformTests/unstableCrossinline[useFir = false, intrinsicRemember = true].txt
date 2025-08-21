@@ -22,7 +22,6 @@ import androidx.compose.runtime.ReadOnlyComposable
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = 905288344, startOffset = 226, endOffset = 512)
 fun Scratch(vm: MyUnstableViewModel, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   val %dirty = %changed

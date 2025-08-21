@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.gradle.utils
 
 import org.gradle.api.Project
 
+internal val multiplatformAndroidLibraryPluginId = "com.android.kotlin.multiplatform.library"
+
 internal val androidPluginIds = listOf(
     "com.android.application",
     "com.android.library",

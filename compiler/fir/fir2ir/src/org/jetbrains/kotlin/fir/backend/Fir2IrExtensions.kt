@@ -5,13 +5,16 @@
 
 package org.jetbrains.kotlin.fir.backend
 
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.utils.CodeFragmentConversionData
 import org.jetbrains.kotlin.fir.backend.utils.InjectedValue
 import org.jetbrains.kotlin.fir.declarations.FirCodeFragment
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrOverridableDeclaration
@@ -31,6 +34,7 @@ interface Fir2IrExtensions {
 
     fun deserializeToplevelClass(irClass: IrClass, components: Fir2IrComponents): Boolean
     fun findInjectedValue(calleeReference: FirReference, conversionScope: Fir2IrConversionScope): InjectedValue?
+    fun findInjectedInlineLambdaArgument(parameter: FirValueParameterSymbol): FirExpression?
 
     /**
      * Platform-dependent logic to determine whether a backing field is required for [property].
@@ -39,6 +43,8 @@ interface Fir2IrExtensions {
      * otherwise it should return the result of [Fir2IrExtensions.Default.hasBackingField].
      */
     fun hasBackingField(property: FirProperty, session: FirSession): Boolean
+
+    fun specialBackingFieldVisibility(firProperty: FirProperty, session: FirSession): Visibility?
 
     fun initializeIrBuiltInsAndSymbolTable(irBuiltIns: IrBuiltIns, symbolTable: SymbolTable)
 
@@ -61,8 +67,10 @@ interface Fir2IrExtensions {
         override val externalOverridabilityConditions: List<IrExternalOverridabilityCondition> = emptyList()
         override fun deserializeToplevelClass(irClass: IrClass, components: Fir2IrComponents): Boolean = false
         override fun findInjectedValue(calleeReference: FirReference, conversionScope: Fir2IrConversionScope): Nothing? = null
+        override fun findInjectedInlineLambdaArgument(parameter: FirValueParameterSymbol): FirExpression? = null
         override fun hasBackingField(property: FirProperty, session: FirSession): Boolean = property.hasBackingField
         override fun initializeIrBuiltInsAndSymbolTable(irBuiltIns: IrBuiltIns, symbolTable: SymbolTable) {}
         override fun shouldGenerateDelegatedMember(delegateMemberFromBaseType: IrOverridableDeclaration<*>): Boolean = true
+        override fun specialBackingFieldVisibility(firProperty: FirProperty, session: FirSession): Visibility? = null
     }
 }

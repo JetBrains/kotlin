@@ -30,10 +30,7 @@ import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.config.jvmDefaultMode
-import org.jetbrains.kotlin.lexer.KtTokens.INLINE_KEYWORD
-import org.jetbrains.kotlin.lexer.KtTokens.VALUE_KEYWORD
 import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
-import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmNameAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmOverloadsAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmSyntheticAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.copy
@@ -61,12 +58,12 @@ internal fun createSymbolLightClassNoCache(classOrObject: KtClassOrObject, ktMod
     else -> createLightClassNoCache(classOrObject, ktModule)
 }
 
-internal fun createLightClassNoCache(ktClassOrObject: KtClassOrObject, ktModule: KaModule): SymbolLightClassBase = when {
-    ktClassOrObject.hasModifier(INLINE_KEYWORD) || ktClassOrObject.hasModifier(VALUE_KEYWORD) ->
-        SymbolLightClassForValueClass(ktClassOrObject, ktModule)
-
-    ktClassOrObject is KtClass && ktClassOrObject.isAnnotation() -> SymbolLightClassForAnnotationClass(ktClassOrObject, ktModule)
-    ktClassOrObject is KtClass && ktClassOrObject.isInterface() -> SymbolLightClassForInterface(ktClassOrObject, ktModule)
+internal fun createLightClassNoCache(
+    ktClassOrObject: KtClassOrObject,
+    ktModule: KaModule,
+): SymbolLightClassBase = when (ktClassOrObject) {
+    is KtClass if ktClassOrObject.isAnnotation() -> SymbolLightClassForAnnotationClass(ktClassOrObject, ktModule)
+    is KtClass if ktClassOrObject.isInterface() -> SymbolLightClassForInterface(ktClassOrObject, ktModule)
     else -> SymbolLightClassForClassOrObject(ktClassOrObject, ktModule)
 }
 
@@ -97,19 +94,11 @@ internal fun createLightClassNoCache(
         manager = manager,
     )
 
-    else -> if (classSymbol.isInline) {
-        SymbolLightClassForValueClass(
-            ktModule = ktModule,
-            classSymbol = classSymbol,
-            manager = manager,
-        )
-    } else {
-        SymbolLightClassForClassOrObject(
-            ktModule = ktModule,
-            classSymbol = classSymbol,
-            manager = manager,
-        )
-    }
+    else -> SymbolLightClassForClassOrObject(
+        ktModule = ktModule,
+        classSymbol = classSymbol,
+        manager = manager,
+    )
 }
 
 private fun lightClassForEnumEntry(ktEnumEntry: KtEnumEntry): KtLightClass? {
@@ -167,39 +156,75 @@ internal fun KaSession.createMethods(
     }
 }
 
+internal fun interface LightMethodCreator {
+    /**
+     * Creates a method representation based on the provided parameters.
+     *
+     * @param methodIndex The index of the method to be created.
+     * @param valueParameterPickMask An optional [BitSet] that specifies arguments to pick; can be null
+     * @param hasValueClassInParameterType Indicates whether the method has a value class in its parameters.
+     */
+    fun create(
+        methodIndex: Int,
+        valueParameterPickMask: BitSet?,
+        hasValueClassInParameterType: Boolean,
+    )
+}
+
+/** @see LightMethodCreator */
 internal fun <T : KaFunctionSymbol> KaSession.createMethodsJvmOverloadsAware(
     declaration: T,
-    result: MutableList<PsiMethod>,
-    skipValueClassParameters: Boolean,
     methodIndexBase: Int,
-    lightMethodCreator: (Int, BitSet?) -> PsiMethod,
+    lightMethodCreator: LightMethodCreator,
 ) {
-    var indexOfFirstParameterWithValueClass: Int? = null
-    if (skipValueClassParameters && !declaration.hasJvmNameAnnotation()) {
-        for ((index, parameter) in declaration.valueParameters.withIndex()) when {
-            !typeForValueClass(parameter.returnType) -> {}
-            !parameter.hasDefaultValue -> return // No method can be generated at all
-            indexOfFirstParameterWithValueClass == null -> indexOfFirstParameterWithValueClass = index
+    val hasJvmOverloadsAnnotation = declaration.hasJvmOverloadsAnnotation()
+    val hasValueClassInParameterType = hasValueClassInSignature(
+        declaration,
+        // value parameters would be checked separately for each overload
+        skipValueParametersCheck = hasJvmOverloadsAnnotation,
+
+        // return type processing is up to the call site
+        skipReturnTypeCheck = true,
+    )
+
+    val valueParameters = declaration.valueParameters
+    val parameterCount = valueParameters.size
+    val valueClassMask = if (hasValueClassInParameterType) {
+        // Optimization to avoid redundant iteration if the signature anyway has a value class
+        null
+    } else {
+        BitSet(parameterCount).apply {
+            valueParameters.forEachIndexed { index, valueParameter ->
+                if (typeForValueClass(valueParameter.returnType)) {
+                    set(index)
+                }
+            }
         }
     }
 
-    // No value classes in the signature -> the method can be generated as it is
-    // A declaration with @JvmName is also allowed as it replaces the mangling name
-    if (indexOfFirstParameterWithValueClass == null) {
-        result += lightMethodCreator.invoke(methodIndexBase, null)
-    }
+    // Default method with all arguments
+    lightMethodCreator.create(
+        methodIndex = methodIndexBase,
+        valueParameterPickMask = null,
+        hasValueClassInParameterType = hasValueClassInParameterType || valueClassMask?.isEmpty == false,
+    )
 
-    if (!declaration.hasJvmOverloadsAnnotation()) return
+    if (!hasJvmOverloadsAnnotation) return
 
     var methodIndex = methodIndexBase
-    val skipMask = BitSet(declaration.valueParameters.size)
-    for (i in declaration.valueParameters.size - 1 downTo 0) {
-        if (!declaration.valueParameters[i].hasDefaultValue) continue
-        skipMask.set(i)
+    val pickMask = BitSet(parameterCount)
+    pickMask.set(0, parameterCount)
 
-        if (indexOfFirstParameterWithValueClass == null || i <= indexOfFirstParameterWithValueClass) {
-            result += lightMethodCreator.invoke(methodIndex++, skipMask.copy())
-        }
+    for (index in parameterCount - 1 downTo 0) {
+        val valueParameter = valueParameters[index]
+        if (!valueParameter.hasDefaultValue) continue
+        pickMask.clear(index)
+
+        lightMethodCreator.create(
+            methodIndex = methodIndex++,
+            valueParameterPickMask = pickMask.copy(),
+            hasValueClassInParameterType = hasValueClassInParameterType || valueClassMask?.intersects(pickMask) == true,
+        )
     }
 }
 
@@ -454,39 +479,57 @@ internal fun KaSession.addPropertyBackingFields(
 }
 
 /**
- * @param suppressJvmNameCheck **true** if [hasJvmNameAnnotation] should be omitted.
- * E.g., if [JvmName] is checked manually later
+ * Whether the [callableSymbol] has a value class in its signature.
+ *
+ * @param skipValueParametersCheck whether to skip value parameter types of the callable symbol during the check
+ * (effectively the same as [valueParameterPickMask] with bits for all parameters)
+ * @param valueParameterPickMask a bit mask specifying which value parameters of the callable symbol should be picked during the check
+ * @param skipReturnTypeCheck whether to skip the return type of the callable symbol during the check
  */
-internal fun KaSession.hasTypeForValueClassInSignature(
+internal fun KaSession.hasValueClassInSignature(
     callableSymbol: KaCallableSymbol,
-    ignoreReturnType: Boolean = false,
-    suppressJvmNameCheck: Boolean = false,
-    argumentsSkipMask: BitSet? = null,
-    ignoreValueParameters: Boolean = false,
+    skipValueParametersCheck: Boolean = false,
+    valueParameterPickMask: BitSet? = null,
+    skipReturnTypeCheck: Boolean = false,
 ): Boolean {
-    // Declarations with JvmName can be accessible from Java
-    when {
-        suppressJvmNameCheck -> {}
-        callableSymbol.hasJvmNameAnnotation() -> return false
-        callableSymbol !is KaKotlinPropertySymbol -> {}
-        callableSymbol.getter?.hasJvmNameAnnotation() == true || callableSymbol.setter?.hasJvmNameAnnotation() == true -> return false
-    }
-
-    if (!ignoreReturnType) {
-        val psiDeclaration = callableSymbol.psi as? KtCallableDeclaration
-        // Only explicitly declared types can be checked to avoid contract violations
-        if (psiDeclaration?.typeReference != null && typeForValueClass(callableSymbol.returnType)) return true
+    if (!skipReturnTypeCheck && hasValueClassInReturnType(callableSymbol)) {
+        return true
     }
 
     if (callableSymbol.receiverType?.let { typeForValueClass(it) } == true) return true
     if (callableSymbol.contextParameters.any { typeForValueClass(it.returnType) }) return true
-    if (!ignoreValueParameters && callableSymbol is KaFunctionSymbol) {
+    if (!skipValueParametersCheck && callableSymbol is KaFunctionSymbol) {
         return callableSymbol.valueParameters.withIndex().any { (index, valueParameter) ->
-            argumentsSkipMask?.get(index) != true && typeForValueClass(valueParameter.returnType)
+            valueParameterPickMask?.get(index) != false && typeForValueClass(valueParameter.returnType)
         }
     }
 
     return false
+}
+
+internal fun KaSession.hasValueClassInReturnType(callableSymbol: KaCallableSymbol): Boolean {
+    val psiDeclaration = callableSymbol.psi as? KtCallableDeclaration
+    val shouldCheckType = psiDeclaration == null || psiDeclaration.typeReference != null
+    // Only explicitly declared types can be checked to avoid contract violations
+    return shouldCheckType && typeForValueClass(callableSymbol.returnType)
+}
+
+/**
+ * Whether a declaration would have a mangled name due to value classes in its signature
+ */
+internal fun hasMangledNameDueValueClassesInSignature(
+    hasValueClassInParameterType: Boolean,
+    hasValueClassInReturnType: Boolean,
+    isTopLevel: Boolean,
+): Boolean = when {
+    // Non-return type is a value class -> mangled name
+    hasValueClassInParameterType -> true
+
+    // No value class in signature at all -> no mangling
+    !hasValueClassInReturnType -> false
+
+    // For top-level declarations a value class in return position don't lead to mangling
+    else -> !isTopLevel
 }
 
 internal fun KaSession.typeForValueClass(type: KaType): Boolean {
@@ -507,3 +550,6 @@ internal inline fun <reified T : KaClassSymbol> KtClassOrObject.createSymbolPoin
     @Suppress("UNCHECKED_CAST")
     symbol.createPointer() as KaSymbolPointer<T>
 }
+
+internal inline val SymbolLightClassBase.isValueClass: Boolean
+    get() = this is SymbolLightClassForClassOrObject && isValueClass

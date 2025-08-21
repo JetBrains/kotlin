@@ -89,7 +89,7 @@ internal fun captureFromTypeParameterUpperBoundIfNeeded(
     val simplifiedArgumentType = argumentType.lowerBoundIfFlexible() as? ConeTypeParameterType ?: return argumentType
     val context = session.typeContext
 
-    val chosenSupertype = simplifiedArgumentType.collectUpperBounds()
+    val chosenSupertype = simplifiedArgumentType.collectUpperBounds(session.typeContext)
         .singleOrNull { it.hasSupertypeWithGivenClassId(expectedTypeClassId, context) } ?: return argumentType
 
     val capturedType = context.captureFromExpression(chosenSupertype) ?: return argumentType

@@ -32,23 +32,23 @@ kotlin {
             )
         )
     }
+}
 
-    tasks.named<Test>("test") {
-        useJUnit {
-            exclude("**/*LincheckTest.class")
-        }
+tasks.test {
+    useJUnit {
+        exclude("**/*LincheckTest.class")
     }
+}
 
-    tasks.register<Test>("lincheckTest") {
-        javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
+tasks.register<Test>("lincheckTest") {
+    javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
 
-        jvmArgs(
-            "--add-opens", "java.base/jdk.internal.misc=ALL-UNNAMED",
-            "--add-exports", "java.base/jdk.internal.util=ALL-UNNAMED",
-            "--add-exports", "java.base/sun.security.action=ALL-UNNAMED"
-        )
-        filter { include("**/*LincheckTest.class") }
-    }
+    jvmArgs(
+        "--add-opens", "java.base/jdk.internal.misc=ALL-UNNAMED",
+        "--add-exports", "java.base/jdk.internal.util=ALL-UNNAMED",
+        "--add-exports", "java.base/sun.security.action=ALL-UNNAMED"
+    )
+    filter { include("**/*LincheckTest.class") }
 }
 
 binaryCompatibilityValidator {
@@ -85,7 +85,8 @@ binaryCompatibilityValidator {
     }
 }
 
-val unpublishedCompilerRuntimeDependencies = listOf( // TODO: remove in KT-70247
+val unpublishedCompilerRuntimeDependencies = listOf(
+    // TODO: remove in KT-70247
     ":compiler:cli", // for MessageRenderer, related to MessageCollector usage
     ":compiler:cli-common", // for compiler arguments setup, for logging via MessageCollector, CompilerSystemProperties, ExitCode
     ":compiler:compiler.version", // for user projects buildscripts, `loadCompilerVersion`
@@ -104,20 +105,7 @@ val unpublishedCompilerRuntimeDependencies = listOf( // TODO: remove in KT-70247
 dependencies {
     commonApi(platform(project(":kotlin-gradle-plugins-bom")))
     commonApi(project(":kotlin-gradle-plugin-api"))
-    commonApi(project(":kotlin-gradle-plugin-model"))
     commonApi(project(":libraries:tools:gradle:fus-statistics-gradle-plugin"))
-
-    // Following two dependencies is a workaround for IDEA import to pick-up them correctly
-    commonCompileOnly(project(":kotlin-gradle-plugin-api")) {
-        capabilities {
-            requireCapability("org.jetbrains.kotlin:kotlin-gradle-plugin-api-common")
-        }
-    }
-    commonCompileOnly(project(":kotlin-gradle-plugin-model")) {
-        capabilities {
-            requireCapability("org.jetbrains.kotlin:kotlin-gradle-plugin-model-common")
-        }
-    }
 
     for (compilerRuntimeDependency in unpublishedCompilerRuntimeDependencies) {
         commonCompileOnly(project(compilerRuntimeDependency)) { isTransitive = false }
@@ -355,7 +343,6 @@ tasks {
         asmDeprecation {
             val exclusions = listOf(
                 "org.jetbrains.kotlin.gradle.**", // part of the plugin
-                "org.jetbrains.kotlin.project.model.**", // part of the plugin
                 "org.jetbrains.kotlin.statistics.**", // part of the plugin
                 "org.jetbrains.kotlin.tooling.**", // part of the plugin
                 "org.jetbrains.kotlin.org.**", // already shadowed dependencies
@@ -591,6 +578,19 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         }
 
         systemProperty("resourcesPath", layout.projectDirectory.dir("src/functionalTest/resources").asFile)
+
+        //region custom Maven Local directory
+        // The Maven Local dir that Gradle uses can be customised via system property `maven.repo.local`.
+        // The functional tests require artifacts are published to Maven Local.
+        // To make sure the tests uses the same `maven.repo.local` as is configured
+        // in the buildscript, forward the value of `maven.repo.local` into the test process.
+        val mavenRepoLocal = providers.systemProperty("maven.repo.local").orNull
+        if (mavenRepoLocal != null) {
+            // Only set `maven.repo.local` if it's present in the buildscript,
+            // to avoid `maven.repo.local` being `null`.
+            systemProperty("maven.repo.local", mavenRepoLocal)
+        }
+        //endregion
     }
 
     dependencies {

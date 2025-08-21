@@ -29,11 +29,7 @@ private val assertionWrapperPhase = makeIrModulePhase(
 fun nativeLoweringsOfTheFirstPhase(
     languageVersionSettings: LanguageVersionSettings,
 ): List<NamedCompilerPhase<PreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> = buildList {
-    // TODO: after the fix of KT-76260 this condition should be simplified to just the check of `IrRichCallableReferencesInKlibs` feature
-    val enableRichReferences = languageVersionSettings.supportsFeature(LanguageFeature.IrRichCallableReferencesInKlibs) ||
-            languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization)
-
-    if (enableRichReferences) {
+    if (languageVersionSettings.supportsFeature(LanguageFeature.IrRichCallableReferencesInKlibs)) {
         this += upgradeCallableReferencesPhase
     }
     if (languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization)) {

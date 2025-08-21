@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import java.util.*
 
-enum class BinaryOperationPrecedence(val higherPriority: BinaryOperationPrecedence?, val tokenSet: TokenSet) {
+enum class BinaryOperationPrecedence(val higherPriority: BinaryOperationPrecedence?, vararg val tokens: KtToken) {
     AS(null, KtTokens.AS_KEYWORD, KtTokens.AS_SAFE),
     MULTIPLICATIVE(AS, KtTokens.MUL, KtTokens.DIV, KtTokens.PERC),
     ADDITIVE(MULTIPLICATIVE, KtTokens.PLUS, KtTokens.MINUS),
@@ -26,13 +26,8 @@ enum class BinaryOperationPrecedence(val higherPriority: BinaryOperationPreceden
     ASSIGNMENT(DISJUNCTION, KtTokens.EQ, KtTokens.PLUSEQ, KtTokens.MINUSEQ, KtTokens.MULTEQ, KtTokens.DIVEQ, KtTokens.PERCEQ),
     ;
 
-    constructor(
-        higherPriority: BinaryOperationPrecedence?,
-        vararg operationElementTypes: IElementType,
-    ) : this(higherPriority, TokenSet.create(*operationElementTypes))
-
-    val tokens: List<IElementType>
-        get() = tokenSet.types.asList()
+    @Suppress("unused") // Used in IntelliJ
+    val tokenSet: TokenSet = TokenSet.create(*tokens)
 
     companion object {
         /**
@@ -62,7 +57,7 @@ enum class BinaryOperationPrecedence(val higherPriority: BinaryOperationPreceden
             }
 
             for (entry in entries) {
-                for (type in entry.tokenSet.getTypes()) {
+                for (type in entry.tokens) {
                     register(type, entry)
 
                     if (type === KtTokens.IDENTIFIER && includeSoftIdentifiers) {

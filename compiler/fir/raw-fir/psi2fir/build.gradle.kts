@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.ideaExt.idea
-
 /*
  * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
@@ -8,6 +6,7 @@ import org.jetbrains.kotlin.ideaExt.idea
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("java-test-fixtures")
 }
 
 dependencies {
@@ -19,16 +18,16 @@ dependencies {
     compileOnly(intellijCore())
     compileOnly(libs.guava)
 
-    testImplementation(libs.junit4)
-    testImplementation(projectTests(":compiler:tests-common"))
-    testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+    testFixturesApi(libs.junit4)
+    testFixturesApi(testFixtures(project(":compiler:tests-common")))
+    testFixturesApi(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
     testCompileOnly(kotlinTest("junit"))
 
     testRuntimeOnly(project(":core:descriptors.runtime"))
 
-    testCompileOnly(intellijCore())
-    testRuntimeOnly(intellijCore())
+    testFixturesCompileOnly(intellijCore())
+    testImplementation(intellijCore())
 }
 
 sourceSets {
@@ -37,6 +36,7 @@ sourceSets {
         projectDefault()
         generatedTestDir()
     }
+    "testFixtures" { projectDefault() }
 }
 
 projectTest(parallel = true) {

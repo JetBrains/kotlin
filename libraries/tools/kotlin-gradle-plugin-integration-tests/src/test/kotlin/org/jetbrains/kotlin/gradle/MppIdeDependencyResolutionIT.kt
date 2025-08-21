@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency.Type.Regu
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinUnresolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.*
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.*
+import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_STRICT_RESOLVE_IDE_DEPENDENCIES
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport
@@ -110,7 +111,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
         project(
             projectName = "cinteropImport",
             gradleVersion = gradleVersion,
-            localRepoDir = defaultLocalRepo(gradleVersion)
+            localRepoDir = defaultLocalRepo(gradleVersion),
         ) {
             build(":dep-with-cinterop:publishAllPublicationsToBuildRepository")
 
@@ -394,10 +395,12 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
             resolveIdeDependencies(":consumer") { dependencies ->
                 dependencies["commonMain"].assertMatches(
                     kotlinNativeDistributionDependencies,
+                    unresolvedDependenciesDiagnosticMatcher("project :producer"),
                 )
 
                 dependencies["linuxMain"].assertMatches(
                     kotlinNativeDistributionDependencies,
+                    unresolvedDependenciesDiagnosticMatcher("project :producer"),
                     dependsOnDependency(":consumer/commonMain"),
                     dependsOnDependency(":consumer/nativeMain")
                 )
@@ -410,7 +413,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                     binaryCoordinates("this:does:not-exist"),
                     IdeaKotlinDependencyMatcher("Project Dependency: producer") { dependency ->
                         dependency is IdeaKotlinUnresolvedBinaryDependency && ":producer" in dependency.cause.orEmpty()
-                    }
+                    },
                 )
             }
         }
@@ -705,7 +708,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
             "base-kotlin-multiplatform-android-library",
             gradleVersion,
             buildJdk = jdkVersion.location,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressWarningFromAgpWithGradle813(gradleVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
         ) {
             buildScriptInjection {
                 applyDefaultAndroidLibraryConfiguration()

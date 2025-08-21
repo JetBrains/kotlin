@@ -12,7 +12,7 @@ dependencies {
     testApi(kotlinTest("junit5"))
     testApi(intellijCore())
     testApi(project(":kotlin-scripting-jvm-host-unshaded"))
-    testApi(projectTests(":compiler:tests-compiler-utils"))
+    testApi(testFixtures(project(":compiler:tests-compiler-utils")))
     testApi(project(":kotlin-scripting-compiler"))
     testApi(project(":daemon-common")) // TODO: fix import (workaround for jps build)
 

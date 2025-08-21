@@ -173,6 +173,7 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
 
                     val npmProject = compilation.npmProject
                     val resourcesDir = compilation.output.resourcesDir
+                    val rootDir = project.rootDir
                     task.devServerProperty.convention(
                         npmProject.dist.zip(npmProject.dir) { distDirectory, dir ->
                             KotlinWebpackConfig.DevServer(
@@ -180,7 +181,11 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
                                 static = mutableListOf(
                                     distDirectory.asFile.normalize().relativeOrAbsolute(dir.asFile),
                                     resourcesDir.relativeOrAbsolute(dir.asFile),
-                                ),
+                                ).apply {
+                                    if (mode == KotlinJsBinaryMode.DEVELOPMENT) {
+                                        add(rootDir.relativeOrAbsolute(dir.asFile))
+                                    }
+                                },
                                 client = KotlinWebpackConfig.DevServer.Client(
                                     KotlinWebpackConfig.DevServer.Client.Overlay(
                                         errors = true,

@@ -807,15 +807,15 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
         }
 
         @Test
-        @TestMetadata("AnnotatedTypeParameterBoundsInNullUnmarkedContext.kt")
-        public void testAnnotatedTypeParameterBoundsInNullUnmarkedContext() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/AnnotatedTypeParameterBoundsInNullUnmarkedContext.kt");
-        }
-
-        @Test
         @TestMetadata("Captured.kt")
         public void testCaptured() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/Captured.kt");
+        }
+
+        @Test
+        @TestMetadata("CovariantReturn.kt")
+        public void testCovariantReturn() {
+          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/CovariantReturn.kt");
         }
 
         @Test
@@ -993,12 +993,6 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
         }
 
         @Test
-        @TestMetadata("NullUnmarkedVsParametricNullness.kt")
-        public void testNullUnmarkedVsParametricNullness() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedVsParametricNullness.kt");
-        }
-
-        @Test
         @TestMetadata("NullUnmarkedVsTypeNullMarked.kt")
         public void testNullUnmarkedVsTypeNullMarked() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedVsTypeNullMarked.kt");
@@ -1090,12 +1084,6 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
         @TestMetadata("AnnotatedBoundsOfWildcard.kt")
         public void testAnnotatedBoundsOfWildcard() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/AnnotatedBoundsOfWildcard.kt");
-        }
-
-        @Test
-        @TestMetadata("AnnotatedTypeParameterBoundsInNullUnmarkedContext.kt")
-        public void testAnnotatedTypeParameterBoundsInNullUnmarkedContext() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/AnnotatedTypeParameterBoundsInNullUnmarkedContext.kt");
         }
 
         @Test
@@ -1276,12 +1264,6 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
         @TestMetadata("NullUnmarkedVsPackageNullMarked.kt")
         public void testNullUnmarkedVsPackageNullMarked() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedVsPackageNullMarked.kt");
-        }
-
-        @Test
-        @TestMetadata("NullUnmarkedVsParametricNullness.kt")
-        public void testNullUnmarkedVsParametricNullness() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedVsParametricNullness.kt");
         }
 
         @Test
@@ -1623,6 +1605,12 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
       @TestMetadata("overrideWithTypeUseInClasspathWithArray.kt")
       public void testOverrideWithTypeUseInClasspathWithArray() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jsr305/overrideWithTypeUseInClasspathWithArray.kt");
+      }
+
+      @Test
+      @TestMetadata("springNotNullApiGenericOverride.kt")
+      public void testSpringNotNullApiGenericOverride() {
+        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jsr305/springNotNullApiGenericOverride.kt");
       }
 
       @Test

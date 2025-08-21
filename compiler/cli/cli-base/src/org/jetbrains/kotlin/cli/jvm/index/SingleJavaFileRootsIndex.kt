@@ -20,6 +20,7 @@ import com.intellij.lang.java.lexer.JavaLexer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.pom.java.LanguageLevel
 import com.intellij.psi.PsiKeyword
+import com.intellij.psi.PsiPackage
 import com.intellij.psi.impl.source.tree.ElementType
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.name.ClassId
@@ -61,6 +62,7 @@ class SingleJavaFileRootsIndex(private val roots: List<JavaRoot>) {
      * Given a .java file, [readClassIds] uses lexer to determine which classes are declared in that file
      */
     private class JavaSourceClassIdReader(file: VirtualFile) {
+        private val isPackageInfo = (file.nameWithoutExtension == PsiPackage.PACKAGE_INFO_CLASS)
         private val lexer = JavaLexer(LanguageLevel.HIGHEST).apply {
             start(String(file.contentsToByteArray()))
         }
@@ -122,11 +124,20 @@ class SingleJavaFileRootsIndex(private val roots: List<JavaRoot>) {
                 if (end()) break
                 result.add(ClassId(packageFqName, Name.identifier(tokenText())))
             }
+
+            if (isPackageInfo) {
+                result.add(ClassId(packageFqName, PACKAGE_INFO_CLASS_NAME))
+            }
+
             return result
         }
 
         companion object {
             private val CLASS_KEYWORDS = setOf(ElementType.CLASS_KEYWORD, ElementType.INTERFACE_KEYWORD, ElementType.ENUM_KEYWORD)
         }
+    }
+
+    companion object {
+        internal val PACKAGE_INFO_CLASS_NAME = Name.identifier(PsiPackage.PACKAGE_INFO_CLASS)
     }
 }

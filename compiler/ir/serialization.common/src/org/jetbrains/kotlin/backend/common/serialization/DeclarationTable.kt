@@ -16,9 +16,8 @@ import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.KotlinMangler.IrMangler
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
-abstract class GlobalDeclarationTable(val mangler: IrMangler, private val reuseExistingSignaturesForSymbols: Boolean) {
+abstract class GlobalDeclarationTable(val mangler: IrMangler) {
     val publicIdSignatureComputer = PublicIdSignatureComputer(mangler)
     internal val clashDetector = IdSignatureClashDetector()
 
@@ -43,8 +42,7 @@ abstract class GlobalDeclarationTable(val mangler: IrMangler, private val reuseE
         recordInSignatureClashDetector: Boolean,
     ): IdSignature {
         return table.getOrPut(declaration) {
-            runIf(reuseExistingSignaturesForSymbols) { declaration.symbol.signature }
-                ?: publicIdSignatureComputer.computePublicIdSignature(declaration, compatibleMode)
+            publicIdSignatureComputer.computePublicIdSignature(declaration, compatibleMode)
         }.also {
             if (recordInSignatureClashDetector && it.isPubliclyVisible && !it.isLocal) {
                 clashDetector.trackDeclaration(declaration, it)

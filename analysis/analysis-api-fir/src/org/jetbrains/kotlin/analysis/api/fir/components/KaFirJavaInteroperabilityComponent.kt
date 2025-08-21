@@ -122,6 +122,12 @@ internal class KaFirJavaInteroperabilityComponent(
 
         if (!rootModuleSession.moduleData.platform.has<JvmPlatform>() && !allowNonJvmPlatforms) return null
 
+        if (mode == KaTypeMappingMode.FUNCTION_RETURN_TYPE && !isAnnotationMethod && coneType.isUnit) {
+            // Here we approximate the JVM backend logic from `MethodSignatureMapper#hasVoidReturnType`.
+            // But we do it only in the special type mapping mode `FUNCTION_RETURN_TYPE` because it is not applicable in other cases.
+            return PsiTypes.voidType()
+        }
+
         val mappingMode = mode.toTypeMappingMode(this, isAnnotationMethod, suppressWildcards)
         val typeElement = coneType.simplifyType(rootModuleSession, useSitePosition).asPsiTypeElement(
             mode = mappingMode,
@@ -191,8 +197,17 @@ internal class KaFirJavaInteroperabilityComponent(
             KaTypeMappingMode.SUPER_TYPE -> TypeMappingMode.SUPER_TYPE_AS_IS
             KaTypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS -> TypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS
             KaTypeMappingMode.RETURN_TYPE_BOXED -> TypeMappingMode.RETURN_TYPE_BOXED
-            KaTypeMappingMode.RETURN_TYPE -> jvmTypeMapper.typeContext.getOptimalModeForReturnType(expandedType, isAnnotationMethod)
-            KaTypeMappingMode.VALUE_PARAMETER -> jvmTypeMapper.typeContext.getOptimalModeForValueParameter(expandedType)
+            KaTypeMappingMode.RETURN_TYPE, KaTypeMappingMode.FUNCTION_RETURN_TYPE ->
+                jvmTypeMapper.typeContext.getOptimalModeForReturnType(expandedType, isAnnotationMethod)
+
+            KaTypeMappingMode.VALUE_PARAMETER, KaTypeMappingMode.VALUE_PARAMETER_BOXED -> {
+                val mappingMode = jvmTypeMapper.typeContext.getOptimalModeForValueParameter(expandedType)
+                if (this == KaTypeMappingMode.VALUE_PARAMETER_BOXED) {
+                    mappingMode.wrapInlineClassesMode()
+                } else {
+                    mappingMode
+                }
+            }
         }.let { typeMappingMode ->
             // Otherwise, i.e., if we won't skip type with no type arguments, flag overriding might bother a case like:
             // @JvmSuppressWildcards(false) Long -> java.lang.Long, not long, even though it should be no-op!
@@ -448,8 +463,12 @@ private fun ConeKotlinType.simplifyType(
 
         val needLocalTypeApproximation = needLocalTypeApproximation(visibilityForApproximation, isInlineFunction, session, useSitePosition)
         // TODO: can we approximate local types in type arguments *selectively* ?
-        currentType = PublicTypeApproximator.approximateTypeToPublicDenotable(currentType, session, needLocalTypeApproximation)
-            ?: currentType
+        currentType = PublicTypeApproximator.approximateToDenotableSupertype(
+            currentType,
+            session,
+            needLocalTypeApproximation,
+            shouldApproximateLocalType = { _, _ -> true }
+        ) ?: currentType
 
     } while (oldType !== currentType)
     if (typeArguments.isNotEmpty()) {

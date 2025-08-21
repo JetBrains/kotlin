@@ -386,143 +386,9 @@ public final class org/jetbrains/kotlin/gradle/logging/GradleErrorMessageCollect
 	public fun report (Lorg/jetbrains/kotlin/cli/common/messages/CompilerMessageSeverity;Ljava/lang/String;Lorg/jetbrains/kotlin/cli/common/messages/CompilerMessageSourceLocation;)V
 }
 
-public final class org/jetbrains/kotlin/gradle/model/builder/KaptModelBuilder : org/gradle/tooling/provider/model/ToolingModelBuilder {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/model/builder/KaptModelBuilder$Companion;
-	public fun <init> ()V
-	public fun buildAll (Ljava/lang/String;Lorg/gradle/api/Project;)Ljava/lang/Object;
-	public fun canBuild (Ljava/lang/String;)Z
-}
-
-public final class org/jetbrains/kotlin/gradle/model/builder/KaptModelBuilder$Companion {
-}
-
-public final class org/jetbrains/kotlin/gradle/model/builder/KotlinModelBuilder : org/gradle/tooling/provider/model/ToolingModelBuilder {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/model/builder/KotlinModelBuilder$Companion;
-	public fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;)V
-	public fun buildAll (Ljava/lang/String;Lorg/gradle/api/Project;)Ljava/lang/Object;
-	public fun canBuild (Ljava/lang/String;)Z
-}
-
-public final class org/jetbrains/kotlin/gradle/model/builder/KotlinModelBuilder$Companion {
-}
-
-public final class org/jetbrains/kotlin/gradle/model/impl/CompilerArgumentsImpl : java/io/Serializable, org/jetbrains/kotlin/gradle/model/CompilerArguments {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/model/impl/CompilerArgumentsImpl$Companion;
-	public fun <init> (Ljava/util/List;Ljava/util/List;Ljava/util/List;)V
-	public final fun component1 ()Ljava/util/List;
-	public final fun component2 ()Ljava/util/List;
-	public final fun component3 ()Ljava/util/List;
-	public final fun copy (Ljava/util/List;Ljava/util/List;Ljava/util/List;)Lorg/jetbrains/kotlin/gradle/model/impl/CompilerArgumentsImpl;
-	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/model/impl/CompilerArgumentsImpl;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/model/impl/CompilerArgumentsImpl;
-	public fun equals (Ljava/lang/Object;)Z
-	public fun getCompileClasspath ()Ljava/util/List;
-	public fun getCurrentArguments ()Ljava/util/List;
-	public fun getDefaultArguments ()Ljava/util/List;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class org/jetbrains/kotlin/gradle/model/impl/CompilerArgumentsImpl$Companion {
-}
-
-public final class org/jetbrains/kotlin/gradle/model/impl/KaptImpl : java/io/Serializable, org/jetbrains/kotlin/gradle/model/Kapt {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/model/impl/KaptImpl$Companion;
-	public fun <init> (Ljava/lang/String;Ljava/util/Collection;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Ljava/util/Collection;
-	public final fun copy (Ljava/lang/String;Ljava/util/Collection;)Lorg/jetbrains/kotlin/gradle/model/impl/KaptImpl;
-	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/model/impl/KaptImpl;Ljava/lang/String;Ljava/util/Collection;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/model/impl/KaptImpl;
-	public fun equals (Ljava/lang/Object;)Z
-	public fun getKaptSourceSets ()Ljava/util/Collection;
-	public fun getModelVersion ()J
-	public fun getName ()Ljava/lang/String;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class org/jetbrains/kotlin/gradle/model/impl/KaptImpl$Companion {
-}
-
-public final class org/jetbrains/kotlin/gradle/model/impl/KaptSourceSetImpl : java/io/Serializable, org/jetbrains/kotlin/gradle/model/KaptSourceSet {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/model/impl/KaptSourceSetImpl$Companion;
-	public fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/model/KaptSourceSet$KaptSourceSetType;Ljava/io/File;Ljava/io/File;Ljava/io/File;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Lorg/jetbrains/kotlin/gradle/model/KaptSourceSet$KaptSourceSetType;
-	public final fun component3 ()Ljava/io/File;
-	public final fun component4 ()Ljava/io/File;
-	public final fun component5 ()Ljava/io/File;
-	public final fun copy (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/model/KaptSourceSet$KaptSourceSetType;Ljava/io/File;Ljava/io/File;Ljava/io/File;)Lorg/jetbrains/kotlin/gradle/model/impl/KaptSourceSetImpl;
-	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/model/impl/KaptSourceSetImpl;Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/model/KaptSourceSet$KaptSourceSetType;Ljava/io/File;Ljava/io/File;Ljava/io/File;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/model/impl/KaptSourceSetImpl;
-	public fun equals (Ljava/lang/Object;)Z
-	public fun getGeneratedClassesDirectory ()Ljava/io/File;
-	public fun getGeneratedKotlinSourcesDirectory ()Ljava/io/File;
-	public fun getGeneratedSourcesDirectory ()Ljava/io/File;
-	public fun getName ()Ljava/lang/String;
-	public fun getType ()Lorg/jetbrains/kotlin/gradle/model/KaptSourceSet$KaptSourceSetType;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class org/jetbrains/kotlin/gradle/model/impl/KaptSourceSetImpl$Companion {
-}
-
-public final class org/jetbrains/kotlin/gradle/model/impl/KotlinProjectImpl : java/io/Serializable, org/jetbrains/kotlin/gradle/model/KotlinProject {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/model/impl/KotlinProjectImpl$Companion;
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/model/KotlinProject$ProjectType;Ljava/util/Collection;Ljava/util/Collection;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Ljava/lang/String;
-	public final fun component3 ()Lorg/jetbrains/kotlin/gradle/model/KotlinProject$ProjectType;
-	public final fun component4 ()Ljava/util/Collection;
-	public final fun component5 ()Ljava/util/Collection;
-	public final fun copy (Ljava/lang/String;Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/model/KotlinProject$ProjectType;Ljava/util/Collection;Ljava/util/Collection;)Lorg/jetbrains/kotlin/gradle/model/impl/KotlinProjectImpl;
-	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/model/impl/KotlinProjectImpl;Ljava/lang/String;Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/model/KotlinProject$ProjectType;Ljava/util/Collection;Ljava/util/Collection;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/model/impl/KotlinProjectImpl;
-	public fun equals (Ljava/lang/Object;)Z
-	public fun getExpectedByDependencies ()Ljava/util/Collection;
-	public fun getKotlinVersion ()Ljava/lang/String;
-	public fun getModelVersion ()J
-	public fun getName ()Ljava/lang/String;
-	public fun getProjectType ()Lorg/jetbrains/kotlin/gradle/model/KotlinProject$ProjectType;
-	public fun getSourceSets ()Ljava/util/Collection;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class org/jetbrains/kotlin/gradle/model/impl/KotlinProjectImpl$Companion {
-}
-
-public final class org/jetbrains/kotlin/gradle/model/impl/SourceSetImpl : java/io/Serializable, org/jetbrains/kotlin/gradle/model/SourceSet {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/model/impl/SourceSetImpl$Companion;
-	public fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/model/SourceSet$SourceSetType;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Collection;Ljava/io/File;Ljava/io/File;Lorg/jetbrains/kotlin/gradle/model/CompilerArguments;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Lorg/jetbrains/kotlin/gradle/model/SourceSet$SourceSetType;
-	public final fun component3 ()Ljava/util/Collection;
-	public final fun component4 ()Ljava/util/Collection;
-	public final fun component5 ()Ljava/util/Collection;
-	public final fun component6 ()Ljava/io/File;
-	public final fun component7 ()Ljava/io/File;
-	public final fun component8 ()Lorg/jetbrains/kotlin/gradle/model/CompilerArguments;
-	public final fun copy (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/model/SourceSet$SourceSetType;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Collection;Ljava/io/File;Ljava/io/File;Lorg/jetbrains/kotlin/gradle/model/CompilerArguments;)Lorg/jetbrains/kotlin/gradle/model/impl/SourceSetImpl;
-	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/model/impl/SourceSetImpl;Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/model/SourceSet$SourceSetType;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Collection;Ljava/io/File;Ljava/io/File;Lorg/jetbrains/kotlin/gradle/model/CompilerArguments;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/model/impl/SourceSetImpl;
-	public fun equals (Ljava/lang/Object;)Z
-	public fun getClassesOutputDirectory ()Ljava/io/File;
-	public fun getCompilerArguments ()Lorg/jetbrains/kotlin/gradle/model/CompilerArguments;
-	public fun getFriendSourceSets ()Ljava/util/Collection;
-	public fun getName ()Ljava/lang/String;
-	public fun getResourcesDirectories ()Ljava/util/Collection;
-	public fun getResourcesOutputDirectory ()Ljava/io/File;
-	public fun getSourceDirectories ()Ljava/util/Collection;
-	public fun getType ()Lorg/jetbrains/kotlin/gradle/model/SourceSet$SourceSetType;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class org/jetbrains/kotlin/gradle/model/impl/SourceSetImpl$Companion {
-}
-
 public abstract class org/jetbrains/kotlin/gradle/plugin/AbstractKotlinAndroidPluginWrapper : org/jetbrains/kotlin/gradle/plugin/KotlinBasePluginWrapper {
-	public fun <init> (Lorg/gradle/tooling/provider/model/ToolingModelBuilderRegistry;)V
+	public fun <init> ()V
 	public fun getProjectExtensionClass ()Lkotlin/reflect/KClass;
-	protected final fun getRegistry ()Lorg/gradle/tooling/provider/model/ToolingModelBuilderRegistry;
 }
 
 public abstract class org/jetbrains/kotlin/gradle/plugin/AbstractKotlinJsPluginWrapper : org/jetbrains/kotlin/gradle/plugin/KotlinBasePluginWrapper {
@@ -543,9 +409,8 @@ public final class org/jetbrains/kotlin/gradle/plugin/AbstractKotlinPluginKt {
 }
 
 public abstract class org/jetbrains/kotlin/gradle/plugin/AbstractKotlinPluginWrapper : org/jetbrains/kotlin/gradle/plugin/KotlinBasePluginWrapper {
-	public fun <init> (Lorg/gradle/tooling/provider/model/ToolingModelBuilderRegistry;)V
+	public fun <init> ()V
 	public fun getProjectExtensionClass ()Lkotlin/reflect/KClass;
-	protected final fun getRegistry ()Lorg/gradle/tooling/provider/model/ToolingModelBuilderRegistry;
 }
 
 public abstract class org/jetbrains/kotlin/gradle/plugin/AbstractKotlinTargetConfigurator : org/jetbrains/kotlin/gradle/plugin/KotlinTargetConfigurator {
@@ -658,7 +523,7 @@ public class org/jetbrains/kotlin/gradle/plugin/KaptExtension : org/jetbrains/ko
 }
 
 public class org/jetbrains/kotlin/gradle/plugin/KotlinAndroidPluginWrapper : org/jetbrains/kotlin/gradle/plugin/AbstractKotlinAndroidPluginWrapper {
-	public fun <init> (Lorg/gradle/tooling/provider/model/ToolingModelBuilderRegistry;)V
+	public fun <init> ()V
 	public synthetic fun apply (Ljava/lang/Object;)V
 	public fun apply (Lorg/gradle/api/Project;)V
 	public fun getPluginVariant ()Ljava/lang/String;
@@ -788,7 +653,7 @@ public final class org/jetbrains/kotlin/gradle/plugin/KotlinPluginInMultipleProj
 }
 
 public class org/jetbrains/kotlin/gradle/plugin/KotlinPluginWrapper : org/jetbrains/kotlin/gradle/plugin/AbstractKotlinPluginWrapper {
-	public fun <init> (Lorg/gradle/tooling/provider/model/ToolingModelBuilderRegistry;)V
+	public fun <init> ()V
 	public synthetic fun apply (Ljava/lang/Object;)V
 	public fun apply (Lorg/gradle/api/Project;)V
 	public fun getPluginVariant ()Ljava/lang/String;
@@ -1715,10 +1580,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/apple/swi
 	public abstract fun getModuleName ()Lorg/gradle/api/provider/Property;
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftexport/SwiftExportedModuleVersionMetadata : org/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftexport/SwiftExportedModuleMetadata {
-	public abstract fun getModuleVersion ()Lorg/gradle/api/artifacts/ModuleVersionIdentifier;
-}
-
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/compilationImpl/KotlinCompilationConfigurationsContainer {
 	public abstract fun getApiConfiguration ()Lorg/gradle/api/artifacts/Configuration;
 	public abstract fun getCompileDependencyConfiguration ()Lorg/gradle/api/artifacts/Configuration;
@@ -1867,6 +1728,14 @@ public final class org/jetbrains/kotlin/gradle/plugin/sources/android/configurat
 	public fun configureWithVariant (Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;Lcom/android/build/gradle/api/BaseVariant;)V
 }
 
+public abstract class org/jetbrains/kotlin/gradle/plugin/statistics/BuildFinishFlowProviderManager {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/statistics/BuildFinishFlowProviderManager$Companion;
+	public fun <init> (Lorg/gradle/api/flow/FlowScope;Lorg/gradle/api/flow/FlowProviders;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/statistics/BuildFinishFlowProviderManager$Companion {
+}
+
 public abstract class org/jetbrains/kotlin/gradle/plugin/statistics/BuildFusService : java/lang/AutoCloseable, org/gradle/api/services/BuildService, org/gradle/tooling/events/OperationCompletionListener {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/statistics/BuildFusService$Companion;
 	public fun <init> ()V
@@ -1907,6 +1776,7 @@ public final class org/jetbrains/kotlin/gradle/plugin/statistics/ConfigurationMe
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/statistics/ConfigurationMetricsBuildFusParameters : org/jetbrains/kotlin/gradle/plugin/statistics/BuildFusService$Parameters {
 	public abstract fun getConfigurationMetrics ()Lorg/gradle/api/provider/ListProperty;
+	public abstract fun getKotlinVersion ()Lorg/gradle/api/provider/Property;
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/statistics/DaemonReuseCounter : org/jetbrains/kotlin/gradle/plugin/statistics/IDaemonReuseCounterMXBean {
@@ -2206,12 +2076,13 @@ public abstract interface class org/jetbrains/kotlin/gradle/report/data/BuildOpe
 }
 
 public final class org/jetbrains/kotlin/gradle/report/data/GradleCompileStatisticsData : org/jetbrains/kotlin/build/report/statistics/CompileStatisticsData {
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;JJLjava/util/Set;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;JLjava/util/List;Ljava/util/Set;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/lang/String;Ljava/lang/Boolean;Ljava/util/List;Ljava/lang/String;Ljava/util/List;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;JJLjava/util/Set;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;JLjava/util/List;Ljava/util/Set;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/lang/String;Ljava/lang/Boolean;Ljava/util/List;Ljava/lang/String;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;JJLjava/util/Set;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;JLjava/util/List;Ljava/util/Set;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/lang/String;Ljava/lang/Boolean;Ljava/util/List;Ljava/lang/String;Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;JJLjava/util/Set;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;JLjava/util/List;Ljava/util/Set;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/lang/String;Ljava/lang/Boolean;Ljava/util/List;Ljava/lang/String;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun getBuildTimesMetrics ()Ljava/util/Map;
 	public fun getChanges ()Ljava/util/List;
 	public fun getCompilerArguments ()Ljava/util/List;
 	public fun getDurationMs ()J
+	public fun getDynamicBuildTimeMetrics ()Ljava/util/Map;
 	public fun getFinishTime ()J
 	public fun getFromKotlinPlugin ()Ljava/lang/Boolean;
 	public fun getGcCountMetrics ()Ljava/util/Map;
@@ -2247,7 +2118,6 @@ public abstract interface annotation class org/jetbrains/kotlin/gradle/swiftexpo
 
 public abstract interface class org/jetbrains/kotlin/gradle/targets/js/AbstractEnv {
 	public abstract fun getAllowInsecureProtocol ()Z
-	public abstract fun getCleanableStore ()Lorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;
 	public abstract fun getDir ()Ljava/io/File;
 	public abstract fun getDownload ()Z
 	public abstract fun getDownloadBaseUrl ()Ljava/lang/String;
@@ -2949,6 +2819,7 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/ir/JsIrBinary : org
 	public final fun getProject ()Lorg/gradle/api/Project;
 	public final fun getTarget ()Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrTarget;
 	public final fun getValidateGeneratedTsTaskName ()Ljava/lang/String;
+	protected final fun get_linkSyncTask ()Lorg/gradle/api/tasks/TaskProvider;
 	public final fun setGenerateTs (Z)V
 	protected fun syncInputConfigure (Lorg/jetbrains/kotlin/gradle/targets/js/ir/DefaultIncrementalSyncTask;)V
 }
@@ -3237,23 +3108,21 @@ public final class org/jetbrains/kotlin/gradle/targets/js/ir/WebpackConfigurator
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsEnv : org/jetbrains/kotlin/gradle/targets/js/AbstractEnv {
-	public fun <init> (ZLorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;Ljava/io/File;Ljava/io/File;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Z)V
+	public fun <init> (ZLjava/io/File;Ljava/io/File;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Z)V
 	public final fun component1 ()Z
-	public final fun component10 ()Z
-	public final fun component2 ()Lorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;
+	public final fun component2 ()Ljava/io/File;
 	public final fun component3 ()Ljava/io/File;
-	public final fun component4 ()Ljava/io/File;
+	public final fun component4 ()Ljava/lang/String;
 	public final fun component5 ()Ljava/lang/String;
 	public final fun component6 ()Ljava/lang/String;
 	public final fun component7 ()Ljava/lang/String;
 	public final fun component8 ()Ljava/lang/String;
-	public final fun component9 ()Ljava/lang/String;
-	public final fun copy (ZLorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;Ljava/io/File;Ljava/io/File;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Z)Lorg/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsEnv;
-	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsEnv;ZLorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;Ljava/io/File;Ljava/io/File;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsEnv;
+	public final fun component9 ()Z
+	public final fun copy (ZLjava/io/File;Ljava/io/File;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Z)Lorg/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsEnv;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsEnv;ZLjava/io/File;Ljava/io/File;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsEnv;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getAllowInsecureProtocol ()Z
 	public final fun getArchitectureName ()Ljava/lang/String;
-	public fun getCleanableStore ()Lorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;
 	public fun getDir ()Ljava/io/File;
 	public fun getDownload ()Z
 	public fun getDownloadBaseUrl ()Ljava/lang/String;
@@ -4368,52 +4237,6 @@ public final class org/jetbrains/kotlin/gradle/targets/js/testing/karma/KarmaCli
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class org/jetbrains/kotlin/gradle/targets/js/testing/karma/KarmaConfig {
-	public fun <init> ()V
-	public fun <init> (ZZLjava/lang/String;Ljava/util/List;Ljava/util/List;Lorg/jetbrains/kotlin/gradle/targets/js/testing/karma/KarmaClient;Ljava/util/List;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;ZZLjava/util/List;Ljava/util/Map;Ljava/util/Map;)V
-	public synthetic fun <init> (ZZLjava/lang/String;Ljava/util/List;Ljava/util/List;Lorg/jetbrains/kotlin/gradle/targets/js/testing/karma/KarmaClient;Ljava/util/List;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;ZZLjava/util/List;Ljava/util/Map;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1 ()Z
-	public final fun component10 ()Ljava/lang/String;
-	public final fun component11 ()Z
-	public final fun component12 ()Z
-	public final fun component13 ()Ljava/util/List;
-	public final fun component14 ()Ljava/util/Map;
-	public final fun component15 ()Ljava/util/Map;
-	public final fun component2 ()Z
-	public final fun component3 ()Ljava/lang/String;
-	public final fun component4 ()Ljava/util/List;
-	public final fun component5 ()Ljava/util/List;
-	public final fun component6 ()Lorg/jetbrains/kotlin/gradle/targets/js/testing/karma/KarmaClient;
-	public final fun component7 ()Ljava/util/List;
-	public final fun component8 ()Ljava/util/Map;
-	public final fun component9 ()Ljava/lang/String;
-	public final fun copy (ZZLjava/lang/String;Ljava/util/List;Ljava/util/List;Lorg/jetbrains/kotlin/gradle/targets/js/testing/karma/KarmaClient;Ljava/util/List;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;ZZLjava/util/List;Ljava/util/Map;Ljava/util/Map;)Lorg/jetbrains/kotlin/gradle/targets/js/testing/karma/KarmaConfig;
-	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/targets/js/testing/karma/KarmaConfig;ZZLjava/lang/String;Ljava/util/List;Ljava/util/List;Lorg/jetbrains/kotlin/gradle/targets/js/testing/karma/KarmaClient;Ljava/util/List;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;ZZLjava/util/List;Ljava/util/Map;Ljava/util/Map;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/targets/js/testing/karma/KarmaConfig;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getAutoWatch ()Z
-	public final fun getBasePath ()Ljava/lang/String;
-	public final fun getBrowsers ()Ljava/util/List;
-	public final fun getClient ()Lorg/jetbrains/kotlin/gradle/targets/js/testing/karma/KarmaClient;
-	public final fun getCustomContextFile ()Ljava/lang/String;
-	public final fun getCustomDebugFile ()Ljava/lang/String;
-	public final fun getCustomLaunchers ()Ljava/util/Map;
-	public final fun getFailOnEmptyTestSuite ()Z
-	public final fun getFailOnFailingTestSuite ()Z
-	public final fun getFiles ()Ljava/util/List;
-	public final fun getFrameworks ()Ljava/util/List;
-	public final fun getPreprocessors ()Ljava/util/Map;
-	public final fun getProxies ()Ljava/util/Map;
-	public final fun getReporters ()Ljava/util/List;
-	public final fun getSingleRun ()Z
-	public fun hashCode ()I
-	public final fun setAutoWatch (Z)V
-	public final fun setBasePath (Ljava/lang/String;)V
-	public final fun setCustomContextFile (Ljava/lang/String;)V
-	public final fun setCustomDebugFile (Ljava/lang/String;)V
-	public final fun setSingleRun (Z)V
-	public fun toString ()Ljava/lang/String;
-}
-
 public class org/jetbrains/kotlin/gradle/targets/js/testing/karma/KarmaConsoleProcessor {
 	public fun <init> (Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)V
 	public final fun process (Lorg/jetbrains/kotlin/gradle/internal/LogType;Ljava/lang/String;)Ljava/lang/String;
@@ -4903,24 +4726,22 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/yarn/YarnBasics : o
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnv : org/jetbrains/kotlin/gradle/targets/js/AbstractEnv {
-	public fun <init> (ZLjava/lang/String;ZLorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;Ljava/io/File;Ljava/lang/String;Ljava/lang/String;ZLorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnLockMismatchReport;ZZLjava/util/List;)V
+	public fun <init> (ZLjava/lang/String;ZLjava/io/File;Ljava/lang/String;Ljava/lang/String;ZLorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnLockMismatchReport;ZZLjava/util/List;)V
 	public final fun component1 ()Z
 	public final fun component10 ()Z
-	public final fun component11 ()Z
-	public final fun component12 ()Ljava/util/List;
+	public final fun component11 ()Ljava/util/List;
 	public final fun component2 ()Ljava/lang/String;
 	public final fun component3 ()Z
-	public final fun component4 ()Lorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;
-	public final fun component5 ()Ljava/io/File;
+	public final fun component4 ()Ljava/io/File;
+	public final fun component5 ()Ljava/lang/String;
 	public final fun component6 ()Ljava/lang/String;
-	public final fun component7 ()Ljava/lang/String;
-	public final fun component8 ()Z
-	public final fun component9 ()Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnLockMismatchReport;
-	public final fun copy (ZLjava/lang/String;ZLorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;Ljava/io/File;Ljava/lang/String;Ljava/lang/String;ZLorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnLockMismatchReport;ZZLjava/util/List;)Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnv;
-	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnv;ZLjava/lang/String;ZLorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;Ljava/io/File;Ljava/lang/String;Ljava/lang/String;ZLorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnLockMismatchReport;ZZLjava/util/List;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnv;
+	public final fun component7 ()Z
+	public final fun component8 ()Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnLockMismatchReport;
+	public final fun component9 ()Z
+	public final fun copy (ZLjava/lang/String;ZLjava/io/File;Ljava/lang/String;Ljava/lang/String;ZLorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnLockMismatchReport;ZZLjava/util/List;)Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnv;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnv;ZLjava/lang/String;ZLjava/io/File;Ljava/lang/String;Ljava/lang/String;ZLorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnLockMismatchReport;ZZLjava/util/List;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnv;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getAllowInsecureProtocol ()Z
-	public fun getCleanableStore ()Lorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;
 	public fun getDir ()Ljava/io/File;
 	public fun getDownload ()Z
 	public fun getDownloadBaseUrl ()Ljava/lang/String;
@@ -4968,9 +4789,14 @@ public final class org/jetbrains/kotlin/gradle/targets/js/yarn/YarnLockMismatchR
 
 public abstract class org/jetbrains/kotlin/gradle/targets/js/yarn/YarnLockStoreTask : org/jetbrains/kotlin/gradle/targets/js/npm/LockStoreTask {
 	public fun <init> ()V
+	public fun copy ()V
 	public final fun getReportNewYarnLock ()Lorg/gradle/api/provider/Provider;
 	public final fun getYarnLockAutoReplace ()Lorg/gradle/api/provider/Provider;
 	public final fun getYarnLockMismatchReport ()Lorg/gradle/api/provider/Provider;
+}
+
+public abstract class org/jetbrains/kotlin/gradle/targets/js/yarn/YarnLockUpgradeTask : org/jetbrains/kotlin/gradle/targets/js/yarn/YarnLockCopyTask {
+	public fun copy ()V
 }
 
 public class org/jetbrains/kotlin/gradle/targets/js/yarn/YarnPlugin : org/jetbrains/kotlin/gradle/targets/web/yarn/CommonYarnPlugin {
@@ -5628,20 +5454,18 @@ public abstract class org/jetbrains/kotlin/gradle/targets/native/toolchain/Unzip
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenEnv : org/jetbrains/kotlin/gradle/targets/js/AbstractEnv {
-	public fun <init> (ZLjava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/io/File;Lorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;Z)V
+	public fun <init> (ZLjava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/io/File;Z)V
 	public final fun component1 ()Z
 	public final fun component2 ()Ljava/lang/String;
 	public final fun component3 ()Z
 	public final fun component4 ()Ljava/lang/String;
 	public final fun component5 ()Ljava/lang/String;
 	public final fun component6 ()Ljava/io/File;
-	public final fun component7 ()Lorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;
-	public final fun component8 ()Z
-	public final fun copy (ZLjava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/io/File;Lorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;Z)Lorg/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenEnv;
-	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenEnv;ZLjava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/io/File;Lorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;ZILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenEnv;
+	public final fun component7 ()Z
+	public final fun copy (ZLjava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/io/File;Z)Lorg/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenEnv;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenEnv;ZLjava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/io/File;ZILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenEnv;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getAllowInsecureProtocol ()Z
-	public fun getCleanableStore ()Lorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;
 	public fun getDir ()Ljava/io/File;
 	public fun getDownload ()Z
 	public fun getDownloadBaseUrl ()Ljava/lang/String;
@@ -5716,20 +5540,18 @@ public final class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenSet
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/wasm/d8/D8Env : org/jetbrains/kotlin/gradle/targets/js/AbstractEnv {
-	public fun <init> (ZLjava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/io/File;Lorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;Z)V
+	public fun <init> (ZLjava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/io/File;Z)V
 	public final fun component1 ()Z
 	public final fun component2 ()Ljava/lang/String;
 	public final fun component3 ()Z
 	public final fun component4 ()Ljava/lang/String;
 	public final fun component5 ()Ljava/lang/String;
 	public final fun component6 ()Ljava/io/File;
-	public final fun component7 ()Lorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;
-	public final fun component8 ()Z
-	public final fun copy (ZLjava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/io/File;Lorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;Z)Lorg/jetbrains/kotlin/gradle/targets/wasm/d8/D8Env;
-	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/targets/wasm/d8/D8Env;ZLjava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/io/File;Lorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;ZILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/targets/wasm/d8/D8Env;
+	public final fun component7 ()Z
+	public final fun copy (ZLjava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/io/File;Z)Lorg/jetbrains/kotlin/gradle/targets/wasm/d8/D8Env;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/targets/wasm/d8/D8Env;ZLjava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/io/File;ZILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/targets/wasm/d8/D8Env;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getAllowInsecureProtocol ()Z
-	public fun getCleanableStore ()Lorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;
 	public fun getDir ()Ljava/io/File;
 	public fun getDownload ()Z
 	public fun getDownloadBaseUrl ()Ljava/lang/String;
@@ -5957,8 +5779,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/targets/web/nodejs/C
 }
 
 public class org/jetbrains/kotlin/gradle/targets/web/nodejs/NpmToolingEnv {
-	public fun <init> (Lorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;Ljava/lang/String;Ljava/io/File;Z)V
-	public final fun getCleanableStore ()Lorg/jetbrains/kotlin/gradle/tasks/internal/CleanableStore;
+	public fun <init> (Ljava/lang/String;Ljava/io/File;Z)V
 	public final fun getDir ()Ljava/io/File;
 	public final fun getExplicitDir ()Z
 	public final fun getVersion ()Ljava/lang/String;
@@ -6065,9 +5886,8 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/AbstractKotlinCompileToo
 }
 
 public abstract class org/jetbrains/kotlin/gradle/tasks/AbstractKotlinNativeCompile : org/jetbrains/kotlin/gradle/tasks/AbstractKotlinCompileTool, org/jetbrains/kotlin/gradle/internal/tasks/ProducesKlib {
-	public fun <init> (Lorg/gradle/api/model/ObjectFactory;)V
+	public fun <init> (Lorg/gradle/api/model/ObjectFactory;Lorg/gradle/api/provider/ProviderFactory;)V
 	public abstract fun getAdditionalCompilerOptions ()Lorg/gradle/api/provider/Provider;
-	public final fun getArtifactVersion ()Ljava/lang/String;
 	public abstract fun getBaseName ()Ljava/lang/String;
 	public fun getCompilerPluginClasspath ()Lorg/gradle/api/file/FileCollection;
 	public final fun getCompilerPluginCommandLine ()Ljava/util/List;
@@ -6235,16 +6055,6 @@ public final class org/jetbrains/kotlin/gradle/tasks/FrameworkLayout {
 	public final fun mkdirs ()V
 }
 
-public abstract class org/jetbrains/kotlin/gradle/tasks/GeneratePgpKeys : org/gradle/api/DefaultTask {
-	public fun <init> (Lorg/gradle/workers/WorkerExecutor;)V
-	public final fun execute ()V
-	public abstract fun getBouncyCastleClasspath ()Lorg/gradle/api/file/ConfigurableFileCollection;
-	public abstract fun getGradleHomePath ()Lorg/gradle/api/provider/Property;
-	public abstract fun getKeyName ()Lorg/gradle/api/provider/Property;
-	public abstract fun getOutputDirectory ()Lorg/gradle/api/file/DirectoryProperty;
-	public abstract fun getPassword ()Lorg/gradle/api/provider/Property;
-}
-
 public abstract class org/jetbrains/kotlin/gradle/tasks/GradleCompileTaskProvider {
 	public fun <init> (Lorg/gradle/api/model/ObjectFactory;Lorg/gradle/api/file/ProjectLayout;Lorg/gradle/api/Task;Lorg/gradle/api/Project;Lorg/gradle/api/provider/Provider;)V
 	public final fun getBuildDir ()Lorg/gradle/api/file/DirectoryProperty;
@@ -6376,6 +6186,7 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/KotlinNativeCompile : or
 	public fun getCompilerOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinNativeCompilerOptions;
 	public fun getDebuggable ()Z
 	public final fun getEnabledLanguageFeatures ()Ljava/util/Set;
+	public final fun getExportKdoc ()Lorg/gradle/api/provider/Property;
 	public fun getKlibOutput ()Lorg/gradle/api/provider/Provider;
 	public final fun getKonanDataDir ()Lorg/gradle/api/provider/Provider;
 	public final fun getKonanHome ()Lorg/gradle/api/provider/Provider;
@@ -6412,6 +6223,7 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/KotlinNativeLink : org/j
 	public final fun getEmbedBitcode ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
 	public final fun getEmbedBitcodeMode ()Lorg/gradle/api/provider/Provider;
 	public final fun getEntryPoint ()Ljava/lang/String;
+	public final fun getExportKdoc ()Lorg/gradle/api/provider/Provider;
 	public final fun getExportLibraries ()Lorg/gradle/api/file/FileCollection;
 	protected final fun getFriendModule ()Lorg/gradle/api/file/FileCollection;
 	public final fun getKonanDataDir ()Lorg/gradle/api/provider/Provider;
@@ -6470,9 +6282,49 @@ public final class org/jetbrains/kotlin/gradle/tasks/TasksUtilsKt {
 	public static final fun throwExceptionIfCompilationFailed (Lorg/jetbrains/kotlin/cli/common/ExitCode;Lorg/jetbrains/kotlin/gradle/tasks/KotlinCompilerExecutionStrategy;)V
 }
 
-public abstract class org/jetbrains/kotlin/gradle/tasks/UploadPgpKeyTask : org/gradle/api/DefaultTask {
-	public fun <init> ()V
-	public final fun execute ()V
+public abstract class org/jetbrains/kotlin/gradle/tasks/publishing/CheckPomTask : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/plugin/diagnostics/UsesKotlinToolingDiagnostics {
+	protected final fun execute ()V
+	public abstract fun getPom ()Lorg/gradle/api/provider/Property;
+	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;)V
+}
+
+public abstract class org/jetbrains/kotlin/gradle/tasks/publishing/CheckSigningTask : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/plugin/diagnostics/UsesKotlinToolingDiagnostics {
+	protected final fun execute ()V
+	public abstract fun getBouncyCastleClasspath ()Lorg/gradle/api/file/ConfigurableFileCollection;
+	public abstract fun getExampleSignature ()Lorg/gradle/api/provider/Property;
+	public abstract fun getGradleHomePath ()Lorg/gradle/api/provider/Property;
+	public abstract fun getHasKeyPassword ()Lorg/gradle/api/provider/Property;
+	public abstract fun getKeyId ()Lorg/gradle/api/provider/Property;
+	public abstract fun getKeyringPath ()Lorg/gradle/api/file/RegularFileProperty;
+	public abstract fun getKeyservers ()Lorg/gradle/api/provider/ListProperty;
+	public abstract fun getOfflineMode ()Lorg/gradle/api/provider/Property;
+	public abstract fun getPublicationNamesWithSigning ()Lorg/gradle/api/provider/MapProperty;
+	public abstract fun getSignatoryExists ()Lorg/gradle/api/provider/Property;
+	public abstract fun getSignatoryKeyId ()Lorg/gradle/api/provider/Property;
+	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;)V
+}
+
+public abstract class org/jetbrains/kotlin/gradle/tasks/publishing/GeneratePgpKeys : org/gradle/api/DefaultTask {
+	protected final fun execute ()V
+	public abstract fun getBouncyCastleClasspath ()Lorg/gradle/api/file/ConfigurableFileCollection;
+	public abstract fun getGradleHomePath ()Lorg/gradle/api/provider/Property;
+	public abstract fun getKeyName ()Lorg/gradle/api/provider/Property;
+	public abstract fun getOutputDirectory ()Lorg/gradle/api/file/DirectoryProperty;
+	public abstract fun getPassword ()Lorg/gradle/api/provider/Property;
+}
+
+public final class org/jetbrains/kotlin/gradle/tasks/publishing/HelpersKt$addPomValidationHelpers$1$1$1$inlined$sam$i$org_gradle_api_Action$0 : org/gradle/api/Action {
+	public fun <init> (Lkotlin/jvm/functions/Function1;)V
+	public final synthetic fun execute (Ljava/lang/Object;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/tasks/publishing/HelpersKt$inlined$sam$i$org_gradle_api_Action$0 : org/gradle/api/Action {
+	public fun <init> (Lkotlin/jvm/functions/Function1;)V
+	public final synthetic fun execute (Ljava/lang/Object;)V
+}
+
+public abstract class org/jetbrains/kotlin/gradle/tasks/publishing/UploadPgpKeyTask : org/gradle/api/DefaultTask {
+	protected final fun execute ()V
 	public abstract fun getKeyring ()Lorg/gradle/api/provider/Property;
 	public abstract fun getKeyserver ()Lorg/gradle/api/provider/Property;
 }

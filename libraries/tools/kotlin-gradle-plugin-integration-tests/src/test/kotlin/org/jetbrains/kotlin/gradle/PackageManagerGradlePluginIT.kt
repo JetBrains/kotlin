@@ -14,8 +14,10 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.PACKAGE
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.RESTORE_PACKAGE_LOCK_BASE_NAME
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.STORE_PACKAGE_LOCK_BASE_NAME
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.UPGRADE_PACKAGE_LOCK_BASE_NAME
+import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.YARN_LOCK
 import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
+import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnRootEnvSpec
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -23,6 +25,7 @@ import kotlin.io.path.deleteRecursively
 import kotlin.io.path.notExists
 import kotlin.io.path.readText
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class NpmGradlePluginIT : PackageManagerGradlePluginIT() {
     override val yarn: Boolean = false
@@ -53,6 +56,7 @@ class NpmGradlePluginIT : PackageManagerGradlePluginIT() {
 
     @DisplayName("package-lock is OS independent")
     @GradleTest
+    @JsGradlePluginTests
     @OsCondition(enabledOnCI = [OS.WINDOWS])
     fun testPackageLockOsIndependent(gradleVersion: GradleVersion) {
         project("kotlin-js-package-lock-project", gradleVersion) {
@@ -66,6 +70,7 @@ class NpmGradlePluginIT : PackageManagerGradlePluginIT() {
     }
 
     @GradleTest
+    @JsGradlePluginTests
     fun `when transitive npm dependency version changes - expect package json is rebuilt`(
         gradleVersion: GradleVersion,
     ) {
@@ -130,7 +135,6 @@ class NpmGradlePluginIT : PackageManagerGradlePluginIT() {
     }
 }
 
-@Suppress("JUnitTestCaseWithNoTests") // tests are defined in the supertype
 class YarnGradlePluginIT : PackageManagerGradlePluginIT() {
     override val yarn: Boolean = true
 
@@ -159,7 +163,6 @@ class YarnGradlePluginIT : PackageManagerGradlePluginIT() {
     override val mismatchReportMessage: String = YarnPlugin.yarnLockMismatchMessage(upgradeTaskName)
 }
 
-@JsGradlePluginTests
 abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
 
     abstract val yarn: Boolean
@@ -199,6 +202,7 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
 
     @DisplayName("js composite build works with lock file persistence")
     @GradleTest
+    @JsGradlePluginTests
     fun testJsCompositeBuildWithUpgradeLockFile(gradleVersion: GradleVersion) {
         project(
             "js-composite-build",
@@ -234,6 +238,7 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
 
     @DisplayName("Failing with lock file update")
     @GradleTest
+    @JsGradlePluginTests
     fun testFailingWithLockFileUpdate(gradleVersion: GradleVersion) {
         project(
             "kotlin-js-package-lock-project",
@@ -469,6 +474,7 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
 
     @DisplayName("Lock file persistence")
     @GradleTest
+    @JsGradlePluginTests
     fun testLockStore(gradleVersion: GradleVersion) {
         project("nodeJsDownload", gradleVersion) {
             testLockStore(
@@ -495,6 +501,7 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
 
     @DisplayName("Package manager ignore scripts")
     @GradleTest
+    @JsGradlePluginTests
     fun testIgnoreScripts(gradleVersion: GradleVersion) {
         project("nodeJsDownload", gradleVersion) {
             testIgnoreScripts(
@@ -557,6 +564,7 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
 
     @DisplayName("Change rootPackageJson after its generation")
     @GradleTest
+    @JsGradlePluginTests
     fun testChangeRootPackageJsonAfterGeneration(gradleVersion: GradleVersion) {
         project("kotlin-js-package-lock-project", gradleVersion) {
             buildGradleKts.modify {

@@ -882,13 +882,9 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         private fun JvmIrBuilder.generateSignature(target: IrFunctionSymbol): IrExpression =
             irCall(backendContext.symbols.signatureStringIntrinsic).apply {
                 //don't pass receivers otherwise LocalDeclarationLowering will create additional captured parameters
-                arguments[0] = IrFunctionReferenceImpl(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, irFunctionReference.type, target,
-                    irFunctionReference.typeArguments.size,
-                    irFunctionReference.reflectionTarget, null
-                ).apply {
-                    copyTypeArgumentsFrom(irFunctionReference)
-                }
+                arguments[0] = IrRawFunctionReferenceImpl(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, irFunctionReference.type, target
+                )
             }
 
         private fun createFakeBoundReceiverForJvmStaticInObject(): Pair<IrValueParameter, IrGetObjectValueImpl> {

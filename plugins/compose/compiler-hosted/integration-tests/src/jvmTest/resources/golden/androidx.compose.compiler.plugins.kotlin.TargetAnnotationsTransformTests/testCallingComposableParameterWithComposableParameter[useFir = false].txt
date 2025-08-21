@@ -17,7 +17,6 @@ fun Test(decorator: @Composable (content: @Composable () -> Unit) -> Unit) {
 
 @Composable
 @ComposableInferredTarget(scheme = "[UI[UI[UI]]]")
-@FunctionKeyMeta(key = -1733844305, startOffset = 72, endOffset = 228)
 fun Test(decorator: Function3<@[ParameterName(name = 'content')] Function2<Composer, Int, Unit>, Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)<decora...>:Test.kt")

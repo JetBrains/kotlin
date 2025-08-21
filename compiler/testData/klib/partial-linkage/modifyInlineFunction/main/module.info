@@ -1,0 +1,3 @@
+STEP 1:
+    arguments: -Xcontext-parameters -XXLanguage:+IrInlinerBeforeKlibSerialization
+    dependencies: stdlib, lib1, lib2

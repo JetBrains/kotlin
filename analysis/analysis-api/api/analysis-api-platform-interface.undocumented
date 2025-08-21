@@ -87,6 +87,7 @@ org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinGlobalSearchSc
 org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinGlobalSearchScopeMergeStrategy.Companion.getMergeStrategies(Project)
 org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleDependentsProvider.Companion.getInstance(Project)
 org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleDependentsProviderBase
+org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleInformationProvider.Companion.getInstance(Project)
 org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleOutputProvider.Companion.getInstance(Project)
 org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider.Companion.getInstance(Project)
 org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider.Companion.getModule(Project, PsiElement, KaModule?)

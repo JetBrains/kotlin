@@ -20,7 +20,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
-import com.intellij.psi.tree.TokenSet;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
@@ -31,13 +31,10 @@ import org.jetbrains.kotlin.psi.typeRefHelpers.TypeRefHelpersKt;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.kotlin.lexer.KtTokens.VAL_KEYWORD;
-import static org.jetbrains.kotlin.lexer.KtTokens.VAR_KEYWORD;
+import static org.jetbrains.kotlin.lexer.KtTokens.EQ;
 
 @SuppressWarnings("deprecation")
 public class KtDestructuringDeclarationEntry extends KtNamedDeclarationNotStubbed implements KtVariableDeclaration {
-
-    private static final TokenSet VAL_VAR_KEYWORDS = TokenSet.create(VAL_KEYWORD, VAR_KEYWORD);
 
     public KtDestructuringDeclarationEntry(@NotNull ASTNode node) {
         super(node);
@@ -109,18 +106,18 @@ public class KtDestructuringDeclarationEntry extends KtNamedDeclarationNotStubbe
 
     @Override
     public boolean isVar() {
-        return getParentNode().findChildByType(KtTokens.VAR_KEYWORD) != null;
+        return findChildByType(KtTokens.VAR_KEYWORD) != null || getParentNode().findChildByType(KtTokens.VAR_KEYWORD) != null;
     }
 
     @Nullable
     @Override
-    public KtExpression getInitializer() {
-        return null;
+    public KtNameReferenceExpression getInitializer() {
+        return PsiTreeUtil.getNextSiblingOfType(findChildByType(EQ), KtNameReferenceExpression.class);
     }
 
     @Override
     public boolean hasInitializer() {
-        return false;
+        return getInitializer() != null;
     }
 
     @NotNull
@@ -133,9 +130,19 @@ public class KtDestructuringDeclarationEntry extends KtNamedDeclarationNotStubbe
 
     @Override
     public PsiElement getValOrVarKeyword() {
-        ASTNode node = getParentNode().findChildByType(VAL_VAR_KEYWORDS);
+        ASTNode node = getParentNode().findChildByType(KtTokens.VAL_VAR);
         if (node == null) return null;
         return node.getPsi();
+    }
+
+    /**
+     * @return the PSI element for the val or var keyword of the entry itself or null.
+     *
+     * Only entries of full form destructuring declarations have their own val or var keyword.
+     */
+    @Nullable
+    public PsiElement getOwnValOrVarKeyword() {
+        return findChildByType(KtTokens.VAL_VAR);
     }
 
     @Nullable

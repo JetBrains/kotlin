@@ -3,8 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("DEPRECATION")
-
 package org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication
 
 import com.android.build.api.variant.AndroidComponentsExtension
@@ -21,7 +19,6 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.AndroidGradlePluginVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
@@ -156,7 +153,7 @@ internal fun KotlinAndroidTarget.setUpMultiplatformResourcesAndAssets(
 ) {
     if (project.multiplatformExtensionOrNull == null) return
 
-    val legacyAgpVariant = compilation.androidVariant
+    @Suppress("DEPRECATION") val legacyAgpVariant = compilation.androidVariant ?: return
     val legacyAgpVariantName = getVariantName(legacyAgpVariant)
     project.multiplatformExtension.resourcesPublicationExtension?.subscribeOnPublishResources(this) { resources ->
         val copyResourcesTask = compilation.registerAssembleHierarchicalResourcesTaskProvider(

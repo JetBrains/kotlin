@@ -185,6 +185,12 @@ class FirDeserializationContext(
     }
 }
 
+class FirNestedTypeAliasDeserializationContext(
+    val memberDeserializer: FirMemberDeserializer,
+    val proto: ProtoBuf.TypeAlias,
+    val scopeProvider: FirScopeProvider,
+)
+
 class FirMemberDeserializer(private val c: FirDeserializationContext) {
     private val contractDeserializer = FirContractDeserializer(c)
 
@@ -200,12 +206,11 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
      */
     fun loadTypeAlias(
         proto: ProtoBuf.TypeAlias,
+        classId: ClassId,
         scopeProvider: FirScopeProvider,
         preComputedSymbol: FirTypeAliasSymbol? = null
     ): FirTypeAlias {
         val flags = proto.flags
-        val name = c.nameResolver.getName(proto.name)
-        val classId = ClassId(c.packageFqName, name)
         val symbol = preComputedSymbol ?: FirTypeAliasSymbol(classId)
         val local = c.childContext(proto.typeParameterList, containingDeclarationSymbol = symbol)
         val versionRequirements = VersionRequirement.create(proto, c)
@@ -213,7 +218,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             moduleData = c.moduleData
             origin = FirDeclarationOrigin.Library
             this.scopeProvider = scopeProvider
-            this.name = name
+            this.name = classId.shortClassName
             val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags))
             status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
                 visibility,
@@ -355,7 +360,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         val flags = if (proto.hasFlags()) proto.flags else loadOldFlags(proto.oldFlags)
         val callableName = c.nameResolver.getName(proto.name)
         val callableId = CallableId(c.packageFqName, c.relativeClassName, callableName)
-        val symbol = FirPropertySymbol(callableId)
+        val symbol = FirRegularPropertySymbol(callableId)
         val local = c.childContext(proto.typeParameterList, containingDeclarationSymbol = symbol)
 
         // Per documentation on Property.getter_flags in metadata.proto, if an accessor flags field is absent, its value should be computed
@@ -404,7 +409,6 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             this.isVar = isVar
             this.symbol = symbol
             dispatchReceiverType = c.dispatchReceiver
-            isLocal = false
             val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags))
             status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
                 visibility,
@@ -417,7 +421,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 isConst = Flags.IS_CONST.get(flags)
                 isLateInit = Flags.IS_LATEINIT.get(flags)
                 isExternal = Flags.IS_EXTERNAL_PROPERTY.get(flags)
-                hasMustUseReturnValue = Flags.HAS_MUST_USE_RETURN_VALUE_PROPERTY.get(flags)
+                returnValueStatus = ProtoEnumFlags.returnValueStatus(Flags.RETURN_VALUE_STATUS_PROPERTY.get(flags))
             }
 
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
@@ -576,7 +580,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             this.moduleData = c.moduleData
             this.origin = origin
             this.name = SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
-            this.symbol = FirValueParameterSymbol(name)
+            this.symbol = FirValueParameterSymbol()
             this.returnTypeRef = typeRef
             this.containingDeclarationSymbol = containingDeclarationSymbol
             this.valueParameterKind = FirValueParameterKind.LegacyContextReceiver
@@ -646,7 +650,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 isExternal = Flags.IS_EXTERNAL_FUNCTION.get(flags)
                 isSuspend = Flags.IS_SUSPEND.get(flags)
                 hasStableParameterNames = !Flags.IS_FUNCTION_WITH_NON_STABLE_PARAMETER_NAMES.get(flags)
-                hasMustUseReturnValue = Flags.HAS_MUST_USE_RETURN_VALUE_FUNCTION.get(flags)
+                returnValueStatus = ProtoEnumFlags.returnValueStatus(Flags.RETURN_VALUE_STATUS_FUNCTION.get(flags))
             }
             this.symbol = symbol
             dispatchReceiverType = c.dispatchReceiver
@@ -735,7 +739,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 isActual = false
                 isOverride = false
                 this.isInner = isInner
-                hasMustUseReturnValue = Flags.HAS_MUST_USE_RETURN_VALUE_CTOR.get(flags)
+                returnValueStatus = ProtoEnumFlags.returnValueStatus(Flags.RETURN_VALUE_STATUS_CTOR.get(flags))
             }
             this.symbol = symbol
             dispatchReceiverType =
@@ -790,14 +794,17 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
     ) {
         valueParameters.mapIndexedTo(destination) { index, proto ->
             val flags = if (proto.hasFlags()) proto.flags else 0
-            val name = c.nameResolver.getName(proto.name)
+            val name = if (kind == FirValueParameterKind.ContextParameter && !proto.hasName())
+                SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+            else
+                c.nameResolver.getName(proto.name)
             buildValueParameter {
                 moduleData = c.moduleData
                 this.containingDeclarationSymbol = containingDeclarationSymbol
                 origin = FirDeclarationOrigin.Library
                 returnTypeRef = proto.type(c.typeTable).toTypeRef(c)
                 this.name = name
-                symbol = FirValueParameterSymbol(name)
+                symbol = FirValueParameterSymbol()
                 resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                 defaultValue = defaultValue(flags)
                 if (addDefaultValue) {

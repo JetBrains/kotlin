@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.web.yarn.BaseYarnRootEnvSpec
 import org.jetbrains.kotlin.gradle.targets.web.yarn.BaseYarnRootExtension
 import org.jetbrains.kotlin.gradle.tasks.CleanDataTask
+import org.jetbrains.kotlin.gradle.tasks.CleanDataTask.Companion.deprecationMessage
+import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.detachedResolvable
 import org.jetbrains.kotlin.gradle.utils.listProperty
@@ -121,14 +123,20 @@ internal class YarnPluginApplier(
             ),
             CleanDataTask::class.java
         ) {
-            it.cleanableStoreProvider = project.provider { yarnRootExtension.requireConfigured().cleanableStore }
+            it.doFirst {
+                it.logger.warn(deprecationMessage(it.path))
+            }
+
+            it.cleanableStoreProvider = yarnSpec
+                .installationDirectory
+                .map { CleanableStore.Companion[it.asFile.path] }
             it.description = "Clean unused local yarn version"
         }
 
         yarnRootExtension.lockFileDirectory = lockFileDirectory(project.rootDir)
 
         val upgradeYarnLock =
-            project.tasks.register(platformDisambiguate.extensionName(UPGRADE_YARN_LOCK_BASE_NAME), YarnLockCopyTask::class.java) { task ->
+            project.tasks.register(platformDisambiguate.extensionName(UPGRADE_YARN_LOCK_BASE_NAME), YarnLockUpgradeTask::class.java) { task ->
                 task.dependsOn(kotlinNpmInstall)
                 task.inputFile.set(nodeJsRoot.rootPackageDirectory.map { it.file(LockCopyTask.YARN_LOCK) })
                 task.outputDirectory.set(yarnRootExtension.lockFileDirectory)

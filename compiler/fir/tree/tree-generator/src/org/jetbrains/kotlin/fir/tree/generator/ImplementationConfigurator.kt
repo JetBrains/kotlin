@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -251,6 +251,28 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             }
         }
 
+        impl(legacyRawContractDescription) {
+
+        }
+
+        impl(lazyContractDescription) {
+            val error = """error("FirLazyContractDescription should be calculated before accessing")"""
+            default("source") {
+                value = error
+                withGetter = true
+            }
+
+            default("contractCall") {
+                value = error
+                withGetter = true
+            }
+
+            default("diagnostic") {
+                value = error
+                withGetter = true
+            }
+        }
+
         impl(errorLoop) {
             default("block", "FirEmptyExpressionBlock()")
             default("condition", "FirErrorExpressionImpl(source, MutableOrEmptyList.empty(), ConeUnreportedDuplicateDiagnostic(diagnostic), null, null)")
@@ -390,6 +412,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         impl(resolvedQualifier) {
             isMutable("packageFqName", "relativeClassFqName", "isNullableLHSForCallableReference")
             defaultClassIdFromRelativeClassName()
+            additionalImports(regularClass)
         }
 
         impl(resolvedReifiedParameterReference)
@@ -641,25 +664,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             additionalImports(expression)
         }
 
-        impl(resolvedQualifier) {
-            // Initialize the value to true if only the companion object is present. This makes a standalone class reference expression
-            // correctly resolve to the companion object. For example
-            // ```
-            // class A {
-            //   companion object
-            // }
-            //
-            // val companionOfA = A // This standalone class reference `A` here should resolve to the companion object.
-            // ```
-            //
-            // If this `FirResolvedQualifier` is a receiver expression of some other qualified access, the value is updated in
-            // `FirCallResolver` according to the resolution result.
-            default("resolvedToCompanionObject", "(symbol?.fir as? FirRegularClass)?.companionObjectSymbol != null")
-            additionalImports(regularClass)
-        }
-
         impl(errorResolvedQualifier) {
-            defaultFalse("resolvedToCompanionObject", withGetter = true)
             defaultClassIdFromRelativeClassName()
         }
 

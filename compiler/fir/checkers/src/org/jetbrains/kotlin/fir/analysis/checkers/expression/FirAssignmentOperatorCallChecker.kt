@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCallOrigin
 import org.jetbrains.kotlin.fir.expressions.FirOperationNameConventions
 import org.jetbrains.kotlin.fir.references.toResolvedNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.types.ConeDynamicType
 import org.jetbrains.kotlin.fir.types.isUnit
 import org.jetbrains.kotlin.fir.types.resolvedType
 
@@ -28,7 +29,8 @@ object FirAssignmentOperatorCallChecker : FirFunctionCallChecker(MppCheckerKind.
         ) {
             return
         }
-        if (!expression.resolvedType.fullyExpandedType().isUnit) {
+        val resolvedType = expression.resolvedType.fullyExpandedType()
+        if (!(resolvedType.isUnit || resolvedType is ConeDynamicType)) {
             reporter.reportOn(
                 expression.source,
                 FirErrors.ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT,

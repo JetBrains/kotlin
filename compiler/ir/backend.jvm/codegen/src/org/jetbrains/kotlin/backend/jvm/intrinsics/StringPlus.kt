@@ -12,8 +12,7 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Type
 
-object StringPlus : IntrinsicMethod() {
-
+object StringPlus : CallBasedIntrinsicMethod() {
     override fun toCallable(
         expression: IrFunctionAccessExpression,
         signature: JvmMethodSignature,

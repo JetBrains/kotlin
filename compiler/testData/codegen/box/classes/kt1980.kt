@@ -1,4 +1,5 @@
 // KJS_WITH_FULL_RUNTIME
+// FILE: lib.kt
 public inline fun Int.times(body : () -> Unit) {
     var count = this;
     while (count > 0) {
@@ -7,6 +8,7 @@ public inline fun Int.times(body : () -> Unit) {
     }
 }
 
+// FILE: main.kt
 fun calc() : Int {
     val a = ArrayList<()->Int>()
     2.times {

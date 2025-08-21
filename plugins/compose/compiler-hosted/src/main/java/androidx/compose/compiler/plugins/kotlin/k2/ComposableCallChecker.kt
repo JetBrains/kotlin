@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.references.toResolvedFunctionSymbol
 import org.jetbrains.kotlin.fir.references.toResolvedValueParameterSymbol
 import org.jetbrains.kotlin.fir.resolve.isInvoke
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -53,7 +54,7 @@ object ComposablePropertyAccessExpressionChecker : FirPropertyAccessExpressionCh
 object ComposableFunctionCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirFunctionCall) {
-        val calleeFunction = expression.calleeReference.toResolvedCallableSymbol()
+        val calleeFunction = expression.calleeReference.toResolvedFunctionSymbol()
             ?: return
 
         // K2 propagates annotation from the fun interface method to the constructor.

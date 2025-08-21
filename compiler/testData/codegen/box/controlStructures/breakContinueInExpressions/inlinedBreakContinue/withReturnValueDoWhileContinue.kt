@@ -2,8 +2,10 @@
 // IGNORE_BACKEND_K1: ANY
 // Reason: break/continue in inline lambdas unsupported
 
+// FILE: lib.kt
 inline fun foo(block: () -> Int): Int  = block()
 
+// FILE: main.kt
 fun box(): String {
     var sum = 0
     var i = 1

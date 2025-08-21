@@ -30,10 +30,11 @@ import kotlin.reflect.KClass
 context(context: CheckerContext, reporter: DiagnosticReporter)
 fun checkUpperBoundViolated(
     typeRef: FirTypeRef?,
-    isIgnoreTypeParameters: Boolean = false
+    isIgnoreTypeParameters: Boolean = false,
+    isInsideTypeOperatorOrParameterBounds: Boolean = false,
 ) {
     val type = typeRef?.coneType?.lowerBoundIfFlexible() as? ConeClassLikeType ?: return
-    checkUpperBoundViolated(typeRef, type, isIgnoreTypeParameters, typeRef.source)
+    checkUpperBoundViolated(typeRef, type, isIgnoreTypeParameters, typeRef.source, isInsideTypeOperatorOrParameterBounds)
 }
 
 context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -42,6 +43,7 @@ private fun checkUpperBoundViolated(
     notExpandedType: ConeClassLikeType,
     isIgnoreTypeParameters: Boolean = false,
     fallbackSource: KtSourceElement?,
+    isInsideTypeOperatorOrParameterBounds: Boolean = false,
 ) {
     // If we have FirTypeRef information, add KtSourceElement information to each argument of the type and fully expand.
     val type = if (typeRef != null) {
@@ -68,7 +70,13 @@ private fun checkUpperBoundViolated(
     val substitutor = FE10LikeConeSubstitutor(substitution, context.session)
 
     return checkUpperBoundViolated(
-        typeParameterSymbols, type.typeArguments.toList(), substitutor, isReportExpansionError = true, isIgnoreTypeParameters, fallbackSource,
+        typeParameterSymbols,
+        type.typeArguments.toList(),
+        substitutor,
+        isReportExpansionError = true,
+        isIgnoreTypeParameters,
+        fallbackSource,
+        isInsideTypeOperatorOrParameterBounds,
     )
 }
 
@@ -99,6 +107,7 @@ fun checkUpperBoundViolated(
     isReportExpansionError: Boolean = false,
     isIgnoreTypeParameters: Boolean = false,
     fallbackSource: KtSourceElement?,
+    isInsideTypeOperatorOrParameterBounds: Boolean = false,
 ) {
     val count = minOf(typeParameters.size, typeArguments.size)
     val typeSystemContext = context.session.typeContext
@@ -139,10 +148,17 @@ fun checkUpperBoundViolated(
                     } else {
                         val extraMessage =
                             if (upperBound.unwrapToSimpleTypeUsingLowerBound() is ConeCapturedType) "Consider removing the explicit type arguments" else ""
-                        reporter.reportOn(
-                            argumentSource ?: fallbackSource, regularDiagnostic,
-                            upperBound, argumentType, extraMessage
-                        )
+                        when {
+                            !isInsideTypeOperatorOrParameterBounds -> reporter.reportOn(
+                                argumentSource ?: fallbackSource, regularDiagnostic,
+                                upperBound, argumentType, extraMessage
+                            )
+                            else -> reporter.reportOn(
+                                argumentSource ?: fallbackSource,
+                                FirErrors.UPPER_BOUND_VIOLATED_IN_TYPE_OPERATOR_OR_PARAMETER_BOUNDS,
+                                upperBound, argumentType, extraMessage,
+                            )
+                        }
                     }
                 } else {
                     // Only check if the original check was successful to prevent duplicate diagnostics
@@ -177,10 +193,12 @@ private fun reportUpperBoundViolationWarningIfNecessary(
 ) {
     if (additionalUpperBoundsProvider == null) return
     val additionalUpperBound = additionalUpperBoundsProvider.getAdditionalUpperBound(upperBound) ?: return
-    // While [org.jetbrains.kotlin.fir.resolve.calls.CreateFreshTypeVariableSubstitutorStage.getTypePreservingFlexibilityWrtTypeVariable]
-    // is here, to obtain original explicit type arguments, we need to look into special attribute.
-    // TODO: Get rid of this unwrapping once KT-59138 is fixed and the relevant feature for disabling it will be removed
-    // Also we should get rid of it once LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible is removed
+
+    /**
+     * While [LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible]
+     * is here, to obtain original explicit type arguments, we need to look into special attribute.
+     * TODO: Get rid of this unwrapping once [LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible] is removed
+     */
     val properArgumentType =
         argumentType.attributes.explicitTypeArgumentIfMadeFlexibleSynthetically?.coneType ?: argumentType
 

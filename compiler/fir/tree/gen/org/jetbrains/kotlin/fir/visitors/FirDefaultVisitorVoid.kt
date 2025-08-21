@@ -267,6 +267,10 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
         visitNamedReference(resolvedNamedReference)
     }
 
+    override fun visitPropertyWithExplicitBackingFieldResolvedNamedReference(propertyWithExplicitBackingFieldResolvedNamedReference: FirPropertyWithExplicitBackingFieldResolvedNamedReference) {
+        visitResolvedNamedReference(propertyWithExplicitBackingFieldResolvedNamedReference)
+    }
+
     override fun visitResolvedCallableReference(resolvedCallableReference: FirResolvedCallableReference) {
         visitResolvedNamedReference(resolvedCallableReference)
     }
@@ -361,6 +365,10 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
 
     override fun visitLegacyRawContractDescription(legacyRawContractDescription: FirLegacyRawContractDescription) {
         visitContractDescription(legacyRawContractDescription)
+    }
+
+    override fun visitLazyContractDescription(lazyContractDescription: FirLazyContractDescription) {
+        visitLegacyRawContractDescription(lazyContractDescription)
     }
 
     override fun visitErrorContractDescription(errorContractDescription: FirErrorContractDescription) {

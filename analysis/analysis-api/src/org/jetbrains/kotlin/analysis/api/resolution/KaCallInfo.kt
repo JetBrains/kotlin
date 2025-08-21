@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.resolution
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
@@ -14,11 +15,13 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
  * The call may either be resolved successfully ([KaSuccessCallInfo]), or with errors ([KaErrorCallInfo]), coming with a list of candidate
  * calls and a diagnostic.
  */
+@OptIn(KaImplementationDetail::class)
 public sealed interface KaCallInfo : KaLifetimeOwner
 
 /**
  * A successfully resolved call.
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaSuccessCallInfo : KaCallInfo {
     /**
      * The successfully resolved [KaCall].
@@ -29,6 +32,7 @@ public interface KaSuccessCallInfo : KaCallInfo {
 /**
  * An erroneous call. The [candidateCalls] and [diagnostic] can be used to further analyze the error.
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaErrorCallInfo : KaCallInfo {
     /**
      * A list of [KaCall]s to candidates that were considered during the call resolution process, but ultimately not selected. This may be

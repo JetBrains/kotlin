@@ -92,15 +92,15 @@ public interface Map<K, out V> {
 public interface MutableCollection<E> : kotlin.collections.Collection<E>, kotlin.collections.MutableIterable<E> {
     public abstract operator fun iterator(): kotlin.collections.MutableIterator<E>
 
-    public abstract fun add(element: E): kotlin.Boolean
+    @kotlin.IgnorableReturnValue public abstract fun add(element: E): kotlin.Boolean
 
-    public abstract fun remove(element: E): kotlin.Boolean
+    @kotlin.IgnorableReturnValue public abstract fun remove(element: E): kotlin.Boolean
 
-    public abstract fun addAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
+    @kotlin.IgnorableReturnValue public abstract fun addAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
 
-    public abstract fun removeAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
+    @kotlin.IgnorableReturnValue public abstract fun removeAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
 
-    public abstract fun retainAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
+    @kotlin.IgnorableReturnValue public abstract fun retainAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
 
     public abstract fun clear(): kotlin.Unit
 }
@@ -114,25 +114,25 @@ public interface MutableIterator<out T> : kotlin.collections.Iterator<T> {
 }
 
 public interface MutableList<E> : kotlin.collections.List<E>, kotlin.collections.MutableCollection<E> {
-    public abstract fun add(element: E): kotlin.Boolean
+    @kotlin.IgnorableReturnValue public abstract fun add(element: E): kotlin.Boolean
 
-    public abstract fun remove(element: E): kotlin.Boolean
+    @kotlin.IgnorableReturnValue public abstract fun remove(element: E): kotlin.Boolean
 
-    public abstract fun addAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
+    @kotlin.IgnorableReturnValue public abstract fun addAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
 
-    public abstract fun addAll(index: kotlin.Int, elements: kotlin.collections.Collection<E>): kotlin.Boolean
+    @kotlin.IgnorableReturnValue public abstract fun addAll(index: kotlin.Int, elements: kotlin.collections.Collection<E>): kotlin.Boolean
 
-    public abstract fun removeAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
+    @kotlin.IgnorableReturnValue public abstract fun removeAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
 
-    public abstract fun retainAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
+    @kotlin.IgnorableReturnValue public abstract fun retainAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
 
     public abstract fun clear(): kotlin.Unit
 
-    public abstract operator fun set(index: kotlin.Int, element: E): E
+    @kotlin.IgnorableReturnValue public abstract operator fun set(index: kotlin.Int, element: E): E
 
     public abstract fun add(index: kotlin.Int, element: E): kotlin.Unit
 
-    public abstract fun removeAt(index: kotlin.Int): E
+    @kotlin.IgnorableReturnValue public abstract fun removeAt(index: kotlin.Int): E
 
     public abstract fun listIterator(): kotlin.collections.MutableListIterator<E>
 
@@ -160,9 +160,9 @@ public interface MutableMap<K, V> : kotlin.collections.Map<K, V> {
 
     public abstract val entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K, V>>
 
-    public abstract fun put(key: K, value: V): V?
+    @kotlin.IgnorableReturnValue public abstract fun put(key: K, value: V): V?
 
-    public abstract fun remove(key: K): V?
+    @kotlin.IgnorableReturnValue public abstract fun remove(key: K): V?
 
     @kotlin.SinceKotlin @kotlin.internal.PlatformDependent public open fun remove(key: K, value: V): kotlin.Boolean { /* compiled code */ }
 
@@ -171,22 +171,22 @@ public interface MutableMap<K, V> : kotlin.collections.Map<K, V> {
     public abstract fun clear(): kotlin.Unit
 
     public interface MutableEntry<K, V> : kotlin.collections.Map.Entry<K, V> {
-        public abstract fun setValue(newValue: V): V
+        @kotlin.IgnorableReturnValue public abstract fun setValue(newValue: V): V
     }
 }
 
 public interface MutableSet<E> : kotlin.collections.Set<E>, kotlin.collections.MutableCollection<E> {
     public abstract operator fun iterator(): kotlin.collections.MutableIterator<E>
 
-    public abstract fun add(element: E): kotlin.Boolean
+    @kotlin.IgnorableReturnValue public abstract fun add(element: E): kotlin.Boolean
 
-    public abstract fun remove(element: E): kotlin.Boolean
+    @kotlin.IgnorableReturnValue public abstract fun remove(element: E): kotlin.Boolean
 
-    public abstract fun addAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
+    @kotlin.IgnorableReturnValue public abstract fun addAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
 
-    public abstract fun removeAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
+    @kotlin.IgnorableReturnValue public abstract fun removeAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
 
-    public abstract fun retainAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
+    @kotlin.IgnorableReturnValue public abstract fun retainAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
 
     public abstract fun clear(): kotlin.Unit
 }
@@ -202,4 +202,3 @@ public interface Set<out E> : kotlin.collections.Collection<E> {
 
     public abstract fun containsAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
 }
-

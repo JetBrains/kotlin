@@ -16,12 +16,11 @@
 
 package org.jetbrains.kotlin.maven;
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.plugins.annotations.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.build.SourcesUtilsKt;
@@ -41,10 +40,14 @@ import org.jetbrains.kotlin.config.JvmTarget;
 import org.jetbrains.kotlin.maven.incremental.FileCopier;
 import org.jetbrains.kotlin.maven.kapt.AnnotationProcessingManager;
 
+import javax.inject.Inject;
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -52,6 +55,7 @@ import java.util.stream.Stream;
 
 import static org.jetbrains.kotlin.com.intellij.openapi.util.text.StringUtil.join;
 import static org.jetbrains.kotlin.maven.Util.filterClassPath;
+import static org.jetbrains.kotlin.maven.Util.getMavenPluginVersion;
 
 /**
  * Compiles kotlin sources
@@ -95,6 +99,28 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
 
     @Parameter(property = "kotlin.compiler.javaParameters")
     protected boolean javaParameters;
+
+    @Parameter(property = "kotlin.compiler.daemon", defaultValue = "true")
+    protected boolean useDaemon;
+
+    @Parameter(property = "kotlin.compiler.daemon.jvmArgs")
+    protected List<String> kotlinDaemonJvmArgs;
+
+    @Parameter(property = "kotlin.compiler.daemon.shutdownDelayMs")
+    protected Long daemonShutdownDelayMs;
+
+    /**
+     * The time the Kotlin daemon continues to live after the Maven build process finishes (without the Maven daemon)
+     */
+    private static final Duration DEFAULT_NON_MAVEN_DAEMON_SHUTDOWN_DELAY = Duration.ofMinutes(30);
+    /**
+     * The time the Kotlin daemon continues to live after the Maven daemon shuts down
+     */
+    private static final Duration DEFAULT_MAVEN_DAEMON_SHUTDOWN_DELAY = Duration.ofSeconds(1);
+    /**
+     * A system property used to detect we are inside the Maven Daemon.
+     */
+    private static final String MAVEN_DAEMON_PROPERTY_NAME = "mvnd.home";
 
     @NotNull
     private File getCachesDir() {
@@ -194,8 +220,6 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
         if (scriptTemplates != null && !scriptTemplates.isEmpty()) {
             arguments.setScriptTemplates(scriptTemplates.toArray(new String[0]));
         }
-
-        arguments.setJavaSourceRoots(sourceRoots.stream().map(File::getAbsolutePath).toArray(String[]::new));
     }
 
     private boolean isJava9Module(@NotNull List<File> sourceRoots) {
@@ -222,9 +246,27 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
         super.execute();
     }
 
-    private CompilationService getCompilationService() {
-        ClassLoader btaClassloader = this.getClass().getClassLoader(); // load it within the same classloader yet
-        return CompilationService.loadImplementation(btaClassloader);
+    @Inject
+    private KotlinArtifactResolver kotlinArtifactResolver;
+
+    private CompilationService getCompilationService() throws MojoExecutionException {
+        try {
+            Set<Artifact> artifacts =
+                    kotlinArtifactResolver.resolveArtifact("org.jetbrains.kotlin", "kotlin-build-tools-impl", getMavenPluginVersion());
+            URL[] urls = artifacts.stream().map(artifact -> {
+                File file = artifact.getFile();
+                try {
+                    return file.toURI().toURL();
+                }
+                catch (MalformedURLException e) {
+                    throw new RuntimeException("Failed to convert file to URL: " + file, e);
+                }
+            }).toArray(URL[]::new);
+            ClassLoader btaClassLoader = new URLClassLoader(urls, SharedApiClassesClassLoader.newInstance());
+            return CompilationService.loadImplementation(btaClassLoader);
+        } catch (Exception e) {
+            throw new MojoExecutionException("Failed to load Kotlin Build Tools API implementation", e);
+        }
     }
 
     private static String getFileExtension(File file) {
@@ -248,7 +290,23 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
             ProjectId projectId = ProjectId.Companion.RandomProjectUUID();
             CompilationService compilationService = getCompilationService();
             CompilerExecutionStrategyConfiguration strategyConfig = compilationService.makeCompilerExecutionStrategyConfiguration();
-            strategyConfig.useInProcessStrategy();
+            if (useDaemon) {
+                boolean inMavenDaemon = System.getProperty(MAVEN_DAEMON_PROPERTY_NAME) != null;
+                Duration usedDaemonShutdownDelay;
+                if (daemonShutdownDelayMs != null) {
+                    // respect explicitly specified value
+                    usedDaemonShutdownDelay = Duration.ofMillis(daemonShutdownDelayMs);
+                } else if (inMavenDaemon) {
+                    usedDaemonShutdownDelay = DEFAULT_MAVEN_DAEMON_SHUTDOWN_DELAY;
+                } else {
+                    usedDaemonShutdownDelay = DEFAULT_NON_MAVEN_DAEMON_SHUTDOWN_DELAY;
+                }
+                getLog().debug("Using Kotlin compiler daemon with shutdown delay " + usedDaemonShutdownDelay + " ms" + (inMavenDaemon ? " (in Maven daemon)" : " (outside Maven daemon)"));
+                strategyConfig.useDaemonStrategy(kotlinDaemonJvmArgs, usedDaemonShutdownDelay);
+            } else {
+                getLog().debug("Using in-process Kotlin compiler");
+                strategyConfig.useInProcessStrategy();
+            }
 
             JvmCompilationConfiguration compileConfig = compilationService.makeJvmCompilationConfiguration();
 

@@ -14,6 +14,7 @@ import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.codeInsight.CommentUtilCore;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -370,7 +371,7 @@ public class KtPsiUtil {
      * The suppression is used because the field is used in IntelliJ monorepo.
      */
     @SuppressWarnings("WeakerAccess")
-    public static final int MAX_PRIORITY = BinaryOperationPrecedence.values().length + 3;
+    public static final int MAX_PRIORITY = CollectionsKt.count(BinaryOperationPrecedence.getEntries()) + 3;
 
     /**
      * @return priority (that opposed to precedence) of the passed <tt>expression</tt>

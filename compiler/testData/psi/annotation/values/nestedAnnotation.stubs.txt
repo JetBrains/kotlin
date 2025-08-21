@@ -1,11 +1,11 @@
 Nested.kt:
-  PsiJetFileStubImpl[package=foo]
+  FILE[kind=File[packageFqName=foo]]
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=foo]
     IMPORT_LIST
     CLASS[classId=foo/Nested, fqName=foo.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Nested, superNames=[]]
       MODIFIER_LIST[annotation]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Nested]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Nested]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=foo.Nested.i, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=i]
             TYPE_REFERENCE
@@ -18,12 +18,12 @@ Nested.kt:
 
 
 Outer.kt:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/Outer, fqName=Outer, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Outer, superNames=[]]
       MODIFIER_LIST[annotation]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Outer]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Outer]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=Outer.some, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=some]
             TYPE_REFERENCE
@@ -38,7 +38,7 @@ Outer.kt:
 
 
 WithNested.kt:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
       IMPORT_DIRECTIVE[importedFqName=foo.Nested, isAllUnder=false, isValid=true]
@@ -59,10 +59,18 @@ WithNested.kt:
             VALUE_ARGUMENT[isSpread=false]
               VALUE_ARGUMENT_NAME
                 REFERENCE_EXPRESSION[referencedName=nested]
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION[referencedName=Nested]
+                VALUE_ARGUMENT_LIST
+                  VALUE_ARGUMENT[isSpread=false]
+                    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
+                  VALUE_ARGUMENT[isSpread=false]
+                    STRING_TEMPLATE
+                      LITERAL_STRING_TEMPLATE_ENTRY[text=nested value]
 
 
 WithQualifiedNested.kt:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/WithQualifiedNested, fqName=WithQualifiedNested, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithQualifiedNested, superNames=[]]
@@ -77,3 +85,13 @@ WithQualifiedNested.kt:
               STRING_TEMPLATE
                 LITERAL_STRING_TEMPLATE_ENTRY[text=value]
             VALUE_ARGUMENT[isSpread=false]
+              DOT_QUALIFIED_EXPRESSION
+                REFERENCE_EXPRESSION[referencedName=foo]
+                CALL_EXPRESSION
+                  REFERENCE_EXPRESSION[referencedName=Nested]
+                  VALUE_ARGUMENT_LIST
+                    VALUE_ARGUMENT[isSpread=false]
+                      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+                    VALUE_ARGUMENT[isSpread=false]
+                      STRING_TEMPLATE
+                        LITERAL_STRING_TEMPLATE_ENTRY[text=nested value]

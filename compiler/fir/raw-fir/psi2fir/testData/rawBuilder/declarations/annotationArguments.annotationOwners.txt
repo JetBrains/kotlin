@@ -96,3 +96,7 @@ context -> FirRegularClassSymbol Another
 @Arrays(<implicitArrayOf>(bar#?.{ $subj$.foo#(String(str)) }, baz#.bar#?.{ $subj$.doo# }, !=(IntegerLiteral(1), IntegerLiteral(2))))
 owner -> FirRegularClassSymbol WithIncorrectArguments
 context -> FirRegularClassSymbol WithIncorrectArguments
+
+@kotlin.Deprecated(String(Deprecated), kotlin#.ReplaceWith#(String(NewClass), String(foo.bar.baz.NewClass)), level = kotlin#.DeprecationLevel#.HIDDEN#)
+owner -> FirRegularClassSymbol Qualified
+context -> FirRegularClassSymbol Qualified

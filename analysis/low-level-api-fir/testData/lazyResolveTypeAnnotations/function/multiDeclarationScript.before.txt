@@ -35,83 +35,83 @@
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 @R|util/Anno|(LAZY_EXPRESSION)  util/Pair
-  context -> FirPropertySymbol <local>/<iterator>
+  context -> FirLocalPropertySymbol <local>/<iterator>
   anchor -> [FirNamedFunctionSymbol util/bar]
 
 @R|util/Anno|(LAZY_EXPRESSION)  util/Pair
-  context -> FirPropertySymbol <local>/<destruct>
+  context -> FirLocalPropertySymbol <local>/<destruct>
   anchor -> [FirNamedFunctionSymbol util/bar]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/String>>?
-  context -> FirPropertySymbol <local>/x
+  context -> FirLocalPropertySymbol <local>/x
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/String>
-  context -> FirPropertySymbol <local>/x
+  context -> FirLocalPropertySymbol <local>/x
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/String
-  context -> FirPropertySymbol <local>/x
+  context -> FirLocalPropertySymbol <local>/x
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/Array<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>?
-  context -> FirPropertySymbol <local>/y
+  context -> FirLocalPropertySymbol <local>/y
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirPropertySymbol <local>/y
+  context -> FirLocalPropertySymbol <local>/y
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirPropertySymbol <local>/y
+  context -> FirLocalPropertySymbol <local>/y
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/String>>?
-  context -> FirPropertySymbol <local>/a
+  context -> FirLocalPropertySymbol <local>/a
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/String>
-  context -> FirPropertySymbol <local>/a
+  context -> FirLocalPropertySymbol <local>/a
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/String
-  context -> FirPropertySymbol <local>/a
+  context -> FirLocalPropertySymbol <local>/a
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/Array<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>?
-  context -> FirPropertySymbol <local>/b
+  context -> FirLocalPropertySymbol <local>/b
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirPropertySymbol <local>/b
+  context -> FirLocalPropertySymbol <local>/b
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirPropertySymbol <local>/b
+  context -> FirLocalPropertySymbol <local>/b
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/String>>?
-  context -> FirPropertySymbol <local>/a
+  context -> FirLocalPropertySymbol <local>/a
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/String>
-  context -> FirPropertySymbol <local>/a
+  context -> FirLocalPropertySymbol <local>/a
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/String
-  context -> FirPropertySymbol <local>/a
+  context -> FirLocalPropertySymbol <local>/a
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/Array<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>?
-  context -> FirPropertySymbol <local>/b
+  context -> FirLocalPropertySymbol <local>/b
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirPropertySymbol <local>/b
+  context -> FirLocalPropertySymbol <local>/b
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirPropertySymbol <local>/b
+  context -> FirLocalPropertySymbol <local>/b
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/Array<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>?
@@ -131,7 +131,7 @@ FILE: [ResolvedTo(IMPORTS)] multiDeclarationScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-multiDeclarationScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-multiDeclarationScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=util/Anno.position] position: R|kotlin/String|): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -141,10 +141,10 @@ FILE: [ResolvedTo(IMPORTS)] multiDeclarationScript.kts
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final data [ResolvedTo(CONTRACTS)] [ContainingScriptKey=FirScriptSymbol util.<script-multiDeclarationScript.kts>] class Pair : R|kotlin/Any| {
+        public final data [ResolvedTo(CONTRACTS)] [ContainingScriptKey=FirScriptSymbol util.<script-multiDeclarationScript.kts>, ScriptTopLevelDeclaration=true] class Pair : R|kotlin/Any| {
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Pair] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=util/Pair.a] a: R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/String>>?|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=util/Pair.b] b: R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Array<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>?|): R|util/Pair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -163,11 +163,11 @@ FILE: [ResolvedTo(IMPORTS)] multiDeclarationScript.kts
 
         }
 
-        public final [ResolvedTo(CONTRACTS)] fun bar(): R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  util/Pair>| { LAZY_BLOCK }
+        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun bar(): R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  util/Pair>| { LAZY_BLOCK }
 
-        public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> withLambda([ResolvedTo(CONTRACTS)] lambda: R|(util/Pair) -> T|): R|T| { LAZY_BLOCK }
+        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun <[ResolvedTo(CONTRACTS)] T> withLambda([ResolvedTo(CONTRACTS)] lambda: R|(util/Pair) -> T|): R|T| { LAZY_BLOCK }
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol util/bar, FirConstructorSymbol util/Pair.Pair]] fun foo(): R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Array<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>?| {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol util/bar, FirConstructorSymbol util/Pair.Pair], ScriptTopLevelDeclaration=true] fun foo(): R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Array<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>?| {
             ^foo R|util/withLambda|<R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Array<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>?|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function1<util/Pair, TypeVariable(T)>] withLambda@fun <anonymous>([ResolvedTo(RAW_FIR)] <unused var>: R|util/Pair|): R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Array<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>?| <inline=NoInline>  {
                 [ResolvedTo(RAW_FIR)] lval prop: R|kotlin/String| = String(str)
                 @R|util/Anno|[Types](position = <strcat>(String(near for ), R|<local>/prop|))  {

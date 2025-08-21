@@ -60,7 +60,7 @@ internal inline fun internalInline() {
     <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!><!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_WARNING!>privateInlineI<!>()<!>
     privateInlineAC()
     privateInlineEC()
-    <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!>class Local : <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING, PRIVATE_CLASS_MEMBER_FROM_INLINE!>Generic<<!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>A<!>><!>() {}<!>
+    <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!><!NOT_YET_SUPPORTED_IN_INLINE!>class<!> Local : <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING, PRIVATE_CLASS_MEMBER_FROM_INLINE!>Generic<<!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>A<!>><!>() {}<!>
     <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!>val withContext = <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!><!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_WARNING!>makeWithContext<!>()<!><!>
     <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!>withContext<!>.toString()
     <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!>null as <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>A<!><!>
@@ -94,7 +94,8 @@ private class B {
         publicMakeLocal()
         makeEffectivelyPrivateLocal()
         privateInline()
-        class Local : Generic<A>() {}
+        <!NOT_YET_SUPPORTED_IN_INLINE!>class<!> Local : Generic<A>() {}
+        object : Generic<A>() {}
         null as A
         null as A.Nested
         A::class
@@ -112,7 +113,8 @@ internal class C {
                 publicMakeLocal()
                 makeEffectivelyPrivateLocal()
                 privateInline()
-                class Local : Generic<A>() {}
+                <!NOT_YET_SUPPORTED_IN_INLINE!>class<!> Local : Generic<A>() {}
+                object : Generic<A>() {}
                 null as A
                 null as A.Nested
                 A::class
@@ -140,7 +142,8 @@ internal fun inlineInsideAnonymousObject() {
             makeEffectivelyPrivateLocal()
             privateInline()
             Inner()
-            class Local : <!PRIVATE_CLASS_MEMBER_FROM_INLINE!>Generic<A><!>() {}
+            <!NOT_YET_SUPPORTED_IN_INLINE!>class<!> Local : <!PRIVATE_CLASS_MEMBER_FROM_INLINE!>Generic<A><!>() {}
+            object : <!PRIVATE_CLASS_MEMBER_FROM_INLINE!>Generic<A><!>() {}
             null as A
             null as A.Nested
             A::class

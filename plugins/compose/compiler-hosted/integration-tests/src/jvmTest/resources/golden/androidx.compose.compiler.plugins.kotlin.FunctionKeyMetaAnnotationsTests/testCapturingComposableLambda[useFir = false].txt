@@ -23,8 +23,8 @@ fun Foo() {
 // ------------------------------------------
 
 TestKt {
-    Wrapper (Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;I)V null
-    Foo (Landroidx/compose/runtime/Composer;I)V null
+    Wrapper (Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;I)V [key=-1537305205, startOffset=47, endOffset=105]
+    Foo (Landroidx/compose/runtime/Composer;I)V [key=-607362160, startOffset=119, endOffset=226]
     Foo$lambda$1 (Landroidx/compose/runtime/MutableState;)I null
     Foo$lambda$2 (Landroidx/compose/runtime/MutableState;I)V null
     access$Foo$lambda$1 (Landroidx/compose/runtime/MutableState;)I null
@@ -38,7 +38,7 @@ TestKt$Wrapper$1 {
 
 TestKt$Foo$1 {
     <init> (Landroidx/compose/runtime/MutableState;)V null
-    invoke (Landroidx/compose/runtime/Composer;I)V null
+    invoke (Landroidx/compose/runtime/Composer;I)V [key=-1912932616, startOffset=191, endOffset=224]
     invoke (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object; null
 }
 

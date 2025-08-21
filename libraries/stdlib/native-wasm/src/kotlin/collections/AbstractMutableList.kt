@@ -39,11 +39,13 @@ public actual abstract class AbstractMutableList<E> protected actual constructor
      *
      * @return `true` because the list is always modified as the result of this operation.
      */
+    @IgnorableReturnValue
     override actual fun add(element: E): Boolean {
         add(size, element)
         return true
     }
 
+    @IgnorableReturnValue
     override actual fun addAll(index: Int, elements: Collection<E>): Boolean {
         AbstractList.checkPositionIndex(index, size)
 
@@ -60,7 +62,9 @@ public actual abstract class AbstractMutableList<E> protected actual constructor
         removeRange(0, size)
     }
 
+    @IgnorableReturnValue
     override actual fun removeAll(elements: Collection<E>): Boolean = removeAll { it in elements }
+    @IgnorableReturnValue
     override actual fun retainAll(elements: Collection<E>): Boolean = removeAll { it !in elements }
 
 

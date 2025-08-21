@@ -13,7 +13,7 @@ assert(::foo.isOpen)
 ---
 test3: ---
 assert((::foo)(1))
-       ||
-       |fun foo(kotlin.Int): kotlin.Boolean
-       false
+        |     |
+        |     false
+        fun foo(kotlin.Int): kotlin.Boolean
 ---

@@ -16,7 +16,7 @@ val xx2: Unit = <!INITIALIZER_TYPE_MISMATCH!><!INVALID_IF_AS_EXPRESSION!>if<!> (
 val xx3 = idAny(<!INVALID_IF_AS_EXPRESSION!>if<!> (true) 42)
 val xx4 = id(<!INVALID_IF_AS_EXPRESSION!>if<!> (true) 42)
 val xx5 = idUnit(<!ARGUMENT_TYPE_MISMATCH!><!INVALID_IF_AS_EXPRESSION!>if<!> (true) 42<!>)
-val xx6 = null ?: <!INVALID_IF_AS_EXPRESSION!>if<!> (true) 42
+val xx6 = <!USELESS_ELVIS_LEFT_IS_NULL!>null ?:<!> <!INVALID_IF_AS_EXPRESSION!>if<!> (true) 42
 val xx7 = "" + <!INVALID_IF_AS_EXPRESSION!>if<!> (true) 42
 
 val wxx1 = <!NO_ELSE_IN_WHEN!>when<!> { true -> 42 }
@@ -24,7 +24,7 @@ val wxx2: Unit = <!INITIALIZER_TYPE_MISMATCH!><!NO_ELSE_IN_WHEN!>when<!> { true 
 val wxx3 = idAny(<!NO_ELSE_IN_WHEN!>when<!> { true -> 42 })
 val wxx4 = id(<!NO_ELSE_IN_WHEN!>when<!> { true -> 42 })
 val wxx5 = idUnit(<!ARGUMENT_TYPE_MISMATCH!><!NO_ELSE_IN_WHEN!>when<!> { true -> 42 }<!>)
-val wxx6 = null ?: <!NO_ELSE_IN_WHEN!>when<!> { true -> 42 }
+val wxx6 = <!USELESS_ELVIS_LEFT_IS_NULL!>null ?:<!> <!NO_ELSE_IN_WHEN!>when<!> { true -> 42 }
 val wxx7 = "" + <!NO_ELSE_IN_WHEN!>when<!> { true -> 42 }
 
 val fn1 = { if (true) 42 }

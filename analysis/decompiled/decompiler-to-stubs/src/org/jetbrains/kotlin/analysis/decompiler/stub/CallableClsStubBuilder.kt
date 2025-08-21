@@ -139,14 +139,14 @@ abstract class CallableClsStubBuilder(
     protected fun createModifierListStubForCallableDeclaration(
         flags: Int,
         flagsToTranslate: List<FlagsToModifiers>,
-        mustUseReturnValueFlag: Flags.BooleanFlagField?,
+        returnValueStatus: Flags.FlagField<ProtoBuf.ReturnValueStatus>,
     ): KotlinModifierListStubImpl {
         val modifierListStub = createModifierListStubForDeclaration(
             callableStub,
             flags,
             flagsToTranslate,
             additionalModifiers = emptyList(),
-            mustUseReturnValueFlag = mustUseReturnValueFlag,
+            returnValueStatus = returnValueStatus,
         )
 
         typeStubBuilder.createContextReceiverStubs(modifierListStub, contextReceiverTypes)
@@ -203,7 +203,7 @@ private class FunctionClsStubBuilder(
                 SUSPEND,
                 EXPECT_FUNCTION,
             ) + modalityModifier,
-            mustUseReturnValueFlag = Flags.HAS_MUST_USE_RETURN_VALUE_FUNCTION,
+            returnValueStatus = Flags.RETURN_VALUE_STATUS_FUNCTION,
         )
 
         // If function is marked as having no annotations, we don't create stubs for it
@@ -228,7 +228,7 @@ private class FunctionClsStubBuilder(
             isTopLevel,
             c.containerFqName.child(callableName),
             isExtension = functionProto.hasReceiver(),
-            hasBlockBody = true,
+            hasNoExpressionBody = true,
             hasBody = Flags.MODALITY.get(functionProto.flags) != Modality.ABSTRACT,
             hasTypeParameterListBeforeFunctionName = functionProto.typeParameterList.isNotEmpty(),
             mayHaveContract = hasContract,
@@ -266,14 +266,13 @@ private class PropertyClsStubBuilder(
     }
 
     override fun createModifierListStub() {
-        val constModifier = if (isVar) listOf() else listOf(CONST)
-        val modalityModifier = if (isTopLevel) listOf() else listOf(MODALITY)
-
         val flags = propertyProto.flags
+        val constModifier = if (isVar) listOf() else listOf(CONST)
+        val modalityModifier = if (isTopLevel || Flags.IS_CONST[flags]) listOf() else listOf(MODALITY)
         val modifierListStubImpl = createModifierListStubForCallableDeclaration(
             flags = flags,
             flagsToTranslate = listOf(VISIBILITY, LATEINIT, EXTERNAL_PROPERTY, EXPECT_PROPERTY) + constModifier + modalityModifier,
-            mustUseReturnValueFlag = Flags.HAS_MUST_USE_RETURN_VALUE_PROPERTY,
+            returnValueStatus = Flags.RETURN_VALUE_STATUS_PROPERTY,
         )
 
         // If field is marked as having no annotations, we don't create stubs for it
@@ -317,7 +316,7 @@ private class PropertyClsStubBuilder(
     }
 
     override fun createCallableSpecialParts() {
-        if ((callableStub as KotlinPropertyStub).hasInitializer()) {
+        if ((callableStub as KotlinPropertyStub).hasInitializer) {
             KotlinNameReferenceExpressionStubImpl(callableStub, StringRef.fromString(COMPILED_DEFAULT_INITIALIZER))
         }
 
@@ -345,7 +344,8 @@ private class PropertyClsStubBuilder(
             /* parent = */ callableStub,
             /* isGetter = */ true,
             /* hasBody = */ isNotDefault,
-            /* hasBlockBody = */ true, // KT-77302: The value is always true due to a current hasBlockBody semantic
+            /* hasNoExpressionBody = */ true,
+            /* mayHaveContract = */ false, // property accessors don't have contracts in metadata yet
         )
 
         createModifierListAndAnnotationStubsForAccessor(
@@ -380,7 +380,8 @@ private class PropertyClsStubBuilder(
             /* parent = */ callableStub,
             /* isGetter = */ false,
             /* hasBody = */ isNotDefault,
-            /* hasBlockBody = */ true, // KT-77302: The value is always true due to a current hasBlockBody semantic
+            /* hasNoExpressionBody = */ true,
+            /* mayHaveContract = */ false, // property accessors don't have contracts in metadata yet
         )
 
         createModifierListAndAnnotationStubsForAccessor(
@@ -448,7 +449,7 @@ private class PropertyClsStubBuilder(
             accessorFlags,
             ACCESSOR_FLAGS,
             additionalModifiers = emptyList(),
-            mustUseReturnValueFlag = null,
+            returnValueStatus = null,
         )
 
         if (annotations.isNotEmpty()) {
@@ -558,7 +559,7 @@ private class ConstructorClsStubBuilder(
         val modifierListStubImpl = createModifierListStubForCallableDeclaration(
             flags = flags,
             flagsToTranslate = listOf(VISIBILITY),
-            mustUseReturnValueFlag = Flags.HAS_MUST_USE_RETURN_VALUE_CTOR,
+            returnValueStatus = Flags.RETURN_VALUE_STATUS_CTOR,
         )
 
         // If constructor is marked as having no annotations, we don't create stubs for it
@@ -577,16 +578,18 @@ private class ConstructorClsStubBuilder(
         // delegated call is not to this (as there is no this keyword) and it has body (while primary does not have one)
         // This info is anyway irrelevant for the purposes these stubs are used
         return if (Flags.IS_SECONDARY.get(constructorProto.flags))
-            KotlinConstructorStubImpl(
-                parent, KtStubElementTypes.SECONDARY_CONSTRUCTOR, name, hasBody = true,
+            KotlinSecondaryConstructorStubImpl(
+                parent = parent,
+                containingClassName = name,
+                hasBody = true,
                 isDelegatedCallToThis = false,
                 isExplicitDelegationCall = false,
+                mayHaveContract = false, // constructors don't have contracts in the metadata yet
             )
         else
-            KotlinConstructorStubImpl(
-                parent, KtStubElementTypes.PRIMARY_CONSTRUCTOR, name, hasBody = false,
-                isDelegatedCallToThis = false,
-                isExplicitDelegationCall = false,
+            KotlinPrimaryConstructorStubImpl(
+                parent = parent,
+                containingClassName = name,
             )
     }
 }

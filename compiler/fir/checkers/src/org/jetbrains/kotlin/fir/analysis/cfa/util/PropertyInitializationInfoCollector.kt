@@ -8,12 +8,15 @@ package org.jetbrains.kotlin.fir.analysis.cfa.util
 import org.jetbrains.kotlin.contracts.description.MarkedEventOccurrencesRange
 import org.jetbrains.kotlin.contracts.description.canBeRevisited
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.analysis.cfa.isCapturedByValue
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.calleeReference
+import org.jetbrains.kotlin.fir.expressions.dispatchReceiver
+import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.util.SetMultimap
 import org.jetbrains.kotlin.fir.util.setMultimapOf
@@ -52,11 +55,28 @@ class PropertyInitializationInfoCollector(
         data: PathAwarePropertyInitializationInfo
     ): PathAwarePropertyInitializationInfo {
         val dataForNode = visitNode(node, data)
-        val receiver = (node.fir.dispatchReceiver?.unwrapSmartcastExpression() as? FirThisReceiverExpression)?.calleeReference?.boundSymbol
-        if (receiver != expectedReceiver) return dataForNode
-        val symbol = node.fir.calleeReference?.toResolvedPropertySymbol() ?: return dataForNode
-        if (symbol !in localProperties) return dataForNode
-        return dataForNode.addRange(symbol, MarkedEventOccurrencesRange.ExactlyOnce(node))
+        val symbol = toSymbolIfOurs(node.fir.dispatchReceiver, node.fir.calleeReference) ?: return dataForNode
+        val range = EventOccurrencesRangeAtNode(MarkedEventOccurrencesRange.ExactlyOnce(node), mustBeLateinit = false)
+        return dataForNode.addRange(symbol, range)
+    }
+
+    override fun visitQualifiedAccessNode(
+        node: QualifiedAccessNode,
+        data: PathAwareControlFlowInfo<VariableInitializationEvent, EventOccurrencesRangeAtNode>
+    ): PathAwareControlFlowInfo<VariableInitializationEvent, EventOccurrencesRangeAtNode> {
+        val dataForNode = visitNode(node, data)
+        val symbol = toSymbolIfOurs(node.fir.dispatchReceiver, node.fir.calleeReference) ?: return dataForNode
+        val range = EventOccurrencesRangeAtNode(MarkedEventOccurrencesRange.Zero, mustBeLateinit = true)
+        return dataForNode.addRangeIfEmpty(symbol, range)
+    }
+
+    private fun toSymbolIfOurs(
+        dispatchReceiver: FirExpression?,
+        calleeReference: FirReference?,
+    ): FirPropertySymbol? {
+        val receiver = (dispatchReceiver?.unwrapSmartcastExpression() as? FirThisReceiverExpression)?.calleeReference?.boundSymbol
+        val symbol = calleeReference?.toResolvedPropertySymbol() ?: return null
+        return symbol.takeIf { receiver == expectedReceiver && symbol in localProperties }
     }
 
     override fun visitVariableDeclarationNode(
@@ -70,7 +90,10 @@ class PropertyInitializationInfoCollector(
             node.fir.initializer == null && node.fir.delegate == null ->
                 dataForNode.removeRange(node.fir.symbol)
             else ->
-                dataForNode.overwriteRange(node.fir.symbol, MarkedEventOccurrencesRange.ExactlyOnce(node))
+                dataForNode.overwriteRange(
+                    node.fir.symbol,
+                    EventOccurrencesRangeAtNode(MarkedEventOccurrencesRange.ExactlyOnce(node), mustBeLateinit = false),
+                )
         }
     }
 
@@ -83,7 +106,10 @@ class PropertyInitializationInfoCollector(
         // Otherwise it is
         val dataForNode = visitNode(node, data)
         if (node.firstPreviousNode is PropertyInitializerEnterNode) return dataForNode
-        return dataForNode.overwriteRange(node.fir.symbol, MarkedEventOccurrencesRange.ExactlyOnce(node))
+        return dataForNode.overwriteRange(
+            node.fir.symbol,
+            EventOccurrencesRangeAtNode(MarkedEventOccurrencesRange.ExactlyOnce(node), mustBeLateinit = false),
+        )
     }
 
     override fun visitEdge(

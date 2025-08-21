@@ -1,2 +1,0 @@
-OriginalTypeString: UNRESOLVED
-KaType: ERROR_TYPE(Symbol not found for /UNRESOLVED)

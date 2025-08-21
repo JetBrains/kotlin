@@ -19,6 +19,8 @@ private var A.privateVar: Int
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    /* ACCESSOR use-site */ access$<get-privateVar>$tAKt($receiver = this)
-    /* ACCESSOR use-site */ access$<set-privateVar>$tAKt($receiver = this, value = value)
-    /* ACCESSOR use-site */ access$<get-privateVar>$tAKt($receiver = this)
+    /* LOCAL declaration @0 */ local fun <anonymous>($this$run: A)
+        /* ACCESSOR use-site */ access$<get-privateVar>$tAKt($receiver = this)
+        /* ACCESSOR use-site */ access$<set-privateVar>$tAKt($receiver = this, value = value)
+        /* ACCESSOR use-site */ access$<get-privateVar>$tAKt($receiver = this)
+    /* INVOKE @0 */ local fun <anonymous>($this$run: A)

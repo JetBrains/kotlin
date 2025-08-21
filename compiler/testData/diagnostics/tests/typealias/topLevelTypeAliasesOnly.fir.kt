@@ -12,13 +12,13 @@ class C {
     class D {
         <!UNSUPPORTED_FEATURE!>typealias Nested = Any<!>
         fun foo() {
-            <!UNSUPPORTED!>typealias LocalInMember = Any<!>
+            <!UNSUPPORTED_FEATURE!>typealias LocalInMember = Any<!>
         }
     }
 }
 
 fun foo() {
-    <!UNSUPPORTED!>typealias Local = Any<!>
+    <!UNSUPPORTED_FEATURE!>typealias Local = Any<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, nestedClass, typeAliasDeclaration */

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,6 +13,7 @@ import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
@@ -45,7 +46,7 @@ object StubUtils {
             is KotlinPlaceHolderStub<*> if parentStub.stubType == KtStubElementTypes.CLASS_BODY -> {
                 val containingClassStub = parentStub.parentStub as? KotlinClassifierStub
                 if (containingClassStub != null && currentDeclaration !is KtEnumEntry) {
-                    containingClassStub.getClassId()?.createNestedClassId(currentDeclaration.nameAsSafeName)
+                    containingClassStub.classId?.createNestedClassId(currentDeclaration.nameAsSafeName)
                 } else {
                     null
                 }
@@ -82,6 +83,9 @@ object StubUtils {
         1 -> false
         else -> null
     }
+
+    @JvmStatic
+    internal fun StubInputStream.readFqName(): FqName = FqName(readNameString()!!)
 
     /**
      * `/* hasBackingField: true */` or `/* hasBackingField: false */` are special comments added during conversion

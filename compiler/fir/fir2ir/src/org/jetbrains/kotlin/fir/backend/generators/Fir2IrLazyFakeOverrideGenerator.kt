@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirFakeOverrideGenerator
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.util.setMultimapOf
@@ -281,7 +278,7 @@ class Fir2IrLazyFakeOverrideGenerator(private val c: Fir2IrComponents) : Fir2IrC
             val containingClass = dispatchReceiverLookupTag.toRegularClassSymbol(session)!!
             FirFakeOverrideGenerator.createSubstitutionOverrideProperty(
                 session,
-                FirPropertySymbol(CallableId(containingClass.classId, originalSymbol.callableId.callableName)),
+                FirRegularPropertySymbol(CallableId(containingClass.classId, originalSymbol.name)),
                 firProperty,
                 derivedClassLookupTag = dispatchReceiverLookupTag,
                 newDispatchReceiverType = containingClass.defaultType(),

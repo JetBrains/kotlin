@@ -107,7 +107,7 @@ class MethodInliner(
             transformedNode.signature, transformedNode.exceptions?.toTypedArray()
         )
 
-        val visitor = RemapVisitor(resultNode, remapper, nodeRemapper)
+        val visitor = RemapVisitor(resultNode, remapper, nodeRemapper, inliningContext.typeMapper)
 
         try {
             transformedNode.accept(
@@ -253,7 +253,7 @@ class MethodInliner(
                         return
                     }
 
-                    val nullableAnyType = inliningContext.state.module.builtIns.nullableAnyType
+                    val nullableAnyType = inliningContext.typeMapper.typeSystem.nullableAnyType()
                     val expectedParameters = info.invokeMethod.argumentTypes
                     val expectedKotlinParameters = info.invokeMethodParameters
                     val argumentCount = Type.getArgumentTypes(desc).size
@@ -265,7 +265,9 @@ class MethodInliner(
                     var valueParamShift = max(nextLocalIndex, markerShift) + expectedParameters.sumOf { it.size }
                     for (index in argumentCount - 1 downTo 0) {
                         val type = expectedParameters[index]
-                        StackValue.coerce(AsmTypes.OBJECT_TYPE, nullableAnyType, type, expectedKotlinParameters[index], this)
+                        StackValue.coerce(
+                            AsmTypes.OBJECT_TYPE, nullableAnyType, type, expectedKotlinParameters[index], this, inliningContext.typeMapper,
+                        )
                         valueParamShift -= type.size
                         store(valueParamShift, type)
                     }
@@ -350,7 +352,10 @@ class MethodInliner(
                     result.reifiedTypeParametersUsages.mergeAll(lambdaResult.reifiedTypeParametersUsages)
                     result.reifiedTypeParametersUsages.mergeAll(info.reifiedTypeParametersUsages)
 
-                    StackValue.coerce(info.invokeMethod.returnType, info.invokeMethodReturnType, OBJECT_TYPE, nullableAnyType, this)
+                    StackValue.coerce(
+                        info.invokeMethod.returnType, info.invokeMethodReturnType, OBJECT_TYPE, nullableAnyType, this,
+                        inliningContext.typeMapper,
+                    )
                     setLambdaInlining(false)
                     addInlineMarker(this, false)
 
@@ -477,7 +482,7 @@ class MethodInliner(
         val oldArgumentTypes = if (reorderIrLambdaParameters) {
             // In IR lambdas, captured variables come before real parameters, but after the extension receiver.
             // Move them to the end of the descriptor instead.
-            Type.getArgumentTypes(inliningContext.lambdaInfo!!.invokeMethod.descriptor)
+            Type.getArgumentTypes(inliningContext.lambdaInfo.invokeMethod.descriptor)
         } else {
             Type.getArgumentTypes(node.desc)
         }

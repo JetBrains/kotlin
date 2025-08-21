@@ -78,7 +78,7 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
 
         for ((symbol, firEffect) in argumentsCalledInPlace) {
             val requiredRange = (firEffect.effect as ConeCallsEffectDeclaration).kind
-            val foundRange = invocationData.getValue(graph.exitNode)[NormalPath]?.get(symbol)?.withoutMarker ?: EventOccurrencesRange.ZERO
+            val foundRange = invocationData.getValue(graph.exitNode)[NormalPath]?.get(symbol)?.range?.withoutMarker ?: EventOccurrencesRange.ZERO
             val coercedFoundRange = foundRange.coerceToInvocationKind()
             if (foundRange !in requiredRange) {
                 reporter.reportOn(firEffect.source, FirErrors.WRONG_INVOCATION_KIND, symbol, requiredRange, coercedFoundRange)
@@ -146,7 +146,7 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
             node.fir.forEachArgument { arg, range ->
                 if (range != null) {
                     val symbol = arg.qualifiedAccessSymbol()?.takeIf { it in lambdaSymbols } ?: return@forEachArgument
-                    dataForNode = dataForNode.addRange(symbol, range.at(node))
+                    dataForNode = dataForNode.addRange(symbol, EventOccurrencesRangeAtNode(range.at(node), mustBeLateinit = false))
                 }
             }
             return dataForNode

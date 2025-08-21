@@ -139,6 +139,10 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
                 sourceRoots.from("$kotlin_stdlib_dir/js/src/kotlin")
 
                 sourceRoots.from("$kotlin_stdlib_dir/js/builtins")
+                // We don't generate docs for the intermediate webMain source set, so to make
+                // regular declarations from it visible, they are explicitly included in js and wasm-js source sets.
+                sourceRoots.from("$kotlin_stdlib_dir/common-js-wasmjs/src/kotlin/JsInterop.kt")
+                sourceRoots.from("$kotlin_stdlib_dir/common-js-wasmjs/src/kotlin/js/ExperimentalWasmJsInterop.kt")
 
                 // builtin sources that are copied from common builtins during JS stdlib build
                 listOf(
@@ -188,6 +192,18 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
                 sourceRoots.from("$kotlin_stdlib_dir/wasm/js/builtins")
                 sourceRoots.from("$kotlin_stdlib_dir/wasm/js/internal")
                 sourceRoots.from("$kotlin_stdlib_dir/wasm/js/src")
+                // We don't generate docs for the intermediate webMain source set, so to make
+                // regular declarations from it visible, they are explicitly included in js and wasm-js source sets.
+                sourceRoots.from("$kotlin_stdlib_dir/common-js-wasmjs/src/kotlin/JsInterop.kt")
+                sourceRoots.from("$kotlin_stdlib_dir/common-js-wasmjs/src/kotlin/js/ExperimentalWasmJsInterop.kt")
+
+                // builtin sources that are copied from common builtins during Wasm stdlib build
+                listOf(
+                    "Annotation.kt",
+                    "CharSequence.kt",
+                    "Comparable.kt",
+                    "Number.kt",
+                ).forEach { sourceRoots.from("$kotlin_stdlib_dir/jvm/builtins/$it") }
             }
             register("wasm-wasi") {
                 platform.set(Platform.wasm)
@@ -202,6 +218,14 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
                 sourceRoots.from("$kotlin_stdlib_dir/wasm/stubs")
                 sourceRoots.from("$kotlin_stdlib_dir/wasm/wasi/builtins")
                 sourceRoots.from("$kotlin_stdlib_dir/wasm/wasi/src")
+
+                // builtin sources that are copied from common builtins during Wasm stdlib build
+                listOf(
+                    "Annotation.kt",
+                    "CharSequence.kt",
+                    "Comparable.kt",
+                    "Number.kt",
+                ).forEach { sourceRoots.from("$kotlin_stdlib_dir/jvm/builtins/$it") }
             }
             configureEach {
                 documentedVisibilities.set(setOf(DokkaConfiguration.Visibility.PUBLIC, DokkaConfiguration.Visibility.PROTECTED))
@@ -559,7 +583,6 @@ fun AbstractDokkaTask.fixIntersectedSourceRootsAndSamples(
 
         // replace samples here
         sourceSet.samples.setFrom(sourceSet.samples.map { replacements[it] ?: it })
-        sourceSet.samples.forEach { println(it) }
     }
 
     val kotlin_library_url = "https://github.com/JetBrains/kotlin/tree/$githubRevision/libraries/$libraryName"

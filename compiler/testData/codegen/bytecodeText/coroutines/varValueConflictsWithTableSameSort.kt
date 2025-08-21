@@ -1,5 +1,5 @@
 // WITH_COROUTINES
-// API_VERSION: LATEST
+// LANGUAGE: +JvmNullOutSpilledCoroutineLocals
 
 import helpers.*
 // TREAT_AS_ONE_FILE

@@ -108,6 +108,7 @@ internal class ListBuilder<E>(initialCapacity: Int = 10) : MutableList<E>, Rando
         removeRangeInternal(0, length)
     }
 
+    @IgnorableReturnValue
     override fun removeAt(index: Int): E {
         checkIsMutable()
         AbstractList.checkElementIndex(index, length)
@@ -415,6 +416,7 @@ internal class ListBuilder<E>(initialCapacity: Int = 10) : MutableList<E>, Rando
             removeRangeInternal(offset, length)
         }
 
+        @IgnorableReturnValue
         override fun removeAt(index: Int): E {
             checkIsMutable()
             checkForComodification()

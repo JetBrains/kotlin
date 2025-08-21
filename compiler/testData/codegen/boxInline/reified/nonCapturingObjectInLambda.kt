@@ -1,6 +1,5 @@
 // CHECK_BYTECODE_LISTING
 // FIR_IDENTICAL
-// IGNORE_INLINER: IR
 
 // FILE: 1.kt
 package test

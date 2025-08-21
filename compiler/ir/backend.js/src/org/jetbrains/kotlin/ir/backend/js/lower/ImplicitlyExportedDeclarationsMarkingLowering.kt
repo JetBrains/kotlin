@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.export.isExported
+import org.jetbrains.kotlin.ir.backend.js.tsexport.isExported
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.JsAnnotations
 import org.jetbrains.kotlin.ir.backend.js.utils.couldBeConvertedToExplicitExport
@@ -62,18 +62,18 @@ class ImplicitlyExportedDeclarationsMarkingLowering(private val context: JsIrBac
             addAll(typeParameters.flatMap { it.superTypes })
         }
 
-        return types.flatMap { it.collectImplicitlyExportedDeclarations() }.toSet()
+        return types.flatMap { it.collectImplicitlyExportedDeclarations(includeArguments = true) }.toSet()
     }
 
     private fun IrProperty.collectImplicitlyExportedDeclarations(): Set<IrDeclaration> {
         val getterImplicitlyExportedDeclarations = getter?.collectImplicitlyExportedDeclarations() ?: emptySet()
         val setterImplicitlyExportedDeclarations = setter?.collectImplicitlyExportedDeclarations() ?: emptySet()
-        val fieldImplicitlyExportedDeclarations = backingField?.type?.collectImplicitlyExportedDeclarations() ?: emptySet()
+        val fieldImplicitlyExportedDeclarations = backingField?.type?.collectImplicitlyExportedDeclarations(includeArguments = true) ?: emptySet()
 
         return getterImplicitlyExportedDeclarations + setterImplicitlyExportedDeclarations + fieldImplicitlyExportedDeclarations
     }
 
-    private fun IrType.collectImplicitlyExportedDeclarations(): Set<IrDeclaration> {
+    private fun IrType.collectImplicitlyExportedDeclarations(includeArguments: Boolean = false): Set<IrDeclaration> {
         if (this is IrDynamicType || this !is IrSimpleType)
             return emptySet()
 
@@ -85,7 +85,26 @@ class ImplicitlyExportedDeclarationsMarkingLowering(private val context: JsIrBac
             classifier is IrTypeParameterSymbol -> classifier.owner.superTypes.flatMap { it.collectImplicitlyExportedDeclarations() }
                 .toSet()
 
-            classifier is IrClassSymbol -> setOfNotNull(classifier.owner.takeIf { it.shouldBeMarkedWithImplicitExportOrUpgraded() })
+            classifier is IrClassSymbol -> {
+                val klass = classifier.owner
+                val result = mutableSetOf<IrDeclaration>()
+
+                if (klass.shouldBeMarkedWithImplicitExportOrUpgraded()) {
+                    result.add(klass)
+                }
+
+                if (includeArguments && (klass.couldBeConvertedToExplicitExport() == true || klass.isExternal || klass.isExported(context))) {
+                    arguments.flatMapTo(result) {
+                        when (it) {
+                            is IrStarProjection -> emptySet()
+                            is IrTypeProjection -> it.type.collectImplicitlyExportedDeclarations()
+                        }
+                    }
+                }
+
+                result
+            }
+
             else -> emptySet()
         }
     }

@@ -22,11 +22,9 @@ private interface DefaultParamInterface {
 
 private interface DefaultParamInterface {
   @Composable
-  @FunctionKeyMeta(key = 1531877915, startOffset = 95, endOffset = 207)
   abstract fun Content(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int)
   @Composable
   @ComposableInferredTarget(scheme = "[0[0]]")
-  @FunctionKeyMeta(key = -57199539, startOffset = 224, endOffset = 350)
   open fun ComposedContent(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
     %composer.startReplaceGroup(<>)
     sourceInformation(%composer, "C(ComposedContent)N(content)<conten...>:Test.kt")
@@ -41,7 +39,7 @@ private interface DefaultParamInterface {
   }
   class ComposeDefaultImpls {
     @Composable
-    @ComposableInferredTarget(scheme = "[0[_][0]]")
+    @ComposableInferredTarget(scheme = "[0[0]]")
     fun ComposedContent%default(content: Function2<Composer, Int, Unit>?, %this%: DefaultParamInterface, %composer: Composer?, %changed: Int, %default: Int) {
       %composer = %composer.startRestartGroup(<>)
       sourceInformation(%composer, "C(ComposedContent%default)N(content):Test.kt")
@@ -78,7 +76,7 @@ private interface DefaultParamInterface {
       }
     }
     @Composable
-    @ComposableInferredTarget(scheme = "[0[_][0]]")
+    @ComposableInferredTarget(scheme = "[0[0]]")
     fun Content%default(content: Function2<Composer, Int, Unit>?, %this%: DefaultParamInterface, %composer: Composer?, %changed: Int, %default: Int) {
       %composer = %composer.startRestartGroup(<>)
       sourceInformation(%composer, "C(Content%default)N(content)<{>:Test.kt")
@@ -131,6 +129,7 @@ private interface DefaultParamInterface {
   @Composable
   @JvmSynthetic
   @Deprecated(message = "Binary compatibility stub for default parameters", level = DeprecationLevel.HIDDEN)
+  @ComposableInferredTarget(scheme = "[0[0]]")
   open fun ComposedContent(content: Function2<Composer, Int, Unit>?, %composer: Composer?, %changed: Int, %default: Int) {
     return ComposedContent%default(content, <this>, %composer, %changed, %default)
   }

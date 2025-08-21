@@ -17,7 +17,6 @@ fun SimpleBox(modifier: Modifier = Modifier) {
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = 536154668, startOffset = 165, endOffset = 231)
 fun SimpleBox(modifier: Modifier?, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(SimpleBox)N(modifier):Test.kt")

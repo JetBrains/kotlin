@@ -13,14 +13,14 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 context(context: CheckerContext, reporter: DiagnosticReporter)
 fun checkInconsistentTypeParameters(
-    firTypeRefClasses: List<Pair<FirTypeRef?, FirRegularClassSymbol>>,
+    firTypeRefClasses: List<Pair<FirTypeRef?, FirClassSymbol<*>>>,
     source: KtSourceElement?,
     isValues: Boolean,
 ) {
@@ -44,7 +44,7 @@ fun checkInconsistentTypeParameters(
 
 context(context: CheckerContext)
 private fun buildDeepSubstitutionMultimap(
-    firTypeRefClasses: List<Pair<FirTypeRef?, FirRegularClassSymbol>>,
+    firTypeRefClasses: List<Pair<FirTypeRef?, FirClassSymbol<*>>>,
 ): Map<FirTypeParameterSymbol, ClassSymbolAndProjections> {
     val result = mutableMapOf<FirTypeParameterSymbol, ClassSymbolAndProjections>()
     val substitution = mutableMapOf<FirTypeParameterSymbol, ConeTypeProjection>()
@@ -56,7 +56,7 @@ private fun buildDeepSubstitutionMultimap(
     context(context: CheckerContext)
     fun fillInDeepSubstitutor(
         typeArguments: Array<out ConeTypeProjection>?,
-        classSymbol: FirRegularClassSymbol
+        classSymbol: FirClassSymbol<*>
     ) {
         if (typeArguments != null) {
             val typeParameterSymbols = classSymbol.typeParameterSymbols
@@ -107,6 +107,6 @@ private fun buildDeepSubstitutionMultimap(
 }
 
 private data class ClassSymbolAndProjections(
-    val classSymbol: FirRegularClassSymbol,
+    val classSymbol: FirClassSymbol<*>,
     val projections: MutableList<ConeTypeProjection>
 )

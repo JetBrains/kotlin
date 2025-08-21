@@ -9,26 +9,28 @@ package org.jetbrains.kotlin.gradle.unitTests
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Attribute
-import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinNativeCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.gradle.util.buildProject
+import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
+import org.jetbrains.kotlin.gradle.util.kotlin
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
+import org.junit.Test
 import kotlin.test.*
 
 internal class CompilationSpecificPluginPath {
     @Test
     fun `native common sourceset should be compiled with common plugins`() {
-        // Given plugin but with legacy-native-specific artifact
-        class NativeSpecificPlugin : FakeSubPlugin("common", "native", { true })
+        // Given plugin applicable to all platforms
+        class CommonPlugin : FakeSubPlugin("common", { true })
 
         val project = buildProject {
             project.plugins.apply("kotlin-multiplatform")
 
-            plugins.apply(NativeSpecificPlugin::class.java)
+            plugins.apply(CommonPlugin::class.java)
 
             kotlin {
 
@@ -83,8 +85,8 @@ internal class CompilationSpecificPluginPath {
     @Test
     fun `kotlin plugin author can control plugin artifacts per compilation`() {
         // Given platform-specific Kotlin plugins
-        class JvmOnly : FakeSubPlugin("jvmOnly", null, { target.platformType == KotlinPlatformType.jvm })
-        class JsOnly : FakeSubPlugin("jsOnly", null, { target.platformType == KotlinPlatformType.js })
+        class JvmOnly : FakeSubPlugin("jvmOnly", { target.platformType == KotlinPlatformType.jvm })
+        class JsOnly : FakeSubPlugin("jsOnly", { target.platformType == KotlinPlatformType.js })
 
         // When apply them to a Kotlin MPP Project
         val project = buildProjectWithMPP {
@@ -112,16 +114,16 @@ internal class CompilationSpecificPluginPath {
 
     @Test
     fun `only common artifacts should be taken for native platforms`() {
-        // Given plugin but with legacy-native-specific artifact
-        class NativeSpecificPlugin : FakeSubPlugin("common1", "native", { true })
+        // Given plugin applicable to all platforms
+        class CommonPlugin1 : FakeSubPlugin("common1", { true })
 
-        // And plugin without legacy native artifact but applicable on all platforms
-        class RegularPluginWithoutNativeArtifact : FakeSubPlugin("common2", null, { true })
+        // And another plugin applicable to all platforms
+        class CommonPlugin2 : FakeSubPlugin("common2", { true })
 
         // When applying these plugins
         val project = buildProjectWithMPP {
-            plugins.apply(NativeSpecificPlugin::class.java)
-            plugins.apply(RegularPluginWithoutNativeArtifact::class.java)
+            plugins.apply(CommonPlugin1::class.java)
+            plugins.apply(CommonPlugin2::class.java)
 
             kotlin {
                 jvm()
@@ -130,63 +132,9 @@ internal class CompilationSpecificPluginPath {
         }
         project.evaluate()
 
-        // Expect jvm and native targets have both common artifacts and no legacy native artifacts
+        // Expect jvm and native targets have both common artifacts
         assertEquals(listOf("common1", "common2"), project.subplugins("jvm"))
         assertEquals(listOf("common1", "common2"), project.subplugins("linuxX64"))
-    }
-
-    @Test
-    fun `native platform and common sourcesets should be compiled with native plugin artifacts when embeddable compiler jar is not used`() {
-        // Given plugin but with native-specific artifact
-        class NativeSpecificPlugin : FakeSubPlugin("common1", "native", { true })
-
-        // And plugin without native artifact but applicable on all platforms
-        class RegularPluginWithoutNativeArtifact : FakeSubPlugin("common2", null, { true })
-
-        // When applying these plugins
-        val project = buildProjectWithMPP {
-            plugins.apply(NativeSpecificPlugin::class.java)
-            plugins.apply(RegularPluginWithoutNativeArtifact::class.java)
-
-
-            // With kotlin.native.useEmbeddableCompilerJar=false
-            extensions.getByType(ExtraPropertiesExtension::class.java).set("kotlin.native.useEmbeddableCompilerJar", "false")
-
-            kotlin {
-                linuxX64()
-                mingwX64()
-                jvm()
-
-                sourceSets.apply {
-                    val commonMain = getByName("commonMain")
-                    val nativeMain = create("nativeMain")
-                    val linuxX64 = getByName("linuxX64Main")
-                    val mingwX64 = getByName("mingwX64Main")
-                    val jvm = getByName("jvmMain")
-
-                    // Make nativeMain be common source set for linuxX64 and mingwX64
-                    nativeMain.dependsOn(commonMain)
-                    linuxX64.dependsOn(nativeMain)
-                    mingwX64.dependsOn(nativeMain)
-                    jvm.dependsOn(commonMain)
-                }
-            }
-        }
-        project.evaluate()
-
-        // Then expect native artifact to be used for nativeMain metadata compilation
-        assertEquals(setOf("native"), project.compileTaskSubplugins("compileNativeMainKotlinMetadata"))
-        assertEquals(setOf("common1", "common2"), project.compileTaskSubplugins("compileKotlinMetadata"))
-        assertEquals(setOf("common1", "common2"), project.compileTaskSubplugins("compileCommonMainKotlinMetadata"))
-        assertEquals(setOf("common1", "common2"), project.compileTaskSubplugins("compileKotlinJvm"))
-        assertEquals(setOf("native"), project.compileTaskSubplugins("compileKotlinLinuxX64"))
-
-        // Expect jvm target have both artifacts
-        assertEquals(listOf("common1", "common2"), project.subplugins("jvm"))
-
-        // And native target should have only NativeSpecificPlugin artifacts
-        assertEquals(listOf("native"), project.subplugins("linuxX64"))
-        assertEquals(listOf("native"), project.subplugins("mingwX64"))
     }
 
     @Test
@@ -255,7 +203,6 @@ internal class CompilationSpecificPluginPath {
 
     private abstract class FakeSubPlugin(
         val id: String,
-        val idLegacyNative: String? = null,
         val isApplicablePredicate: KotlinCompilation<*>.() -> Boolean
     ) : KotlinCompilerPluginSupportPlugin {
         override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean = kotlinCompilation.isApplicablePredicate()
@@ -269,13 +216,6 @@ internal class CompilationSpecificPluginPath {
             "test",
             id
         )
-
-        override fun getPluginArtifactForNative(): SubpluginArtifact? = idLegacyNative?.let {
-            SubpluginArtifact(
-                "test",
-                it
-            )
-        }
     }
 
     private fun pluginClassPathConfiguration(target: String, compilation: String) =

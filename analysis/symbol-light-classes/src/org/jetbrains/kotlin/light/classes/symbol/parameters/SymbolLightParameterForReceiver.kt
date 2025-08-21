@@ -62,9 +62,7 @@ internal class SymbolLightParameterForReceiver private constructor(
 
     override val kotlinOrigin: KtParameter? = null
 
-    override fun getModifierList(): PsiModifierList = _modifierList
-
-    private val _modifierList: PsiModifierList by lazyPub {
+    override fun getModifierList(): PsiModifierList = cachedValue {
         SymbolLightClassModifierList(
             containingDeclaration = this,
             annotationsBox = GranularAnnotationsBox(

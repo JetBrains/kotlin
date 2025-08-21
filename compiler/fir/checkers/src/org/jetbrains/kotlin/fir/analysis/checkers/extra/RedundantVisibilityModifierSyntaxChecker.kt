@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.syntax.FirDeclarationSyntaxChe
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -203,11 +204,12 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
 
             this is FirConstructor -> {
                 val classSymbol = this.getContainingClassSymbol()
-                if (
-                    classSymbol is FirRegularClassSymbol
-                    && (classSymbol.isEnumClass || classSymbol.isSealed)
-                ) {
-                    Visibilities.Private
+                if (classSymbol is FirRegularClassSymbol) {
+                    when {
+                        classSymbol.isSealed -> Visibilities.Protected
+                        classSymbol.isEnumClass -> Visibilities.Private
+                        else -> defaultVisibility
+                    }
                 } else {
                     defaultVisibility
                 }

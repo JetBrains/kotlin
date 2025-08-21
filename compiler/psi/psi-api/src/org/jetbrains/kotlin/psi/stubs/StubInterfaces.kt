@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.psi.stubs
 
-import com.intellij.openapi.util.IntellijInternalApi
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.stubs.NamedStub
 import com.intellij.psi.stubs.PsiFileStub
@@ -16,88 +15,106 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 
 interface KotlinFileStub : PsiFileStub<KtFile> {
-    fun getPackageFqName(): FqName
-    fun isScript(): Boolean
+    fun getPackageFqName(): FqName = (kind as? KotlinFileStubKind.WithPackage)?.packageFqName ?: FqName.ROOT
+    fun isScript(): Boolean = kind is KotlinFileStubKind.WithPackage.Script
+
     fun findImportsByAlias(alias: String): List<KotlinImportDirectiveStub>
+
+    /** @see KotlinFileStubKind */
+    val kind: KotlinFileStubKind
 }
 
 interface KotlinPlaceHolderStub<T : KtElement> : StubElement<T>
 
 interface KotlinPlaceHolderWithTextStub<T : KtElement> : KotlinPlaceHolderStub<T> {
-    fun text(): String
+    val text: String
 }
 
 interface KotlinStubWithFqName<T : PsiNamedElement> : NamedStub<T> {
-    fun getFqName(): FqName?
+    val fqName: FqName?
 }
 
 interface KotlinClassifierStub {
-    fun getClassId(): ClassId?
+    val classId: ClassId?
 }
 
 interface KotlinTypeAliasStub : KotlinClassifierStub, KotlinStubWithFqName<KtTypeAlias> {
-    fun isTopLevel(): Boolean
+    val isTopLevel: Boolean
 }
 
 interface KotlinClassOrObjectStub<T : KtClassOrObject> : KotlinClassifierStub, KotlinStubWithFqName<T> {
-    fun isLocal(): Boolean
-    fun getSuperNames(): List<String>
-    fun isTopLevel(): Boolean
+    val isLocal: Boolean
+    val superNames: List<String>
+    val isTopLevel: Boolean
 }
 
 interface KotlinClassStub : KotlinClassOrObjectStub<KtClass> {
-    fun isInterface(): Boolean
-    fun isEnumEntry(): Boolean
+    val isInterface: Boolean
+    val isEnumEntry: Boolean
 
     /**
      * When we build [KotlinClassStub] for source stubs, this function always returns `false`. For binary stubs, it returns whether
      * the binary class was compiled with `-jvm-default={enable|no-compatibility}` option or not.
      */
-    fun isClsStubCompiledToJvmDefaultImplementation(): Boolean
+    val isClsStubCompiledToJvmDefaultImplementation: Boolean
 }
 
 interface KotlinObjectStub : KotlinClassOrObjectStub<KtObjectDeclaration> {
-    fun isCompanion(): Boolean
-    fun isObjectLiteral(): Boolean
+    val isObjectLiteral: Boolean
 }
 
 interface KotlinValueArgumentStub<T : KtValueArgument> : KotlinPlaceHolderStub<T> {
-    fun isSpread(): Boolean
+    val isSpread: Boolean
 }
 
 interface KotlinContractEffectStub : KotlinPlaceHolderStub<KtContractEffect> {}
 
 interface KotlinAnnotationEntryStub : StubElement<KtAnnotationEntry> {
-    fun getShortName(): String?
-    fun hasValueArguments(): Boolean
+    val shortName: String?
+    val hasValueArguments: Boolean
 }
 
 interface KotlinAnnotationUseSiteTargetStub : StubElement<KtAnnotationUseSiteTarget> {
-    fun getUseSiteTarget(): String
+    val useSiteTarget: String
 }
 
-interface KotlinFunctionStub : KotlinCallableStubBase<KtNamedFunction> {
-    fun hasBlockBody(): Boolean
-    fun hasBody(): Boolean
-    fun hasTypeParameterListBeforeFunctionName(): Boolean
-    fun mayHaveContract(): Boolean
+/**
+ * A marker interface for declarations with bodies.
+ */
+interface KotlinDeclarationWithBodyStub<T : KtDeclarationWithBody> : StubElement<T> {
+    /**
+     * Whether the declaration may have a contract.
+     * **false** means that the declaration is definitely having no contract,
+     * but **true** doesn't guarantee that the declaration has a contract.
+     */
+    val mayHaveContract: Boolean
+
+    /**
+     * Whether the declaration has a block body or no bodies at all.
+     */
+    val hasNoExpressionBody: Boolean
+
+    /**
+     * Whether the declaration has a body (expression or block).
+     */
+    val hasBody: Boolean
 }
 
-interface KotlinConstructorStub<T : KtConstructor<T>> :
-    KotlinCallableStubBase<T> {
-    fun hasBody(): Boolean
-    fun isDelegatedCallToThis(): Boolean
-    fun isExplicitDelegationCall(): Boolean
+interface KotlinFunctionStub : KotlinCallableStubBase<KtNamedFunction>, KotlinDeclarationWithBodyStub<KtNamedFunction> {
+    val hasTypeParameterListBeforeFunctionName: Boolean
 }
 
-interface KotlinImportAliasStub : StubElement<KtImportAlias> {
-    fun getName(): String?
+interface KotlinConstructorStub<T : KtConstructor<T>> : KotlinCallableStubBase<T>, KotlinDeclarationWithBodyStub<T> {
+    val isDelegatedCallToThis: Boolean
+    val isExplicitDelegationCall: Boolean
 }
+
+interface KotlinImportAliasStub : NamedStub<KtImportAlias>
 
 interface KotlinImportDirectiveStub : StubElement<KtImportDirective> {
-    fun isAllUnder(): Boolean
-    fun getImportedFqName(): FqName?
-    fun isValid(): Boolean
+    val isAllUnder: Boolean
+    val importedFqName: FqName?
+    val isValid: Boolean
 }
 
 interface KotlinModifierListStub : StubElement<KtDeclarationModifierList> {
@@ -106,52 +123,60 @@ interface KotlinModifierListStub : StubElement<KtDeclarationModifierList> {
     /**
      * Whether the modifier list has a [SpecialFlag].
      */
-    @IntellijInternalApi
+    @KtImplementationDetail
     fun hasSpecialFlag(flag: SpecialFlag): Boolean
 
     /** Represents special flags that are common for many declarations */
-    @IntellijInternalApi
+    @KtImplementationDetail
     enum class SpecialFlag {
         /**
-         * Whether the return type of the modifier list owner must be checked.
+         * Whether the return value of the modifier list owner must be checked for usage.
          * This check is supposed to work only for binary stubs.
          *
-         * See [KT-12719](https://youtrack.jetbrains.com/issue/KT-12719) for details.
+         * See org.jetbrains.kotlin.resolve.ReturnValueStatus and FirResolvedStatus for details.
+         * Feature issue: [KT-12719](https://youtrack.jetbrains.com/issue/KT-12719).
          */
         MustUseReturnValue,
+
+        /**
+         * Whether the return value of the modifier list owner is declared as explicitly ignorable and should not be checked for usage.
+         * This check is supposed to work only for binary stubs.
+         *
+         * See org.jetbrains.kotlin.resolve.ReturnValueStatus and FirResolvedStatus for details.
+         * Feature issue: [KT-12719](https://youtrack.jetbrains.com/issue/KT-12719).
+         */
+        IgnorableReturnValue,
     }
 }
 
 interface KotlinNameReferenceExpressionStub : StubElement<KtNameReferenceExpression> {
-    fun getReferencedName(): String
+    val referencedName: String
 }
 
 interface KotlinEnumEntrySuperclassReferenceExpressionStub : StubElement<KtEnumEntrySuperclassReferenceExpression> {
-    fun getReferencedName(): String
+    val referencedName: String
 }
 
 interface KotlinParameterStub : KotlinStubWithFqName<KtParameter> {
-    fun isMutable(): Boolean
-    fun hasValOrVar(): Boolean
-    fun hasDefaultValue(): Boolean
+    val isMutable: Boolean
+    val hasValOrVar: Boolean
+    val hasDefaultValue: Boolean
 }
 
-interface KotlinPropertyAccessorStub : StubElement<KtPropertyAccessor> {
-    fun isGetter(): Boolean
-    fun hasBody(): Boolean
-    fun hasBlockBody(): Boolean
+interface KotlinPropertyAccessorStub : KotlinDeclarationWithBodyStub<KtPropertyAccessor> {
+    val isGetter: Boolean
 }
 
 interface KotlinBackingFieldStub : StubElement<KtBackingField> {
-    fun hasInitializer(): Boolean
+    val hasInitializer: Boolean
 }
 
 interface KotlinPropertyStub : KotlinCallableStubBase<KtProperty> {
-    fun isVar(): Boolean
-    fun hasDelegate(): Boolean
-    fun hasDelegateExpression(): Boolean
-    fun hasInitializer(): Boolean
-    fun hasReturnTypeRef(): Boolean
+    val isVar: Boolean
+    val hasDelegate: Boolean
+    val hasDelegateExpression: Boolean
+    val hasInitializer: Boolean
+    val hasReturnTypeRef: Boolean
 
     /**
      * Whether the property has a backing field.
@@ -163,14 +188,11 @@ interface KotlinPropertyStub : KotlinCallableStubBase<KtProperty> {
 }
 
 interface KotlinCallableStubBase<TDeclaration : KtCallableDeclaration> : KotlinStubWithFqName<TDeclaration> {
-    fun isTopLevel(): Boolean
-    fun isExtension(): Boolean
+    val isTopLevel: Boolean
+    val isExtension: Boolean
 }
 
-interface KotlinTypeParameterStub : KotlinStubWithFqName<KtTypeParameter> {
-    fun isInVariance(): Boolean
-    fun isOutVariance(): Boolean
-}
+interface KotlinTypeParameterStub : KotlinStubWithFqName<KtTypeParameter>
 
 enum class ConstantValueKind {
     NULL,
@@ -181,8 +203,8 @@ enum class ConstantValueKind {
 }
 
 interface KotlinConstantExpressionStub : StubElement<KtConstantExpression> {
-    fun kind(): ConstantValueKind
-    fun value(): String
+    val kind: ConstantValueKind
+    val value: String
 }
 
 interface KotlinClassLiteralExpressionStub : StubElement<KtClassLiteralExpression>
@@ -198,7 +220,7 @@ interface KotlinCollectionLiteralExpressionStub : StubElement<KtCollectionLitera
 }
 
 interface KotlinTypeProjectionStub : StubElement<KtTypeProjection> {
-    fun getProjectionKind(): KtProjectionKind
+    val projectionKind: KtProjectionKind
 }
 
 interface KotlinUserTypeStub : StubElement<KtUserType>
@@ -206,11 +228,11 @@ interface KotlinUserTypeStub : StubElement<KtUserType>
 interface KotlinFunctionTypeStub : StubElement<KtFunctionType>
 
 interface KotlinScriptStub : KotlinStubWithFqName<KtScript> {
-    override fun getFqName(): FqName
+    override val fqName: FqName
 }
 
 interface KotlinContextReceiverStub : StubElement<KtContextReceiver> {
-    fun getLabel(): String?
+    val label: String?
 }
 
 interface KotlinStringInterpolationPrefixStub : StubElement<KtStringInterpolationPrefix> {

@@ -170,6 +170,30 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeWithLatestLanguageVersionT
   }
 
   @Test
+  @TestMetadata("commonObjectWithBackingField.kt")
+  public void testCommonObjectWithBackingField() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/commonObjectWithBackingField.kt");
+  }
+
+  @Test
+  @TestMetadata("commonObjectWithDelegate.kt")
+  public void testCommonObjectWithDelegate() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/commonObjectWithDelegate.kt");
+  }
+
+  @Test
+  @TestMetadata("commonObjectWithWhenInAnnotation.kt")
+  public void testCommonObjectWithWhenInAnnotation() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/commonObjectWithWhenInAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("commonObjectWithWhenInSupertype.kt")
+  public void testCommonObjectWithWhenInSupertype() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/commonObjectWithWhenInSupertype.kt");
+  }
+
+  @Test
   @TestMetadata("delegationToExpectInterfaceMixedWithInheritance.kt")
   public void testDelegationToExpectInterfaceMixedWithInheritance() {
     runTest("compiler/testData/diagnostics/tests/multiplatform/delegationToExpectInterfaceMixedWithInheritance.kt");
@@ -2929,6 +2953,18 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeWithLatestLanguageVersionT
     @TestMetadata("actualTypealiasClassifierRedeclaration.kt")
     public void testActualTypealiasClassifierRedeclaration() {
       runTest("compiler/testData/diagnostics/tests/multiplatform/typealias/actualTypealiasClassifierRedeclaration.kt");
+    }
+
+    @Test
+    @TestMetadata("actualTypealiasToAnyFromInterface.kt")
+    public void testActualTypealiasToAnyFromInterface() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/typealias/actualTypealiasToAnyFromInterface.kt");
+    }
+
+    @Test
+    @TestMetadata("actualTypealiasToAnyFromInterfaceMultiModule.kt")
+    public void testActualTypealiasToAnyFromInterfaceMultiModule() {
+      runTest("compiler/testData/diagnostics/tests/multiplatform/typealias/actualTypealiasToAnyFromInterfaceMultiModule.kt");
     }
 
     @Test

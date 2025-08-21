@@ -402,13 +402,17 @@ inline fun <V : Any> KMutableProperty0<V?>.getOrSetIfNull(compute: () -> V): V =
         this.set(it)
     }
 
-inline fun <T, S> MutableList<T>.assignFrom(other: Iterable<S>, transform: (S) -> T) {
+inline fun <T, S> MutableList<T>.assignFrom(other: Collection<S>, transform: (S) -> T) {
     clear()
+    if (this is ArrayList<*>) {
+        ensureCapacity(other.size)
+    }
     other.mapTo(this, transform)
 }
 
-fun <T> MutableList<T>.assignFrom(other: Iterable<T>) {
-    assignFrom(other) { it }
+fun <T> MutableList<T>.assignFrom(other: Collection<T>) {
+    clear()
+    addAll(other)
 }
 
 fun <T : Any> List<T>.plusIfNotNull(element: T?): List<T> = when (element) {

@@ -350,6 +350,107 @@ public final class DebugProtoBuf {
     // @@protoc_insertion_point(enum_scope:org.jetbrains.kotlin.metadata.MemberKind)
   }
 
+  /**
+   * Protobuf enum {@code org.jetbrains.kotlin.metadata.ReturnValueStatus}
+   */
+  public enum ReturnValueStatus
+      implements org.jetbrains.kotlin.protobuf.ProtocolMessageEnum {
+    /**
+     * <code>UNSPECIFIED = 0;</code>
+     */
+    UNSPECIFIED(0, 0),
+    /**
+     * <code>MUST_USE = 1;</code>
+     */
+    MUST_USE(1, 1),
+    /**
+     * <code>EXPLICITLY_IGNORABLE = 2;</code>
+     *
+     * <pre>
+     *3 represents &#64;MustUse AND &#64;Ignorable state, which is semantically incorrect.
+     *We can reserve this state for future potential extensions.
+     * </pre>
+     */
+    EXPLICITLY_IGNORABLE(2, 2),
+    ;
+
+    /**
+     * <code>UNSPECIFIED = 0;</code>
+     */
+    public static final int UNSPECIFIED_VALUE = 0;
+    /**
+     * <code>MUST_USE = 1;</code>
+     */
+    public static final int MUST_USE_VALUE = 1;
+    /**
+     * <code>EXPLICITLY_IGNORABLE = 2;</code>
+     *
+     * <pre>
+     *3 represents &#64;MustUse AND &#64;Ignorable state, which is semantically incorrect.
+     *We can reserve this state for future potential extensions.
+     * </pre>
+     */
+    public static final int EXPLICITLY_IGNORABLE_VALUE = 2;
+
+
+    public final int getNumber() { return value; }
+
+    public static ReturnValueStatus valueOf(int value) {
+      switch (value) {
+        case 0: return UNSPECIFIED;
+        case 1: return MUST_USE;
+        case 2: return EXPLICITLY_IGNORABLE;
+        default: return null;
+      }
+    }
+
+    public static org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<ReturnValueStatus>
+        internalGetValueMap() {
+      return internalValueMap;
+    }
+    private static org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<ReturnValueStatus>
+        internalValueMap =
+          new org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<ReturnValueStatus>() {
+            public ReturnValueStatus findValueByNumber(int number) {
+              return ReturnValueStatus.valueOf(number);
+            }
+          };
+
+    public final org.jetbrains.kotlin.protobuf.Descriptors.EnumValueDescriptor
+        getValueDescriptor() {
+      return getDescriptor().getValues().get(index);
+    }
+    public final org.jetbrains.kotlin.protobuf.Descriptors.EnumDescriptor
+        getDescriptorForType() {
+      return getDescriptor();
+    }
+    public static final org.jetbrains.kotlin.protobuf.Descriptors.EnumDescriptor
+        getDescriptor() {
+      return org.jetbrains.kotlin.metadata.DebugProtoBuf.getDescriptor().getEnumTypes().get(3);
+    }
+
+    private static final ReturnValueStatus[] VALUES = values();
+
+    public static ReturnValueStatus valueOf(
+        org.jetbrains.kotlin.protobuf.Descriptors.EnumValueDescriptor desc) {
+      if (desc.getType() != getDescriptor()) {
+        throw new java.lang.IllegalArgumentException(
+          "EnumValueDescriptor is not for this type.");
+      }
+      return VALUES[desc.getIndex()];
+    }
+
+    private final int index;
+    private final int value;
+
+    private ReturnValueStatus(int index, int value) {
+      this.index = index;
+      this.value = value;
+    }
+
+    // @@protoc_insertion_point(enum_scope:org.jetbrains.kotlin.metadata.ReturnValueStatus)
+  }
+
   public interface StringTableOrBuilder extends
       // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.metadata.StringTable)
       org.jetbrains.kotlin.protobuf.MessageOrBuilder {
@@ -44525,7 +44626,9 @@ public final class DebugProtoBuf {
       "\tPROTECTED\020\002\022\n\n\006PUBLIC\020\003\022\023\n\017PRIVATE_TO_T" +
       "HIS\020\004\022\t\n\005LOCAL\020\005*Q\n\nMemberKind\022\017\n\013DECLAR" +
       "ATION\020\000\022\021\n\rFAKE_OVERRIDE\020\001\022\016\n\nDELEGATION" +
-      "\020\002\022\017\n\013SYNTHESIZED\020\003B\017B\rDebugProtoBuf"
+      "\020\002\022\017\n\013SYNTHESIZED\020\003*L\n\021ReturnValueStatus" +
+      "\022\017\n\013UNSPECIFIED\020\000\022\014\n\010MUST_USE\020\001\022\030\n\024EXPLI" +
+      "CITLY_IGNORABLE\020\002B\017B\rDebugProtoBuf"
     };
     org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {

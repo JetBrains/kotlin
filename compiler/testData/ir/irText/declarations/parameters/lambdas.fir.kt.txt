@@ -6,7 +6,7 @@ val test1: Function1<String, String>
   get
 
 val test2: @ExtensionFunctionType Function2<Any, Any, Any>
-  field = local fun Any.<anonymous>(it: Any): Int {
+  field = local fun Any.<anonymous>(it: Any): Any {
     return it.hashCode()
   }
 
@@ -24,3 +24,4 @@ val test4: Function2<Int, Int, Unit>
   }
 
   get
+

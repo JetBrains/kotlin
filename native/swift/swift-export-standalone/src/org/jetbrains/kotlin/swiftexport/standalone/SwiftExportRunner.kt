@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.swiftexport.standalone.translation.translateModulePu
 import org.jetbrains.kotlin.swiftexport.standalone.utils.logConfigIssues
 import org.jetbrains.kotlin.swiftexport.standalone.writer.dumpTextAtFile
 import org.jetbrains.kotlin.swiftexport.standalone.writer.dumpTextAtPath
-import org.jetbrains.sir.printer.SirAsSwiftSourcesPrinter
+import org.jetbrains.sir.printer.SirPrinter
 import java.io.Serializable
 import java.nio.file.Path
 import kotlin.collections.filter
@@ -180,13 +180,12 @@ private fun writeKotlinPackagesModule(
     sirModule: SirModule,
     outputPath: Path,
 ): SwiftExportModule.SwiftOnly {
-    val swiftSources = sequenceOf(
-        SirAsSwiftSourcesPrinter.print(
-            sirModule,
-            stableDeclarationsOrder = true,
-            renderDocComments = false,
-        )
-    )
+    val swiftSources = SirPrinter(
+        stableDeclarationsOrder = true,
+        renderDocComments = false,
+    ).print(
+        sirModule
+    ).swiftSource
 
     dumpTextAtFile(swiftSources, outputPath.toFile())
 

@@ -47,7 +47,7 @@ fun box(): String {
 // test.kt:24 invoke
 // EXPECTATIONS FIR JVM_IR
 // test.kt:17 bar$lambda$0
-// test.kt:24 box$lambda$1
+// test.kt:24 box$lambda$0
 // EXPECTATIONS JVM_IR
 // test.kt:9 getR
 // EXPECTATIONS ClassicFrontend JVM_IR
@@ -56,8 +56,8 @@ fun box(): String {
 // test.kt:17 invoke
 // test.kt:18 invoke
 // EXPECTATIONS FIR JVM_IR
-// test.kt:24 box$lambda$1
-// test.kt:25 box$lambda$1
+// test.kt:24 box$lambda$0
+// test.kt:25 box$lambda$0
 // test.kt:17 bar$lambda$0
 // test.kt:18 bar$lambda$0
 // EXPECTATIONS JVM_IR

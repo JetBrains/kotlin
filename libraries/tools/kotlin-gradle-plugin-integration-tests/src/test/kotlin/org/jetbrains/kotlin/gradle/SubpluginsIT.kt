@@ -199,11 +199,7 @@ class SubpluginsIT : KGPBaseTest() {
         project(
             "kapt2/android-dagger",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressDeprecationWarningsSinceGradleVersion(
-                gradleVersion = TestVersions.Gradle.G_8_13,
-                currentGradleVersion = gradleVersion,
-                reason = "KT-71879: old Kotlin release produces deprecation warning"
-            ),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = providedJdk.location
         ) {
             subProject("app").buildGradle.modify {
@@ -252,21 +248,15 @@ class SubpluginsIT : KGPBaseTest() {
     @DisplayName("KT-51378: Using 'kotlin-dsl' with latest plugin version in buildSrc module")
     @GradleTest
     fun testBuildSrcKotlinDSL(gradleVersion: GradleVersion) {
-        val firstNonDeprecated = KotlinVersion.firstNonDeprecated.name
+        val languageVersionForBuildSrc = if (gradleVersion > GradleVersion.version(TestVersions.Gradle.G_8_2)) {
+            KotlinVersion.firstNonDeprecated.name
+        } else {
+            // Those Gradle versions embed Kotlin compiler <= 1.8.20, so are subject to KT-56526
+            // 2.0 is the highest version that can be used there
+            @Suppress("DEPRECATION")
+            KotlinVersion.KOTLIN_2_0
+        }
         project("buildSrcUsingKotlinCompilationAndKotlinPlugin", gradleVersion) {
-            val languageVersionConfiguration = if (gradleVersion == GradleVersion.version(TestVersions.Gradle.G_7_6)) {
-                """
-                afterEvaluate {
-                    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-                        // aligned with embedded Kotlin compiler: https://docs.gradle.org/current/userguide/compatibility.html#kotlin
-                        compilerOptions.apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.$firstNonDeprecated)
-                        compilerOptions.languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.$firstNonDeprecated)
-                    }
-                }
-                """.trimIndent()
-            } else {
-                ""
-            }
             subProject("buildSrc").buildGradleKts.modify {
                 //language=kts
                 """
@@ -284,7 +274,14 @@ class SubpluginsIT : KGPBaseTest() {
                     }
                 }
                 
-                $languageVersionConfiguration
+                afterEvaluate {
+                    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+                        // aligned with embedded Kotlin compiler: https://docs.gradle.org/current/userguide/compatibility.html#kotlin
+                        // the hardcoded values are fine as this block (and the test) are checking some old Gradle functionality
+                        compilerOptions.apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.$languageVersionForBuildSrc)
+                        compilerOptions.languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.$languageVersionForBuildSrc)
+                    }
+                }
                 
                 ${it.substringAfter("}")}
                 """.trimIndent()

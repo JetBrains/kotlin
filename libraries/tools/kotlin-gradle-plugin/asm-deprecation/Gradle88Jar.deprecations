@@ -29,4 +29,5 @@ package org.jetbrains.kotlin.incremental.components
 package org.jetbrains.kotlin.incremental.impl
 package org.jetbrains.kotlin.incremental.js
 package org.jetbrains.kotlin.incremental.storage
+package org.jetbrains.kotlin.stats
 package org.jetbrains.kotlin.util.capitalizeDecapitalize

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 @ExperimentalWasmDsl
 @Deprecated(
-    "Use 'org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Plugin' instead",
+    "Use 'org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Plugin' instead. Scheduled for removal in Kotlin 2.4.",
     ReplaceWith("D8EnvSpec", "org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Plugin")
 )
 open class D8Plugin : Plugin<Project> {

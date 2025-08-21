@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirErrorReferenceWithCan
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.candidate
 import org.jetbrains.kotlin.fir.resolve.calls.findTypesForSuperCandidates
+import org.jetbrains.kotlin.fir.resolve.calls.fullyExpandedClass
 import org.jetbrains.kotlin.fir.resolve.calls.stages.mapArguments
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -232,6 +233,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
     private fun transformExpressionUsingSmartcastInfo(original: FirExpression): FirExpression {
         when (val expression = original.unwrapDesugaredAssignmentValueRef()) {
+            is FirFunctionCall -> {}
             is FirQualifiedAccessExpression -> dataFlowAnalyzer.exitQualifiedAccessExpression(expression)
             is FirResolvedQualifier -> dataFlowAnalyzer.exitResolvedQualifierNode(expression)
             else -> return original
@@ -248,7 +250,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         data: ResolutionMode,
     ): FirExpression? {
         if (originalExpression !is FirPropertyAccessExpression) return null
-        if (!session.languageVersionSettings.supportsFeature(LanguageFeature.ContextSensitiveResolutionUsingExpectedType)) return null
+        if (!LanguageFeature.ContextSensitiveResolutionUsingExpectedType.isEnabled()) return null
 
         val expectedType =
             (data as? ResolutionMode.WithExpectedType)?.hintForContextSensitiveResolution ?: data.expectedType ?: return null
@@ -600,7 +602,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             if (enableArrayOfCallTransformation) {
                 return arrayOfCallTransformer.transformFunctionCall(result, session)
             }
-            return result
+            return result.addSmartcastIfNeeded(data)
         }
 
     /**
@@ -842,7 +844,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             )
         }
         // following `!!` is safe since `operatorIsSuccessful = true` implies `operatorCallReference != null`
-        val operatorReturnTypeMatches = operatorIsSuccessful && operatorReturnTypeMatches(operatorCallReference!!.candidate)
+        val operatorReturnTypeMatches = operatorIsSuccessful && operatorReturnTypeMatches(operatorCallReference.candidate)
 
         val lhsReference = leftArgument.toReference(session)
         val lhsSymbol =
@@ -963,7 +965,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         fun buildAndResolveOperatorCall(
             receiver: FirExpression,
             fakeSourceKind: KtFakeSourceElementKind.DesugaredIncrementOrDecrement,
-        ): FirFunctionCall = buildFunctionCall {
+        ): FirExpression = buildFunctionCall {
             source = incrementDecrementExpression.operationSource
             explicitReceiver = receiver
             calleeReference = buildSimpleNamedReference {
@@ -1067,7 +1069,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     }
 
     private fun FirTypeRef.withTypeArgumentsForBareType(argument: FirExpression, operation: FirOperation): FirTypeRef {
-        val type = coneTypeSafe<ConeClassLikeType>() ?: return this
+        val type = coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType() ?: return this
         if (type.typeArguments.isNotEmpty()) return this // TODO: Incorrect for local classes, KT-59686
         // TODO: Check equality of size of arguments and parameters?
 
@@ -1084,7 +1086,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 firClass.isLocal && firClass.typeParameters.none { it.symbol.containingDeclarationSymbol in outerClasses } &&
                 (operation == NOT_IS || operation == IS || operation == AS || operation == SAFE_AS)
             ) {
-                (firClass as FirClass).defaultType()
+                firClass.defaultType()
             } else return buildErrorTypeRef {
                 source = this@withTypeArgumentsForBareType.source
                 diagnostic = ConeNoTypeArgumentsOnRhsError(firClass.typeParameters.size, firClass.symbol)
@@ -1176,7 +1178,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
      * If context-sensitive resolution is necessary and successful, conversionTypeRef will be replaced with an updated result
      */
     private fun FirTypeOperatorCall.resolveConversionTypeRefInContextSensitiveModeIfNecessary() {
-        if (!session.languageVersionSettings.supportsFeature(LanguageFeature.ContextSensitiveResolutionUsingExpectedType)) return
+        if (!LanguageFeature.ContextSensitiveResolutionUsingExpectedType.isEnabled()) return
 
         // If the type is resolved correctly, we don't need to re-run the resolution
         val errorTypeRef = conversionTypeRef as? FirErrorTypeRef ?: return

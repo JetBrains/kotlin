@@ -1,3 +1,6 @@
+import org.gradle.kotlin.dsl.withType
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -22,11 +25,14 @@ dependencies {
     testApi(platform(libs.junit.bom))
     testRuntimeOnly(libs.junit.jupiter.engine)
     testImplementation(libs.junit.jupiter.api)
+    testImplementation(kotlinTest())
     testImplementation(project(":native:analysis-api-based-test-utils"))
-    testImplementation(project(":compiler:tests-common", "tests-jar"))
+    testImplementation(testFixtures(project(":compiler:tests-common")))
 }
 
-nativeTest("test", null)
+nativeTest("test", null) {
+    dependsOn(":kotlin-native:distInvalidateStaleCaches")
+}
 
 sourceSets {
     "main" { projectDefault() }
@@ -40,3 +46,10 @@ publish()
 runtimeJar()
 sourcesJar()
 javadocJar()
+
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions.optIn.addAll(
+        "org.jetbrains.kotlin.analysis.api.KaContextParameterApi",
+        "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
+    )
+}

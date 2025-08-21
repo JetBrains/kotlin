@@ -56,7 +56,7 @@ internal fun ConeKotlinType.isEnum(session: FirSession) = toRegularClassSymbol(s
 internal fun ConeKotlinType.isClass(session: FirSession) = toRegularClassSymbol(session) != null
 
 internal fun ConeKotlinType.toTypeInfo(session: FirSession): TypeInfo {
-    val bounds = collectUpperBounds().map { it.replaceArgumentsWithStarProjections() }
+    val bounds = collectUpperBounds(session.typeContext).map { it.replaceArgumentsWithStarProjections() }
     val type = bounds.ifNotEmpty { ConeTypeIntersector.intersectTypes(session.typeContext, this) }?.fullyExpandedType(session)
         ?: session.builtinTypes.nullableAnyType.coneType
     val notNullType = type.withNullability(nullable = false, session.typeContext)

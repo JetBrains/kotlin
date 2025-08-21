@@ -151,7 +151,7 @@ fun case_8(x: TypealiasNullableString) {
 }
 
 // TESTCASE NUMBER: 9
-fun case_9(x: TypealiasNullableString?) {
+fun case_9(x: TypealiasNullableString<!REDUNDANT_NULLABLE!>?<!>) {
     if (x === null) {
 
     } else if (false) {
@@ -189,7 +189,7 @@ fun case_10() {
 }
 
 // TESTCASE NUMBER: 11
-fun case_11(x: TypealiasNullableStringIndirect?, y: TypealiasNullableStringIndirect) {
+fun case_11(x: TypealiasNullableStringIndirect<!REDUNDANT_NULLABLE!>?<!>, y: TypealiasNullableStringIndirect) {
     val t: TypealiasNullableStringIndirect = null
 
     if (x == null) {
@@ -248,7 +248,7 @@ fun case_13(x: otherpackage.Case13?) =
 
 // TESTCASE NUMBER: 14
 class Case14 {
-    val x: otherpackage.Case14?
+    val x: otherpackage.Case14<!REDUNDANT_NULLABLE!>?<!>
     init {
         x = otherpackage.Case14()
     }

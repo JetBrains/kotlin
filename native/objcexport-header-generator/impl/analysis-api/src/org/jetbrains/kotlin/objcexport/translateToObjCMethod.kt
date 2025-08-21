@@ -120,19 +120,18 @@ internal fun KaCallableSymbol.getSwiftPrivateAttribute(): String? =
     if (isRefinedInSwift()) "swift_private" else null
 
 internal fun KaCallableSymbol.isRefinedInSwift(): Boolean = when {
-    // Note: the front-end checker requires all overridden descriptors to be either refined or not refined.
-    //overriddenDescriptors.isNotEmpty() -> overriddenDescriptors.first().isRefinedInSwift() //TODO: implement isRefinedInSwift
     else -> ClassId.topLevel(KonanFqNames.refinesInSwift) in annotations
 }
 
 internal fun ObjCExportContext.getSwiftName(symbol: KaFunctionSymbol, methodBridge: MethodBridge): String {
-    //assert(mapper.isBaseMethod(method)) //TODO: implement isBaseMethod
-    if (symbol is KaNamedSymbol) {
-        anyMethodSwiftNames[symbol.name]?.let { return it }
-    }
 
+    val anyMethodSelector = anyMethodSwiftNames[symbol.name]
     val parameters = valueParametersAssociated(methodBridge, symbol)
     val method = symbol
+
+    if (anyMethodSelector != null && analysisSession.overridesAnyMethod(symbol)) {
+        return anyMethodSelector
+    }
 
     val sb = StringBuilder().apply {
         append(getMangledName(symbol, forSwift = true))
@@ -224,17 +223,29 @@ internal fun splitSelector(selector: String): List<String> {
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.getSelector]
  */
-fun ObjCExportContext.getSelector(symbol: KaFunctionSymbol, methodBridge: MethodBridge): String {
-    if (symbol is KaNamedSymbol) {
-        val name = symbol.name
-
-        anyMethodSelectors[name]?.let { return it }
-        objCReservedNameMethodSelectors[name]?.let { return it }
-    }
+fun ObjCExportContext.getSelector(symbol: KaFunctionSymbol, methodBridge: MethodBridge, isPropertyGetter: Boolean = false): String {
 
     val parameters = valueParametersAssociated(methodBridge, symbol)
     val method = symbol
     val sb = StringBuilder()
+    val anyMethodSelector = anyMethodSelectors[symbol.name]
+    val reservedNameSelector = objCReservedNameMethodSelectors[symbol.name]
+
+    if (reservedNameSelector != null && parameters.isEmpty()) {
+        /**
+         * We take reserved name only when there are no parameters.
+         * If there is at least one parameter then there will be no conflict with reserved name:
+         * ```kotlin
+         * fun release(param: String) -> "releaseParam"
+         * fun release() -> "release_"
+         * ```
+         */
+        return reservedNameSelector
+    }
+
+    if (anyMethodSelector != null && analysisSession.overridesAnyMethod(symbol)) {
+        return anyMethodSelector
+    }
 
     sb.append(getMangledName(symbol, forSwift = false))
 
@@ -273,7 +284,7 @@ fun ObjCExportContext.getSelector(symbol: KaFunctionSymbol, methodBridge: Method
             sb.append(name)
         }
 
-        sb.append(':')
+        if (!isPropertyGetter) sb.append(':')
     }
     return sb.toString()
 }

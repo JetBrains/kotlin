@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonKlibBasedCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
 import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.konan.test.blackbox.*
@@ -466,7 +467,7 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
         fun testNonExistingLibraryPassedToTheCompilerInDifferentWays() = with(NonRepeatedModuleNameGenerator()) {
             sequenceOf("no-such-library")
                 .flatMap { sequenceOf(it, "no-such-directory/$it") }
-                .flatMap { sequenceOf(it, "./$it", "../$it", "$it/../$it") }
+                .flatMap { sequenceOf(it, "./$it", "../build/$it", "$it/../$it") }
                 .flatMap { sequenceOf(it, buildDir.resolve(it).absolutePath) }
                 .flatMap { sequenceOf(it, "$it.klib") }
                 .forEach { libraryNameOrPath ->
@@ -507,7 +508,7 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
 
             sequenceOf(stdlibFile, posixFile)
                 .map { it.name }
-                .flatMap { sequenceOf("./$it", "../$it", "$it/../$it") }
+                .flatMap { sequenceOf("./$it", "../build/$it", "$it/../$it") }
                 .flatMap { sequenceOf(it, "$it.klib") }
                 .forEach { libraryNameOrPath ->
                     expectFailingAsNotFound(libraryNameOrPath) { compileMainModule(libraryNameOrPath) }
@@ -686,11 +687,20 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
         }
 
         private inline fun expectFailingAsNotFound(dependencyNameInError: String, block: () -> Unit) {
+            val normalizedDependencyNameInError = dependencyNameInError.replace('/', File.separatorChar)
+
             try {
                 block()
-                fail("Normally should not get here")
+                fail { "The test was expected to fail with the error due to unresolved KLIB \"$dependencyNameInError\". But was successful." }
             } catch (cte: CompilationToolException) {
-                assertTrue(cte.reason.contains("error: KLIB resolver: Could not find \"$dependencyNameInError\""))
+                // The message can use both forward and backward slashes on Windows.
+                assertTrue(
+                    cte.reason.contains("error: KLIB resolver: Could not find \"$normalizedDependencyNameInError\"") ||
+                            cte.reason.contains("error: KLIB resolver: Could not find \"$dependencyNameInError\"")
+                ) {
+                    "The test was expected to fail with the error due to unresolved KLIB \"$dependencyNameInError\". " +
+                            "But the actual error message is (${cte.reason.toByteArray().size} bytes, ${cte.reason.lineSequence().count()} lines):\n${cte.reason}"
+                }
             }
         }
 
@@ -897,7 +907,7 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
 
     companion object {
         private const val USER_DIR = "user.dir"
-        private val irProvidersMismatchSrcDir = File("native/native.tests/testData/irProvidersMismatch")
+        private val irProvidersMismatchSrcDir = ForTestCompileRuntime.transformTestDataPath("native/native.tests/testData/irProvidersMismatch")
 
         private const val DUPLICATED_UNIQUE_NAME = "DUPLICATED_UNIQUE_NAME"
 

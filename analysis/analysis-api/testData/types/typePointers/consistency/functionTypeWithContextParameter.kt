@@ -1,0 +1,1 @@
+fun test(block: <expr>context (String) (String) -> Int?</expr>) {}

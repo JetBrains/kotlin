@@ -17,7 +17,6 @@ fun Wrapper(content: @Composable () -> Unit) { content() }
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = -1718744799, startOffset = 93, endOffset = 191)
 fun Test(z: Int, x: Int, y: Result<Int>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)P(2!,1:kotlin.Result)<{>,<Wrappe...>:Test.kt")
@@ -61,7 +60,6 @@ fun Test(z: Int, x: Int, y: Result<Int>, %composer: Composer?, %changed: Int) {
 }
 @Composable
 @ComposableInferredTarget(scheme = "[0[0]]")
-@FunctionKeyMeta(key = -283819720, startOffset = 229, endOffset = 287)
 fun Wrapper(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Wrapper)<conten...>:Test.kt")

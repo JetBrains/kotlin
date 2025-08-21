@@ -146,6 +146,7 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
             args.jsr305 = originalArguments.jsr305
             args.nullabilityAnnotations = originalArguments.nullabilityAnnotations
             args.jspecifyAnnotations = originalArguments.jspecifyAnnotations
+            @Suppress("DEPRECATION")
             args.jvmDefault = originalArguments.jvmDefault
             args.jdkRelease = originalArguments.jdkRelease
             args.progressiveMode = originalArguments.progressiveMode
@@ -289,7 +290,7 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
         configureBaseArguments(args, moduleData, tmp)
         configureArguments(args, moduleData)
 
-        val manager = CompilerPerformanceManager()
+        val manager = CompilerPerformanceManager().apply { detailedPerf = args.detailedPerf }
         val services = Services.Builder().register(PerformanceManager::class.java, manager).build()
         val collector = TestMessageCollector()
         val result = try {

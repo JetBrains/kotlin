@@ -1,4 +1,4 @@
-// IGNORE_INLINER: IR
+
 // TARGET_BACKEND: JVM
 // FILE: utils.kt
 package a

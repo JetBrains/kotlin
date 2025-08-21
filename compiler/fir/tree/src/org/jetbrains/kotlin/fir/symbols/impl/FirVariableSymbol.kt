@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-sealed class FirVariableSymbol<out E : FirVariable>(override val callableId: CallableId) : FirCallableSymbol<E>() {
+sealed class FirVariableSymbol<out E : FirVariable> : FirCallableSymbol<E>() {
     val resolvedInitializer: FirExpression?
         get() {
             if (fir.initializer == null) return null
@@ -50,14 +50,13 @@ sealed class FirVariableSymbol<out E : FirVariable>(override val callableId: Cal
 
     val isVar: Boolean
         get() = fir.isVar
+
+    override val name: Name
+        get() = fir.name
 }
 
-open class FirPropertySymbol(callableId: CallableId) : FirVariableSymbol<FirProperty>(callableId), PropertySymbolMarker {
-    // TODO: should we use this constructor for local variables?
-    constructor(name: Name) : this(CallableId(name))
-
-    val isLocal: Boolean
-        get() = fir.isLocal
+sealed class FirPropertySymbol : FirVariableSymbol<FirProperty>(), PropertySymbolMarker {
+    abstract val isLocal: Boolean
 
     open val getterSymbol: FirPropertyAccessorSymbol?
         get() = fir.getter?.symbol
@@ -96,11 +95,35 @@ open class FirPropertySymbol(callableId: CallableId) : FirVariableSymbol<FirProp
     }
 }
 
+/**
+ * Used for purely local properties, which are declared in a functions
+ */
+class FirLocalPropertySymbol() : FirPropertySymbol() {
+    override val callableId: CallableId?
+        get() = null
+
+    override val isLocal: Boolean
+        get() = true
+}
+
+class FirLocalPropertySymbolWithCallableId(override val callableId: CallableId) : FirPropertySymbol() {
+    override val isLocal: Boolean
+        get() = true
+}
+
+/**
+ * Used for top-level and member properties, including member properties of local classes / anonymous objects
+ */
+open class FirRegularPropertySymbol(override val callableId: CallableId) : FirPropertySymbol() {
+    override val isLocal: Boolean
+        get() = false
+}
+
 class FirIntersectionOverridePropertySymbol(
     callableId: CallableId,
     override val intersections: Collection<FirCallableSymbol<*>>,
     override val containsMultipleNonSubsumed: Boolean,
-) : FirPropertySymbol(callableId), FirIntersectionCallableSymbol
+) : FirRegularPropertySymbol(callableId), FirIntersectionCallableSymbol
 
 class FirIntersectionOverrideFieldSymbol(
     callableId: CallableId,
@@ -108,7 +131,10 @@ class FirIntersectionOverrideFieldSymbol(
     override val containsMultipleNonSubsumed: Boolean,
 ) : FirFieldSymbol(callableId), FirIntersectionCallableSymbol
 
-class FirBackingFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirBackingField>(callableId) {
+class FirBackingFieldSymbol : FirVariableSymbol<FirBackingField>() {
+    override val callableId: CallableId
+        get() = CallableId(name)
+
     val propertySymbol: FirPropertySymbol
         get() = fir.propertySymbol
 
@@ -121,9 +147,12 @@ class FirBackingFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirBacki
     }
 }
 
-class FirDelegateFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirProperty>(callableId)
+class FirDelegateFieldSymbol(val correspondingPropertySymbol: FirPropertySymbol) : FirVariableSymbol<FirProperty>() {
+    override val callableId: CallableId?
+        get() = correspondingPropertySymbol.callableId
+}
 
-open class FirFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirField>(callableId) {
+open class FirFieldSymbol(override val callableId: CallableId) : FirVariableSymbol<FirField>() {
     val hasInitializer: Boolean
         get() = fir.initializer != null
 
@@ -131,15 +160,18 @@ open class FirFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirField>(
         get() = fir.hasConstantInitializer
 }
 
-class FirEnumEntrySymbol(callableId: CallableId) : FirVariableSymbol<FirEnumEntry>(callableId), EnumEntrySymbolMarker {
+class FirEnumEntrySymbol(override val callableId: CallableId) : FirVariableSymbol<FirEnumEntry>(), EnumEntrySymbolMarker {
     val initializerObjectSymbol: FirAnonymousObjectSymbol?
         get() = (fir.initializer as? FirAnonymousObjectExpression)?.anonymousObject?.symbol
 }
 
-class FirValueParameterSymbol(name: Name) : FirVariableSymbol<FirValueParameter>(CallableId(name)),
+class FirValueParameterSymbol() : FirVariableSymbol<FirValueParameter>(),
     ValueParameterSymbolMarker,
     // TODO(KT-72994) stop extending FirThisOwnerSymbol when context receivers are removed
     FirThisOwnerSymbol<FirValueParameter> {
+    override val callableId: CallableId
+        get() = CallableId(name)
+
     val hasDefaultValue: Boolean
         get() = fir.defaultValue != null
 
@@ -194,8 +226,15 @@ class FirReceiverParameterSymbol : FirBasedSymbol<FirReceiverParameter>(), FirTh
 
 class FirErrorPropertySymbol(
     val diagnostic: ConeDiagnostic
-) : FirPropertySymbol(CallableId(FqName.ROOT, NAME)), FirErrorCallableSymbol<FirProperty> {
+) : FirPropertySymbol(), FirErrorCallableSymbol<FirProperty> {
+    override val callableId: CallableId
+        get() = CALLABLE_ID
+
+    override val isLocal: Boolean
+        get() = false
+
     companion object {
         val NAME: Name = Name.special("<error property>")
+        val CALLABLE_ID: CallableId = CallableId(FqName.ROOT, NAME)
     }
 }

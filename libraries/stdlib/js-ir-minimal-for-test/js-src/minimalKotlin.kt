@@ -24,8 +24,9 @@ public actual val Throwable.suppressedExceptions: List<Throwable>
  * @throws IllegalArgumentException when [radix] is not a valid radix for number to string conversion.
  */
 @SinceKotlin("1.2")
+@OptIn(JsIntrinsic::class)
 public fun Long.toString(radix: Int): String =
-    this.toStringImpl(checkRadix(radix))
+    jsLongToString(this, checkRadix(radix))
 
 /**
  * Checks whether the given [radix] is valid radix for string to number and number to string conversion.

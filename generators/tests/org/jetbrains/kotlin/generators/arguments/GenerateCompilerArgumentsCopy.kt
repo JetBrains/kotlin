@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.generators.arguments
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.config.CompilerSettings
 import org.jetbrains.kotlin.config.JpsPluginSettings
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 import kotlin.reflect.KClass
@@ -139,6 +140,7 @@ private fun Printer.deprecatePropertyIfNecessary(property: KProperty1<*, *>) {
 fun generateConfigureLanguageFeatures(withPrinterToFile: (targetFile: File, Printer.() -> Unit) -> Unit) {
     generateConfigureLanguageFeaturesImpl(CommonCompilerArguments::class.java, "Common", withPrinterToFile)
     generateConfigureLanguageFeaturesImpl(K2JVMCompilerArguments::class.java, "Jvm", withPrinterToFile)
+    generateConfigureLanguageFeaturesImpl(K2JSCompilerArguments::class.java, "Js", withPrinterToFile)
 }
 
 private fun generateConfigureLanguageFeaturesImpl(
@@ -167,35 +169,41 @@ private fun Printer.enableFeaturesFromDeclaredFieldsOf(klass: Class<*>) {
     var isFirst = true
 
     for (field in klass.declaredFields) {
-        if (
-            field.getAnnotation(Argument::class.java) == null ||
-            field.type != Boolean::class.java
-        ) {
-            continue
+        if (field.getAnnotation(Argument::class.java) == null) continue
+
+        val featuresByValue = buildMap<String, Pair<MutableList<LanguageFeature>, MutableList<LanguageFeature>>> {
+            for (enables in field.getAnnotationsByType(Enables::class.java)) {
+                val pair = getOrPut(enables.ifValueIs) { Pair(mutableListOf(), mutableListOf()) }
+                pair.first.add(enables.feature)
+            }
+            for (disables in field.getAnnotationsByType(Disables::class.java)) {
+                val pair = getOrPut(disables.ifValueIs) { Pair(mutableListOf(), mutableListOf()) }
+                pair.second.add(disables.feature)
+            }
         }
 
-        val featuresToEnable = field.getAnnotationsByType(Enables::class.java).map { it.feature }
-        val featuresToDisable = field.getAnnotationsByType(Disables::class.java).map { it.feature }
-
-        if (featuresToEnable.isEmpty() && featuresToDisable.isEmpty()) {
-            continue
-        }
+        if (featuresByValue.isEmpty()) continue
 
         if (!isFirst) {
             println()
         }
 
-        println("if (arguments.${field.name}) {")
-        withIndent {
-            for (feature in featuresToEnable) {
-                println("put(LanguageFeature.${feature.name}, LanguageFeature.State.ENABLED)")
-            }
+        for ((value, pair) in featuresByValue) {
+            val (featuresToEnable, featuresToDisable) = pair
 
-            for (feature in featuresToDisable) {
-                println("put(LanguageFeature.${feature.name}, LanguageFeature.State.DISABLED)")
+            val optionalComparison = if (value.isNotBlank()) " == \"$value\"" else ""
+            println("if (arguments.${field.name}$optionalComparison) {")
+            withIndent {
+                for (feature in featuresToEnable) {
+                    println("put(LanguageFeature.${feature.name}, LanguageFeature.State.ENABLED)")
+                }
+
+                for (feature in featuresToDisable) {
+                    println("put(LanguageFeature.${feature.name}, LanguageFeature.State.DISABLED)")
+                }
             }
+            println("}")
         }
-        println("}")
 
         isFirst = false
     }

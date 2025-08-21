@@ -24,7 +24,6 @@ fun Test(states: List<String>, condition: Boolean) {
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = -1277138018, startOffset = 84, endOffset = 578)
 fun Test(states: List<String>, condition: Boolean, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)N(states,condition):Test.kt")

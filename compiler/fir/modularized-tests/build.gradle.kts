@@ -20,10 +20,10 @@ dependencies {
 
     testImplementation(libs.junit4)
     testCompileOnly(kotlinTest("junit"))
-    testApi(projectTests(":compiler:tests-common"))
+    testApi(testFixtures(project(":compiler:tests-common")))
 
     testRuntimeOnly(project(":core:descriptors.runtime"))
-    testApi(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
+    testApi(testFixtures(project(":compiler:fir:analysis-tests:legacy-fir-tests")))
     testApi(project(":compiler:fir:resolve"))
     testApi(project(":compiler:fir:providers"))
     testApi(project(":compiler:fir:semantics"))

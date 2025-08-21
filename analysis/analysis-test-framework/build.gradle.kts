@@ -3,33 +3,35 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("java-test-fixtures")
 }
 
 dependencies {
-    testImplementation(kotlinStdlib())
-    testImplementation(intellijCore())
-    testApi(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupiter.api)
+    testFixturesImplementation(kotlinStdlib())
+    testFixturesImplementation(intellijCore())
+    testFixturesApi(platform(libs.junit.bom))
+    testFixturesImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 
-    testImplementation(kotlinTest("junit"))
-    testImplementation(project(":analysis:analysis-internal-utils"))
-    testImplementation(project(":compiler:psi:psi-api"))
-    testImplementation(project(":analysis:kt-references"))
-    testApi(projectTests(":compiler:tests-common-new"))
-    testApi(projectTests(":compiler:tests-common"))
-    testImplementation(project(":analysis:analysis-api-platform-interface"))
-    testImplementation(project(":analysis:analysis-api"))
-    testApi(project(":analysis:analysis-api-standalone:analysis-api-standalone-base"))
-    testApi(project(":analysis:analysis-api-standalone:analysis-api-fir-standalone-base"))
-    testImplementation(project(":analysis:analysis-api-impl-base"))
-    testImplementation(project(":analysis:decompiled:decompiler-to-psi"))
-    testImplementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
+    testFixturesImplementation(kotlinTest("junit"))
+    testFixturesImplementation(project(":analysis:analysis-internal-utils"))
+    testFixturesImplementation(project(":compiler:psi:psi-api"))
+    testFixturesImplementation(project(":analysis:kt-references"))
+    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesApi(testFixtures(project(":compiler:tests-common")))
+    testFixturesImplementation(project(":analysis:analysis-api-platform-interface"))
+    testFixturesImplementation(project(":analysis:analysis-api"))
+    testFixturesApi(project(":analysis:analysis-api-standalone:analysis-api-standalone-base"))
+    testFixturesApi(project(":analysis:analysis-api-standalone:analysis-api-fir-standalone-base"))
+    testFixturesImplementation(project(":analysis:analysis-api-impl-base"))
+    testFixturesImplementation(project(":analysis:decompiled:decompiler-to-psi"))
+    testFixturesImplementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
 }
 
 sourceSets {
     "main" { none() }
-    "test" { projectDefault() }
+    "test" { none() }
+    "testFixtures" { projectDefault() }
 }
 
 projectTest(jUnitMode = JUnitMode.JUnit5) {
@@ -45,5 +47,6 @@ tasks.withType<KotlinJvmCompile>().configureEach {
         "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
         "org.jetbrains.kotlin.analysis.api.KaPlatformInterface",
         "org.jetbrains.kotlin.analysis.api.KaImplementationDetail",
+        "org.jetbrains.kotlin.analysis.api.KaContextParameterApi",
     )
 }

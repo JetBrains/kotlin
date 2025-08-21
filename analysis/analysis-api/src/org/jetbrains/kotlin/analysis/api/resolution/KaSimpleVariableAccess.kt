@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.resolution
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.psi.KtExpression
 
 /**
@@ -15,11 +16,13 @@ public sealed interface KaSimpleVariableAccess {
     /**
      * The [variable access][KaSimpleVariableAccessCall] reads the variable.
      */
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface Read : KaSimpleVariableAccess
 
     /**
      * The [variable access][KaSimpleVariableAccessCall] writes to the variable.
      */
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface Write : KaSimpleVariableAccess {
         /**
          * A [KtExpression] that represents the new value which is assigned to this variable, or `null` if the assignment is incomplete and

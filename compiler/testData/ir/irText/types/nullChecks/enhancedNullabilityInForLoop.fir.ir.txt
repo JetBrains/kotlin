@@ -76,7 +76,7 @@ FILE fqName:<root> fileName:/enhancedNullabilityInForLoop.kt
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.P'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.P [val]
-          TYPE_OP type=<root>.P origin=CAST typeOperand=<root>.P
+          TYPE_OP type=<root>.P origin=IMPLICIT_CAST typeOperand=<root>.P
             GET_VAR 'other: kotlin.Any? declared in <root>.P.equals' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH

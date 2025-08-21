@@ -20,8 +20,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirDeprecationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInUsageBaseChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInUsageBaseChecker.Experimentality
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
-import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.processOverriddenFunctionsWithActionSafe
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -38,8 +37,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.typeContext
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeCheckerState
@@ -131,10 +130,13 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirClass) {
+        // Don't report override-related problems if we have bad supertypes
+        if (declaration.superTypeRefs.any { it is FirErrorTypeRef }) return
+
         val typeCheckerState = context.session.typeContext.newTypeCheckerState(
             errorTypesEqualToAnything = false,
             stubTypesEqualToAnything = false,
-            dnnTypesEqualToFlexible = context.languageVersionSettings.supportsFeature(LanguageFeature.AllowDnnTypeOverridingFlexibleType)
+            dnnTypesEqualToFlexible = LanguageFeature.AllowDnnTypeOverridingFlexibleType.isEnabled()
         )
 
         val firTypeScope = declaration.unsubstitutedScope()
@@ -369,10 +371,11 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
         firTypeScope: FirTypeScope
     ) {
         val overriddenMemberSymbols = firTypeScope.getDirectOverriddenSafe(member)
-        val hasOverrideKeyword = member.hasModifier(KtTokens.OVERRIDE_KEYWORD)
-        val isOverride = member.isOverride && (member.origin != FirDeclarationOrigin.Source || hasOverrideKeyword)
 
-        if (!isOverride) {
+        member.checkSuspend(overriddenMemberSymbols, containingClass)
+        if (member.checkDataClassMembers(overriddenMemberSymbols, containingClass, typeCheckerState)) return
+
+        if (!member.isOverride) {
             if (overriddenMemberSymbols.isEmpty() ||
                 context.session.overridesBackwardCompatibilityHelper.overrideCanBeOmitted(overriddenMemberSymbols)
             ) {
@@ -403,27 +406,6 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
                 member,
                 originalContainingClassSymbol
             )
-            return
-        }
-
-        member.checkSuspend(overriddenMemberSymbols, containingClass)
-
-        if (member.source?.kind is KtFakeSourceElementKind.DataClassGeneratedMembers) {
-            val conflictingSymbol = overriddenMemberSymbols.find { it.isFinal } ?: member.checkReturnType(
-                overriddenSymbols = overriddenMemberSymbols,
-                typeCheckerState = typeCheckerState,
-            )
-            if (conflictingSymbol != null) {
-                reporter.reportOn(
-                    containingClass.source,
-                    FirErrors.DATA_CLASS_OVERRIDE_CONFLICT,
-                    member,
-                    conflictingSymbol
-                )
-            }
-            if (member.name == StandardNames.DATA_CLASS_COPY) {
-                member.checkDataClassCopy(overriddenMemberSymbols, containingClass)
-            }
             return
         }
 
@@ -482,6 +464,33 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
                 }
             }
         }
+    }
+
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun FirCallableSymbol<*>.checkDataClassMembers(
+        overriddenMemberSymbols: List<FirCallableSymbol<*>>,
+        containingClass: FirClass,
+        typeCheckerState: TypeCheckerState,
+    ): Boolean {
+        if (source?.kind is KtFakeSourceElementKind.DataClassGeneratedMembers) {
+            val conflictingSymbol = overriddenMemberSymbols.find { it.isFinal } ?: checkReturnType(
+                overriddenSymbols = overriddenMemberSymbols,
+                typeCheckerState = typeCheckerState,
+            )
+            if (conflictingSymbol != null) {
+                reporter.reportOn(
+                    containingClass.source,
+                    FirErrors.DATA_CLASS_OVERRIDE_CONFLICT,
+                    this,
+                    conflictingSymbol
+                )
+            }
+            if (name == StandardNames.DATA_CLASS_COPY) {
+                checkDataClassCopy(overriddenMemberSymbols, containingClass)
+            }
+            return true
+        }
+        return false
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)

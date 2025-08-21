@@ -1,9 +1,9 @@
-PsiJetFileStubImpl[package=]
+FILE[kind=File[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   CLASS[classId=/Color, fqName=Color, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Color, superNames=[]]
     MODIFIER_LIST[enum]
-    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Color]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Color]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=Color.rgb, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=rgb]
           TYPE_REFERENCE
@@ -18,7 +18,7 @@ PsiJetFileStubImpl[package=]
                 USER_TYPE
                   ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION[referencedName=Color]
         CLASS_BODY
-          FUN[fqName=Color.RED.foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+          FUN[fqName=Color.RED.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
             MODIFIER_LIST[override]
             VALUE_PARAMETER_LIST
             TYPE_REFERENCE
@@ -32,7 +32,7 @@ PsiJetFileStubImpl[package=]
                 USER_TYPE
                   ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION[referencedName=Color]
         CLASS_BODY
-          FUN[fqName=Color.GREEN.foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+          FUN[fqName=Color.GREEN.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
             MODIFIER_LIST[override]
             VALUE_PARAMETER_LIST
             TYPE_REFERENCE
@@ -46,13 +46,13 @@ PsiJetFileStubImpl[package=]
                 USER_TYPE
                   ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION[referencedName=Color]
         CLASS_BODY
-          FUN[fqName=Color.BLUE.foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+          FUN[fqName=Color.BLUE.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
             MODIFIER_LIST[override]
             VALUE_PARAMETER_LIST
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=Color.foo, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+      FUN[fqName=Color.foo, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
         MODIFIER_LIST[abstract]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE

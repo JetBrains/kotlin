@@ -1,4 +1,4 @@
-PsiJetFileStubImpl[package=pack]
+KotlinStub$FILE[kind=File[packageFqName=pack]]
 KotlinStub$PACKAGE_DIRECTIVE
   KotlinStub$REFERENCE_EXPRESSION[referencedName=pack]
 KotlinStub$IMPORT_LIST
@@ -15,8 +15,8 @@ KotlinStub$CLASS[classId=pack/MultiFieldValueClassWithTypeAlias, fqName=pack.Mul
               KotlinStub$REFERENCE_EXPRESSION[referencedName=jvm]
             KotlinStub$REFERENCE_EXPRESSION[referencedName=JvmInline]
   KotlinStub$TYPE_PARAMETER_LIST
-    KotlinStub$TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
-  KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=MultiFieldValueClassWithTypeAlias]
+    KotlinStub$TYPE_PARAMETER[fqName=null, name=T]
+  KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=MultiFieldValueClassWithTypeAlias]
     KotlinStub$MODIFIER_LIST[public]
     KotlinStub$VALUE_PARAMETER_LIST
       KotlinStub$VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=alias]
@@ -60,8 +60,8 @@ KotlinStub$CLASS[classId=pack/MultiFieldValueClassWithTypeAlias, fqName=pack.Mul
           KotlinStub$USER_TYPE
             KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
           KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
-    KotlinStub$FUN[fqName=pack.MultiFieldValueClassWithTypeAlias.equals, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
-      KotlinStub$MODIFIER_LIST[open public operator]
+    KotlinStub$FUN[fqName=pack.MultiFieldValueClassWithTypeAlias.equals, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
+      KotlinStub$MODIFIER_LIST[public open operator]
       KotlinStub$VALUE_PARAMETER_LIST
         KotlinStub$VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=other]
           KotlinStub$TYPE_REFERENCE
@@ -75,16 +75,16 @@ KotlinStub$CLASS[classId=pack/MultiFieldValueClassWithTypeAlias, fqName=pack.Mul
           KotlinStub$USER_TYPE
             KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
           KotlinStub$REFERENCE_EXPRESSION[referencedName=Boolean]
-    KotlinStub$FUN[fqName=pack.MultiFieldValueClassWithTypeAlias.hashCode, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
-      KotlinStub$MODIFIER_LIST[open public]
+    KotlinStub$FUN[fqName=pack.MultiFieldValueClassWithTypeAlias.hashCode, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
+      KotlinStub$MODIFIER_LIST[public open]
       KotlinStub$VALUE_PARAMETER_LIST
       KotlinStub$TYPE_REFERENCE
         KotlinStub$USER_TYPE
           KotlinStub$USER_TYPE
             KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
           KotlinStub$REFERENCE_EXPRESSION[referencedName=Int]
-    KotlinStub$FUN[fqName=pack.MultiFieldValueClassWithTypeAlias.toString, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
-      KotlinStub$MODIFIER_LIST[open public]
+    KotlinStub$FUN[fqName=pack.MultiFieldValueClassWithTypeAlias.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
+      KotlinStub$MODIFIER_LIST[public open]
       KotlinStub$VALUE_PARAMETER_LIST
       KotlinStub$TYPE_REFERENCE
         KotlinStub$USER_TYPE

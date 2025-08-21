@@ -200,12 +200,6 @@ open class IncrementalK2JavaChangeBuildToolsApiInProcessIT : IncrementalJavaChan
 @DisplayName("Incremental compilation via Build Tools API using in-process strategy and FIR runner")
 class IncrementalK2JavaChangeUsingFirRunnerBuildToolsApiInProcessIT : IncrementalK2JavaChangeBuildToolsApiInProcessIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copy(useFirJvmRunner = true)
-
-    @Disabled("KT-75657")
-    @GradleTest
-    override fun testTypeAliasIncremental(gradleVersion: GradleVersion) {
-        super.testTypeAliasIncremental(gradleVersion)
-    }
 }
 
 @DisplayName("Default incremental compilation with disabled precise compilation outputs backup")

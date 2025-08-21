@@ -6,7 +6,7 @@
 package kotlin.time
 
 /**
- * Creates a [Clock] that uses the [time mark at the moment of creation][TimeMark.markNow] to determine how [far][TimeMark.elapsedNow]
+ * Creates a [Clock] that uses the [time mark at the moment of creation][TimeSource.markNow] to determine how [far][TimeMark.elapsedNow]
  * the [current moment][Clock.now] is from the [origin].
  *
  * This clock stores the [TimeMark] at the moment of creation, so repeatedly creating [Clock]s from the same [TimeSource] results

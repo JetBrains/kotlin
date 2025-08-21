@@ -14,16 +14,16 @@ import org.jetbrains.kotlin.psi.stubs.KotlinCollectionLiteralExpressionStub
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinCollectionLiteralExpressionStubImpl
 
 class KtCollectionLiteralExpressionElementType(@NonNls debugName: String) :
-    KtStubElementType<KotlinCollectionLiteralExpressionStub, KtCollectionLiteralExpression>(
+    KtStubElementType<KotlinCollectionLiteralExpressionStubImpl, KtCollectionLiteralExpression>(
         debugName,
         KtCollectionLiteralExpression::class.java,
-        KotlinCollectionLiteralExpressionStub::class.java
+        KotlinCollectionLiteralExpressionStub::class.java,
     ) {
-    override fun serialize(stub: KotlinCollectionLiteralExpressionStub, dataStream: StubOutputStream) {
+    override fun serialize(stub: KotlinCollectionLiteralExpressionStubImpl, dataStream: StubOutputStream) {
         dataStream.writeVarInt(stub.innerExpressionCount)
     }
 
-    override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): KotlinCollectionLiteralExpressionStub {
+    override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): KotlinCollectionLiteralExpressionStubImpl {
         val innerExpressionCount = dataStream.readVarInt()
         return KotlinCollectionLiteralExpressionStubImpl(
             parent = parentStub,
@@ -31,7 +31,7 @@ class KtCollectionLiteralExpressionElementType(@NonNls debugName: String) :
         )
     }
 
-    override fun createStub(psi: KtCollectionLiteralExpression, parentStub: StubElement<*>?): KotlinCollectionLiteralExpressionStub {
+    override fun createStub(psi: KtCollectionLiteralExpression, parentStub: StubElement<*>?): KotlinCollectionLiteralExpressionStubImpl {
         return KotlinCollectionLiteralExpressionStubImpl(
             parent = parentStub,
             innerExpressionCount = psi.innerExpressions.size,

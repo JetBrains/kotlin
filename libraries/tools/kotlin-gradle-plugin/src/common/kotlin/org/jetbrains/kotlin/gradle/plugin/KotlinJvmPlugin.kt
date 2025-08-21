@@ -17,9 +17,7 @@ const val KOTLIN_DSL_NAME = "kotlin"
 const val KOTLIN_JS_DSL_NAME = "kotlin2js"
 const val KOTLIN_OPTIONS_DSL_NAME = "kotlinOptions"
 
-internal open class KotlinJvmPlugin(
-    registry: ToolingModelBuilderRegistry
-) : AbstractKotlinPlugin(KotlinTasksProvider(), registry) {
+internal open class KotlinJvmPlugin : AbstractKotlinPlugin(KotlinTasksProvider()) {
 
     internal companion object {
         private const val targetName = "" // use empty suffix for the task names

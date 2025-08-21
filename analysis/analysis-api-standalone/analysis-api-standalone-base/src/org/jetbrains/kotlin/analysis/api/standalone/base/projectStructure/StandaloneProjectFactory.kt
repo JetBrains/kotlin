@@ -19,6 +19,7 @@ import com.intellij.openapi.roots.PackageIndex
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.openapi.vfs.toNioPathOrNull
 import com.intellij.psi.*
 import com.intellij.psi.impl.file.impl.JavaFileManager
 import com.intellij.psi.impl.smartPointers.PsiClassReferenceTypePointerFactory
@@ -370,6 +371,38 @@ object StandaloneProjectFactory {
         }
     }
 
+    fun createLibraryModuleSearchScope(
+        binaryRoots: Collection<Path>,
+        binaryVirtualFiles: Collection<VirtualFile>,
+        environment: CoreApplicationEnvironment,
+        project: Project,
+    ): GlobalSearchScope {
+        return if (binaryVirtualFiles.any { it.toNioPathOrNull() == null }) {
+            // I.e., in-memory file system
+            // Fall back: file-based search scope
+            @Suppress("DEPRECATION")
+            createSearchScopeByLibraryRoots(
+                binaryRoots,
+                binaryVirtualFiles,
+                environment,
+                project,
+            )
+        } else {
+            // Optimization: Trie-based search scope
+            @Suppress("DEPRECATION")
+            createTrieBasedSearchScopeByLibraryRoots(
+                binaryRoots,
+                binaryVirtualFiles,
+                environment,
+                project,
+            )
+        }
+    }
+
+    @Deprecated(
+        "This function will become private. Use `createLibraryModuleSearchScope` instead.",
+        replaceWith = ReplaceWith("createLibraryModuleSearchScope(binaryRoots, binaryVirtualFiles, environment, project)"),
+    )
     fun createSearchScopeByLibraryRoots(
         binaryRoots: Collection<Path>,
         binaryVirtualFiles: Collection<VirtualFile>,
@@ -393,6 +426,64 @@ object StandaloneProjectFactory {
 
             override fun toString(): String = virtualFileUrls.toString()
         }
+    }
+
+    @Deprecated(
+        "This function will become private. Use `createLibraryModuleSearchScope` instead.",
+        replaceWith = ReplaceWith("createLibraryModuleSearchScope(binaryRoots, binaryVirtualFiles, environment, project)"),
+    )
+    fun createTrieBasedSearchScopeByLibraryRoots(
+        binaryRoots: Collection<Path>,
+        binaryVirtualFiles: Collection<VirtualFile>,
+        environment: CoreApplicationEnvironment,
+        project: Project,
+    ): GlobalSearchScope {
+        val virtualFiles = getVirtualFilesForLibraryRoots(binaryRoots, environment) + binaryVirtualFiles
+        return LibraryRootsSearchScope(virtualFiles, project)
+    }
+
+    private class SimpleTrie(paths: List<String>) {
+        class TrieNode {
+            var isTerminal: Boolean = false
+        }
+
+        val root = TrieNode()
+
+        private val m = mutableMapOf<Pair<TrieNode, String>, TrieNode>().apply {
+            paths.forEach { path ->
+                var p = root
+                for (d in path.trim('/').split('/')) {
+                    p = getOrPut(Pair(p, d)) { TrieNode() }
+                }
+                p.isTerminal = true
+            }
+        }
+
+        fun contains(s: String): Boolean {
+            var p = root
+            for (d in s.trim('/').split('/')) {
+                p = m.get(Pair(p, d))?.also {
+                    if (it.isTerminal)
+                        return true
+                } ?: return false
+            }
+            return false
+        }
+    }
+
+    private class LibraryRootsSearchScope(
+        roots: List<VirtualFile>,
+        project: Project,
+    ) : GlobalSearchScope(project) {
+        val trie: SimpleTrie = SimpleTrie(roots.map { it.path })
+
+        override fun contains(file: VirtualFile): Boolean {
+            return trie.contains(file.path)
+        }
+
+        override fun isSearchInModuleContent(aModule: Module): Boolean = false
+
+        override fun isSearchInLibraries(): Boolean = true
     }
 
     fun getVirtualFilesForLibraryRoots(

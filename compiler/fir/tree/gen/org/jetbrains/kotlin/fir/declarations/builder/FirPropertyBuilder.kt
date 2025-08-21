@@ -51,7 +51,6 @@ class FirPropertyBuilder : FirVariableBuilder, FirTypeParametersOwnerBuilder, Fi
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var symbol: FirPropertySymbol
     var delegateFieldSymbol: FirDelegateFieldSymbol? = null
-    var isLocal: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     var bodyResolveState: FirPropertyBodyResolveState = FirPropertyBodyResolveState.NOTHING_RESOLVED
     override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
 
@@ -79,7 +78,6 @@ class FirPropertyBuilder : FirVariableBuilder, FirTypeParametersOwnerBuilder, Fi
             annotations.toMutableOrEmpty(),
             symbol,
             delegateFieldSymbol,
-            isLocal,
             bodyResolveState,
             typeParameters,
         )
@@ -122,7 +120,6 @@ inline fun buildPropertyCopy(original: FirProperty, init: FirPropertyBuilder.() 
     copyBuilder.backingField = original.backingField
     copyBuilder.annotations.addAll(original.annotations)
     copyBuilder.delegateFieldSymbol = original.delegateFieldSymbol
-    copyBuilder.isLocal = original.isLocal
     copyBuilder.bodyResolveState = original.bodyResolveState
     copyBuilder.typeParameters.addAll(original.typeParameters)
     return copyBuilder.apply(init).build()

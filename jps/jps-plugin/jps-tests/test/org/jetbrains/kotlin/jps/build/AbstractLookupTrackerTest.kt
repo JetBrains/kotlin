@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.incremental.ICFileMappingTrackerImpl
+import org.jetbrains.kotlin.incremental.components.ICFileMappingTracker
 import org.jetbrains.kotlin.incremental.components.LookupInfo
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.isKotlinFile
@@ -316,6 +318,7 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
         val outputItemsCollector = OutputItemsCollectorImpl()
         val services = Services.Builder().run {
             register(LookupTracker::class.java, lookupTracker)
+            register(ICFileMappingTracker::class.java, ICFileMappingTrackerImpl(outputItemsCollector))
             registerAdditionalServices()
             build()
         }

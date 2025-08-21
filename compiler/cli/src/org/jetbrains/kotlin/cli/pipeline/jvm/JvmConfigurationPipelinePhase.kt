@@ -98,6 +98,7 @@ object JvmConfigurationUpdater : ConfigurationUpdater<K2JVMCompilerArguments>() 
         inlineConstTracker = services[InlineConstTracker::class.java]
         enumWhenTracker = services[EnumWhenTracker::class.java]
         importTracker = services[ImportTracker::class.java]
+        fileMappingTracker = services[ICFileMappingTracker::class.java]
         incrementalCompilationComponents = services[IncrementalCompilationComponents::class.java]
         putIfNotNull(ClassicFrontendSpecificJvmConfigurationKeys.JAVA_CLASSES_TRACKER, services[JavaClassesTracker::class.java])
     }

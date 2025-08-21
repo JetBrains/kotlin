@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiClass
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLResolutionFacadeService
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -23,11 +25,10 @@ import org.jetbrains.kotlin.psi.KtFile
 fun KaModule.getResolutionFacade(project: Project): LLResolutionFacade =
     LLResolutionFacadeService.getInstance(project).getResolutionFacade(this)
 
-
 /**
- * Creates [FirBasedSymbol] by [KtDeclaration] .
- * returned [FirDeclaration]  will be resolved at least to [phase]
+ * Resolves this [KtDeclaration] to a [FirBasedSymbol].
  *
+ * The underlying [FirDeclaration][org.jetbrains.kotlin.fir.declarations.FirDeclaration] will be resolved at least to [phase].
  */
 fun KtDeclaration.resolveToFirSymbol(
     resolutionFacade: LLResolutionFacade,
@@ -37,10 +38,10 @@ fun KtDeclaration.resolveToFirSymbol(
 }
 
 /**
- * Creates [FirBasedSymbol] by [KtDeclaration] .
- * returned [FirDeclaration] will be resolved at least to [phase]
+ * Resolves this [KtDeclaration] to a [FirBasedSymbol]. If the resulting [FirBasedSymbol] is not subtype of [S],
+ * [InvalidFirElementTypeException] is thrown.
  *
- * If resulted [FirBasedSymbol] is not subtype of [S], throws [InvalidFirElementTypeException]
+ * The underlying [FirDeclaration][org.jetbrains.kotlin.fir.declarations.FirDeclaration] will be resolved at least to [phase].
  */
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 inline fun <reified S : FirBasedSymbol<*>> KtDeclaration.resolveToFirSymbolOfType(
@@ -55,10 +56,9 @@ inline fun <reified S : FirBasedSymbol<*>> KtDeclaration.resolveToFirSymbolOfTyp
 }
 
 /**
- * Creates [FirBasedSymbol] by [KtDeclaration] .
- * returned [FirDeclaration] will be resolved at least to [phase]
+ * Resolves this [KtDeclaration] to a [FirBasedSymbol]. If the resulting [FirBasedSymbol] is not subtype of [S], returns `null`.
  *
- * If resulted [FirBasedSymbol] is not subtype of [S], returns `null`
+ * The underlying [FirDeclaration][org.jetbrains.kotlin.fir.declarations.FirDeclaration] will be resolved at least to [phase].
  */
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 inline fun <reified S : FirBasedSymbol<*>> KtDeclaration.resolveToFirSymbolOfTypeSafe(
@@ -68,6 +68,11 @@ inline fun <reified S : FirBasedSymbol<*>> KtDeclaration.resolveToFirSymbolOfTyp
     return resolveToFirSymbol(resolutionFacade, phase) as? S
 }
 
+/**
+ * Resolve a **non-Kotlin** [PsiClass] to a [FirRegularClassSymbol]
+ */
+fun PsiClass.resolveToFirSymbol(resolutionFacade: LLResolutionFacade): FirRegularClassSymbol =
+    resolutionFacade.resolveToFirSymbol(this)
 
 /**
  * Returns a list of Diagnostics compiler finds for given [KtElement]

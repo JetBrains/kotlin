@@ -1,4 +1,3 @@
-// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 class Some { fun foo() {} }
 
@@ -32,7 +31,7 @@ typealias InvSpecificAlias = Inv<String>
 typealias Mixed3<B> = Inv<InvAlias<B>>
 
 fun test_2() {
-    <!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>Mixed3<String><!>::foo
+    <!UPPER_BOUND_VIOLATED!>Mixed3<String><!>::foo
 
     Inv<String>::foo
     Inv<<!UPPER_BOUND_VIOLATED!>Int<!>>::foo
@@ -64,13 +63,13 @@ fun test_2() {
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>InvUnusedCorrectAlias<!>::foo
     InvUnusedCorrectAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String, String><!>::foo
 
-    <!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>InvUnusedIncorrectAlias<String><!>::foo
-    <!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>InvUnusedIncorrectAlias<Int><!>::foo
-    <!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>InvUnusedIncorrectAlias<*><!>::foo
-    <!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>InvUnusedIncorrectAlias<out Int><!>::foo
-    <!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>InvUnusedIncorrectAlias<out String><!>::foo
-    <!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>InvUnusedIncorrectAlias<in Int><!>::foo
-    <!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>InvUnusedIncorrectAlias<in String><!>::foo
+    <!UPPER_BOUND_VIOLATED!>InvUnusedIncorrectAlias<String><!>::foo
+    <!UPPER_BOUND_VIOLATED!>InvUnusedIncorrectAlias<Int><!>::foo
+    <!UPPER_BOUND_VIOLATED!>InvUnusedIncorrectAlias<*><!>::foo
+    <!UPPER_BOUND_VIOLATED!>InvUnusedIncorrectAlias<out Int><!>::foo
+    <!UPPER_BOUND_VIOLATED!>InvUnusedIncorrectAlias<out String><!>::foo
+    <!UPPER_BOUND_VIOLATED!>InvUnusedIncorrectAlias<in Int><!>::foo
+    <!UPPER_BOUND_VIOLATED!>InvUnusedIncorrectAlias<in String><!>::foo
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>InvUnusedIncorrectAlias<!>::foo
     InvUnusedIncorrectAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String, String><!>::foo
     InvUnusedIncorrectAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><in String, in String><!>::foo

@@ -31,7 +31,7 @@ object FirImplementationByDelegationWithDifferentGenericSignatureChecker : FirCl
             val delegatedWrapperData = symbol.delegatedWrapperData ?: return@processAllFunctions
             val wrappedGenericFunction = delegatedWrapperData.wrapped
             if (wrappedGenericFunction.typeParameters.isEmpty()) return@processAllFunctions
-            val fieldScope = delegatedWrapperData.delegateField.symbol.resolvedInitializer?.resolvedType?.scope(
+            val fieldScope = delegatedWrapperData.delegateFieldSymbol.resolvedInitializer?.resolvedType?.scope(
                 context.session, context.scopeSession, CallableCopyTypeCalculator.DoNothing, null
             ) ?: return@processAllFunctions
             var reported = false
@@ -42,7 +42,7 @@ object FirImplementationByDelegationWithDifferentGenericSignatureChecker : FirCl
                 fieldScope.processOverriddenFunctions(clashedSymbol) { overriddenSymbol ->
                     if (overriddenSymbol.unwrapFakeOverrides() === genericSymbolToCompare) {
                         reporter.reportOn(
-                            delegatedWrapperData.delegateField.returnTypeRef.source,
+                            delegatedWrapperData.delegateFieldSymbol.resolvedReturnTypeRef.source,
                             FirJvmErrors.IMPLEMENTATION_BY_DELEGATION_WITH_DIFFERENT_GENERIC_SIGNATURE,
                             wrappedGenericFunction.symbol,
                             clashedSymbol

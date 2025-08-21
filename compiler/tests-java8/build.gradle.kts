@@ -5,18 +5,21 @@ plugins {
     id("jps-compatible")
     id("compiler-tests-convention")
     id("test-inputs-check")
+    id("java-test-fixtures")
 }
 
 dependencies {
-    testApi(project(":kotlin-scripting-compiler"))
-    testApi(projectTests(":compiler:tests-common"))
+    testFixturesApi(project(":kotlin-scripting-compiler"))
+    testFixturesApi(testFixtures(project(":compiler:tests-common")))
+    testFixturesImplementation(intellijCore())
     testImplementation(intellijCore())
-    testApi(platform(libs.junit.bom))
+    testFixturesApi(platform(libs.junit.bom))
     testCompileOnly(libs.junit4)
+    testFixturesImplementation("org.junit.jupiter:junit-jupiter:${libs.versions.junit5.get()}")
     testImplementation("org.junit.jupiter:junit-jupiter:${libs.versions.junit5.get()}")
     testRuntimeOnly(libs.junit.vintage.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
-    testApi(projectTests(":generators:test-generator"))
+    testFixturesApi(testFixtures(project(":generators:test-generator")))
     testRuntimeOnly(toolsJar())
 }
 
@@ -26,6 +29,7 @@ sourceSets {
         projectDefault()
         generatedTestDir()
     }
+    "testFixtures" { projectDefault() }
 }
 
 compilerTests {

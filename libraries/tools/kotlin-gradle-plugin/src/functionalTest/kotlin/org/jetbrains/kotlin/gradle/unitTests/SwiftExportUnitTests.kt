@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.kotlin.dsl.project
 import org.gradle.kotlin.dsl.support.uppercaseFirstChar
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.configureRepositoriesForTests
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.toIdSuffix
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleTarget
@@ -459,14 +461,6 @@ class SwiftExportUnitTests {
     }
 
     @Test
-    fun `test swift export experimental feature message`() {
-        val project = swiftExportProject()
-        project.evaluate()
-
-        project.assertContainsDiagnostic(KotlinToolingDiagnostics.ExperimentalFeatureWarning)
-    }
-
-    @Test
     fun `test swift export custom settings`() {
         val customSettings = mapOf("SWIFT_EXPORT_CUSTOM_SETTING" to "CUSTOM_VALUE")
         val project = swiftExportProject {
@@ -887,6 +881,94 @@ class SwiftExportUnitTests {
             add(SwiftExportModuleForAssertion("KotlinxCoroutinesCore", "kotlinx-coroutines-core-iosSimulatorArm64Main-1.10.0.klib", true))
             add(SwiftExportModuleForAssertion("Subproject", "subproject", false))
             add(SwiftExportModuleForAssertion("Atomicfu", "atomicfu.klib", false))
+        }
+
+        assertEquals(
+            expectedModules,
+            actualModules.toModulesForAssertion(),
+        )
+    }
+
+    @Test
+    fun `test exporting different types of dependencies`() {
+        val project = buildProject(
+            projectBuilder = {
+                withName("shared")
+            },
+            configureProject = {
+                configureRepositoriesForTests()
+            }
+        )
+        project.subProject("subproject1") {
+            iosSimulatorArm64()
+        }
+        project.subProject("subproject2") {
+            iosSimulatorArm64()
+        }
+
+        val projectDependency_1 = project.project(":subproject1")
+        val projectDependency_2 = project.dependencies.project(":subproject2")
+        project.setupForSwiftExport(
+            multiplatform = {
+                iosSimulatorArm64()
+            },
+            swiftExport = {
+                export(projectDependency_1)
+                export(projectDependency_2)
+                export("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.0")
+            }
+        )
+
+        project.evaluate()
+        projectDependency_1.evaluate()
+
+        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
+        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
+
+        val expectedModules = SmartSet.create<SwiftExportModuleForAssertion>().apply {
+            add(SwiftExportModuleForAssertion("KotlinxCoroutinesCore", "kotlinx-coroutines-core-iosSimulatorArm64Main-1.10.0.klib", true))
+            add(SwiftExportModuleForAssertion("Subproject1", "subproject1", true))
+            add(SwiftExportModuleForAssertion("Subproject2", "subproject2", true))
+            add(SwiftExportModuleForAssertion("Atomicfu", "atomicfu.klib", false))
+        }
+
+        assertEquals(
+            expectedModules,
+            actualModules.toModulesForAssertion(),
+        )
+    }
+
+    @Test
+    fun `test exporting two runtime modules`() {
+        val project = buildProject(
+            projectBuilder = {
+                withName("shared")
+            },
+            configureProject = {
+                configureRepositoriesForTests()
+            }
+        )
+
+        project.setupForSwiftExport(
+            multiplatform = {
+                iosSimulatorArm64()
+            },
+            swiftExport = {
+                export("app.cash.sqldelight:runtime:2.1.0")
+                export("org.jetbrains.compose.runtime:runtime:1.8.2")
+            }
+        )
+
+        project.evaluate()
+
+        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
+        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
+
+        val expectedModules = SmartSet.create<SwiftExportModuleForAssertion>().apply {
+            add(SwiftExportModuleForAssertion("AppCashSqldelightRuntime", "runtime.klib", true))
+            add(SwiftExportModuleForAssertion("OrgJetbrainsComposeRuntimeRuntime", "runtime-uikitSimArm64Main-1.8.2.klib", true))
+            add(SwiftExportModuleForAssertion("Atomicfu", "atomicfu.klib", false))
+            add(SwiftExportModuleForAssertion("KotlinxCoroutinesCore", "kotlinx-coroutines-core.klib", false))
         }
 
         assertEquals(

@@ -26,7 +26,7 @@ kotlin::alloc::test_support::WithSchedulerNotificationHook::~WithSchedulerNotifi
 }
 
 kotlin::alloc::ExtraObjectCell* kotlin::alloc::test_support::initExtraObjectCell(uint8_t* ptr) {
-    EXPECT_TRUE(ptr[0] == 0 && memcmp(ptr, ptr + 1, kExtraObjCellSize.inBytes() - 1) == 0);
+    EXPECT_TRUE(ptr[0] == 0 && memcmp(ptr, ptr + 1, ExtraObjectCell::size().inBytes() - 1) == 0);
     auto* extraObjCell = new(ptr) ExtraObjectCell();
     new(extraObjCell->data_) kotlin::mm::ExtraObjectData(nullptr, nullptr);
     return extraObjCell;

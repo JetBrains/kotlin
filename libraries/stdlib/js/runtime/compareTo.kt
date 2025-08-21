@@ -5,9 +5,12 @@
 
 package kotlin.js
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
+
 
 // Adopted from misc.js
 
+@UsedFromCompilerGeneratedCode
 internal fun compareTo(a: dynamic, b: dynamic): Int = when (jsTypeOf(a)) {
     "number" -> when {
         jsTypeOf(b) == "number" ->
@@ -18,7 +21,7 @@ internal fun compareTo(a: dynamic, b: dynamic): Int = when (jsTypeOf(a)) {
             primitiveCompareTo(a, b)
     }
 
-    "string", "boolean" -> primitiveCompareTo(a, b)
+    "string", "boolean", "bigint" -> primitiveCompareTo(a, b)
 
     else -> compareToDoNotIntrinsicify(a, b)
 }

@@ -20,14 +20,11 @@ class JsPreSerializationLoweringContext(
     diagnosticReporter: DiagnosticReporter,
 ) : PreSerializationLoweringContext(irBuiltIns, configuration, diagnosticReporter) {
     val dynamicType: IrDynamicType = IrDynamicTypeImpl(emptyList(), Variance.INVARIANT)
-    val intrinsics: JsIntrinsics by lazy { JsIntrinsics(irBuiltIns) }
+    val intrinsics: JsIntrinsics by lazy { JsIntrinsics(irBuiltIns, configuration) }
 
     override val symbols: JsSymbols by lazy {
         JsSymbols(irBuiltIns, irFactory.stageController, intrinsics)
     }
 
     override val sharedVariablesManager by lazy { KlibSharedVariablesManager(symbols) }
-
-    override val allowExternalInlining: Boolean
-        get() = true
 }

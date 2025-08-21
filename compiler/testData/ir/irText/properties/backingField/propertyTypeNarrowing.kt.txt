@@ -16,7 +16,7 @@ class A {
   }
 
   fun test(): Int {
-    return <this>.<get-it>().plus(other = 3)
+    return <this>.<get-it>() /*as Int */.plus(other = 3)
   }
 
 }

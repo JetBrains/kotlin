@@ -4,22 +4,29 @@
  */
 package kotlin.reflect.js.internal
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.reflect.*
 
-internal fun <T : Any> getKClass(jClass: Any /* JsClass<T> | Array<JsClass<T>> */): KClass<T> {
-    return if (js("Array").isArray(jClass)) {
-        getKClassM(jClass.unsafeCast<Array<JsClass<T>>>())
+@UsedFromCompilerGeneratedCode
+internal fun <T : Any> getKClass(jClass: JsClass<T>): KClass<T> {
+    if (jClass === js("String")) return PrimitiveClasses.stringClass.unsafeCast<KClass<T>>()
+
+    val metadata = jClass.asDynamic().`$metadata$`
+
+    return if (metadata != null) {
+        if (metadata.`$kClass$` == null) {
+            val kClass = SimpleKClassImpl(jClass)
+            metadata.`$kClass$` = kClass
+            kClass
+        } else {
+            metadata.`$kClass$`
+        }
     } else {
-        getKClass1(jClass.unsafeCast<JsClass<T>>())
+        SimpleKClassImpl(jClass)
     }
 }
 
-internal fun <T : Any> getKClassM(jClasses: Array<JsClass<T>>): KClass<T> = when (jClasses.size) {
-    1 -> getKClass1(jClasses[0])
-    0 -> NothingKClassImpl.unsafeCast<KClass<T>>()
-    else -> ErrorKClass().unsafeCast<KClass<T>>()
-}
-
+@UsedFromCompilerGeneratedCode
 internal fun <T : Any> getKClassFromExpression(e: T): KClass<T> =
     when (jsTypeOf(e)) {
         "string" -> PrimitiveClasses.stringClass
@@ -45,28 +52,10 @@ internal fun <T : Any> getKClassFromExpression(e: T): KClass<T> =
                         constructor === js("Error") -> PrimitiveClasses.throwableClass
                         else -> {
                             val jsClass: JsClass<T> = constructor
-                            getKClass1(jsClass)
+                            getKClass(jsClass)
                         }
                     }
                 }
             }
         }
     }.unsafeCast<KClass<T>>()
-
-internal fun <T : Any> getKClass1(jClass: JsClass<T>): KClass<T> {
-    if (jClass === js("String")) return PrimitiveClasses.stringClass.unsafeCast<KClass<T>>()
-
-    val metadata = jClass.asDynamic().`$metadata$`
-
-    return if (metadata != null) {
-        if (metadata.`$kClass$` == null) {
-            val kClass = SimpleKClassImpl(jClass)
-            metadata.`$kClass$` = kClass
-            kClass
-        } else {
-            metadata.`$kClass$`
-        }
-    } else {
-        SimpleKClassImpl(jClass)
-    }
-}

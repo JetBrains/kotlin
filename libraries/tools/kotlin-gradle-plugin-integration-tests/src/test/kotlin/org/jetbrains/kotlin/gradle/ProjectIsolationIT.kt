@@ -87,7 +87,7 @@ class ProjectIsolationIT : KGPBaseTest() {
         project(
             projectName = "kapt2/android-databinding",
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressWarningFromAgpWithGradle813(gradleVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
             gradleProperties.appendText(

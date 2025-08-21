@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -73,13 +73,13 @@ internal fun addModifier(modifierList: KtModifierList, modifier: KtModifierKeywo
         modifierToReplace.replace(newModifier)
     } else {
         modifierToReplace?.delete()
-        val newModifierOrder = MODIFIERS_ORDER.indexOf(modifier)
+        val newModifierOrder = MODIFIER_KEYWORDS_ARRAY.indexOf(modifier)
 
         fun placeAfter(child: PsiElement): Boolean {
             if (child is PsiWhiteSpace) return false
             if (child is KtAnnotation || child is KtAnnotationEntry) return true // place modifiers after annotations
             val elementType = child.node!!.elementType
-            val order = MODIFIERS_ORDER.indexOf(elementType)
+            val order = MODIFIER_KEYWORDS_ARRAY.indexOf(elementType)
             return newModifierOrder > order
         }
 
@@ -120,7 +120,7 @@ fun removeModifier(owner: KtModifierListOwner, modifier: KtModifierKeywordToken)
 
 fun sortModifiers(modifiers: List<KtModifierKeywordToken>): List<KtModifierKeywordToken> {
     return modifiers.sortedBy {
-        val index = MODIFIERS_ORDER.indexOf(it)
+        val index = MODIFIER_KEYWORDS_ARRAY.indexOf(it)
         if (index == -1) Int.MAX_VALUE else index
     }
 }
@@ -138,23 +138,8 @@ private val MODIFIERS_TO_REPLACE = mapOf(
     ACTUAL_KEYWORD to listOf(EXPECT_KEYWORD),
 )
 
-val MODIFIERS_ORDER = listOf(
-    PUBLIC_KEYWORD, PROTECTED_KEYWORD, PRIVATE_KEYWORD, INTERNAL_KEYWORD,
-    EXPECT_KEYWORD, ACTUAL_KEYWORD,
-    FINAL_KEYWORD, OPEN_KEYWORD, ABSTRACT_KEYWORD, SEALED_KEYWORD,
-    CONST_KEYWORD,
-    EXTERNAL_KEYWORD,
-    OVERRIDE_KEYWORD,
-    LATEINIT_KEYWORD,
-    TAILREC_KEYWORD,
-    VARARG_KEYWORD,
-    SUSPEND_KEYWORD,
-    INNER_KEYWORD,
-    ENUM_KEYWORD, ANNOTATION_KEYWORD, FUN_KEYWORD,
-    COMPANION_KEYWORD,
-    INLINE_KEYWORD,
-    VALUE_KEYWORD,
-    INFIX_KEYWORD,
-    OPERATOR_KEYWORD,
-    DATA_KEYWORD
+@Deprecated(
+    "Use `KtTokens.MODIFIER_KEYWORDS_ARRAY` directly",
+    ReplaceWith("KtTokens.MODIFIER_KEYWORDS_ARRAY", "org.jetbrains.kotlin.lexer.KtTokens"),
 )
+val MODIFIERS_ORDER: List<KtModifierKeywordToken> get() = MODIFIER_KEYWORDS_ARRAY.asList()

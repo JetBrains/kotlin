@@ -42,7 +42,35 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
             build("build") {
                 assertFileInProjectExists("build/js/packages/kotlin2JsIrDtsGeneration/kotlin/kotlin2JsIrDtsGeneration.js")
                 val dts = projectPath.resolve("build/js/packages/kotlin2JsIrDtsGeneration/kotlin/kotlin2JsIrDtsGeneration.d.ts")
+                val packageJson = projectPath.resolve("build/js/packages/kotlin2JsIrDtsGeneration/")
+                    .resolve(NpmProject.PACKAGE_JSON)
+                    .let { Gson().fromJson(it.readText(), PackageJson::class.java) }
+
                 assertFileExists(dts)
+                assertEquals("kotlin/kotlin2JsIrDtsGeneration.d.ts", packageJson.types)
+                assertFileContains(dts, "function bar(): string")
+            }
+        }
+    }
+
+    @DisplayName("TS type declarations are generated with the right extension for ES modules")
+    @GradleTest
+    fun generateDtsWithEsModules(gradleVersion: GradleVersion) {
+        project("kotlin2JsIrDtsGeneration", gradleVersion) {
+            buildScriptInjection {
+                kotlinMultiplatform.js {
+                    useEsModules()
+                }
+            }
+            build("build") {
+                assertFileInProjectExists("build/js/packages/kotlin2JsIrDtsGeneration/kotlin/kotlin2JsIrDtsGeneration.mjs")
+                val dts = projectPath.resolve("build/js/packages/kotlin2JsIrDtsGeneration/kotlin/kotlin2JsIrDtsGeneration.d.mts")
+                val packageJson = projectPath.resolve("build/js/packages/kotlin2JsIrDtsGeneration/")
+                    .resolve(NpmProject.PACKAGE_JSON)
+                    .let { Gson().fromJson(it.readText(), PackageJson::class.java) }
+
+                assertFileExists(dts)
+                assertEquals("kotlin/kotlin2JsIrDtsGeneration.d.mts", packageJson.types)
                 assertFileContains(dts, "function bar(): string")
             }
         }

@@ -1,4 +1,21 @@
 public final class JvmOverloadsInlineReceiverKt /* JvmOverloadsInlineReceiverKt*/ {
+  @kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi.class})
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "bar")
+  @kotlin.jvm.JvmOverloads()
+  @org.jetbrains.annotations.NotNull()
+  public static final @org.jetbrains.annotations.NotNull() java.lang.String bar(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() StringWrapper);//  bar(@org.jetbrains.annotations.NotNull() StringWrapper)
+
+  @kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi.class})
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "bar")
+  @kotlin.jvm.JvmOverloads()
+  @org.jetbrains.annotations.NotNull()
+  public static final @org.jetbrains.annotations.NotNull() java.lang.String bar(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() StringWrapper, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  bar(@org.jetbrains.annotations.NotNull() StringWrapper, @org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi.class})
+  @kotlin.jvm.JvmExposeBoxed(jvmName = "bar")
+  @kotlin.jvm.JvmOverloads()
+  @org.jetbrains.annotations.NotNull()
+  public static final @org.jetbrains.annotations.NotNull() java.lang.String bar(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() StringWrapper, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() StringWrapper);//  bar(@org.jetbrains.annotations.NotNull() StringWrapper, @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() StringWrapper)
 }
 
 @kotlin.jvm.JvmInline()

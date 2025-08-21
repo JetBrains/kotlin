@@ -208,12 +208,6 @@ enum class KaptCliOption(
         cliToolOption = CliToolOption("-Kapt-strip-metadata", FLAG)
     ),
 
-    KEEP_KDOC_COMMENTS_IN_STUBS(
-        "keepKdocCommentsInStubs",
-        "true | false",
-        "Keep KDoc comments in stubs"
-    ),
-
     USE_K2(
         "useK2",
         "true | false",

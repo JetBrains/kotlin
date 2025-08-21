@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.firPlatformSpecificCastChecker
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.*
 
@@ -48,7 +49,14 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
 
     context(context: CheckerContext)
     private fun checkIsApplicability(l: TypeInfo, r: TypeInfo, expression: FirTypeOperatorCall): Applicability = checkCastErased(l, r)
-        .orIfApplicable { checkAnyApplicability(l, r, expression, Applicability.IMPOSSIBLE_IS_CHECK, Applicability.USELESS_IS_CHECK) }
+        .orIfApplicable {
+            checkAnyApplicability(
+                l, r, expression,
+                Applicability.IMPOSSIBLE_IS_CHECK,
+                Applicability.USELESS_IS_CHECK,
+                isForIsApplicability = true,
+            )
+        }
 
     context(context: CheckerContext)
     private fun checkAsApplicability(l: TypeInfo, r: TypeInfo, expression: FirTypeOperatorCall): Applicability {
@@ -65,15 +73,19 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
             }
             // For `as`-casts, `CAST_ERASED` is an error and is more important, whereas
             // for `is`-checks, usually, diagnostics for useless checks are more useful.
-            else -> checkAnyApplicability(l, r, expression, Applicability.IMPOSSIBLE_CAST, Applicability.USELESS_CAST)
-                .orIfApplicable { checkCastErased(l, r) }
+            else -> checkAnyApplicability(
+                l, r, expression,
+                Applicability.IMPOSSIBLE_CAST,
+                Applicability.USELESS_CAST,
+                isForIsApplicability = false,
+            ).orIfApplicable { checkCastErased(l, r) }
         }
     }
 
     context(context: CheckerContext)
     private fun checkCastErased(l: TypeInfo, r: TypeInfo): Applicability = when {
         !(context.isContractBody
-                && context.languageVersionSettings.supportsFeature(LanguageFeature.AllowCheckForErasedTypesInContracts)
+                && LanguageFeature.AllowCheckForErasedTypesInContracts.isEnabled()
                 ) && isCastErased(l.directType, r.directType) -> {
             Applicability.CAST_ERASED
         }
@@ -86,13 +98,14 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
         expression: FirTypeOperatorCall,
         impossible: Applicability,
         useless: Applicability,
+        isForIsApplicability: Boolean,
     ): Applicability {
         val oneIsNotNull = !l.type.isMarkedOrFlexiblyNullable || !r.type.isMarkedOrFlexiblyNullable
 
         return when {
             isRefinementUseless(l.directType.upperBoundIfFlexible(), r.directType, expression) -> useless
             shouldReportAsPerRules1(l, r) -> when {
-                oneIsNotNull -> impossible
+                isForIsApplicability || oneIsNotNull -> impossible
                 else -> useless
             }
             else -> Applicability.APPLICABLE
@@ -180,14 +193,14 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
 
     context(context: CheckerContext)
     private fun getImpossibilityDiagnostic(l: TypeInfo, rType: ConeKotlinType) = when {
-        !context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2) -> null
+        !LanguageFeature.EnableDfaWarningsInK2.isEnabled() -> null
         context.session.firPlatformSpecificCastChecker.shouldSuppressImpossibleCast(context.session, l.type, rType) -> null
         else -> FirErrors.CAST_NEVER_SUCCEEDS
     }
 
     context(context: CheckerContext)
     private fun getUselessCastDiagnostic() = when {
-        !context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2) -> null
+        !LanguageFeature.EnableDfaWarningsInK2.isEnabled() -> null
         else -> FirErrors.USELESS_CAST
     }
 }

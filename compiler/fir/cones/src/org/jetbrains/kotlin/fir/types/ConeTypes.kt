@@ -143,6 +143,9 @@ open class ConeFlexibleType(
         if (other !is ConeFlexibleType) return false
 
         if (lowerBound != other.lowerBound) return false
+
+        if (isTrivial && other.isTrivial) return true
+
         if (upperBound != other.upperBound) return false
 
         return true
@@ -150,7 +153,12 @@ open class ConeFlexibleType(
 
     final override fun hashCode(): Int {
         var result = lowerBound.hashCode()
-        result = 31 * result + upperBound.hashCode()
+        // We don't use `upperBound.hashCode()` because it might lead to performance loss for trivial types.
+        // While doing something like `31 * lowerBoundResult + Boolean.hashCode(true/* markedNullable */)`
+        // to replicate `upperBound.hashCode()` behavior seems too fragile.
+        // But we want the result was different from just lowerBound's one,
+        // so we add a beautiful though random prime number.
+        result = 31 * result + 2999
         return result
     }
 }
@@ -180,30 +188,17 @@ sealed interface ConeTypeConstructorMarker : TypeConstructorMarker
 
 class ConeCapturedTypeConstructor(
     val projection: ConeTypeProjection,
+    val lowerType: ConeKotlinType?,
+    val captureStatus: CaptureStatus,
     var supertypes: List<ConeKotlinType>? = null,
     val typeParameterMarker: TypeParameterMarker? = null
 ) : CapturedTypeConstructorMarker, ConeTypeConstructorMarker
 
 data class ConeCapturedType(
-    val captureStatus: CaptureStatus,
-    val lowerType: ConeKotlinType?,
     val isMarkedNullable: Boolean = false,
     val constructor: ConeCapturedTypeConstructor,
     override val attributes: ConeAttributes = ConeAttributes.Empty,
-    val isProjectionNotNull: Boolean = false
 ) : ConeSimpleKotlinType(), CapturedTypeMarker {
-
-    constructor(
-        captureStatus: CaptureStatus, lowerType: ConeKotlinType?, projection: ConeTypeProjection,
-        typeParameterMarker: TypeParameterMarker
-    ) : this(
-        captureStatus,
-        lowerType,
-        constructor = ConeCapturedTypeConstructor(
-            projection,
-            typeParameterMarker = typeParameterMarker
-        )
-    )
 
     override val typeArguments: Array<out ConeTypeProjection>
         get() = EMPTY_ARRAY
@@ -214,9 +209,7 @@ data class ConeCapturedType(
 
         other as ConeCapturedType
 
-        if (lowerType != other.lowerType) return false
         if (constructor != other.constructor) return false
-        if (captureStatus != other.captureStatus) return false
         if (isMarkedNullable != other.isMarkedNullable) return false
 
         return true
@@ -224,9 +217,7 @@ data class ConeCapturedType(
 
     override fun hashCode(): Int {
         var result = 7
-        result = 31 * result + (lowerType?.hashCode() ?: 0)
         result = 31 * result + constructor.hashCode()
-        result = 31 * result + captureStatus.hashCode()
         result = 31 * result + isMarkedNullable.hashCode()
         return result
     }

@@ -11,15 +11,18 @@
       <option name="taskNames">
         <list>
           <option value="generateCheckersComponents" />
-          <option value=":analysis:analysis-api-fir:generateCode" />
+          <option value=":analysis:analysis-api-fir:generateDiagnostics" />
         </list>
       </option>
       <option name="vmOptions" value="" />
     </ExternalSystemSettings>
     <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
     <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+    <ExternalSystemDebugDisabled>false</ExternalSystemDebugDisabled>
     <DebugAllEnabled>false</DebugAllEnabled>
     <RunAsTest>false</RunAsTest>
+    <GradleProfilingDisabled>false</GradleProfilingDisabled>
+    <GradleCoverageDisabled>false</GradleCoverageDisabled>
     <method v="2" />
   </configuration>
 </component>

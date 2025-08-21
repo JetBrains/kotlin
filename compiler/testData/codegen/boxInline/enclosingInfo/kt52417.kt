@@ -1,6 +1,4 @@
 // TARGET_BACKEND: JVM
-// IGNORE_INLINER: IR
-// ^^^ KT-75941: with JVM IR Inliner, test expectedly fails with `expected: <OK> but was: <test.TypeToken<java.lang.Object>>`
 // WITH_RUNTIME
 // WITH_STDLIB
 // FILE: 1.kt

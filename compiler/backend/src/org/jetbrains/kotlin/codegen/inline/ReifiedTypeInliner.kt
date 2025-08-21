@@ -237,7 +237,7 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
         type: KT,
         asmType: Type,
         safe: Boolean
-    ) = rewriteNextTypeInsn(insn, Opcodes.CHECKCAST) { stubCheckcast: AbstractInsnNode ->
+    ): Boolean = rewriteNextTypeInsn(insn, Opcodes.CHECKCAST) { stubCheckcast: AbstractInsnNode ->
         if (stubCheckcast !is TypeInsnNode) return false
 
         val newMethodNode = MethodNode(Opcodes.API_VERSION)
@@ -261,7 +261,7 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
         instructions: InsnList,
         type: KT,
         asmType: Type
-    ) = rewriteNextTypeInsn(insn, Opcodes.INSTANCEOF) { stubInstanceOf: AbstractInsnNode ->
+    ): Boolean = rewriteNextTypeInsn(insn, Opcodes.INSTANCEOF) { stubInstanceOf: AbstractInsnNode ->
         if (stubInstanceOf !is TypeInsnNode) return false
 
         val newMethodNode = MethodNode(Opcodes.API_VERSION)
@@ -279,7 +279,7 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
         insn: MethodInsnNode,
         instructions: InsnList,
         type: KT
-    ) = rewriteNextTypeInsn(insn, Opcodes.ACONST_NULL) { stubConstNull: AbstractInsnNode ->
+    ): Boolean = rewriteNextTypeInsn(insn, Opcodes.ACONST_NULL) { stubConstNull: AbstractInsnNode ->
         val newMethodNode = newMethodNodeWithCorrectStackSize {
             typeSystem.generateTypeOf(it, type, intrinsicsSupport)
         }

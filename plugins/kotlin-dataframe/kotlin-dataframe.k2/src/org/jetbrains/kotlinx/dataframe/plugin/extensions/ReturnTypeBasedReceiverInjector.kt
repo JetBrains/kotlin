@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.extensions.FirExpressionResolutionExtension
+import org.jetbrains.kotlin.fir.extensions.captureValueInAnalyze
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitExtensionReceiverValue
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
@@ -67,6 +68,7 @@ class ReturnTypeBasedReceiverInjector(session: FirSession) : FirExpressionResolu
                             coneType = it
                         }
                     }
+                    receiverParameter.captureValueInAnalyze = false
                     ImplicitExtensionReceiverValue(
                         receiverParameter.symbol,
                         it,

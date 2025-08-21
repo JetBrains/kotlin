@@ -1,4 +1,2 @@
--language-version 1.9
--cp %KOTLIN_STDLIB%
 -d output/ap
 ap/Processor.kt

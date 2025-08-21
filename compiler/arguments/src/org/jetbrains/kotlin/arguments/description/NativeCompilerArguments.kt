@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.arguments.description
 
-import org.jetbrains.kotlin.arguments.dsl.TemporaryCompilerArgumentLifecycle
 import org.jetbrains.kotlin.arguments.dsl.base.*
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
 import org.jetbrains.kotlin.arguments.dsl.defaultOne
-import org.jetbrains.kotlin.arguments.dsl.stubLifecycle
 import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
 import org.jetbrains.kotlin.arguments.dsl.types.IntType
 import org.jetbrains.kotlin.arguments.dsl.types.StringArrayType
@@ -27,8 +25,10 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         description = "Enable runtime assertions in generated code.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -37,8 +37,10 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         description = "Enable the emission of debug information.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -48,8 +50,10 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         description = "Produce a runner for unit tests.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -58,8 +62,10 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         description = "Produce a worker runner for unit tests.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -68,8 +74,10 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         description = "Produce a runner for unit tests that doesn't force an exit.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -81,8 +89,10 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         valueType = StringArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -94,8 +104,10 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         valueDescription = "<path>".asReleaseDependent()
         delimiter = KotlinCompilerArgument.Delimiter.None
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -105,8 +117,15 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         valueType = StringType.defaultNull
         valueDescription = "<version>".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        additionalAnnotations(
+            Deprecated("This flag is deprecated")
+        )
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
+            deprecatedVersion = KotlinReleaseVersion.v2_0_20,
+        )
     }
 
     compilerArgument {
@@ -115,8 +134,10 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         description = "List available hardware targets.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -126,8 +147,10 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -136,8 +159,10 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         valueType = StringType.defaultNull
         valueDescription = "<model>".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -147,15 +172,17 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         valueType = StringType.defaultNull
         valueDescription = "<name>".asReleaseDependent()
 
-        additionalAnnotations(
+        additionalMetadata(
             GradleOption(
                 value = DefaultValue.STRING_NULL_DEFAULT,
                 gradleInputType = GradleInputTypes.INPUT
             )
         )
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -168,8 +195,10 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         valueType = StringArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -179,8 +208,10 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         description = "Don't link the libraries from dist/klib automatically.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -189,8 +220,15 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         description = "Don't link endorsed libraries from the dist automatically. This option has been deprecated, as the dist no longer has any endorsed libraries.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        additionalAnnotations(
+            Deprecated("This flag is deprecated")
+        )
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
+            deprecatedVersion = KotlinReleaseVersion.v1_9_20,
+        )
     }
 
     compilerArgument {
@@ -198,8 +236,10 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         description = "Assume the 'main' entry point will be provided by external libraries.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -207,8 +247,10 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         description = "Don't pack the library into a klib file.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -220,8 +262,10 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         valueDescription = "<arg>".asReleaseDependent()
         delimiter = KotlinCompilerArgument.Delimiter.Space
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -232,8 +276,10 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         valueDescription = "<arg>".asReleaseDependent()
         delimiter = KotlinCompilerArgument.Delimiter.None
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -241,8 +287,10 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         description = "Don't link with the stdlib.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -251,8 +299,10 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         description = "Enable optimizations during compilation.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -263,8 +313,10 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         valueType = StringType.defaultNull
         valueDescription = "<name>".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -275,8 +327,10 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         valueType = StringType.defaultNull
         valueDescription = "<name>".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -286,8 +340,10 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         valueType = StringType.defaultNull
         valueDescription = "{program|static|dynamic|framework|library|bitcode}".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -296,8 +352,10 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         valueType = StringType.defaultNull
         valueDescription = "<target>".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     // Advanced options with -X prefix
@@ -308,8 +366,9 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         valueType = StringType.defaultNull
         valueDescription = "<id>".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_6_20,
+        )
     }
 
     compilerArgument {
@@ -320,8 +379,9 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         valueDescription = "<path>".asReleaseDependent()
         delimiter = KotlinCompilerArgument.Delimiter.None
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -332,8 +392,9 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         valueDescription = "<library path>,<cache path>".asReleaseDependent()
         delimiter = KotlinCompilerArgument.Delimiter.None
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -345,8 +406,9 @@ By default caches will be placed into the kotlin-native system cache directory."
         valueDescription = "<path>".asReleaseDependent()
         delimiter = KotlinCompilerArgument.Delimiter.None
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_8_20,
+        )
     }
 
     compilerArgument {
@@ -356,8 +418,9 @@ By default caches will be placed into the kotlin-native system cache directory."
         valueDescription = "<path>".asReleaseDependent()
         delimiter = KotlinCompilerArgument.Delimiter.None
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_8_20,
+        )
     }
 
     compilerArgument {
@@ -368,8 +431,9 @@ By default caches will be placed into the kotlin-native system cache directory."
         valueDescription = "<path>".asReleaseDependent()
         delimiter = KotlinCompilerArgument.Delimiter.None
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_9_20,
+        )
     }
 
     compilerArgument {
@@ -378,8 +442,9 @@ By default caches will be placed into the kotlin-native system cache directory."
         description = "Check dependencies and download the missing ones.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -388,8 +453,9 @@ By default caches will be placed into the kotlin-native system cache directory."
         description = "".asReleaseDependent()
         valueType = StringType.defaultNull
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -401,8 +467,9 @@ This library must be one of the ones passed with '-library'.""".asReleaseDepende
         valueDescription = "<path>".asReleaseDependent()
         delimiter = KotlinCompilerArgument.Delimiter.None
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -413,8 +480,9 @@ but they do not affect compilation at all.""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_0_0,
+        )
     }
 
     compilerArgument {
@@ -422,8 +490,9 @@ but they do not affect compilation at all.""".asReleaseDependent()
         description = "Enable the IR fake override validator.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -433,8 +502,9 @@ but they do not affect compilation at all.""".asReleaseDependent()
         valueType = StringArrayType.defaultNull
         valueDescription = "<header>".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -446,8 +516,9 @@ Currently this option is disabled by default on other platforms.""".asReleaseDep
         valueType = StringType.defaultNull
         valueDescription = "{disable|enable}".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     // TODO: remove after 1.4 release.
@@ -457,8 +528,14 @@ Currently this option is disabled by default on other platforms.""".asReleaseDep
         description = "Add light debug information. This option has been deprecated. Please use '-Xadd-light-debug=enable' instead.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        additionalAnnotations(
+            Deprecated("This flag is deprecated")
+        )
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+            deprecatedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -468,8 +545,9 @@ Currently this option is disabled by default on other platforms.""".asReleaseDep
         valueType = StringType.defaultNull
         valueDescription = "{disable|enable}".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_30,
+        )
     }
 
     compilerArgument {
@@ -480,8 +558,9 @@ Currently this option is disabled by default on other platforms.""".asReleaseDep
         valueDescription = "<path>".asReleaseDependent()
         delimiter = KotlinCompilerArgument.Delimiter.None
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -492,8 +571,9 @@ Currently this option is disabled by default on other platforms.""".asReleaseDep
         valueDescription = "<path>".asReleaseDependent()
         delimiter = KotlinCompilerArgument.Delimiter.None
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_8_0,
+        )
     }
 
     compilerArgument {
@@ -501,8 +581,9 @@ Currently this option is disabled by default on other platforms.""".asReleaseDep
         description = "Force the compiler to produce per-file caches.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_8_0,
+        )
     }
 
     compilerArgument {
@@ -513,8 +594,9 @@ The default value is 1.""".asReleaseDependent()
         valueType = IntType.defaultOne
         valueDescription = "<N>".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_9_0,
+        )
     }
 
     compilerArgument {
@@ -523,8 +605,9 @@ The default value is 1.""".asReleaseDependent()
         description = "Export KDoc entries in the framework header.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -534,8 +617,9 @@ The default value is 1.""".asReleaseDependent()
         description = "Print LLVM bitcode.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -544,8 +628,9 @@ The default value is 1.""".asReleaseDependent()
         description = "Ensure that all calls of possibly long external functions are done in the native thread state.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_6_0,
+        )
     }
 
     compilerArgument {
@@ -554,8 +639,9 @@ The default value is 1.""".asReleaseDependent()
         description = "Print IR.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -563,8 +649,9 @@ The default value is 1.""".asReleaseDependent()
         description = "Print files.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -573,8 +660,9 @@ The default value is 1.""".asReleaseDependent()
         description = "Don't link unused libraries even if explicitly specified.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -583,8 +671,9 @@ The default value is 1.""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_1_20,
+        )
     }
 
     compilerArgument {
@@ -595,8 +684,9 @@ The default value is 1.""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -606,8 +696,9 @@ The default value is 1.""".asReleaseDependent()
         valueType = StringArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -616,8 +707,9 @@ The default value is 1.""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<name>".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -625,8 +717,9 @@ The default value is 1.""".asReleaseDependent()
         description = "Create a framework with a static library instead of a dynamic one.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -636,8 +729,9 @@ The default value is 1.""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -645,8 +739,9 @@ The default value is 1.""".asReleaseDependent()
         description = "Save the result of the Kotlin IR to LLVM IR translation to '-Xsave-llvm-ir-directory'.".asReleaseDependent()
         valueType = StringArrayType.defaultNull
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_7_0,
+        )
     }
 
     compilerArgument {
@@ -656,8 +751,9 @@ The default value is 1.""".asReleaseDependent()
         description = "Verify LLVM bitcode after each method.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -665,8 +761,9 @@ The default value is 1.""".asReleaseDependent()
         description = "Verify the compiler.".asReleaseDependent()
         valueType = StringType.defaultNull
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -675,8 +772,10 @@ The default value is 1.""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -685,8 +784,9 @@ The default value is 1.""".asReleaseDependent()
         valueType = StringArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_8_20,
+        )
     }
 
     compilerArgument {
@@ -695,8 +795,9 @@ The default value is 1.""".asReleaseDependent()
         description = "Generate debug info of the given version (1, 2).".asReleaseDependent()
         valueType = IntType.defaultOne
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -704,8 +805,9 @@ The default value is 1.""".asReleaseDependent()
         description = "Disable generics support for framework header.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -715,8 +817,9 @@ The default value is 1.""".asReleaseDependent()
         valueType = StringArrayType.defaultNull
         valueDescription = "<arg1,arg2,...>".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -725,8 +828,9 @@ The default value is 1.""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "std | mimalloc | custom".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -734,8 +838,9 @@ The default value is 1.""".asReleaseDependent()
         description = "Save a klib that only contains the public ABI to the given path.".asReleaseDependent()
         valueType = StringType.defaultNull
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_9_24
+        )
     }
 
     compilerArgument {
@@ -744,8 +849,9 @@ The default value is 1.""".asReleaseDependent()
         valueType = StringArrayType.defaultNull
         valueDescription = "<old1=new1,old2=new2,...>".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -754,8 +860,9 @@ The default value is 1.""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "{disable|enable}".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -767,8 +874,9 @@ The default value is 1.""".asReleaseDependent()
         // For example, target cpu features.
         delimiter = KotlinCompilerArgument.Delimiter.Semicolon
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -777,8 +885,9 @@ The default value is 1.""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<mode>".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_20,
+        )
     }
 
     compilerArgument {
@@ -787,8 +896,9 @@ The default value is 1.""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<gc>".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_30,
+        )
     }
 
     compilerArgument {
@@ -798,8 +908,9 @@ The default value is 1.""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "{disable|enable}".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_6_0,
+        )
     }
 
     // TODO: Remove when legacy MM is gone.
@@ -809,8 +920,9 @@ The default value is 1.""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<mode>".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_6_0,
+        )
     }
 
     compilerArgument {
@@ -819,8 +931,9 @@ The default value is 1.""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "{dev|user|absolute path to llvm}".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_6_0,
+        )
     }
 
     compilerArgument {
@@ -830,8 +943,9 @@ The default value is 1.""".asReleaseDependent()
         valueType = StringArrayType.defaultNull
         valueDescription = "<option=value>".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_6_0,
+        )
     }
 
     compilerArgument {
@@ -840,8 +954,9 @@ The default value is 1.""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<tag1=level1,tag2=level2,...>".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_6_0,
+        )
     }
 
     compilerArgument {
@@ -851,8 +966,9 @@ The default value is 1.""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_7_0
+        )
     }
 
     compilerArgument {
@@ -861,8 +977,9 @@ The default value is 1.""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "{disable|enable}".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_6_20,
+        )
     }
 
     compilerArgument {
@@ -870,8 +987,9 @@ The default value is 1.""".asReleaseDependent()
         description = "Omit binary when compiling the framework.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_8_0,
+        )
     }
 
     compilerArgument {
@@ -880,8 +998,9 @@ The default value is 1.""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_9_0,
+        )
     }
 
     compilerArgument {
@@ -891,8 +1010,9 @@ The default value is 1.""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_9_0,
+        )
     }
 
     compilerArgument {
@@ -901,8 +1021,9 @@ The default value is 1.""".asReleaseDependent()
         description = "Path for writing backend dependencies.".asReleaseDependent()
         valueType = StringType.defaultNull
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_9_0,
+        )
     }
 
     compilerArgument {
@@ -910,8 +1031,9 @@ The default value is 1.""".asReleaseDependent()
         description = "Directory that should contain the results of '-Xsave-llvm-ir-after=<phase>'.".asReleaseDependent()
         valueType = StringType.defaultNull
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_9_0,
+        )
     }
 
     compilerArgument {
@@ -919,8 +1041,9 @@ The default value is 1.""".asReleaseDependent()
         description = "Custom path to the location of konan distributions.".asReleaseDependent()
         valueType = StringType.defaultNull
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_9_20,
+        )
     }
 
     compilerArgument {
@@ -928,8 +1051,9 @@ The default value is 1.""".asReleaseDependent()
         description = "Custom set of LLVM passes to run as the ModuleOptimizationPipeline.".asReleaseDependent()
         valueType = StringType.defaultNull
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_1_0,
+        )
     }
 
     compilerArgument {
@@ -938,8 +1062,9 @@ The default value is 1.""".asReleaseDependent()
         description = "Custom set of LLVM passes to run as the LTOOptimizationPipeline.".asReleaseDependent()
         valueType = StringType.defaultNull
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_1_0,
+        )
     }
 
     compilerArgument {
@@ -947,16 +1072,8 @@ The default value is 1.""".asReleaseDependent()
         description = "Comma-separated list that will be written as the value of 'native_targets' property in the .klib manifest. Unknown values are discarded.".asReleaseDependent()
         valueType = StringArrayType.defaultNull
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
-    }
-
-    compilerArgument {
-        name = "Xdump-synthetic-accessors-to"
-        description = "Path to a directory to dump synthetic accessors and their use sites.".asReleaseDependent()
-        valueType = StringType.defaultNull
-
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_0_20,
+        )
     }
 }

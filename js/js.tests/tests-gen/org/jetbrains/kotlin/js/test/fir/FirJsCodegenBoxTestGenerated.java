@@ -48,6 +48,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
     }
 
     @Test
+    @TestMetadata("checkReturnValue.kt")
+    public void testCheckReturnValue() {
+      runTest("compiler/testData/codegen/box/annotations/checkReturnValue.kt");
+    }
+
+    @Test
     @TestMetadata("deserializedLocalClassArgument.kt")
     public void testDeserializedLocalClassArgument() {
       runTest("compiler/testData/codegen/box/annotations/deserializedLocalClassArgument.kt");
@@ -1160,6 +1166,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
     }
 
     @Test
+    @TestMetadata("k42000_crossmodule.kt")
+    public void testK42000_crossmodule() {
+      runTest("compiler/testData/codegen/box/basics/k42000_crossmodule.kt");
+    }
+
+    @Test
     @TestMetadata("kt75483.kt")
     public void testKt75483() {
       runTest("compiler/testData/codegen/box/basics/kt75483.kt");
@@ -1625,6 +1637,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
     @Test
     public void testAllFilesPresentInBoxing() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/boxing"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+    }
+
+    @Test
+    @TestMetadata("boxBoolean.kt")
+    public void testBoxBoolean() {
+      runTest("compiler/testData/codegen/box/boxing/boxBoolean.kt");
     }
 
     @Test
@@ -2156,27 +2174,9 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
     }
 
     @Test
-    @TestMetadata("fakeOverrideFromInterfaceThroughIntermediateClass.kt")
-    public void testFakeOverrideFromInterfaceThroughIntermediateClass() {
-      runTest("compiler/testData/codegen/box/bridges/fakeOverrideFromInterfaceThroughIntermediateClass.kt");
-    }
-
-    @Test
-    @TestMetadata("fakeOverrideMultiFile.kt")
-    public void testFakeOverrideMultiFile() {
-      runTest("compiler/testData/codegen/box/bridges/fakeOverrideMultiFile.kt");
-    }
-
-    @Test
     @TestMetadata("fakeOverrideOfTraitImpl.kt")
     public void testFakeOverrideOfTraitImpl() {
       runTest("compiler/testData/codegen/box/bridges/fakeOverrideOfTraitImpl.kt");
-    }
-
-    @Test
-    @TestMetadata("fakeOverrideThroughGenericSuperclass.kt")
-    public void testFakeOverrideThroughGenericSuperclass() {
-      runTest("compiler/testData/codegen/box/bridges/fakeOverrideThroughGenericSuperclass.kt");
     }
 
     @Test
@@ -2663,6 +2663,322 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
     @TestMetadata("typeParameterInExtensionReceiver.kt")
     public void testTypeParameterInExtensionReceiver() {
       runTest("compiler/testData/codegen/box/bridges/typeParameterInExtensionReceiver.kt");
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/box/bridges/declarationDifferentSignature")
+    @TestDataPath("$PROJECT_ROOT")
+    public class DeclarationDifferentSignature {
+      @Test
+      public void testAllFilesPresentInDeclarationDifferentSignature() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bridges/declarationDifferentSignature"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+
+      @Test
+      @TestMetadata("simpleAbstractDeclarationDifferentSignature.kt")
+      public void testSimpleAbstractDeclarationDifferentSignature() {
+        runTest("compiler/testData/codegen/box/bridges/declarationDifferentSignature/simpleAbstractDeclarationDifferentSignature.kt");
+      }
+
+      @Test
+      @TestMetadata("simpleAbstractDeclarationOverridesConcreteDifferentSignature.kt")
+      public void testSimpleAbstractDeclarationOverridesConcreteDifferentSignature() {
+        runTest("compiler/testData/codegen/box/bridges/declarationDifferentSignature/simpleAbstractDeclarationOverridesConcreteDifferentSignature.kt");
+      }
+
+      @Test
+      @TestMetadata("simpleConcreteDeclarationDifferentSignature.kt")
+      public void testSimpleConcreteDeclarationDifferentSignature() {
+        runTest("compiler/testData/codegen/box/bridges/declarationDifferentSignature/simpleConcreteDeclarationDifferentSignature.kt");
+      }
+
+      @Test
+      @TestMetadata("simpleConcreteDeclarationOverridesAbstractDifferentSignature.kt")
+      public void testSimpleConcreteDeclarationOverridesAbstractDifferentSignature() {
+        runTest("compiler/testData/codegen/box/bridges/declarationDifferentSignature/simpleConcreteDeclarationOverridesAbstractDifferentSignature.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/box/bridges/diamond")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Diamond {
+      @Test
+      public void testAllFilesPresentInDiamond() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bridges/diamond"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+
+      @Test
+      @TestMetadata("diamondAbstractDeclarations.kt")
+      public void testDiamondAbstractDeclarations() {
+        runTest("compiler/testData/codegen/box/bridges/diamond/diamondAbstractDeclarations.kt");
+      }
+
+      @Test
+      @TestMetadata("diamondAbstractFakeOverridesInTheMiddle.kt")
+      public void testDiamondAbstractFakeOverridesInTheMiddle() {
+        runTest("compiler/testData/codegen/box/bridges/diamond/diamondAbstractFakeOverridesInTheMiddle.kt");
+      }
+
+      @Test
+      @TestMetadata("diamondMixedDeclarations.kt")
+      public void testDiamondMixedDeclarations() {
+        runTest("compiler/testData/codegen/box/bridges/diamond/diamondMixedDeclarations.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/box/bridges/doubleOverride")
+    @TestDataPath("$PROJECT_ROOT")
+    public class DoubleOverride {
+      @Test
+      public void testAllFilesPresentInDoubleOverride() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bridges/doubleOverride"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+
+      @Test
+      @TestMetadata("concreteDeclarationOverridesAbstractDeclarationOverridingConcrete.kt")
+      public void testConcreteDeclarationOverridesAbstractDeclarationOverridingConcrete() {
+        runTest("compiler/testData/codegen/box/bridges/doubleOverride/concreteDeclarationOverridesAbstractDeclarationOverridingConcrete.kt");
+      }
+
+      @Test
+      @TestMetadata("concreteDeclarationOverridesTwoInheritingDeclarations.kt")
+      public void testConcreteDeclarationOverridesTwoInheritingDeclarations() {
+        runTest("compiler/testData/codegen/box/bridges/doubleOverride/concreteDeclarationOverridesTwoInheritingDeclarations.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/box/bridges/fakeOverride")
+    @TestDataPath("$PROJECT_ROOT")
+    public class FakeOverride {
+      @Test
+      @TestMetadata("abstractFakeOverride.kt")
+      public void testAbstractFakeOverride() {
+        runTest("compiler/testData/codegen/box/bridges/fakeOverride/abstractFakeOverride.kt");
+      }
+
+      @Test
+      public void testAllFilesPresentInFakeOverride() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bridges/fakeOverride"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+
+      @Test
+      @TestMetadata("diamondFakeOverrideAbstractAndConcrete.kt")
+      public void testDiamondFakeOverrideAbstractAndConcrete() {
+        runTest("compiler/testData/codegen/box/bridges/fakeOverride/diamondFakeOverrideAbstractAndConcrete.kt");
+      }
+
+      @Test
+      @TestMetadata("diamondFakeOverrideAbstractFakeAndConcrete.kt")
+      public void testDiamondFakeOverrideAbstractFakeAndConcrete() {
+        runTest("compiler/testData/codegen/box/bridges/fakeOverride/diamondFakeOverrideAbstractFakeAndConcrete.kt");
+      }
+
+      @Test
+      @TestMetadata("diamondFakeOverrideAbstractOverridesConcrete.kt")
+      public void testDiamondFakeOverrideAbstractOverridesConcrete() {
+        runTest("compiler/testData/codegen/box/bridges/fakeOverride/diamondFakeOverrideAbstractOverridesConcrete.kt");
+      }
+
+      @Test
+      @TestMetadata("fakeOverrideAbstractAndConcreteDeclarations.kt")
+      public void testFakeOverrideAbstractAndConcreteDeclarations() {
+        runTest("compiler/testData/codegen/box/bridges/fakeOverride/fakeOverrideAbstractAndConcreteDeclarations.kt");
+      }
+
+      @Test
+      @TestMetadata("fakeOverrideDiamondWithExtraAbstract.kt")
+      public void testFakeOverrideDiamondWithExtraAbstract() {
+        runTest("compiler/testData/codegen/box/bridges/fakeOverride/fakeOverrideDiamondWithExtraAbstract.kt");
+      }
+
+      @Test
+      @TestMetadata("fakeOverrideInheritingDeclarations.kt")
+      public void testFakeOverrideInheritingDeclarations() {
+        runTest("compiler/testData/codegen/box/bridges/fakeOverride/fakeOverrideInheritingDeclarations.kt");
+      }
+
+      @Test
+      @TestMetadata("fakeOverrideInheritingDeclarationsAndAbstract.kt")
+      public void testFakeOverrideInheritingDeclarationsAndAbstract() {
+        runTest("compiler/testData/codegen/box/bridges/fakeOverride/fakeOverrideInheritingDeclarationsAndAbstract.kt");
+      }
+
+      @Test
+      @TestMetadata("fakeOverrideInheritsBridgeFromDeclaration.kt")
+      public void testFakeOverrideInheritsBridgeFromDeclaration() {
+        runTest("compiler/testData/codegen/box/bridges/fakeOverride/fakeOverrideInheritsBridgeFromDeclaration.kt");
+      }
+
+      @Test
+      @TestMetadata("fakeOverrideInheritsBridgeFromFakeOverride.kt")
+      public void testFakeOverrideInheritsBridgeFromFakeOverride() {
+        runTest("compiler/testData/codegen/box/bridges/fakeOverride/fakeOverrideInheritsBridgeFromFakeOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("fakeOverrideInheritsBridgesAndAbstract.kt")
+      public void testFakeOverrideInheritsBridgesAndAbstract() {
+        runTest("compiler/testData/codegen/box/bridges/fakeOverride/fakeOverrideInheritsBridgesAndAbstract.kt");
+      }
+
+      @Test
+      @TestMetadata("fakeOverrideManyDeclarations.kt")
+      public void testFakeOverrideManyDeclarations() {
+        runTest("compiler/testData/codegen/box/bridges/fakeOverride/fakeOverrideManyDeclarations.kt");
+      }
+
+      @Test
+      @TestMetadata("fakeOverrideMisleadingImplementation.kt")
+      public void testFakeOverrideMisleadingImplementation() {
+        runTest("compiler/testData/codegen/box/bridges/fakeOverride/fakeOverrideMisleadingImplementation.kt");
+      }
+
+      @Test
+      @TestMetadata("fakeOverrideSameSuperDeclarations.kt")
+      public void testFakeOverrideSameSuperDeclarations() {
+        runTest("compiler/testData/codegen/box/bridges/fakeOverride/fakeOverrideSameSuperDeclarations.kt");
+      }
+
+      @Test
+      @TestMetadata("fakeOverrideShouldNotInheritBridgeFromAbstractDeclaration.kt")
+      public void testFakeOverrideShouldNotInheritBridgeFromAbstractDeclaration() {
+        runTest("compiler/testData/codegen/box/bridges/fakeOverride/fakeOverrideShouldNotInheritBridgeFromAbstractDeclaration.kt");
+      }
+
+      @Test
+      @TestMetadata("fakeOverrideShouldNotInheritBridgeFromAbstractFakeOverride.kt")
+      public void testFakeOverrideShouldNotInheritBridgeFromAbstractFakeOverride() {
+        runTest("compiler/testData/codegen/box/bridges/fakeOverride/fakeOverrideShouldNotInheritBridgeFromAbstractFakeOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("fakeOverrideTwoDeclarationsThroughFakeOverrides.kt")
+      public void testFakeOverrideTwoDeclarationsThroughFakeOverrides() {
+        runTest("compiler/testData/codegen/box/bridges/fakeOverride/fakeOverrideTwoDeclarationsThroughFakeOverrides.kt");
+      }
+
+      @Test
+      @TestMetadata("longTreeOfFakeOverrideBridgeInheritance.kt")
+      public void testLongTreeOfFakeOverrideBridgeInheritance() {
+        runTest("compiler/testData/codegen/box/bridges/fakeOverride/longTreeOfFakeOverrideBridgeInheritance.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/box/bridges/fakeOverrideDifferentSignature")
+    @TestDataPath("$PROJECT_ROOT")
+    public class FakeOverrideDifferentSignature {
+      @Test
+      public void testAllFilesPresentInFakeOverrideDifferentSignature() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bridges/fakeOverrideDifferentSignature"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+
+      @Test
+      @TestMetadata("simpleAbstractDeclarationOverridesAbstractThroughFakeOverride.kt")
+      public void testSimpleAbstractDeclarationOverridesAbstractThroughFakeOverride() {
+        runTest("compiler/testData/codegen/box/bridges/fakeOverrideDifferentSignature/simpleAbstractDeclarationOverridesAbstractThroughFakeOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("simpleAbstractDeclarationOverridesConcreteThroughFakeOverride.kt")
+      public void testSimpleAbstractDeclarationOverridesConcreteThroughFakeOverride() {
+        runTest("compiler/testData/codegen/box/bridges/fakeOverrideDifferentSignature/simpleAbstractDeclarationOverridesConcreteThroughFakeOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("simpleConcreteDeclarationOverridesAbstractThroughFakeOverride.kt")
+      public void testSimpleConcreteDeclarationOverridesAbstractThroughFakeOverride() {
+        runTest("compiler/testData/codegen/box/bridges/fakeOverrideDifferentSignature/simpleConcreteDeclarationOverridesAbstractThroughFakeOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("simpleConcreteDeclarationOverridesConcreteThroughFakeOverride.kt")
+      public void testSimpleConcreteDeclarationOverridesConcreteThroughFakeOverride() {
+        runTest("compiler/testData/codegen/box/bridges/fakeOverrideDifferentSignature/simpleConcreteDeclarationOverridesConcreteThroughFakeOverride.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/box/bridges/noBridges")
+    @TestDataPath("$PROJECT_ROOT")
+    public class NoBridges {
+      @Test
+      public void testAllFilesPresentInNoBridges() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bridges/noBridges"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+
+      @Test
+      @TestMetadata("oneVertexAbstract.kt")
+      public void testOneVertexAbstract() {
+        runTest("compiler/testData/codegen/box/bridges/noBridges/oneVertexAbstract.kt");
+      }
+
+      @Test
+      @TestMetadata("oneVertexConcrete.kt")
+      public void testOneVertexConcrete() {
+        runTest("compiler/testData/codegen/box/bridges/noBridges/oneVertexConcrete.kt");
+      }
+
+      @Test
+      @TestMetadata("simpleAbstractDeclarationOverridesConcreteSameSignature.kt")
+      public void testSimpleAbstractDeclarationOverridesConcreteSameSignature() {
+        runTest("compiler/testData/codegen/box/bridges/noBridges/simpleAbstractDeclarationOverridesConcreteSameSignature.kt");
+      }
+
+      @Test
+      @TestMetadata("simpleAbstractDeclarationSameSignature.kt")
+      public void testSimpleAbstractDeclarationSameSignature() {
+        runTest("compiler/testData/codegen/box/bridges/noBridges/simpleAbstractDeclarationSameSignature.kt");
+      }
+
+      @Test
+      @TestMetadata("simpleDeclarationSameSignature.kt")
+      public void testSimpleDeclarationSameSignature() {
+        runTest("compiler/testData/codegen/box/bridges/noBridges/simpleDeclarationSameSignature.kt");
+      }
+
+      @Test
+      @TestMetadata("simpleFakeOverrideSameSignature.kt")
+      public void testSimpleFakeOverrideSameSignature() {
+        runTest("compiler/testData/codegen/box/bridges/noBridges/simpleFakeOverrideSameSignature.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/box/bridges/overridesTwoDeclarations")
+    @TestDataPath("$PROJECT_ROOT")
+    public class OverridesTwoDeclarations {
+      @Test
+      @TestMetadata("abstractDeclarationOverridesAbstractAndConcreteDeclarations.kt")
+      public void testAbstractDeclarationOverridesAbstractAndConcreteDeclarations() {
+        runTest("compiler/testData/codegen/box/bridges/overridesTwoDeclarations/abstractDeclarationOverridesAbstractAndConcreteDeclarations.kt");
+      }
+
+      @Test
+      @TestMetadata("abstractDeclarationOverridesTwoAbstractDeclarations.kt")
+      public void testAbstractDeclarationOverridesTwoAbstractDeclarations() {
+        runTest("compiler/testData/codegen/box/bridges/overridesTwoDeclarations/abstractDeclarationOverridesTwoAbstractDeclarations.kt");
+      }
+
+      @Test
+      public void testAllFilesPresentInOverridesTwoDeclarations() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bridges/overridesTwoDeclarations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+
+      @Test
+      @TestMetadata("concreteDeclarationOverridesAbstractAndConcreteDeclarations.kt")
+      public void testConcreteDeclarationOverridesAbstractAndConcreteDeclarations() {
+        runTest("compiler/testData/codegen/box/bridges/overridesTwoDeclarations/concreteDeclarationOverridesAbstractAndConcreteDeclarations.kt");
+      }
+
+      @Test
+      @TestMetadata("concreteDeclarationOverridesTwoAbstractDeclarations.kt")
+      public void testConcreteDeclarationOverridesTwoAbstractDeclarations() {
+        runTest("compiler/testData/codegen/box/bridges/overridesTwoDeclarations/concreteDeclarationOverridesTwoAbstractDeclarations.kt");
+      }
     }
 
     @Nested
@@ -4520,12 +4836,6 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
       @TestMetadata("extensionToArray.kt")
       public void testExtensionToArray() {
         runTest("compiler/testData/codegen/box/callableReference/property/extensionToArray.kt");
-      }
-
-      @Test
-      @TestMetadata("genericProperty.kt")
-      public void testGenericProperty() {
-        runTest("compiler/testData/codegen/box/callableReference/property/genericProperty.kt");
       }
 
       @Test
@@ -7080,6 +7390,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
     }
 
     @Test
+    @TestMetadata("inlineAnonymousParameter.kt")
+    public void testInlineAnonymousParameter() {
+      runTest("compiler/testData/codegen/box/contextParameters/inlineAnonymousParameter.kt");
+    }
+
+    @Test
     @TestMetadata("inlineContextualReceiverLambda.kt")
     public void testInlineContextualReceiverLambda() {
       runTest("compiler/testData/codegen/box/contextParameters/inlineContextualReceiverLambda.kt");
@@ -8535,6 +8851,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
       public void testAllFilesPresentInSlowDsl() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/slowDsl"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
       }
+
+      @Test
+      @TestMetadata("slowHtmlLikeDsl.kt")
+      public void testSlowHtmlLikeDsl() {
+        runTest("compiler/testData/codegen/box/controlStructures/slowDsl/slowHtmlLikeDsl.kt");
+      }
     }
 
     @Nested
@@ -9261,6 +9583,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
     @TestMetadata("handleResultSuspended.kt")
     public void testHandleResultSuspended() {
       runTest("compiler/testData/codegen/box/coroutines/handleResultSuspended.kt");
+    }
+
+    @Test
+    @TestMetadata("implicitUnitReturn.kt")
+    public void testImplicitUnitReturn() {
+      runTest("compiler/testData/codegen/box/coroutines/implicitUnitReturn.kt");
     }
 
     @Test
@@ -11735,6 +12063,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
       }
 
       @Test
+      @TestMetadata("onNullableArgument.kt")
+      public void testOnNullableArgument() {
+        runTest("compiler/testData/codegen/box/coroutines/suspendConversion/onNullableArgument.kt");
+      }
+
+      @Test
       @TestMetadata("subtypeOfFunctionalTypeToSuspendConversion.kt")
       public void testSubtypeOfFunctionalTypeToSuspendConversion() {
         runTest("compiler/testData/codegen/box/coroutines/suspendConversion/subtypeOfFunctionalTypeToSuspendConversion.kt");
@@ -12072,6 +12406,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
       @TestMetadata("kt75926.kt")
       public void testKt75926() {
         runTest("compiler/testData/codegen/box/coroutines/varSpilling/kt75926.kt");
+      }
+
+      @Test
+      @TestMetadata("kt79276.kt")
+      public void testKt79276() {
+        runTest("compiler/testData/codegen/box/coroutines/varSpilling/kt79276.kt");
       }
 
       @Test
@@ -12755,6 +13095,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
     @TestMetadata("kt52702.kt")
     public void testKt52702() {
       runTest("compiler/testData/codegen/box/defaultArguments/kt52702.kt");
+    }
+
+    @Test
+    @TestMetadata("kt59326.kt")
+    public void testKt59326() {
+      runTest("compiler/testData/codegen/box/defaultArguments/kt59326.kt");
     }
 
     @Test
@@ -13626,6 +13972,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
       @TestMetadata("kt49793_object.kt")
       public void testKt49793_object() {
         runTest("compiler/testData/codegen/box/delegatedProperty/delegateToAnother/kt49793_object.kt");
+      }
+
+      @Test
+      @TestMetadata("kt79979_memberExtension.kt")
+      public void testKt79979_memberExtension() {
+        runTest("compiler/testData/codegen/box/delegatedProperty/delegateToAnother/kt79979_memberExtension.kt");
       }
 
       @Test
@@ -17184,6 +17536,24 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
     }
 
     @Test
+    @TestMetadata("kt77685-sam.kt")
+    public void testKt77685_sam() {
+      runTest("compiler/testData/codegen/box/funInterface/kt77685-sam.kt");
+    }
+
+    @Test
+    @TestMetadata("kt79092.kt")
+    public void testKt79092() {
+      runTest("compiler/testData/codegen/box/funInterface/kt79092.kt");
+    }
+
+    @Test
+    @TestMetadata("kt79092-sam.kt")
+    public void testKt79092_sam() {
+      runTest("compiler/testData/codegen/box/funInterface/kt79092-sam.kt");
+    }
+
+    @Test
     @TestMetadata("multimodule.kt")
     public void testMultimodule() {
       runTest("compiler/testData/codegen/box/funInterface/multimodule.kt");
@@ -20461,6 +20831,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
     @TestMetadata("multipleInheritanceClash.kt")
     public void testMultipleInheritanceClash() {
       runTest("compiler/testData/codegen/box/inline/multipleInheritanceClash.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedLabelsInlinedClashingAtFunctionsWithClosure.kt")
+    public void testNestedLabelsInlinedClashingAtFunctionsWithClosure() {
+      runTest("compiler/testData/codegen/box/inline/nestedLabelsInlinedClashingAtFunctionsWithClosure.kt");
     }
 
     @Test
@@ -27003,21 +27379,9 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
       }
 
       @Test
-      @TestMetadata("deepGenericDelegatedProperty.kt")
-      public void testDeepGenericDelegatedProperty() {
-        runTest("compiler/testData/codegen/box/ir/serializationRegressions/deepGenericDelegatedProperty.kt");
-      }
-
-      @Test
       @TestMetadata("dispatchReceiverValue.kt")
       public void testDispatchReceiverValue() {
         runTest("compiler/testData/codegen/box/ir/serializationRegressions/dispatchReceiverValue.kt");
-      }
-
-      @Test
-      @TestMetadata("genericProperty.kt")
-      public void testGenericProperty() {
-        runTest("compiler/testData/codegen/box/ir/serializationRegressions/genericProperty.kt");
       }
 
       @Test
@@ -27846,6 +28210,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
     public void testLambda_kt49360_wrapBlock() {
       runTest("compiler/testData/codegen/box/lambda/lambda_kt49360_wrapBlock.kt");
     }
+
+    @Test
+    @TestMetadata("lambda_kt78666.kt")
+    public void testLambda_kt78666() {
+      runTest("compiler/testData/codegen/box/lambda/lambda_kt78666.kt");
+    }
   }
 
   @Nested
@@ -28616,6 +28986,36 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
     }
 
     @Test
+    @TestMetadata("nameBasedDestructuringFullForm.kt")
+    public void testNameBasedDestructuringFullForm() {
+      runTest("compiler/testData/codegen/box/multiDecl/nameBasedDestructuringFullForm.kt");
+    }
+
+    @Test
+    @TestMetadata("nameBasedDestructuringShortForm.kt")
+    public void testNameBasedDestructuringShortForm() {
+      runTest("compiler/testData/codegen/box/multiDecl/nameBasedDestructuringShortForm.kt");
+    }
+
+    @Test
+    @TestMetadata("nameBasedDestructuringUnderscoreWithRenaming.kt")
+    public void testNameBasedDestructuringUnderscoreWithRenaming() {
+      runTest("compiler/testData/codegen/box/multiDecl/nameBasedDestructuringUnderscoreWithRenaming.kt");
+    }
+
+    @Test
+    @TestMetadata("positionalDestructuringFullForm.kt")
+    public void testPositionalDestructuringFullForm() {
+      runTest("compiler/testData/codegen/box/multiDecl/positionalDestructuringFullForm.kt");
+    }
+
+    @Test
+    @TestMetadata("positionalDestructuringShortForm.kt")
+    public void testPositionalDestructuringShortForm() {
+      runTest("compiler/testData/codegen/box/multiDecl/positionalDestructuringShortForm.kt");
+    }
+
+    @Test
     @TestMetadata("returnInElvis.kt")
     public void testReturnInElvis() {
       runTest("compiler/testData/codegen/box/multiDecl/returnInElvis.kt");
@@ -29215,6 +29615,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
       }
 
       @Test
+      @TestMetadata("internalSetterInCommon.kt")
+      public void testInternalSetterInCommon() {
+        runTest("compiler/testData/codegen/box/multiplatform/k2/internalSetterInCommon.kt");
+      }
+
+      @Test
       @TestMetadata("kt57391.kt")
       public void testKt57391() {
         runTest("compiler/testData/codegen/box/multiplatform/k2/kt57391.kt");
@@ -29272,12 +29678,6 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
       @TestMetadata("starImportOfExpectEnumWithActualTypeAlias.kt")
       public void testStarImportOfExpectEnumWithActualTypeAlias() {
         runTest("compiler/testData/codegen/box/multiplatform/k2/starImportOfExpectEnumWithActualTypeAlias.kt");
-      }
-
-      @Test
-      @TestMetadata("unsignedArrayForLoop.kt")
-      public void testUnsignedArrayForLoop() {
-        runTest("compiler/testData/codegen/box/multiplatform/k2/unsignedArrayForLoop.kt");
       }
 
       @Nested
@@ -29944,6 +30344,18 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("arrayDeque.kt")
+        public void testArrayDeque() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/arrayDeque.kt");
+        }
+
+        @Test
+        @TestMetadata("differentDependenciesWithTheSameName.kt")
+        public void testDifferentDependenciesWithTheSameName() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/differentDependenciesWithTheSameName.kt");
+        }
+
+        @Test
         @TestMetadata("expectActualChain2-2.kt")
         public void testExpectActualChain2_2() {
           runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectActualChain2-2.kt");
@@ -29980,9 +30392,27 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("expectOfActualTypeAliasNotReferenced.kt")
+        public void testExpectOfActualTypeAliasNotReferenced() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectOfActualTypeAliasNotReferenced.kt");
+        }
+
+        @Test
         @TestMetadata("expectRefinement.kt")
         public void testExpectRefinement() {
           runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectRefinement.kt");
+        }
+
+        @Test
+        @TestMetadata("fakeOverrideExpectSuperType.kt")
+        public void testFakeOverrideExpectSuperType() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/fakeOverrideExpectSuperType.kt");
+        }
+
+        @Test
+        @TestMetadata("fakeOverrideExpectSuperTypeFromLib.kt")
+        public void testFakeOverrideExpectSuperTypeFromLib() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/fakeOverrideExpectSuperTypeFromLib.kt");
         }
 
         @Test
@@ -30061,6 +30491,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
         @TestMetadata("simple.kt")
         public void testSimple() {
           runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/simple.kt");
+        }
+
+        @Test
+        @TestMetadata("stdlibRegressions.kt")
+        public void testStdlibRegressions() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/stdlibRegressions.kt");
         }
 
         @Test
@@ -31814,6 +32250,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
     }
 
     @Test
+    @TestMetadata("kt52230.kt")
+    public void testKt52230() {
+      runTest("compiler/testData/codegen/box/primitiveTypes/kt52230.kt");
+    }
+
+    @Test
     @TestMetadata("kt6590_identityEquals.kt")
     public void testKt6590_identityEquals() {
       runTest("compiler/testData/codegen/box/primitiveTypes/kt6590_identityEquals.kt");
@@ -31853,6 +32295,18 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
     @TestMetadata("kt757.kt")
     public void testKt757() {
       runTest("compiler/testData/codegen/box/primitiveTypes/kt757.kt");
+    }
+
+    @Test
+    @TestMetadata("kt79977.kt")
+    public void testKt79977() {
+      runTest("compiler/testData/codegen/box/primitiveTypes/kt79977.kt");
+    }
+
+    @Test
+    @TestMetadata("kt79977_withIncrementalCompilation.kt")
+    public void testKt79977_withIncrementalCompilation() {
+      runTest("compiler/testData/codegen/box/primitiveTypes/kt79977_withIncrementalCompilation.kt");
     }
 
     @Test
@@ -31931,6 +32385,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
     @TestMetadata("unboxComparable.kt")
     public void testUnboxComparable() {
       runTest("compiler/testData/codegen/box/primitiveTypes/unboxComparable.kt");
+    }
+
+    @Test
+    @TestMetadata("virtualCallToCustomNumber.kt")
+    public void testVirtualCallToCustomNumber() {
+      runTest("compiler/testData/codegen/box/primitiveTypes/virtualCallToCustomNumber.kt");
     }
 
     @Nested
@@ -32682,6 +33142,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
     }
 
     @Test
+    @TestMetadata("kt78962.kt")
+    public void testKt78962() {
+      runTest("compiler/testData/codegen/box/properties/kt78962.kt");
+    }
+
+    @Test
     @TestMetadata("kt8928.kt")
     public void testKt8928() {
       runTest("compiler/testData/codegen/box/properties/kt8928.kt");
@@ -32808,6 +33274,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
       @Test
       public void testAllFilesPresentInBackingField() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/properties/backingField"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+
+      @Test
+      @TestMetadata("backingFieldInitializedInInit.kt")
+      public void testBackingFieldInitializedInInit() {
+        runTest("compiler/testData/codegen/box/properties/backingField/backingFieldInitializedInInit.kt");
       }
 
       @Test
@@ -39677,6 +40149,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
       }
 
       @Test
+      @TestMetadata("inNestedInline.kt")
+      public void testInNestedInline() {
+        runTest("compiler/testData/codegen/box/reflection/typeOf/inNestedInline.kt");
+      }
+
+      @Test
       @TestMetadata("inlineClasses.kt")
       public void testInlineClasses() {
         runTest("compiler/testData/codegen/box/reflection/typeOf/inlineClasses.kt");
@@ -39716,6 +40194,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
       @TestMetadata("reifiedAsNestedArgument.kt")
       public void testReifiedAsNestedArgument() {
         runTest("compiler/testData/codegen/box/reflection/typeOf/reifiedAsNestedArgument.kt");
+      }
+
+      @Test
+      @TestMetadata("typeAliasedType.kt")
+      public void testTypeAliasedType() {
+        runTest("compiler/testData/codegen/box/reflection/typeOf/typeAliasedType.kt");
       }
 
       @Test
@@ -39805,6 +40289,18 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
           public void testAllFilesPresentInNonReifiedTypeParameters() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/typeOf/noReflect/nonReifiedTypeParameters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
           }
+
+          @Test
+          @TestMetadata("equalsOnClassParameters.kt")
+          public void testEqualsOnClassParameters() {
+            runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/nonReifiedTypeParameters/equalsOnClassParameters.kt");
+          }
+
+          @Test
+          @TestMetadata("equalsOnFunctionParameters.kt")
+          public void testEqualsOnFunctionParameters() {
+            runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/nonReifiedTypeParameters/equalsOnFunctionParameters.kt");
+          }
         }
       }
 
@@ -39839,6 +40335,30 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
         @TestMetadata("innerGeneric.kt")
         public void testInnerGeneric() {
           runTest("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters/innerGeneric.kt");
+        }
+
+        @Test
+        @TestMetadata("insideInlineLambda_class.kt")
+        public void testInsideInlineLambda_class() {
+          runTest("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters/insideInlineLambda_class.kt");
+        }
+
+        @Test
+        @TestMetadata("insideInlineLambda_indy.kt")
+        public void testInsideInlineLambda_indy() {
+          runTest("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters/insideInlineLambda_indy.kt");
+        }
+
+        @Test
+        @TestMetadata("insideNonInlineLambda_class.kt")
+        public void testInsideNonInlineLambda_class() {
+          runTest("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters/insideNonInlineLambda_class.kt");
+        }
+
+        @Test
+        @TestMetadata("insideNonInlineLambda_indy.kt")
+        public void testInsideNonInlineLambda_indy() {
+          runTest("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters/insideNonInlineLambda_indy.kt");
         }
 
         @Test
@@ -40296,6 +40816,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
     }
 
     @Test
+    @TestMetadata("kt79516.kt")
+    public void testKt79516() {
+      runTest("compiler/testData/codegen/box/regressions/kt79516.kt");
+    }
+
+    @Test
     @TestMetadata("kt998.kt")
     public void testKt998() {
       runTest("compiler/testData/codegen/box/regressions/kt998.kt");
@@ -40456,6 +40982,18 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
     }
 
     @Test
+    @TestMetadata("overrideResolution.kt")
+    public void testOverrideResolution() {
+      runTest("compiler/testData/codegen/box/reified/overrideResolution.kt");
+    }
+
+    @Test
+    @TestMetadata("overrideResolutionWithInlinedFunInKlib.kt")
+    public void testOverrideResolutionWithInlinedFunInKlib() {
+      runTest("compiler/testData/codegen/box/reified/overrideResolutionWithInlinedFunInKlib.kt");
+    }
+
+    @Test
     @TestMetadata("recursiveNewArray.kt")
     public void testRecursiveNewArray() {
       runTest("compiler/testData/codegen/box/reified/recursiveNewArray.kt");
@@ -40605,6 +41143,22 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
       public void testTryCatchReifiedType() {
         runTest("compiler/testData/codegen/box/reified/catchParameter/tryCatchReifiedType.kt");
       }
+    }
+  }
+
+  @Nested
+  @TestMetadata("compiler/testData/codegen/box/returnInExpressionBody")
+  @TestDataPath("$PROJECT_ROOT")
+  public class ReturnInExpressionBody {
+    @Test
+    public void testAllFilesPresentInReturnInExpressionBody() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/returnInExpressionBody"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+    }
+
+    @Test
+    @TestMetadata("returnInExpressionBody.kt")
+    public void testReturnInExpressionBody() {
+      runTest("compiler/testData/codegen/box/returnInExpressionBody/returnInExpressionBody.kt");
     }
   }
 
@@ -40953,12 +41507,6 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
     @TestMetadata("nestedClassDeclaration.kt")
     public void testNestedClassDeclaration() {
       runTest("compiler/testData/codegen/box/sameFileInSourceAndDependencies/nestedClassDeclaration.kt");
-    }
-
-    @Test
-    @TestMetadata("propertyDeclaration.kt")
-    public void testPropertyDeclaration() {
-      runTest("compiler/testData/codegen/box/sameFileInSourceAndDependencies/propertyDeclaration.kt");
     }
   }
 
@@ -43304,6 +43852,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
     }
 
     @Test
+    @TestMetadata("importNestedTypealiasFromAnotherModule.kt")
+    public void testImportNestedTypealiasFromAnotherModule() {
+      runTest("compiler/testData/codegen/box/typealias/importNestedTypealiasFromAnotherModule.kt");
+    }
+
+    @Test
     @TestMetadata("incorrectTypeOfTypealiasForSuspendFTMM.kt")
     public void testIncorrectTypeOfTypealiasForSuspendFTMM() {
       runTest("compiler/testData/codegen/box/typealias/incorrectTypeOfTypealiasForSuspendFTMM.kt");
@@ -43337,6 +43891,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
     @TestMetadata("kt45308.kt")
     public void testKt45308() {
       runTest("compiler/testData/codegen/box/typealias/kt45308.kt");
+    }
+
+    @Test
+    @TestMetadata("localTypeAliases.kt")
+    public void testLocalTypeAliases() {
+      runTest("compiler/testData/codegen/box/typealias/localTypeAliases.kt");
     }
 
     @Test
@@ -44566,6 +45126,34 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
       @TestMetadata("withoutElse.kt")
       public void testWithoutElse() {
         runTest("compiler/testData/codegen/box/when/enumOptimization/withoutElse.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/box/when/exhaustiveness")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Exhaustiveness {
+      @Test
+      public void testAllFilesPresentInExhaustiveness() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/when/exhaustiveness"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+
+      @Test
+      @TestMetadata("exhaustiveWithNegativeBoolean.kt")
+      public void testExhaustiveWithNegativeBoolean() {
+        runTest("compiler/testData/codegen/box/when/exhaustiveness/exhaustiveWithNegativeBoolean.kt");
+      }
+
+      @Test
+      @TestMetadata("exhaustiveWithNegativeEnum.kt")
+      public void testExhaustiveWithNegativeEnum() {
+        runTest("compiler/testData/codegen/box/when/exhaustiveness/exhaustiveWithNegativeEnum.kt");
+      }
+
+      @Test
+      @TestMetadata("exhaustiveWithNegativeSealed.kt")
+      public void testExhaustiveWithNegativeSealed() {
+        runTest("compiler/testData/codegen/box/when/exhaustiveness/exhaustiveWithNegativeSealed.kt");
       }
     }
 

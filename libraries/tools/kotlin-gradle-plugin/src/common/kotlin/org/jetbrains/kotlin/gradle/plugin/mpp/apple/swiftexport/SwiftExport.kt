@@ -11,6 +11,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractNativeLibrary
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
@@ -126,7 +127,7 @@ private fun Project.registerSwiftExportRun(
     exportConfiguration: Configuration,
     mainCompilation: KotlinNativeCompilation,
     swiftApiFlattenPackage: Provider<String>,
-    exportedModules: Provider<Set<SwiftExportedModuleVersionMetadata>>,
+    exportedModules: Provider<Set<SwiftExportedDependency>>,
     customSetting: Provider<Map<String, String>>,
 ): TaskProvider<SwiftExportTask> {
     val swiftExportTaskName = lowerCamelCaseName(
@@ -158,6 +159,7 @@ private fun Project.registerSwiftExportRun(
             )
         )
 
+        task.ignoreExperimentalDiagnostic.set(kotlinPropertiesProvider.swiftExportIgnoreExperimental)
         task.mainModuleInput.moduleName.set(swiftApiModuleName)
         task.mainModuleInput.flattenPackage.set(swiftApiFlattenPackage)
         task.kotlinNativeProvider.set(

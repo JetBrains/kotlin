@@ -1,15 +1,14 @@
-import org.jetbrains.kotlin.ideaExt.idea
-
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("java-test-fixtures")
 }
 
 dependencies {
-    testApi(project(":plugins:plugin-sandbox"))
-    testApi(project(":compiler:incremental-compilation-impl"))
-    testApi(projectTests(":compiler:incremental-compilation-impl"))
-    testImplementation(libs.junit.jupiter.api)
+    testFixturesApi(project(":plugins:plugin-sandbox"))
+    testFixturesApi(project(":compiler:incremental-compilation-impl"))
+    testFixturesApi(testFixtures(project(":compiler:incremental-compilation-impl")))
+    testFixturesApi(libs.junit.jupiter.api)
 
     testCompileOnly(intellijCore())
 
@@ -26,13 +25,9 @@ dependencies {
 }
 
 sourceSets {
-    "main" {
-        projectDefault()
-    }
-    "test" {
-        projectDefault()
-        generatedTestDir()
-    }
+    "main" { none() }
+    "test" { generatedTestDir() }
+    "testFixtures" { projectDefault() }
 }
 
 projectTest(parallel = true, jUnitMode = JUnitMode.JUnit4, maxHeapSizeMb = 3072) {

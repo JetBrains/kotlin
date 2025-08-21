@@ -20,17 +20,21 @@ class KtContextReceiver : KtElementImplStub<KotlinContextReceiverStub> {
     constructor(node: ASTNode) : super(node)
     constructor(stub: KotlinContextReceiverStub) : super(stub, KtStubBasedElementTypes.CONTEXT_RECEIVER)
 
+    override fun <R : Any?, D : Any?> accept(visitor: KtVisitor<R, D>, data: D): R {
+        return visitor.visitContextReceiver(this, data)
+    }
+
     fun targetLabel(): KtSimpleNameExpression? =
         findChildByType<KtContainerNode?>(KtNodeTypes.LABEL_QUALIFIER)
             ?.findChildByType(KtNodeTypes.LABEL)
 
     fun labelName(): String? {
-        stub?.let { return it.getLabel() }
+        stub?.let { return it.label }
         return targetLabel()?.getReferencedName()
     }
 
     fun labelNameAsName(): Name? {
-        stub?.let { stub -> return stub.getLabel()?.let { Name.identifier(it) } }
+        stub?.let { stub -> return stub.label?.let { Name.identifier(it) } }
         return targetLabel()?.getReferencedNameAsName()
     }
 

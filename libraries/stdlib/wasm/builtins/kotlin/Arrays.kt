@@ -13,7 +13,7 @@ package kotlin
 import kotlin.wasm.internal.*
 
 /**
- * An array of bytes. When targeting the JVM, instances of this class are represented as `byte[]`.
+ * An array of bytes.
  *
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
@@ -55,8 +55,9 @@ public actual constructor(size: Int) {
      * value = array[index]
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised
+     * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
+     * With the `-Xwasm-enable-array-range-checks` an [IndexOutOfBoundsException] will be thrown.
      */
     public actual operator fun get(index: Int): Byte {
         rangeCheck(index, storage.len())
@@ -71,8 +72,9 @@ public actual constructor(size: Int) {
      * array[index] = value
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised
+     * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
+     * With the `-Xwasm-enable-array-range-checks` an [IndexOutOfBoundsException] will be thrown.
      */
     public actual operator fun set(index: Int, value: Byte): Unit {
         rangeCheck(index, storage.len())
@@ -97,7 +99,7 @@ private class ByteArrayIterator constructor(val array: ByteArray) : ByteIterator
 }
 
 /**
- * An array of chars. When targeting the JVM, instances of this class are represented as `char[]`.
+ * An array of chars.
  *
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
@@ -139,8 +141,9 @@ public actual constructor(size: Int) {
      * value = array[index]
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised
+     * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
+     * With the `-Xwasm-enable-array-range-checks` an [IndexOutOfBoundsException] will be thrown.
      */
     public actual operator fun get(index: Int): Char {
         rangeCheck(index, storage.len())
@@ -155,8 +158,9 @@ public actual constructor(size: Int) {
      * array[index] = value
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised
+     * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
+     * With the `-Xwasm-enable-array-range-checks` an [IndexOutOfBoundsException] will be thrown.
      */
     public actual operator fun set(index: Int, value: Char): Unit {
         rangeCheck(index, storage.len())
@@ -181,7 +185,7 @@ private class CharArrayIterator constructor(val array: CharArray) : CharIterator
 }
 
 /**
- * An array of shorts. When targeting the JVM, instances of this class are represented as `short[]`.
+ * An array of shorts.
  *
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
@@ -223,8 +227,9 @@ public actual constructor(size: Int) {
      * value = array[index]
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised
+     * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
+     * With the `-Xwasm-enable-array-range-checks` an [IndexOutOfBoundsException] will be thrown.
      */
     public actual operator fun get(index: Int): Short {
         rangeCheck(index, storage.len())
@@ -239,8 +244,9 @@ public actual constructor(size: Int) {
      * array[index] = value
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised
+     * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
+     * With the `-Xwasm-enable-array-range-checks` an [IndexOutOfBoundsException] will be thrown.
      */
     public actual operator fun set(index: Int, value: Short): Unit {
         rangeCheck(index, storage.len())
@@ -265,7 +271,7 @@ private class ShortArrayIterator constructor(val array: ShortArray) : ShortItera
 }
 
 /**
- * An array of ints. When targeting the JVM, instances of this class are represented as `int[]`.
+ * An array of ints.
  *
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
@@ -307,8 +313,9 @@ public actual constructor(size: Int) {
      * value = array[index]
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised
+     * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
+     * With the `-Xwasm-enable-array-range-checks` an [IndexOutOfBoundsException] will be thrown.
      */
     public actual operator fun get(index: Int): Int {
         rangeCheck(index, storage.len())
@@ -323,8 +330,9 @@ public actual constructor(size: Int) {
      * array[index] = value
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised
+     * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
+     * With the `-Xwasm-enable-array-range-checks` an [IndexOutOfBoundsException] will be thrown.
      */
     public actual operator fun set(index: Int, value: Int): Unit {
         rangeCheck(index, storage.len())
@@ -349,7 +357,7 @@ private class IntArrayIterator constructor(val array: IntArray) : IntIterator() 
 }
 
 /**
- * An array of longs. When targeting the JVM, instances of this class are represented as `long[]`.
+ * An array of longs.
  *
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
@@ -391,8 +399,9 @@ public actual constructor(size: Int) {
      * value = array[index]
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised
+     * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
+     * With the `-Xwasm-enable-array-range-checks` an [IndexOutOfBoundsException] will be thrown.
      */
     public actual operator fun get(index: Int): Long {
         rangeCheck(index, storage.len())
@@ -407,8 +416,9 @@ public actual constructor(size: Int) {
      * array[index] = value
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised
+     * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
+     * With the `-Xwasm-enable-array-range-checks` an [IndexOutOfBoundsException] will be thrown.
      */
     public actual operator fun set(index: Int, value: Long): Unit {
         rangeCheck(index, storage.len())
@@ -433,7 +443,7 @@ private class LongArrayIterator constructor(val array: LongArray) : LongIterator
 }
 
 /**
- * An array of floats. When targeting the JVM, instances of this class are represented as `float[]`.
+ * An array of floats.
  *
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
@@ -475,8 +485,9 @@ public actual constructor(size: Int) {
      * value = array[index]
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised
+     * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
+     * With the `-Xwasm-enable-array-range-checks` an [IndexOutOfBoundsException] will be thrown.
      */
     public actual operator fun get(index: Int): Float {
         rangeCheck(index, storage.len())
@@ -491,8 +502,9 @@ public actual constructor(size: Int) {
      * array[index] = value
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised
+     * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
+     * With the `-Xwasm-enable-array-range-checks` an [IndexOutOfBoundsException] will be thrown.
      */
     public actual operator fun set(index: Int, value: Float): Unit {
         rangeCheck(index, storage.len())
@@ -517,7 +529,7 @@ private class FloatArrayIterator constructor(val array: FloatArray) : FloatItera
 }
 
 /**
- * An array of doubles. When targeting the JVM, instances of this class are represented as `double[]`.
+ * An array of doubles.
  *
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
@@ -559,8 +571,9 @@ public actual constructor(size: Int) {
      * value = array[index]
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised
+     * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
+     * With the `-Xwasm-enable-array-range-checks` an [IndexOutOfBoundsException] will be thrown.
      */
     public actual operator fun get(index: Int): Double {
         rangeCheck(index, storage.len())
@@ -575,8 +588,9 @@ public actual constructor(size: Int) {
      * array[index] = value
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised
+     * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
+     * With the `-Xwasm-enable-array-range-checks` an [IndexOutOfBoundsException] will be thrown.
      */
     public actual operator fun set(index: Int, value: Double): Unit {
         rangeCheck(index, storage.len())
@@ -601,7 +615,7 @@ private class DoubleArrayIterator constructor(val array: DoubleArray) : DoubleIt
 }
 
 /**
- * An array of booleans. When targeting the JVM, instances of this class are represented as `boolean[]`.
+ * An array of booleans.
  *
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
@@ -643,8 +657,9 @@ public actual constructor(size: Int) {
      * value = array[index]
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised
+     * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
+     * With the `-Xwasm-enable-array-range-checks` an [IndexOutOfBoundsException] will be thrown.
      */
     public actual operator fun get(index: Int): Boolean {
         rangeCheck(index, storage.len())
@@ -659,8 +674,9 @@ public actual constructor(size: Int) {
      * array[index] = value
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised
+     * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
+     * With the `-Xwasm-enable-array-range-checks` an [IndexOutOfBoundsException] will be thrown.
      */
     public actual operator fun set(index: Int, value: Boolean): Unit {
         rangeCheck(index, storage.len())

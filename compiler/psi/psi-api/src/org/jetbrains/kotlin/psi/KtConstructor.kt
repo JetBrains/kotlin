@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,12 +12,16 @@ import com.intellij.psi.search.SearchScope
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.psiUtil.isLegacyContractPresentPsiCheck
 import org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 
 abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinConstructorStub<T>>, KtFunction {
     protected constructor(node: ASTNode) : super(node)
-    protected constructor(stub: KotlinConstructorStub<T>, nodeType: KtStubElementType<KotlinConstructorStub<T>, T>) : super(stub, nodeType)
+    protected constructor(
+        stub: KotlinConstructorStub<T>,
+        nodeType: KtStubElementType<out KotlinConstructorStub<T>, T>,
+    ) : super(stub, nodeType)
 
     abstract fun getContainingClassOrObject(): KtClassOrObject
 
@@ -43,7 +47,7 @@ abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinCon
     override fun hasBlockBody() = hasBody()
 
     fun isDelegatedCallToThis(): Boolean {
-        greenStub?.let { return it.isDelegatedCallToThis() }
+        greenStub?.let { return it.isDelegatedCallToThis }
         return when (this) {
             is KtPrimaryConstructor -> false
             is KtSecondaryConstructor -> getDelegationCallOrNull()?.isCallToThis() ?: true
@@ -52,7 +56,7 @@ abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinCon
     }
 
     fun isExplicitDelegationCall(): Boolean {
-        greenStub?.let { return it.isExplicitDelegationCall() }
+        greenStub?.let { return it.isExplicitDelegationCall }
         return when (this) {
             is KtPrimaryConstructor -> false
             is KtSecondaryConstructor -> getDelegationCallOrNull()?.isImplicit == false
@@ -61,7 +65,7 @@ abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinCon
     }
 
     override fun hasBody(): Boolean {
-        greenStub?.let { return it.hasBody() }
+        greenStub?.let { return it.hasBody }
         return bodyExpression != null
     }
 
@@ -95,6 +99,16 @@ abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinCon
     open fun getConstructorKeyword(): PsiElement? = findChildByType(KtTokens.CONSTRUCTOR_KEYWORD)
 
     fun hasConstructorKeyword(): Boolean = stub != null || getConstructorKeyword() != null
+
+    override fun mayHaveContract(): Boolean {
+        val stub = greenStub
+        if (stub != null) {
+            return stub.mayHaveContract
+        }
+
+        @OptIn(KtImplementationDetail::class)
+        return isLegacyContractPresentPsiCheck()
+    }
 
     override fun getTextOffset(): Int {
         return getConstructorKeyword()?.textOffset

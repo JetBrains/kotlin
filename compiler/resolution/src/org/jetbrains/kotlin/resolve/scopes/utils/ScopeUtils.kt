@@ -207,7 +207,7 @@ private inline fun <T : Any> HierarchicalScope.collectFromMeAndParent(
             if (result == null) {
                 result = SmartList()
             }
-            result!!.add(element)
+            result.add(element)
         }
     }
     return result ?: emptyList()

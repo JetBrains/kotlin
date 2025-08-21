@@ -1,3 +1,4 @@
 expression: TYPEALIAS
 text: typealias Local<T> = List<T>
 isUsedAsExpression: false
+isUsedAsResultOfLambda: false

@@ -19,7 +19,7 @@ dependencies {
     testApi(libs.junit.jupiter.api)
     testApi(libs.junit.jupiter.engine)
     testApi(libs.junit.jupiter.params)
-    testApi(project(":compiler:tests-common", "tests-jar"))
+    testApi(testFixtures(project(":compiler:tests-common")))
 }
 
 kotlin {

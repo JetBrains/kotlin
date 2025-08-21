@@ -88,9 +88,7 @@ sealed class ImplicitValue<S>(
     }
 
     fun isSameImplicitReceiverInstance(other: FirExpression): Boolean {
-        val otherOriginal = other.unwrapSmartcastExpression()
-
-        val otherBoundSymbol = when (otherOriginal) {
+        val otherBoundSymbol = when (val otherOriginal = other.unwrapSmartcastExpression()) {
             is FirThisReceiverExpression -> otherOriginal.calleeReference.boundSymbol
             is FirPropertyAccessExpression -> otherOriginal.calleeReference.toResolvedSymbol<FirBasedSymbol<*>>()
             else -> null

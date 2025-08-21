@@ -240,7 +240,7 @@ internal class KtUltraLightReceiverParameter(
     support: KtUltraLightSupport,
     method: KtUltraLightMethod
 ) : KtAbstractUltraLightParameterForDeclaration(
-    /** @see org.jetbrains.kotlin.codegen.DescriptorAsmUtil.getNameForReceiverParameter */
+    // See `ExpressionCodegen.getNameForReceiverParameter`.
     name = AsmUtil.getLabeledThisName(containingDeclaration.name ?: method.name, LABELED_THIS_PARAMETER, RECEIVER_PARAMETER_NAME),
     kotlinOrigin = null,
     support = support,

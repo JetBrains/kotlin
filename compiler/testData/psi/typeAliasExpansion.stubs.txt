@@ -1,4 +1,4 @@
-PsiJetFileStubImpl[package=test]
+FILE[kind=Facade[packageFqName=test, facadeFqName=test.TypeAliasExpansionKt]]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST
@@ -42,7 +42,7 @@ PsiJetFileStubImpl[package=test]
         REFERENCE_EXPRESSION[referencedName=FunctionAlias]
   TYPEALIAS[classId=test/ParameterizedListAlias, fqName=test.ParameterizedListAlias, isTopLevel=true, name=ParameterizedListAlias]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=A]
+      TYPE_PARAMETER[fqName=null, name=A]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=List]
@@ -80,7 +80,7 @@ PsiJetFileStubImpl[package=test]
                 REFERENCE_EXPRESSION[referencedName=NestedStringAlias]
   TYPEALIAS[classId=test/NestedParameterizedListAlias, fqName=test.NestedParameterizedListAlias, isTopLevel=true, name=NestedParameterizedListAlias]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=A]
+      TYPE_PARAMETER[fqName=null, name=A]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=ParameterizedListAlias]
@@ -131,7 +131,7 @@ PsiJetFileStubImpl[package=test]
           REFERENCE_EXPRESSION[referencedName=FunctionAlias]
   CLASS[classId=test/TypeAliasExpansion, fqName=test.TypeAliasExpansion, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=TypeAliasExpansion, superNames=[]]
     CLASS_BODY
-      FUN[fqName=test.TypeAliasExpansion.entryToString, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=entryToString]
+      FUN[fqName=test.TypeAliasExpansion.entryToString, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=entryToString]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=entry]
             TYPE_REFERENCE

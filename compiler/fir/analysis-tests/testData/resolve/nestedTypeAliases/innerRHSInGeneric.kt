@@ -66,7 +66,7 @@ open class GenericTAOwner<TO> {
     typealias TAtoClassThatHasTAtoInnerInTypeArgument = <!TYPEALIAS_EXPANSION_CAPTURES_OUTER_TYPE_PARAMETERS!>Generic<WrongInnerTA><!>
     typealias TAWithExplicitParameterInTypeArgument = Generic<GenericTAOwner<<!UNRESOLVED_REFERENCE!>TO<!>>.Inner>
     typealias TAWithNonCapturingParameterInTypeArgument<K> = Generic<GenericTAOwner<K>.Inner>
-    typealias TAtoInnerAndInnerInTypeArgument<L> = <!TYPEALIAS_EXPANSION_CAPTURES_OUTER_TYPE_PARAMETERS("'TO' defined in 'TAInGeneric/GenericTAOwner'")!>InnerGeneric<InnerGeneric<L>><!>
+    typealias TAtoInnerAndInnerInTypeArgument<L> = <!TYPEALIAS_EXPANSION_CAPTURES_OUTER_TYPE_PARAMETERS("'TO' defined in 'TAInGeneric.GenericTAOwner'")!>InnerGeneric<InnerGeneric<L>><!>
 }
 
 typealias GenericTAOwnerInnerTA = GenericTAOwner<Int>.Inner

@@ -138,7 +138,11 @@ internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> prot
 
     override fun hashCode(): Int = classOrObjectDeclaration.hashCode()
 
-    override fun getName(): String? = withClassSymbol { it.name?.asString() }
+    private val _name: String? by lazyPub {
+        withClassSymbol { it.name?.asString() }
+    }
+
+    override fun getName(): String? = _name
 
     override fun hasModifierProperty(@NonNls name: String): Boolean = modifierList?.hasModifierProperty(name) ?: false
 

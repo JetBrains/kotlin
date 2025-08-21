@@ -73,7 +73,7 @@ gc::mark::ParallelMark::ParallelMark(bool mutatorsCooperate) {
     setParallelismLevel(maxParallelism, mutatorsCooperate);
 }
 
-void gc::mark::ParallelMark::beginMarkingEpoch(gc::GCHandle gcHandle) {
+void gc::mark::ParallelMark::setupBeforeSTW(gc::GCHandle gcHandle) {
     gcHandle_ = gcHandle;
 
     lockedMutatorsList_ = mm::ThreadRegistry::Instance().LockForIter();
@@ -83,6 +83,7 @@ void gc::mark::ParallelMark::beginMarkingEpoch(gc::GCHandle gcHandle) {
     if (!compiler::gcMarkSingleThreaded()) {
         std::unique_lock guard(workerCreationMutex_);
         pacer_.beginEpoch(gcHandle.getEpoch());
+        GCLogDebug(gcHandle.getEpoch(), "Main GC requested marking in mutators");
         // main worker is always accounted, so others would not be able to exhaust all the parallelism before main is instantiated
         activeWorkersCount_ = 1;
     }
@@ -104,7 +105,7 @@ void gc::mark::ParallelMark::endMarkingEpoch() {
     lockedMutatorsList_ = std::nullopt;
 }
 
-void gc::mark::ParallelMark::runMainInSTW() {
+void gc::mark::ParallelMark::markInSTW() {
     if (compiler::gcMarkSingleThreaded()) {
         ParallelProcessor::Worker worker(*parallelProcessor_);
         gc::collectRootSet<MarkTraits>(gcHandle(), worker, [] (mm::ThreadData&) { return true; });
@@ -123,9 +124,24 @@ void gc::mark::ParallelMark::runMainInSTW() {
         pacer_.begin(MarkPacer::Phase::kParallelMark);
         parallelMark(mainWorker);
     }
+
+    endMarkingEpoch();
+
+    if (compiler::concurrentWeakSweep()) {
+        // Expected to happen inside STW.
+        EnableWeakRefBarriers(gcHandle().getEpoch());
+        resumeTheWorld(gcHandle());
+    }
+
+    gc::processWeaks<DefaultProcessWeaksTraits>(gcHandle(), mm::ExternalRCRefRegistry::instance());
+
+    if (compiler::concurrentWeakSweep()) {
+        stopTheWorld(gcHandle(), "GC stop the world: prepare heap for sweep");
+        DisableWeakRefBarriers();
+    }
 }
 
-void gc::mark::ParallelMark::runOnMutator(mm::ThreadData& mutatorThread) {
+void gc::mark::ParallelMark::markOnMutator(mm::ThreadData& mutatorThread) {
     if (compiler::gcMarkSingleThreaded() || !mutatorsCooperate_) return;
 
     auto parallelWorker = createWorker();
@@ -234,7 +250,7 @@ gc::mark::ParallelMarkThreadData::ParallelMarkThreadData(gc::mark::ParallelMark&
     markDispatcher_(markDispatcher), threadData_(threadData) {}
 
 void gc::mark::ParallelMarkThreadData::onSuspendForGC() noexcept {
-    markDispatcher_.runOnMutator(threadData_);
+    markDispatcher_.markOnMutator(threadData_);
 }
 
 bool gc::mark::ParallelMarkThreadData::tryLockRootSet() noexcept {

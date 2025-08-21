@@ -18,11 +18,13 @@ declare namespace not.exported {
     abstract class Baz extends KtSingleton<Baz.$metadata$.constructor>() {
         private constructor();
     }
-    /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-    namespace Baz.$metadata$ {
-        abstract class constructor {
-            get baz(): boolean;
-            private constructor();
+    namespace Baz {
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace $metadata$ {
+            abstract class constructor {
+                get baz(): boolean;
+                private constructor();
+            }
         }
     }
 }

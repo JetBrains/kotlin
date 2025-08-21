@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
  * Files and packages are not considered [KaDeclarationSymbol]s, as they cannot be declared explicitly in one place. For example, a
  * [KaPackageSymbol] is the semantic representation of a package made up of possibly multiple Kotlin source files.
  */
+@OptIn(KaImplementationDetail::class)
 public sealed interface KaDeclarationSymbol : KaSymbol, KaAnnotatedSymbol {
     /**
      * The declaration's *effective* [KaSymbolModality] (e.g. `open`). Effective modality is the symbol's modality after all language rules

@@ -18,7 +18,6 @@ inline fun Test(
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = -378182080, startOffset = 91, endOffset = 294)
 fun Test(someBool: Boolean, %composer: Composer?, %changed: Int) {
   sourceInformationMarkerStart(%composer, <>, "CC(Test)N(someBool)<rememb...>,<{>:Test.kt")
   val someInt = <block>{

@@ -108,12 +108,6 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
     }
 
     @Test
-    @TestMetadata("kt56665.kt")
-    public void testKt56665() {
-      runTest("compiler/testData/diagnostics/tests/kt56665.kt");
-    }
-
-    @Test
     @TestMetadata("kt57175.kt")
     public void testKt57175() {
       runTest("compiler/testData/diagnostics/tests/kt57175.kt");
@@ -311,6 +305,18 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
       public void testAsTypeAlias() {
         runTest("compiler/testData/diagnostics/tests/cast/AsTypeAlias.kt");
       }
+
+      @Test
+      @TestMetadata("classVsClassIsCheckTypealias.kt")
+      public void testClassVsClassIsCheckTypealias() {
+        runTest("compiler/testData/diagnostics/tests/cast/classVsClassIsCheckTypealias.kt");
+      }
+
+      @Test
+      @TestMetadata("classVsClassIsCheckWithTypeParameter.kt")
+      public void testClassVsClassIsCheckWithTypeParameter() {
+        runTest("compiler/testData/diagnostics/tests/cast/classVsClassIsCheckWithTypeParameter.kt");
+      }
     }
 
     @Nested
@@ -417,6 +423,23 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
     @TestMetadata("compiler/testData/diagnostics/tests/cyclicHierarchy")
     @TestDataPath("$PROJECT_ROOT")
     public class CyclicHierarchy {
+      @Test
+      @TestMetadata("withTypeAlias.kt")
+      public void testWithTypeAlias() {
+        runTest("compiler/testData/diagnostics/tests/cyclicHierarchy/withTypeAlias.kt");
+      }
+
+      @Test
+      @TestMetadata("withTypeAlias0.kt")
+      public void testWithTypeAlias0() {
+        runTest("compiler/testData/diagnostics/tests/cyclicHierarchy/withTypeAlias0.kt");
+      }
+
+      @Test
+      @TestMetadata("withTypeAlias2.kt")
+      public void testWithTypeAlias2() {
+        runTest("compiler/testData/diagnostics/tests/cyclicHierarchy/withTypeAlias2.kt");
+      }
     }
 
     @Nested
@@ -896,6 +919,30 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
       }
 
       @Test
+      @TestMetadata("exposingPrivateTypeInInternal.kt")
+      public void testExposingPrivateTypeInInternal() {
+        runTest("compiler/testData/diagnostics/tests/inline/exposingPrivateTypeInInternal.kt");
+      }
+
+      @Test
+      @TestMetadata("exposingPrivateTypeInInternalAfter.kt")
+      public void testExposingPrivateTypeInInternalAfter() {
+        runTest("compiler/testData/diagnostics/tests/inline/exposingPrivateTypeInInternalAfter.kt");
+      }
+
+      @Test
+      @TestMetadata("exposingPrivateTypeInPublic.kt")
+      public void testExposingPrivateTypeInPublic() {
+        runTest("compiler/testData/diagnostics/tests/inline/exposingPrivateTypeInPublic.kt");
+      }
+
+      @Test
+      @TestMetadata("exposingPrivateTypeInPublicAfter.kt")
+      public void testExposingPrivateTypeInPublicAfter() {
+        runTest("compiler/testData/diagnostics/tests/inline/exposingPrivateTypeInPublicAfter.kt");
+      }
+
+      @Test
       @TestMetadata("usageIsNotInlinable.kt")
       public void testUsageIsNotInlinable() {
         runTest("compiler/testData/diagnostics/tests/inline/usageIsNotInlinable.kt");
@@ -984,6 +1031,23 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
     @TestMetadata("compiler/testData/diagnostics/tests/multimodule")
     @TestDataPath("$PROJECT_ROOT")
     public class Multimodule {
+      @Test
+      @TestMetadata("accessibleTypeAliasIfItsRhsIsInDependencies.kt")
+      public void testAccessibleTypeAliasIfItsRhsIsInDependencies() {
+        runTest("compiler/testData/diagnostics/tests/multimodule/accessibleTypeAliasIfItsRhsIsInDependencies.kt");
+      }
+
+      @Test
+      @TestMetadata("inaccessibleTypeAliasNoForbidTypeAliasWithMissingDependencyType.kt")
+      public void testInaccessibleTypeAliasNoForbidTypeAliasWithMissingDependencyType() {
+        runTest("compiler/testData/diagnostics/tests/multimodule/inaccessibleTypeAliasNoForbidTypeAliasWithMissingDependencyType.kt");
+      }
+
+      @Test
+      @TestMetadata("inaccessibleTypeAliasWithForbidTypeAliasWithMissingDependencyType.kt")
+      public void testInaccessibleTypeAliasWithForbidTypeAliasWithMissingDependencyType() {
+        runTest("compiler/testData/diagnostics/tests/multimodule/inaccessibleTypeAliasWithForbidTypeAliasWithMissingDependencyType.kt");
+      }
     }
 
     @Nested
@@ -1100,6 +1164,16 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
     @TestMetadata("compiler/testData/diagnostics/tests/override")
     @TestDataPath("$PROJECT_ROOT")
     public class Override {
+      @Nested
+      @TestMetadata("compiler/testData/diagnostics/tests/override/clashesOnInheritance")
+      @TestDataPath("$PROJECT_ROOT")
+      public class ClashesOnInheritance {
+        @Test
+        @TestMetadata("inconsistentTypeParameterValuesOnAnonymousObject.kt")
+        public void testInconsistentTypeParameterValuesOnAnonymousObject() {
+          runTest("compiler/testData/diagnostics/tests/override/clashesOnInheritance/inconsistentTypeParameterValuesOnAnonymousObject.kt");
+        }
+      }
     }
 
     @Nested
@@ -1134,6 +1208,18 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
     @TestMetadata("compiler/testData/diagnostics/tests/redeclarations")
     @TestDataPath("$PROJECT_ROOT")
     public class Redeclarations {
+      @Test
+      @TestMetadata("LocalDeclarations.kt")
+      public void testLocalDeclarations() {
+        runTest("compiler/testData/diagnostics/tests/redeclarations/LocalDeclarations.kt");
+      }
+
+      @Test
+      @TestMetadata("privateTypeAliases.kt")
+      public void testPrivateTypeAliases() {
+        runTest("compiler/testData/diagnostics/tests/redeclarations/privateTypeAliases.kt");
+      }
+
       @Test
       @TestMetadata("RedeclarationOfMain.kt")
       public void testRedeclarationOfMain() {
@@ -1240,12 +1326,6 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
       @TestMetadata("samConversionToGenericWrongNullability.kt")
       public void testSamConversionToGenericWrongNullability() {
         runTest("compiler/testData/diagnostics/tests/samConversions/samConversionToGenericWrongNullability.kt");
-      }
-
-      @Test
-      @TestMetadata("samConversionToGenericWrongNullabilityDnnRepresentation.kt")
-      public void testSamConversionToGenericWrongNullabilityDnnRepresentation() {
-        runTest("compiler/testData/diagnostics/tests/samConversions/samConversionToGenericWrongNullabilityDnnRepresentation.kt");
       }
 
       @Test

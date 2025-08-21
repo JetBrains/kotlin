@@ -19,12 +19,6 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isNonReflectFunctionType
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 
-tailrec fun FirExpression.unwrapAnonymousFunctionExpression(): FirAnonymousFunction? = when (this) {
-    is FirAnonymousFunctionExpression -> anonymousFunction
-    is FirWrappedArgumentExpression -> expression.unwrapAnonymousFunctionExpression()
-    else -> null
-}
-
 fun FirFunctionCall.replaceLambdaArgumentEffects(session: FirSession) {
     val calleeReference = calleeReference as? FirNamedReferenceWithCandidate ?: return
     val argumentMapping = calleeReference.candidate.argumentMapping

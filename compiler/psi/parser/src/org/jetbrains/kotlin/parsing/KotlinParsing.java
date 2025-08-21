@@ -25,6 +25,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.KtKeywordToken;
+import org.jetbrains.kotlin.lexer.KtSingleValueToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 
 import static org.jetbrains.kotlin.KtNodeTypes.*;
@@ -82,6 +83,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
     private static final TokenSet VALUE_ARGS_RECOVERY_SET = TokenSet.create(LBRACE, SEMICOLON, RPAR, EOL_OR_SEMICOLON, RBRACE);
     private static final TokenSet PROPERTY_NAME_FOLLOW_SET =
       TokenSet.create(COLON, EQ, LBRACE, RBRACE, SEMICOLON, VAL_KEYWORD, VAR_KEYWORD, FUN_KEYWORD, CLASS_KEYWORD);
+    private static final TokenSet DESTRUCTURING_PROPERTY_NAME_FOLLOW_SET = TokenSet.andNot(PROPERTY_NAME_FOLLOW_SET, VAL_VAR);
     private static final TokenSet PROPERTY_NAME_FOLLOW_MULTI_DECLARATION_RECOVERY_SET = TokenSet.orSet(PROPERTY_NAME_FOLLOW_SET, PARAMETER_NAME_RECOVERY_SET);
     private static final TokenSet PROPERTY_NAME_FOLLOW_FUNCTION_OR_PROPERTY_RECOVERY_SET = TokenSet.orSet(PROPERTY_NAME_FOLLOW_SET, LBRACE_RBRACE_SET, TOP_LEVEL_DECLARATION_FIRST);
     private static final TokenSet IDENTIFIER_EQ_COLON_SEMICOLON_SET = TokenSet.create(IDENTIFIER, EQ, COLON, SEMICOLON);
@@ -532,6 +534,10 @@ public class KotlinParsing extends AbstractKotlinParsing {
             case VAL_KEYWORD_Id:
             case VAR_KEYWORD_Id:
                 return parseProperty(declarationParsingMode);
+            case LPAR_Id:
+            case LBRACKET_Id:
+                IElementType lookahead = lookahead(1);
+                return lookahead == VAL_KEYWORD || lookahead == VAR_KEYWORD ? parseProperty(declarationParsingMode) : null;
             case TYPE_ALIAS_KEYWORD_Id:
                 return parseTypeAlias();
             case OBJECT_KEYWORD_Id:
@@ -1456,8 +1462,10 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *   ;
      */
     public IElementType parseProperty(DeclarationParsingMode mode) {
-        assert (at(VAL_KEYWORD) || at(VAR_KEYWORD));
-        advance();
+        boolean isShortForm = at(VAL_KEYWORD) || at(VAR_KEYWORD);
+        if (isShortForm) {
+            advance();
+        }
 
         boolean typeParametersDeclared = at(LT) && parseTypeParameterList(IDENTIFIER_EQ_COLON_SEMICOLON_SET);
 
@@ -1466,7 +1474,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         PsiBuilder.Marker receiver = mark();
         boolean receiverTypeDeclared = parseReceiverType("property", PROPERTY_NAME_FOLLOW_SET);
 
-        boolean multiDeclaration = at(LPAR);
+        boolean multiDeclaration = at(LPAR) || at(LBRACKET);
 
         errorIf(receiver, multiDeclaration && receiverTypeDeclared, "Receiver type is not allowed on a destructuring declaration");
 
@@ -1475,7 +1483,10 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         if (multiDeclaration) {
             PsiBuilder.Marker multiDecl = mark();
-            parseMultiDeclarationName(PROPERTY_NAME_FOLLOW_SET, PROPERTY_NAME_FOLLOW_MULTI_DECLARATION_RECOVERY_SET);
+            parseMultiDeclarationEntry(
+                    isShortForm ? PROPERTY_NAME_FOLLOW_SET : DESTRUCTURING_PROPERTY_NAME_FOLLOW_SET,
+                    PROPERTY_NAME_FOLLOW_MULTI_DECLARATION_RECOVERY_SET,
+                    isShortForm ? MultiDeclarationMode.SHORT : MultiDeclarationMode.FULL);
             errorIf(multiDecl, !mode.destructuringAllowed, "Destructuring declarations are only allowed for local variables/values");
         }
         else {
@@ -1498,9 +1509,14 @@ public class KotlinParsing extends AbstractKotlinParsing {
         if (!parsePropertyDelegateOrAssignment() && isNameOnTheNextLine && noTypeReference && !receiverTypeDeclared) {
             // Do not parse property identifier on the next line if declaration is invalid
             // In most cases this identifier relates to next statement/declaration
-            beforeName.rollbackTo();
-            error("Expecting property name or receiver type");
-            return PROPERTY;
+            if (!multiDeclaration || isShortForm) {
+                beforeName.rollbackTo();
+                error("Expecting property name or receiver type");
+            } else {
+                beforeName.drop();
+            }
+
+            return multiDeclaration ? DESTRUCTURING_DECLARATION : PROPERTY;
         }
 
         beforeName.drop();
@@ -1565,27 +1581,54 @@ public class KotlinParsing extends AbstractKotlinParsing {
         delegate.done(PROPERTY_DELEGATE);
     }
 
+    public enum MultiDeclarationMode {
+        SHORT,
+        FULL,
+        FULL_VAL_ONLY,
+    }
+
     /*
      * (SimpleName (":" type){","})
      */
-    public void parseMultiDeclarationName(TokenSet follow, TokenSet recoverySet) {
+    public void parseMultiDeclarationEntry(TokenSet follow, TokenSet recoverySet, MultiDeclarationMode mode) {
         // Parsing multi-name, e.g.
         //   val (a, b) = foo()
+        //   (val a: X = aa, var b) = foo()
+        //   val [a, b] = foo()
+        //   [val a: X, var b] = foo()
         myBuilder.disableNewlines();
-        advance(); // LPAR
+
+        boolean isParentheses = at(LPAR);
+        KtSingleValueToken closingBrace = isParentheses ? RPAR : RBRACKET;
+
+        advance(); // LPAR | LBRACKET
 
         if (!atSet(follow)) {
             while (true) {
                 if (at(COMMA)) {
                     errorAndAdvance("Expecting a name");
                 }
-                else if (at(RPAR)) { // For declaration similar to `val () = somethingCall()`
+                else if (at(closingBrace)) { // For declaration similar to `val () = somethingCall()`
                     error("Expecting a name");
                     break;
                 }
                 PsiBuilder.Marker property = mark();
 
-                parseModifierList(COMMA_RPAR_COLON_EQ_SET);
+                if (mode == MultiDeclarationMode.FULL) {
+                    if (at(VAL_KEYWORD) || at(VAR_KEYWORD)) {
+                        advance();
+                    } else {
+                        errorWithRecovery("Expecting val or var keyword", recoverySet);
+                    }
+                } else if (mode == MultiDeclarationMode.FULL_VAL_ONLY) {
+                    if (at(VAL_KEYWORD)) {
+                        advance();
+                    } else {
+                        errorWithRecovery("Expecting val keyword", recoverySet);
+                    }
+                } else {
+                    parseModifierList(COMMA_RPAR_COLON_EQ_SET);
+                }
 
                 expect(IDENTIFIER, "Expecting a name", recoverySet);
 
@@ -1593,15 +1636,22 @@ public class KotlinParsing extends AbstractKotlinParsing {
                     advance(); // COLON
                     parseTypeRef(follow);
                 }
+
+                // Renaming is only allowed in name-based destructuring
+                if (at(EQ) && closingBrace == RPAR) {
+                    advance();
+                    myExpressionParsing.parseSimpleNameExpression();
+                }
+
                 property.done(DESTRUCTURING_DECLARATION_ENTRY);
 
                 if (!at(COMMA)) break;
                 advance(); // COMMA
-                if (at(RPAR)) break;
+                if (at(closingBrace)) break;
             }
         }
 
-        expect(RPAR, "Expecting ')'", follow);
+        expect(closingBrace, isParentheses ? "Expecting ')'" : "Expecting ']'", follow);
         myBuilder.restoreNewlinesState();
     }
 

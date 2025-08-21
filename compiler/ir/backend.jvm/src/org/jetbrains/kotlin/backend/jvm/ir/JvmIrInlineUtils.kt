@@ -9,11 +9,9 @@ import org.jetbrains.kotlin.backend.common.ir.isReifiable
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.backend.common.originalBeforeInline
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.resolve.inline.INLINE_ONLY_ANNOTATION_FQ_NAME
 
@@ -80,31 +78,3 @@ fun IrDeclarationWithVisibility.isEffectivelyInlineOnly(): Boolean =
 
 fun IrFunction.isPrivateInlineSuspend(): Boolean =
     isSuspend && isInline && visibility == DescriptorVisibilities.PRIVATE
-
-private fun IrElement.getDeclarationBeforeInline(): IrDeclaration? {
-    val original = this.originalBeforeInline ?: return null
-    return original.extractRelatedDeclaration()
-}
-
-fun IrElement.getAttributeOwnerBeforeInline(): IrElement? {
-    if (this.originalBeforeInline == null) return null
-    return generateSequence(this) { it.originalBeforeInline }.last()
-}
-
-val IrDeclaration.fileParentBeforeInline: IrFile
-    get() {
-        val original = this.getDeclarationBeforeInline()
-            ?: this.parentClassOrNull?.getDeclarationBeforeInline()
-            ?: this
-        return original.fileParent
-    }
-
-@OptIn(JvmIrInlineExperimental::class)
-val IrInlinedFunctionBlock.inlineDeclaration: IrDeclaration
-    get() = when (val element = inlinedElement) {
-        is IrFunction -> element
-        is IrFunctionExpression -> element.function
-        is IrFunctionReference -> element.symbol.owner
-        is IrPropertyReference -> element.symbol.owner
-        else -> throw AssertionError("Not supported ir element for inlining ${element?.dump()}")
-    }

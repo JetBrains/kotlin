@@ -22,6 +22,11 @@ output/sources
 # javac
 @javacArgs.txt
 
+# kotlinc
+-d output/classes
+-cp output/ap:output/classes:output/javaClasses
+Test.kt
+
 # java
 -cp output/classes:output/javaClasses:output/ap:%KOTLIN_STDLIB%
 test.TestKt

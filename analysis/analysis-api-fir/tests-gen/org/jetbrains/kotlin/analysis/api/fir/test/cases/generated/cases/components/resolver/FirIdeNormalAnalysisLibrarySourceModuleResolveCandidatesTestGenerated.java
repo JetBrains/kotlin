@@ -1379,6 +1379,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
   }
 
   @Test
+  @TestMetadata("suspendLambda.kt")
+  public void testSuspendLambda() {
+    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/suspendLambda.kt");
+  }
+
+  @Test
   @TestMetadata("thisWithLabelToFunction_caretAtLabel.kt")
   public void testThisWithLabelToFunction_caretAtLabel() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/thisWithLabelToFunction_caretAtLabel.kt");
@@ -2951,6 +2957,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
       }
 
       @Test
+      @TestMetadata("companionObject_typeAliased.kt")
+      public void testCompanionObject_typeAliased() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invoke/onObjects/companionObject_typeAliased.kt");
+      }
+
+      @Test
       @TestMetadata("nestedObject1.kt")
       public void testNestedObject1() {
         runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invoke/onObjects/nestedObject1.kt");
@@ -2985,76 +2997,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
       public void testSimpleObject2() {
         runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invoke/onObjects/simpleObject2.kt");
       }
-    }
-  }
 
-  @Nested
-  @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/invokeOnObjects")
-  @TestDataPath("$PROJECT_ROOT")
-  public class InvokeOnObjects {
-    @Test
-    public void testAllFilesPresentInInvokeOnObjects() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/invokeOnObjects"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
-    }
-
-    @Test
-    @TestMetadata("companionObject1.kt")
-    public void testCompanionObject1() {
-      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invokeOnObjects/companionObject1.kt");
-    }
-
-    @Test
-    @TestMetadata("companionObject2.kt")
-    public void testCompanionObject2() {
-      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invokeOnObjects/companionObject2.kt");
-    }
-
-    @Test
-    @TestMetadata("companionObjectWithName1.kt")
-    public void testCompanionObjectWithName1() {
-      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invokeOnObjects/companionObjectWithName1.kt");
-    }
-
-    @Test
-    @TestMetadata("companionObjectWithName2.kt")
-    public void testCompanionObjectWithName2() {
-      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invokeOnObjects/companionObjectWithName2.kt");
-    }
-
-    @Test
-    @TestMetadata("nestedObject1.kt")
-    public void testNestedObject1() {
-      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invokeOnObjects/nestedObject1.kt");
-    }
-
-    @Test
-    @TestMetadata("nestedObject2.kt")
-    public void testNestedObject2() {
-      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invokeOnObjects/nestedObject2.kt");
-    }
-
-    @Test
-    @TestMetadata("nestedObject3.kt")
-    public void testNestedObject3() {
-      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invokeOnObjects/nestedObject3.kt");
-    }
-
-    @Test
-    @TestMetadata("nestedObject4.kt")
-    public void testNestedObject4() {
-      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invokeOnObjects/nestedObject4.kt");
-    }
-
-    @Test
-    @TestMetadata("simpleObject1.kt")
-    public void testSimpleObject1() {
-      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invokeOnObjects/simpleObject1.kt");
-    }
-
-    @Test
-    @TestMetadata("simpleObject2.kt")
-    public void testSimpleObject2() {
-      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invokeOnObjects/simpleObject2.kt");
+      @Test
+      @TestMetadata("simpleObject_typeAliased.kt")
+      public void testSimpleObject_typeAliased() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invoke/onObjects/simpleObject_typeAliased.kt");
+      }
     }
   }
 
@@ -3684,6 +3632,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
       @Test
       public void testAllFilesPresentInQualified() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/qualified"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency");
+      }
+
+      @Test
+      @TestMetadata("backtickedIdentifiers.kt")
+      public void testBacktickedIdentifiers() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/qualified/backtickedIdentifiers.kt");
       }
 
       @Nested

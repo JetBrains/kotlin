@@ -55,7 +55,7 @@ object JvmConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.confi
 
     val STRING_CONCAT by key<JvmStringConcat>("Specifies string concatenation scheme")
 
-    val JDK_RELEASE by key<Integer>("Specifies JDK API version")
+    val JDK_RELEASE by key<Int>("Specifies JDK API version")
 
     val SAM_CONVERSIONS by key<JvmClosureGenerationScheme>("SAM conversions code generation scheme")
 
@@ -90,8 +90,6 @@ object JvmConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.confi
     val ENHANCED_COROUTINES_DEBUGGING by key<Boolean>("Mark compiled generated code in coroutines")
 
     val NO_NEW_JAVA_ANNOTATION_TARGETS by key<Boolean>("Do not generate Java 1.8+ targets for Kotlin annotation classes")
-
-    val ENABLE_IR_INLINER by key<Boolean>("Enable inlining on IR, instead of inlining on bytecode")
 
     val USE_INLINE_SCOPES_NUMBERS by key<Boolean>("Use inline scopes numbers for inline marker variables")
 

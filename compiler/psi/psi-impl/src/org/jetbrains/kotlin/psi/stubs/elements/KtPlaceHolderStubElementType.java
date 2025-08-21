@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,24 +17,25 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderStubImpl;
 import java.io.IOException;
 
 public class KtPlaceHolderStubElementType<T extends KtElementImplStub<? extends StubElement<?>>> extends
-                                                                                                 KtStubElementType<KotlinPlaceHolderStub<T>, T> {
+                                                                                                 KtStubElementType<KotlinPlaceHolderStubImpl<T>, T> {
     public KtPlaceHolderStubElementType(@NotNull @NonNls String debugName, @NotNull Class<T> psiClass) {
         super(debugName, psiClass, KotlinPlaceHolderStub.class);
     }
 
+    @NotNull
     @Override
-    public KotlinPlaceHolderStub<T> createStub(@NotNull T psi, StubElement<?> parentStub) {
+    public KotlinPlaceHolderStubImpl<T> createStub(@NotNull T psi, StubElement<?> parentStub) {
         return new KotlinPlaceHolderStubImpl<>(parentStub, this);
     }
 
     @Override
-    public void serialize(@NotNull KotlinPlaceHolderStub<T> stub, @NotNull StubOutputStream dataStream) throws IOException {
+    public void serialize(@NotNull KotlinPlaceHolderStubImpl<T> stub, @NotNull StubOutputStream dataStream) throws IOException {
         //do nothing
     }
 
     @NotNull
     @Override
-    public KotlinPlaceHolderStub<T> deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
+    public KotlinPlaceHolderStubImpl<T> deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
         return new KotlinPlaceHolderStubImpl<>(parentStub, this);
     }
 }

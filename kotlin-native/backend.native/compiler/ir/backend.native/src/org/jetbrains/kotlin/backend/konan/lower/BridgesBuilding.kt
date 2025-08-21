@@ -80,7 +80,6 @@ internal class BridgesSupport(val irBuiltIns: IrBuiltIns, val irFactory: IrFacto
             returnType = bridgeDirections.returnDirection.type() ?: target.returnType
             isSuspend = function.isSuspend
         }.apply {
-            attributeOwnerId = function.attributeOwnerId
             parent = function.parent
             val bridge = this
 

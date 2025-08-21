@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirEle
 import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
 import org.jetbrains.kotlin.fir.FirPackageDirective
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildImport
 import org.jetbrains.kotlin.fir.declarations.builder.buildResolvedImport
@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeOperatorAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnmatchedTypeArgumentsError
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -264,6 +266,7 @@ internal object FirReferenceResolveHelper {
             is FirEqualityOperatorCall -> getSymbolsByEqualsName(fir, session, analysisSession, symbolBuilder)
             is FirTypeParameter -> getSybmolsByTypeParameter(symbolBuilder, fir)
             is FirResolvedReifiedParameterReference -> getSymbolsByResolvedReifiedTypeParameterReference(symbolBuilder, fir)
+            is FirErrorExpression -> handleErrorExpression(fir, expression, symbolBuilder)
             else -> handleUnknownFirElement(expression, analysisSession, session, symbolBuilder)
         }
     }
@@ -387,6 +390,24 @@ internal object FirReferenceResolveHelper {
 
     private fun FirCall.findCorrespondingParameter(name: Name): FirValueParameter? {
         return resolvedArgumentMapping?.values?.firstOrNull { it.name == name }
+    }
+
+    private fun handleErrorExpression(
+        fir: FirErrorExpression,
+        expression: KtSimpleNameExpression,
+        symbolBuilder: KaSymbolByFirBuilder,
+    ): List<KaSymbol> {
+        val diagnostic = fir.diagnostic
+        return when (expression) {
+            is KtOperationReferenceExpression if expression.operationSignTokenType in KtTokens.AUGMENTED_ASSIGNMENTS && diagnostic is ConeOperatorAmbiguityError -> {
+                diagnostic.candidates.map { candidate ->
+                    candidate.symbol.buildSymbol(symbolBuilder)
+                }
+            }
+            else -> {
+                emptyList()
+            }
+        }
     }
 
     private fun handleUnknownFirElement(
@@ -601,10 +622,10 @@ internal object FirReferenceResolveHelper {
         session: FirSession,
         symbolBuilder: KaSymbolByFirBuilder,
     ): Collection<KaSymbol> {
-        val referencedSymbol = if (fir.resolvedToCompanionObject) {
-            (fir.symbol?.fir as? FirRegularClass)?.companionObjectSymbol
-        } else {
-            fir.symbol
+        val referencedSymbol = when (val symbol = fir.symbol) {
+            // Note: we want to consider the companion object only for regular class qualifiers (and not for typealiased ones)
+            is FirRegularClassSymbol if (fir.resolvedToCompanionObject) -> symbol.companionObjectSymbol
+            else -> symbol
         }
         if (referencedSymbol == null) {
             // If referencedSymbol is null, it means the reference goes to a package.

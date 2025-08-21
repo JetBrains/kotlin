@@ -56,7 +56,7 @@ FILE: selfReferenceToCompanionObject.kt
             public open override val y: R|kotlin/String| = String(K)
                 public get(): R|kotlin/String|
 
-            public final val closure2: R|() -> kotlin/String| = fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+            public final val closure2: R|() -> kotlin/String| = fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
                 ^ this@R|/<anonymous>|.R|/<anonymous>.y|
             }
 

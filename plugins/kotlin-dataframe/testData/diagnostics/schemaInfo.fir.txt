@@ -485,7 +485,7 @@ FILE: schemaInfo.kt
         }
 
     }
-FILE: __GENERATED DECLARATIONS__.kt
+FILE: /__GENERATED__CALLABLES__.kt
     public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Person>|.firstName: R|kotlin/String|
         public get(): R|kotlin/String|
     public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Person>|.firstName: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|

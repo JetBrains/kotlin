@@ -1,6 +1,10 @@
 // LANGUAGE: +ContextParameters
+// OPT_IN: kotlin.js.ExperimentalWasmJsInterop
+
+@file:OptIn(ExperimentalWasmInterop::class)
 
 import kotlin.wasm.WasmImport
+import kotlin.wasm.ExperimentalWasmInterop
 
 @WasmImport("a", "b")
 external fun foo0(): Unit

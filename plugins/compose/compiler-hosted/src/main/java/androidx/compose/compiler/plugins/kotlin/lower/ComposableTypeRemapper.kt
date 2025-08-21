@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.ir.types.impl.IrTypeAbbreviationImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -350,8 +349,7 @@ class ComposableTypeRemapper(
             functionCls.symbol,
             type.nullability,
             newIrArguments.map { remapTypeArgument(it) },
-            type.annotations.filter { !it.isComposableAnnotation() },
-            null
+            type.annotations.filter { !it.isComposableAnnotation() }
         )
     }
 
@@ -360,18 +358,9 @@ class ComposableTypeRemapper(
             type.classifier,
             type.nullability,
             type.arguments.map { remapTypeArgument(it) },
-            type.annotations,
-            type.abbreviation?.remapTypeAbbreviation()
+            type.annotations
         )
     }
-
-    private fun IrTypeAbbreviation.remapTypeAbbreviation() =
-        IrTypeAbbreviationImpl(
-            typeAlias,
-            hasQuestionMark,
-            arguments.map { remapTypeArgument(it) },
-            annotations
-        )
 
     private fun remapTypeArgument(typeArgument: IrTypeArgument): IrTypeArgument =
         if (typeArgument is IrTypeProjection)
@@ -386,13 +375,9 @@ class ComposableTypeRemapper(
     private fun IrType.hasComposableTypeArgument(): Boolean {
         when {
             this is IrSimpleType -> {
-                val argument = arguments.any {
+                return arguments.any {
                     it.typeOrNull?.hasComposableType() == true
                 }
-                val abbreviationArgument = abbreviation?.arguments?.any {
-                    it.typeOrNull?.hasComposableType() == true
-                } == true
-                return argument || abbreviationArgument
             }
         }
         return false

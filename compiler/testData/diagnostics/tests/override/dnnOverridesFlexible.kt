@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN +AllowDnnTypeOverridingFlexibleType
+// LANGUAGE: +AllowDnnTypeOverridingFlexibleType
 // ISSUE: KT-58933
 // FILE: J.java
 public interface J<T> {

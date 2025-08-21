@@ -29,7 +29,6 @@ class TestImpl : Test() {
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = 53166890, startOffset = 48, endOffset = 146)
 fun CallWithDefaults(test: Test, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(CallWithDefaults)N(test)<foo()>,<foo(0)>,<bar()>,<bar(0)>:Test.kt")
@@ -58,7 +57,6 @@ fun CallWithDefaults(test: Test, %composer: Composer?, %changed: Int) {
 @StabilityInferred(parameters = 1)
 open class Test {
   @Composable
-  @FunctionKeyMeta(key = -1866428133, startOffset = 187, endOffset = 226)
   open fun foo(param: Int, %composer: Composer?, %changed: Int) {
     %composer.startReplaceGroup(<>)
     sourceInformation(%composer, "C(foo)N(param):Test.kt")
@@ -71,7 +69,6 @@ open class Test {
     %composer.endReplaceGroup()
   }
   @Composable
-  @FunctionKeyMeta(key = -671088329, startOffset = 248, endOffset = 297)
   open fun bar(param: Int, %composer: Composer?, %changed: Int): Int {
     %composer.startReplaceGroup(<>)
     sourceInformation(%composer, "C(bar)N(param):Test.kt")
@@ -165,7 +162,6 @@ open class Test {
 @StabilityInferred(parameters = 1)
 class TestImpl : Test {
   @Composable
-  @FunctionKeyMeta(key = 1427006299, startOffset = 352, endOffset = 374)
   override fun foo(param: Int, %composer: Composer?, %changed: Int) {
     %composer.startReplaceGroup(<>)
     sourceInformation(%composer, "C(foo)N(param):Test.kt")
@@ -178,7 +174,6 @@ class TestImpl : Test {
     %composer.endReplaceGroup()
   }
   @Composable
-  @FunctionKeyMeta(key = 278947191, startOffset = 400, endOffset = 464)
   override fun bar(param: Int, %composer: Composer?, %changed: Int): Int {
     %composer.startReplaceGroup(<>)
     sourceInformation(%composer, "C(bar)N(param)<bar(pa...>:Test.kt")

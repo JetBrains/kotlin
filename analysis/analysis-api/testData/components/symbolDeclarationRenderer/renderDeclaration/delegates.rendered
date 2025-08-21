@@ -14,5 +14,5 @@ val value: Int
 
 var variable: Int
   get()
-  set(variable: Int)
+  set(`<set-?>`: Int)
 

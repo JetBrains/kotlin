@@ -49,6 +49,12 @@ public class FirKaptStubConverterTestGenerated extends AbstractFirKaptStubConver
   }
 
   @Test
+  @TestMetadata("annotationWithArrayArgument.kt")
+  public void testAnnotationWithArrayArgument() {
+    runTest("plugins/kapt/kapt-compiler/testData/converter/annotationWithArrayArgument.kt");
+  }
+
+  @Test
   @TestMetadata("annotationWithCompanion.kt")
   public void testAnnotationWithCompanion() {
     runTest("plugins/kapt/kapt-compiler/testData/converter/annotationWithCompanion.kt");
@@ -130,12 +136,6 @@ public class FirKaptStubConverterTestGenerated extends AbstractFirKaptStubConver
   @TestMetadata("comments.kt")
   public void testComments() {
     runTest("plugins/kapt/kapt-compiler/testData/converter/comments.kt");
-  }
-
-  @Test
-  @TestMetadata("commentsRemoved.kt")
-  public void testCommentsRemoved() {
-    runTest("plugins/kapt/kapt-compiler/testData/converter/commentsRemoved.kt");
   }
 
   @Test
@@ -595,6 +595,24 @@ public class FirKaptStubConverterTestGenerated extends AbstractFirKaptStubConver
   }
 
   @Test
+  @TestMetadata("kt79133_typeAliasClassLiteral.kt")
+  public void testKt79133_typeAliasClassLiteral() {
+    runTest("plugins/kapt/kapt-compiler/testData/converter/kt79133_typeAliasClassLiteral.kt");
+  }
+
+  @Test
+  @TestMetadata("kt79138_javaClassAnnotatedWithMetadata.kt")
+  public void testKt79138_javaClassAnnotatedWithMetadata() {
+    runTest("plugins/kapt/kapt-compiler/testData/converter/kt79138_javaClassAnnotatedWithMetadata.kt");
+  }
+
+  @Test
+  @TestMetadata("kt79305_typeAliasUnresolvedClassLiteral.kt")
+  public void testKt79305_typeAliasUnresolvedClassLiteral() {
+    runTest("plugins/kapt/kapt-compiler/testData/converter/kt79305_typeAliasUnresolvedClassLiteral.kt");
+  }
+
+  @Test
   @TestMetadata("lazyProperty.kt")
   public void testLazyProperty() {
     runTest("plugins/kapt/kapt-compiler/testData/converter/lazyProperty.kt");
@@ -664,6 +682,12 @@ public class FirKaptStubConverterTestGenerated extends AbstractFirKaptStubConver
   @TestMetadata("multipleTypeConstraints.kt")
   public void testMultipleTypeConstraints() {
     runTest("plugins/kapt/kapt-compiler/testData/converter/multipleTypeConstraints.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedClassInAnnotation.kt")
+  public void testNestedClassInAnnotation() {
+    runTest("plugins/kapt/kapt-compiler/testData/converter/nestedClassInAnnotation.kt");
   }
 
   @Test

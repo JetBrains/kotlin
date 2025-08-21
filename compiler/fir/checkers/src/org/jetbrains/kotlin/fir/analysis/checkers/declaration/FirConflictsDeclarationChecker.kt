@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.FirNameConflictsTrackerComponent
+import org.jetbrains.kotlin.fir.FirNameConflictsTracker
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.analysis.checkers.*
@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.getDestructuredParameter
 import org.jetbrains.kotlin.fir.packageFqName
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.PACKAGE_MEMBER
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
@@ -181,26 +182,30 @@ object FirConflictsDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKin
     }
 }
 
-class FirNameConflictsTracker : FirNameConflictsTrackerComponent() {
+class FirNameConflictsTrackerImpl : FirNameConflictsTracker() {
+    data class ClassifierRedeclarationImpl(
+        override val classifierSymbol: FirClassLikeSymbol<*>,
+        override val containingFile: FirFile?,
+    ) : ClassifierRedeclaration()
 
-    data class ClassifierWithFile(
-        val classifier: FirClassLikeSymbol<*>,
-        val file: FirFile?,
-    )
+    private val redeclaredClassifiers: MutableMap<ClassId, Set<ClassifierRedeclarationImpl>> = HashMap()
 
-    private val _redeclaredClassifiers: MutableMap<ClassId, Set<ClassifierWithFile>> = HashMap()
-    val redeclaredClassifiers: Map<ClassId, Set<ClassifierWithFile>>
-        get() = _redeclaredClassifiers
+    override fun getClassifierRedeclarations(classId: ClassId): Collection<ClassifierRedeclaration> =
+        redeclaredClassifiers[classId].orEmpty()
 
     override fun registerClassifierRedeclaration(
         classId: ClassId,
-        newSymbol: FirClassLikeSymbol<*>, newSymbolFile: FirFile,
-        prevSymbol: FirClassLikeSymbol<*>, prevSymbolFile: FirFile?,
+        newSymbol: FirClassLikeSymbol<*>,
+        newSymbolFile: FirFile,
+        prevSymbol: FirClassLikeSymbol<*>,
+        prevSymbolFile: FirFile?,
     ) {
-        _redeclaredClassifiers.merge(
-            classId, linkedSetOf(ClassifierWithFile(newSymbol, newSymbolFile), ClassifierWithFile(prevSymbol, prevSymbolFile))
+        redeclaredClassifiers.merge(
+            classId,
+            linkedSetOf(
+                ClassifierRedeclarationImpl(newSymbol, newSymbolFile),
+                ClassifierRedeclarationImpl(prevSymbol, prevSymbolFile),
+            ),
         ) { a, b -> a + b }
     }
 }
-
-

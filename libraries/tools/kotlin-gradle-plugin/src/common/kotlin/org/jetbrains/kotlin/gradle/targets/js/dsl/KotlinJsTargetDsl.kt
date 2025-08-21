@@ -114,18 +114,7 @@ interface KotlinJsTargetDsl :
     fun browser(body: KotlinJsBrowserDsl.() -> Unit)
 
     /**
-     * Enable 'browsers' as the execution environment for this target,
-     * so the project can be used for client-side scripting in browsers.
-     *
-     * When enabled, Kotlin Gradle plugin will download and install
-     * the required environment and dependencies for running and testing
-     * in a browser.
-     *
-     * The target can be configured using [fn].
-     *
-     * For more information, see https://kotl.in/kotlin-js-execution-environments
-     *
-     * @see KotlinJsBrowserDsl
+     * [Action] based version of [browser] above.
      */
     fun browser(fn: Action<KotlinJsBrowserDsl>) {
         browser {
@@ -216,7 +205,7 @@ interface KotlinJsTargetDsl :
     var moduleName: String?
 
     @Deprecated(
-        message = "produceExecutable() was changed on binaries.executable()",
+        message = "produceExecutable() was changed on binaries.executable(). Scheduled for removal in Kotlin 2.3.",
         replaceWith = ReplaceWith("binaries.executable()"),
         level = DeprecationLevel.ERROR
     )
@@ -226,9 +215,47 @@ interface KotlinJsTargetDsl :
     //endregion
 }
 
+/**
+ * Base options for configuring Node.js for use in
+ * Kotlin JS, WasmJS, and Wasi targets.
+ *
+ * To learn more see:
+ * - [Set up a Kotlin/JS project](https://kotl.in/kotlin-js-setup).
+ */
 interface KotlinTargetWithNodeJsDsl {
+    /**
+     * Enables 'Node.js' as the execution environment for this target,
+     * so the project can be used running JavaScript code outside a browser.
+     *
+     * When enabled, Kotlin Gradle plugin will download and install
+     * the required environment and dependencies for running and testing
+     * using Node.js.
+     *
+     * For more information, see https://kotl.in/kotlin-js-execution-environments
+     *
+     * @see KotlinJsNodeDsl
+     */
     fun nodejs() = nodejs { }
+
+    /**
+     * Enables 'Node.js' as the execution environment for this target,
+     * so the project can be used running JavaScript code outside a browser.
+     *
+     * When enabled, Kotlin Gradle plugin will download and install
+     * the required environment and dependencies for running and testing
+     * using Node.js.
+     *
+     * The target can be configured using [body].
+     *
+     * For more information, see https://kotl.in/kotlin-js-execution-environments
+     *
+     * @see KotlinJsNodeDsl
+     */
     fun nodejs(body: KotlinJsNodeDsl.() -> Unit)
+
+    /**
+     * [Action] based version of [nodejs] above.
+     */
     fun nodejs(fn: Action<KotlinJsNodeDsl>) {
         nodejs {
             fn.execute(this)
@@ -236,25 +263,122 @@ interface KotlinTargetWithNodeJsDsl {
     }
 }
 
+/**
+ * Common options for the configuring execution environments for Kotlin JS and Wasm targets.
+ *
+ * For more information about execution environments, see https://kotl.in/kotlin-js-execution-environments
+ *
+ * **Note:** This interface is not intended for implementation by build script or plugin authors.
+ */
+// note1: SubTarget == 'execution environment'
+// note2: KGP only supports specific environments (Node.js, browser, D8).
+//        See KT-73301 for supporting custom user-defined envs.
 interface KotlinJsSubTargetDsl {
+
+    /**
+     * Configures the output of the bundle produced for Kotlin JS and Wasm targets.
+     *
+     * By default, the results of a Kotlin/JS project build reside in the
+     * `build/dist/<targetName>/<binaryName>` directory within the project root.
+     *
+     * KGP will save the output bundle in the specified location.
+     */
     @ExperimentalDistributionDsl
     fun distribution(body: Action<Distribution>)
 
+    /**
+     * Configures the default [KotlinJsTest] test task for the execution environment.
+     *
+     * This can be used to modify the configuration of the Kotlin JS test task.
+     *
+     * For more information about test tasks, see https://kotl.in/kotlin-js-test-configuration.
+     */
     fun testTask(body: Action<KotlinJsTest>)
 
+    /**
+     * The container that holds all [KotlinJsPlatformTestRun] executions for the execution environments.
+     *
+     * This can be used to modify the configuration of the test runs.
+     *
+     * @see org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests.testRuns
+     * @see org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl.testRuns
+     */
     val testRuns: NamedDomainObjectContainer<KotlinJsPlatformTestRun>
 }
 
+/**
+ * Browser execution environment options for Kotlin JS and Wasm targets.
+ *
+ * For more information about execution environments, see https://kotl.in/kotlin-js-execution-environments
+ *
+ * **Note:** This interface is not intended for implementation by build script or plugin authors.
+ */
 interface KotlinJsBrowserDsl : KotlinJsSubTargetDsl {
+
+    /**
+     * Configures the default Webpack configuration for the browser execution environment.
+     *
+     * By default, Webpack is used by tasks used to [run][runTask],
+     * [bundle][webpackTask], and [test][testTask] the Kotlin JS and Wasm targets.
+     *
+     * For more information about how Kotlin JS and Wasm use Webpack, see
+     * https://kotl.in/js-project-setup/webpack-bundling
+     *
+     * @see org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+     */
     fun commonWebpackConfig(body: Action<KotlinWebpackConfig>)
 
+    /**
+     * Configures the default [KotlinWebpack] task that **runs** the Kotlin JS or Wasm target.
+     *
+     * This task will serve the compiled Kotlin JS or Wasm target webpack's local development server.
+     * For more information about the run task, see
+     * https://kotl.in/js-project-setup-run-task
+     *
+     * The common webpack configuration options for all [KotlinWebpack] tasks
+     * can also be configured using [commonWebpackConfig].
+     *
+     * @see org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
+     */
     fun runTask(body: Action<KotlinWebpack>)
 
+    /**
+     * Configures the default [KotlinWebpack] task that **bundles** the Kotlin JS or Wasm target.
+     *
+     * This task will bundle the compiled Kotlin JS or Wasm target.
+     *
+     * The common webpack configuration options for all [KotlinWebpack] tasks
+     * can also be configured using [commonWebpackConfig].
+     *
+     * For more information about how Kotlin JS and Wasm use Webpack, see
+     * https://kotl.in/js-project-setup/webpack-bundling
+     *
+     * @see org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
+     */
     fun webpackTask(body: Action<KotlinWebpack>)
-
 }
 
+/**
+ * [Node.js](https://nodejs.org/) execution environment options for Kotlin JS and Wasm targets.
+ *
+ * For more information about execution environments, see
+ * https://kotl.in/kotlin-js-execution-environments
+ * For more information about the Node.js execution environments, see
+ * https://kotl.in/js-project-setup-node-js
+ *
+ * **Note:** This interface is not intended for implementation by build script or plugin authors.
+ */
 interface KotlinJsNodeDsl : KotlinJsSubTargetDsl {
+
+    /**
+     * Configures the default [NodeJsExec] task that **runs** the Kotlin JS or Wasm target
+     * using Node.js.
+     *
+     * For more information about the run task, see
+     * https://kotl.in/js-project-setup-run-task
+     *
+     * @see org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
+     */
     fun runTask(body: Action<NodeJsExec>)
 
     /**
@@ -272,7 +396,6 @@ interface KotlinJsNodeDsl : KotlinJsSubTargetDsl {
      */
     @ExperimentalMainFunctionArgumentsDsl
     fun passProcessArgvToMainFunction()
-
 
     /**
      * _This option is only relevant for JS targets._

@@ -1,5 +1,5 @@
 // See KT-64726
-// IGNORE_INLINER: IR
+
 // IGNORE_BACKEND: WASM
 // FILE: test.kt
 inline fun String.switchMapOnce(crossinline mapper: (String) -> String): String {

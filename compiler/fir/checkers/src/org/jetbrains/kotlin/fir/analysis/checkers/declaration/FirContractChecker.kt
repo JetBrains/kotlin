@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeContractMayNotHaveLabel
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeContractDescriptionError
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
@@ -114,7 +115,7 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
         declaration: FirFunction,
     ) {
         val erasedCastChecker =
-            if (context.languageVersionSettings.supportsFeature(LanguageFeature.AllowCheckForErasedTypesInContracts)) null
+            if (LanguageFeature.AllowCheckForErasedTypesInContracts.isEnabled()) null
             else ErasedCastChecker(declaration, context)
         // Any statements that [ConeEffectExtractor] cannot extract effects will be in `unresolvedEffects`.
         for (unresolvedEffect in contractDescription.unresolvedEffects) {
@@ -148,24 +149,24 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
 
         fun contractNotAllowed(message: String) = reporter.reportOn(source, FirErrors.CONTRACT_NOT_ALLOWED, message)
 
+        val allowedOnAccessors = LanguageFeature.AllowContractsOnPropertyAccessors.isEnabled()
+        val allowedOnSomeOperators = LanguageFeature.AllowContractsOnSomeOperators.isEnabled()
+
         when {
-            declaration is FirPropertyAccessor || declaration is FirAnonymousFunction -> {
-                if (context.languageVersionSettings.supportsFeature(LanguageFeature.AllowContractsOnPropertyAccessors)) {
-                    if (declaration is FirAnonymousFunction) contractNotAllowed("Contracts are not allowed for anonymous functions.")
-                } else {
-                    contractNotAllowed("Contracts are only allowed for functions.")
-                }
+            !allowedOnAccessors && (declaration is FirPropertyAccessor || declaration is FirAnonymousFunction) -> {
+                contractNotAllowed("Contracts are only allowed for functions.")
+            }
+            allowedOnAccessors && declaration is FirAnonymousFunction -> {
+                contractNotAllowed("Contracts are not allowed for anonymous functions.")
             }
             declaration.isAbstract || declaration.isOpen || declaration.isOverride -> {
                 contractNotAllowed("Contracts are not allowed for open or override functions.")
             }
-            declaration.isOperator -> {
-                if (context.languageVersionSettings.supportsFeature(LanguageFeature.AllowContractsOnSomeOperators)) {
-                    if (declaration.isContractOnOperatorForbidden())
-                        contractNotAllowed("Contracts are not allowed for operator ${declaration.nameOrSpecialName}.")
-                } else {
-                    contractNotAllowed("Contracts are not allowed for operator functions.")
-                }
+            !allowedOnSomeOperators && declaration.isOperator -> {
+                contractNotAllowed("Contracts are not allowed for operator functions.")
+            }
+            allowedOnSomeOperators && declaration.isOperator && declaration.isContractOnOperatorForbidden() -> {
+                contractNotAllowed("Contracts are not allowed for operator ${declaration.nameOrSpecialName}.")
             }
             declaration.symbol.callableId.isLocal || declaration.visibility == Visibilities.Local -> {
                 contractNotAllowed("Contracts are not allowed for local functions.")
@@ -411,13 +412,16 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
             return logicalNot.arg.accept(this, data)
         }
 
-        private fun getParameterType(index: Int): ConeKotlinType =
-            when (index) {
-                -1 -> declaration.symbol.resolvedReceiverType
+        private fun getParameterType(index: Int): ConeKotlinType {
+            val declarationSymbolForReceiverParameter =
+                if (declaration is FirPropertyAccessor) declaration.propertySymbol else declaration.symbol
+            return when (index) {
+                -1 -> declarationSymbolForReceiverParameter.resolvedReceiverType
                     ?: declaration.symbol.dispatchReceiverType
                     ?: error("Contract references non-existent receiver")
                 in declaration.valueParameters.indices -> declaration.valueParameters[index].returnTypeRef.coneType
-                else -> declaration.contextParameters[index - declaration.valueParameters.size].returnTypeRef.coneType
+                else -> declarationSymbolForReceiverParameter.contextParameterSymbols[index - declaration.valueParameters.size].resolvedReturnType
             }
+        }
     }
 }

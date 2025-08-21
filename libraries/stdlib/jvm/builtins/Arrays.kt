@@ -14,7 +14,8 @@
 package kotlin
 
 /**
- * An array of bytes. When targeting the JVM, instances of this class are represented as `byte[]`.
+ * An array of bytes.
+ * Instances of this class are represented as `byte[]`.
  *
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
@@ -45,8 +46,7 @@ public actual constructor(size: Int) {
      * value = array[index]
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     public actual operator fun get(index: Int): Byte
 
@@ -58,8 +58,7 @@ public actual constructor(size: Int) {
      * array[index] = value
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     public actual operator fun set(index: Int, value: Byte): Unit
 
@@ -73,7 +72,8 @@ public actual constructor(size: Int) {
 }
 
 /**
- * An array of chars. When targeting the JVM, instances of this class are represented as `char[]`.
+ * An array of chars.
+ * Instances of this class are represented as `char[]`.
  *
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
@@ -104,8 +104,7 @@ public actual constructor(size: Int) {
      * value = array[index]
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     public actual operator fun get(index: Int): Char
 
@@ -117,8 +116,7 @@ public actual constructor(size: Int) {
      * array[index] = value
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     public actual operator fun set(index: Int, value: Char): Unit
 
@@ -132,7 +130,8 @@ public actual constructor(size: Int) {
 }
 
 /**
- * An array of shorts. When targeting the JVM, instances of this class are represented as `short[]`.
+ * An array of shorts.
+ * Instances of this class are represented as `short[]`.
  *
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
@@ -163,8 +162,7 @@ public actual constructor(size: Int) {
      * value = array[index]
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     public actual operator fun get(index: Int): Short
 
@@ -176,8 +174,7 @@ public actual constructor(size: Int) {
      * array[index] = value
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     public actual operator fun set(index: Int, value: Short): Unit
 
@@ -191,7 +188,8 @@ public actual constructor(size: Int) {
 }
 
 /**
- * An array of ints. When targeting the JVM, instances of this class are represented as `int[]`.
+ * An array of ints.
+ * Instances of this class are represented as `int[]`.
  *
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
@@ -222,8 +220,7 @@ public actual constructor(size: Int) {
      * value = array[index]
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     public actual operator fun get(index: Int): Int
 
@@ -235,8 +232,7 @@ public actual constructor(size: Int) {
      * array[index] = value
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     public actual operator fun set(index: Int, value: Int): Unit
 
@@ -250,7 +246,8 @@ public actual constructor(size: Int) {
 }
 
 /**
- * An array of longs. When targeting the JVM, instances of this class are represented as `long[]`.
+ * An array of longs.
+ * Instances of this class are represented as `long[]`.
  *
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
@@ -281,8 +278,7 @@ public actual constructor(size: Int) {
      * value = array[index]
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     public actual operator fun get(index: Int): Long
 
@@ -294,8 +290,7 @@ public actual constructor(size: Int) {
      * array[index] = value
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     public actual operator fun set(index: Int, value: Long): Unit
 
@@ -309,7 +304,8 @@ public actual constructor(size: Int) {
 }
 
 /**
- * An array of floats. When targeting the JVM, instances of this class are represented as `float[]`.
+ * An array of floats.
+ * Instances of this class are represented as `float[]`.
  *
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
@@ -340,8 +336,7 @@ public actual constructor(size: Int) {
      * value = array[index]
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     public actual operator fun get(index: Int): Float
 
@@ -353,8 +348,7 @@ public actual constructor(size: Int) {
      * array[index] = value
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     public actual operator fun set(index: Int, value: Float): Unit
 
@@ -368,7 +362,8 @@ public actual constructor(size: Int) {
 }
 
 /**
- * An array of doubles. When targeting the JVM, instances of this class are represented as `double[]`.
+ * An array of doubles.
+ * Instances of this class are represented as `double[]`.
  *
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
@@ -399,8 +394,7 @@ public actual constructor(size: Int) {
      * value = array[index]
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     public actual operator fun get(index: Int): Double
 
@@ -412,8 +406,7 @@ public actual constructor(size: Int) {
      * array[index] = value
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     public actual operator fun set(index: Int, value: Double): Unit
 
@@ -427,7 +420,8 @@ public actual constructor(size: Int) {
 }
 
 /**
- * An array of booleans. When targeting the JVM, instances of this class are represented as `boolean[]`.
+ * An array of booleans.
+ * Instances of this class are represented as `boolean[]`.
  *
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
@@ -458,8 +452,7 @@ public actual constructor(size: Int) {
      * value = array[index]
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     public actual operator fun get(index: Int): Boolean
 
@@ -471,8 +464,7 @@ public actual constructor(size: Int) {
      * array[index] = value
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     public actual operator fun set(index: Int, value: Boolean): Unit
 

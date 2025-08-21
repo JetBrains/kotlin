@@ -5,9 +5,15 @@
 
 package org.jetbrains.kotlin.gradle.mpp
 
+import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.DiagnosticGroup
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.STRONG_WARNING
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import java.io.File
@@ -222,6 +228,55 @@ class MppDiagnosticsIt : KGPBaseTest() {
         project("errorDiagnosticUpToDateIfNoErrors", gradleVersion) {
             build("assemble") {
                 assertTasksSkipped(":checkKotlinGradlePluginConfigurationErrors")
+            }
+        }
+    }
+
+    internal object StrongWarningDiagnostic : ToolingDiagnosticFactory(STRONG_WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke() =
+            build {
+                title("Foo")
+                    .descriptionBuilder {
+                        if (org.slf4j.LoggerFactory.getLogger(StrongWarningDiagnostic::class.java).isInfoEnabled) {
+                            info
+                        } else {
+                            standard
+                        }
+                    }
+                    .solution("baz")
+            }
+
+        val standard = "StrongWarningDiagnostic_STANDARD"
+        val info = "StrongWarningDiagnostic_INFO"
+    }
+    @GradleTest
+    fun testStrongWarningDiagnostic(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    jvm()
+                }
+                project.reportDiagnostic(StrongWarningDiagnostic())
+            }
+            build(
+                ":checkKotlinGradlePluginConfigurationErrors",
+                buildOptions = defaultBuildOptions.copy(logLevel = org.gradle.api.logging.LogLevel.LIFECYCLE),
+            ) {
+                assertHasDiagnostic(StrongWarningDiagnostic)
+                assertTasksExecuted(":checkKotlinGradlePluginConfigurationErrors")
+                assertOutputContains(StrongWarningDiagnostic.standard)
+            }
+            build(
+                ":checkKotlinGradlePluginConfigurationErrors",
+                buildOptions = defaultBuildOptions.copy(logLevel = org.gradle.api.logging.LogLevel.INFO),
+            ) {
+                assertConfigurationCacheReused()
+                assertHasDiagnostic(StrongWarningDiagnostic)
+                assertTasksExecuted(":checkKotlinGradlePluginConfigurationErrors")
+                assertOutputContains(StrongWarningDiagnostic.info)
             }
         }
     }

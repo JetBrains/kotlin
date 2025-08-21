@@ -90,7 +90,7 @@ FILE fqName:<root> fileName:/kt45236.kt
               then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.NetRequestStatus.Error'
                 CONST Boolean type=kotlin.Boolean value=false
           VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.NetRequestStatus.Error<T of <root>.NetRequestStatus.Error> [val]
-            TYPE_OP type=<root>.NetRequestStatus.Error<T of <root>.NetRequestStatus.Error> origin=CAST typeOperand=<root>.NetRequestStatus.Error<T of <root>.NetRequestStatus.Error>
+            TYPE_OP type=<root>.NetRequestStatus.Error<T of <root>.NetRequestStatus.Error> origin=IMPLICIT_CAST typeOperand=<root>.NetRequestStatus.Error<T of <root>.NetRequestStatus.Error>
               GET_VAR 'other: kotlin.Any? declared in <root>.NetRequestStatus.Error.equals' type=kotlin.Any? origin=null
           WHEN type=kotlin.Unit origin=null
             BRANCH

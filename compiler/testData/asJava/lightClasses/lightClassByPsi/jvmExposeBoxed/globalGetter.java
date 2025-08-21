@@ -1,6 +1,9 @@
 public final class GlobalGetterKt /* GlobalGetterKt*/ {
   @kotlin.jvm.JvmExposeBoxed(jvmName = "bar")
   @org.jetbrains.annotations.NotNull()
+  public static final @org.jetbrains.annotations.NotNull() StringWrapper bar();//  bar()
+
+  @org.jetbrains.annotations.NotNull()
   public static final @org.jetbrains.annotations.NotNull() java.lang.String getFoo();//  getFoo()
 }
 

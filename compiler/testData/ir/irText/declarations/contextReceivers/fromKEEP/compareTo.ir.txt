@@ -80,7 +80,7 @@ FILE fqName:<root> fileName:/compareTo.kt
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Pair'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.Pair<A of <root>.Pair, B of <root>.Pair> [val]
-          TYPE_OP type=<root>.Pair<A of <root>.Pair, B of <root>.Pair> origin=CAST typeOperand=<root>.Pair<A of <root>.Pair, B of <root>.Pair>
+          TYPE_OP type=<root>.Pair<A of <root>.Pair, B of <root>.Pair> origin=IMPLICIT_CAST typeOperand=<root>.Pair<A of <root>.Pair, B of <root>.Pair>
             GET_VAR 'other: kotlin.Any? declared in <root>.Pair.equals' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH

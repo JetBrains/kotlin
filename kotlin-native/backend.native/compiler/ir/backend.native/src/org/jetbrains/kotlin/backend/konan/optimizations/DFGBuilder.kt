@@ -776,7 +776,7 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
                 }
 
                 highestScope!!.nodes += node
-                Scoped(node, highestScope!!)
+                Scoped(node, highestScope)
             }
         }
     }

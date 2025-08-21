@@ -1,5 +1,5 @@
 Marked.class:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/Marked, fqName=Marked, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Marked, superNames=[]]
@@ -11,7 +11,7 @@ Marked.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=MustUseReturnValue]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Marked]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Marked]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
       CLASS_BODY
@@ -22,10 +22,10 @@ Marked.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
-          PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
+          PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
             MODIFIER_LIST[public final]
             VALUE_PARAMETER_LIST
-          PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false]
+          PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
             MODIFIER_LIST[public final]
             VALUE_PARAMETER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
@@ -34,8 +34,23 @@ Marked.class:
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=String]
-        FUN[fqName=Marked.alreadyApplied, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=alreadyApplied]
+        FUN[fqName=Marked.alreadyApplied, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=alreadyApplied]
           MODIFIER_LIST[public final]
+          VALUE_PARAMETER_LIST
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=String]
+        FUN[fqName=Marked.ignorable, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ignorable]
+          MODIFIER_LIST[public final]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                    REFERENCE_EXPRESSION[referencedName=IgnorableReturnValue]
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
             USER_TYPE
@@ -45,7 +60,7 @@ Marked.class:
 
 
 MarkedTopLevelKt.class:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=Facade[packageFqName=<root>, facadeFqName=MarkedTopLevelKt]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     PROPERTY[fqName=markedTopProperty, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=markedTopProperty]
@@ -55,10 +70,10 @@ MarkedTopLevelKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
+      PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
-    FUN[fqName=markedTopFunction, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=markedTopFunction]
+    FUN[fqName=markedTopFunction, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=markedTopFunction]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
@@ -69,12 +84,12 @@ MarkedTopLevelKt.class:
 
 
 MyEnum.class:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/MyEnum, fqName=MyEnum, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=MyEnum, superNames=[Enum]]
-      MODIFIER_LIST[enum public final]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=MyEnum]
+      MODIFIER_LIST[public final enum]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=MyEnum]
         MODIFIER_LIST[private]
         VALUE_PARAMETER_LIST
       SUPER_TYPE_LIST
@@ -92,7 +107,7 @@ MyEnum.class:
       CLASS_BODY
         ENUM_ENTRY[classId=null, fqName=MyEnum.A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=A, superNames=[]]
         ENUM_ENTRY[classId=null, fqName=MyEnum.B, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[]]
-        FUN[fqName=MyEnum.foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+        FUN[fqName=MyEnum.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
           MODIFIER_LIST[public final]
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
@@ -103,12 +118,12 @@ MyEnum.class:
 
 
 Unmarked.class:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/Unmarked, fqName=Unmarked, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Unmarked, superNames=[]]
       MODIFIER_LIST[public final]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Unmarked]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Unmarked]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
       CLASS_BODY
@@ -119,10 +134,10 @@ Unmarked.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
-          PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
+          PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
             MODIFIER_LIST[public final]
             VALUE_PARAMETER_LIST
-          PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false]
+          PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
             MODIFIER_LIST[public final]
             VALUE_PARAMETER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
@@ -131,8 +146,23 @@ Unmarked.class:
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=String]
-        FUN[fqName=Unmarked.getStuff, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=getStuff]
+        FUN[fqName=Unmarked.getStuff, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=getStuff]
           MODIFIER_LIST[public final]
+          VALUE_PARAMETER_LIST
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=String]
+        FUN[fqName=Unmarked.ignorable, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ignorable]
+          MODIFIER_LIST[public final]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                    REFERENCE_EXPRESSION[referencedName=IgnorableReturnValue]
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
             USER_TYPE
@@ -142,7 +172,7 @@ Unmarked.class:
 
 
 UnmarkedTopLevelKt.class:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=Facade[packageFqName=<root>, facadeFqName=UnmarkedTopLevelKt]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     PROPERTY[fqName=unmarkedTopProperty, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=unmarkedTopProperty]
@@ -152,11 +182,26 @@ UnmarkedTopLevelKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
+      PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
-    FUN[fqName=unmarkedTopFunction, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=unmarkedTopFunction]
+    FUN[fqName=unmarkedTopFunction, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=unmarkedTopFunction]
       MODIFIER_LIST[public]
+      VALUE_PARAMETER_LIST
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=String]
+    FUN[fqName=ignorableTopLvl, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=ignorableTopLvl]
+      MODIFIER_LIST[public]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=IgnorableReturnValue]
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
         USER_TYPE

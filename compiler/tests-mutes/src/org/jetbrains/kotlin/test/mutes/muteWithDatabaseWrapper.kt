@@ -5,25 +5,14 @@
 
 package org.jetbrains.kotlin.test.mutes
 
-private val SKIP_MUTED_TESTS = java.lang.Boolean.getBoolean("org.jetbrains.kotlin.skip.muted.tests")
-
-fun isMutedInDatabase(testClass: Class<*>, methodKey: String): Boolean {
-    val mutedTest = mutedSet.mutedTest(testClass, methodKey)
-    return SKIP_MUTED_TESTS && isPresentedInDatabaseWithoutFailMarker(mutedTest)
-}
-
 fun isMutedInDatabaseWithLog(testClass: Class<*>, methodKey: String): Boolean {
-    val mutedInDatabase = isMutedInDatabase(testClass, methodKey)
+    val mutedInDatabase = getMutedTest(testClass, methodKey) != null
 
     if (mutedInDatabase) {
         System.err.println(mutedMessage(testClass, methodKey))
     }
 
     return mutedInDatabase
-}
-
-fun isPresentedInDatabaseWithoutFailMarker(mutedTest: MutedTest?): Boolean {
-    return mutedTest != null && !mutedTest.hasFailFile
 }
 
 fun mutedMessage(klass: Class<*>, methodKey: String): String = "MUTED TEST: ${testKey(klass, methodKey)}"
@@ -34,20 +23,30 @@ fun wrapWithMuteInDatabase(testClass: Class<*>, methodName: String, f: () -> Uni
     val mutedTest = getMutedTest(testClass, methodName)
     val testKey = testKey(testClass, methodName)
 
-    if (isMutedInDatabase(testClass, methodName)) {
-        return {
-            System.err.println(mutedMessage(testClass, methodName))
-        }
-    } else if (isPresentedInDatabaseWithoutFailMarker(mutedTest)) {
-        if (mutedTest?.isFlaky == true) {
-            return wrapWithAutoMute(f, testKey)
+    if (mutedTest != null) {
+        if (mutedTest.isFlaky) {
+            return {
+                System.err.println(mutedMessage(testClass, methodName))
+            }
         } else {
             return {
                 invertMutedTestResultWithLog(f, testKey)
             }
         }
     } else {
-        return f
+        return {
+            try {
+                f()
+            } catch (e: Throwable) {
+                System.err.println(
+                    """FAILED TEST: if it's a cross-push add to mute-common.csv:
+                    ${testClass.canonicalName}.$methodName,KT-XXXX,STABLE
+                    or if you consider it's flaky:
+                    ${testClass.canonicalName}.$methodName,KT-XXXX,FLAKY""".trimIndent()
+                )
+                throw e
+            }
+        }
     }
 }
 

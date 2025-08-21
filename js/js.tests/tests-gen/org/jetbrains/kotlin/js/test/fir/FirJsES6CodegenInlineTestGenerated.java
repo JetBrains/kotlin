@@ -133,6 +133,12 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
     }
 
     @Test
+    @TestMetadata("capturedLocalFunReflection.kt")
+    public void testCapturedLocalFunReflection() {
+      runTest("compiler/testData/codegen/boxInline/anonymousObject/capturedLocalFunReflection.kt");
+    }
+
+    @Test
     @TestMetadata("capturedLocalFunTwice.kt")
     public void testCapturedLocalFunTwice() {
       runTest("compiler/testData/codegen/boxInline/anonymousObject/capturedLocalFunTwice.kt");
@@ -2861,9 +2867,15 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
     }
 
     @Test
-    @TestMetadata("localDelegatedPropertyWithInlinedFunInKlib.kt")
-    public void testLocalDelegatedPropertyWithInlinedFunInKlib() {
-      runTest("compiler/testData/codegen/boxInline/localFunInLambda/localDelegatedPropertyWithInlinedFunInKlib.kt");
+    @TestMetadata("localDelegatedPropertyUsedInsideAnonymousObject.kt")
+    public void testLocalDelegatedPropertyUsedInsideAnonymousObject() {
+      runTest("compiler/testData/codegen/boxInline/localFunInLambda/localDelegatedPropertyUsedInsideAnonymousObject.kt");
+    }
+
+    @Test
+    @TestMetadata("localDelegatedPropertyUsedInsideAnonymousObjectWithInlinedFunInKlib.kt")
+    public void testLocalDelegatedPropertyUsedInsideAnonymousObjectWithInlinedFunInKlib() {
+      runTest("compiler/testData/codegen/boxInline/localFunInLambda/localDelegatedPropertyUsedInsideAnonymousObjectWithInlinedFunInKlib.kt");
     }
 
     @Test

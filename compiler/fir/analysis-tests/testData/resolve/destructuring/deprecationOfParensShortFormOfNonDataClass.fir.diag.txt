@@ -1,0 +1,83 @@
+/deprecationOfParensShortFormOfNonDataClass.kt:(249,250): warning: This syntax will be used for name-based destructuring in a future release which will stop compiling or change its meaning for non-data class 'List<String>'.
+Use the new positional destructuring syntax '[b, ...]' to prepare for the transition.
+See https://kotl.in/name-based-destructuring for more information.
+
+/deprecationOfParensShortFormOfNonDataClass.kt:(282,283): warning: This syntax will be used for name-based destructuring in a future release which will stop compiling or change its meaning for non-data class 'List<String>'.
+Use the new positional destructuring syntax '[a, ...]' to prepare for the transition.
+See https://kotl.in/name-based-destructuring for more information.
+
+/deprecationOfParensShortFormOfNonDataClass.kt:(316,318): warning: This syntax will be used for name-based destructuring in a future release which will stop compiling or change its meaning for non-data class 'List<String>'.
+Use the new positional destructuring syntax '[aa, ...]' to prepare for the transition.
+See https://kotl.in/name-based-destructuring for more information.
+
+/deprecationOfParensShortFormOfNonDataClass.kt:(350,351): warning: This syntax will be used for name-based destructuring in a future release, and an underscore without renaming will become an error.
+Use name-based destructuring syntax '(val x, ...)' and drop the unused entry, or use the new positional destructuring syntax '[_, ...]'.
+See https://kotl.in/name-based-destructuring for more information.
+
+/deprecationOfParensShortFormOfNonDataClass.kt:(384,386): warning: This syntax will be used for name-based destructuring in a future release which will stop compiling or change its meaning for non-data class 'List<String>'.
+Use the new positional destructuring syntax '[aa, ...]' to prepare for the transition.
+See https://kotl.in/name-based-destructuring for more information.
+
+/deprecationOfParensShortFormOfNonDataClass.kt:(388,389): warning: This syntax will be used for name-based destructuring in a future release, and an underscore without renaming will become an error.
+Use name-based destructuring syntax '(val x, ...)' and drop the unused entry, or use the new positional destructuring syntax '[_, ...]'.
+See https://kotl.in/name-based-destructuring for more information.
+
+/deprecationOfParensShortFormOfNonDataClass.kt:(418,420): warning: This syntax will be used for name-based destructuring in a future release which will stop compiling or change its meaning for non-data class 'List<String>'.
+Use the new positional destructuring syntax '[aa, ...]' to prepare for the transition.
+See https://kotl.in/name-based-destructuring for more information.
+
+/deprecationOfParensShortFormOfNonDataClass.kt:(580,581): warning: This syntax will be used for name-based destructuring in a future release which will stop compiling or change its meaning for non-data class 'List<String>'.
+Use the new positional destructuring syntax '[b, ...]' to prepare for the transition.
+See https://kotl.in/name-based-destructuring for more information.
+
+/deprecationOfParensShortFormOfNonDataClass.kt:(605,606): warning: This syntax will be used for name-based destructuring in a future release which will stop compiling or change its meaning for non-data class 'List<String>'.
+Use the new positional destructuring syntax '[a, ...]' to prepare for the transition.
+See https://kotl.in/name-based-destructuring for more information.
+
+/deprecationOfParensShortFormOfNonDataClass.kt:(631,633): warning: This syntax will be used for name-based destructuring in a future release which will stop compiling or change its meaning for non-data class 'List<String>'.
+Use the new positional destructuring syntax '[aa, ...]' to prepare for the transition.
+See https://kotl.in/name-based-destructuring for more information.
+
+/deprecationOfParensShortFormOfNonDataClass.kt:(657,658): warning: This syntax will be used for name-based destructuring in a future release, and an underscore without renaming will become an error.
+Use name-based destructuring syntax '(val x, ...)' and drop the unused entry, or use the new positional destructuring syntax '[_, ...]'.
+See https://kotl.in/name-based-destructuring for more information.
+
+/deprecationOfParensShortFormOfNonDataClass.kt:(683,685): warning: This syntax will be used for name-based destructuring in a future release which will stop compiling or change its meaning for non-data class 'List<String>'.
+Use the new positional destructuring syntax '[aa, ...]' to prepare for the transition.
+See https://kotl.in/name-based-destructuring for more information.
+
+/deprecationOfParensShortFormOfNonDataClass.kt:(687,688): warning: This syntax will be used for name-based destructuring in a future release, and an underscore without renaming will become an error.
+Use name-based destructuring syntax '(val x, ...)' and drop the unused entry, or use the new positional destructuring syntax '[_, ...]'.
+See https://kotl.in/name-based-destructuring for more information.
+
+/deprecationOfParensShortFormOfNonDataClass.kt:(709,711): warning: This syntax will be used for name-based destructuring in a future release which will stop compiling or change its meaning for non-data class 'List<String>'.
+Use the new positional destructuring syntax '[aa, ...]' to prepare for the transition.
+See https://kotl.in/name-based-destructuring for more information.
+
+/deprecationOfParensShortFormOfNonDataClass.kt:(887,888): warning: This syntax will be used for name-based destructuring in a future release which will stop compiling or change its meaning for non-data class 'List<String>'.
+Use the new positional destructuring syntax '[b, ...]' to prepare for the transition.
+See https://kotl.in/name-based-destructuring for more information.
+
+/deprecationOfParensShortFormOfNonDataClass.kt:(909,910): warning: This syntax will be used for name-based destructuring in a future release which will stop compiling or change its meaning for non-data class 'List<String>'.
+Use the new positional destructuring syntax '[a, ...]' to prepare for the transition.
+See https://kotl.in/name-based-destructuring for more information.
+
+/deprecationOfParensShortFormOfNonDataClass.kt:(932,934): warning: This syntax will be used for name-based destructuring in a future release which will stop compiling or change its meaning for non-data class 'List<String>'.
+Use the new positional destructuring syntax '[aa, ...]' to prepare for the transition.
+See https://kotl.in/name-based-destructuring for more information.
+
+/deprecationOfParensShortFormOfNonDataClass.kt:(955,956): warning: This syntax will be used for name-based destructuring in a future release, and an underscore without renaming will become an error.
+Use name-based destructuring syntax '(val x, ...)' and drop the unused entry, or use the new positional destructuring syntax '[_, ...]'.
+See https://kotl.in/name-based-destructuring for more information.
+
+/deprecationOfParensShortFormOfNonDataClass.kt:(978,980): warning: This syntax will be used for name-based destructuring in a future release which will stop compiling or change its meaning for non-data class 'List<String>'.
+Use the new positional destructuring syntax '[aa, ...]' to prepare for the transition.
+See https://kotl.in/name-based-destructuring for more information.
+
+/deprecationOfParensShortFormOfNonDataClass.kt:(982,983): warning: This syntax will be used for name-based destructuring in a future release, and an underscore without renaming will become an error.
+Use name-based destructuring syntax '(val x, ...)' and drop the unused entry, or use the new positional destructuring syntax '[_, ...]'.
+See https://kotl.in/name-based-destructuring for more information.
+
+/deprecationOfParensShortFormOfNonDataClass.kt:(1001,1003): warning: This syntax will be used for name-based destructuring in a future release which will stop compiling or change its meaning for non-data class 'List<String>'.
+Use the new positional destructuring syntax '[aa, ...]' to prepare for the transition.
+See https://kotl.in/name-based-destructuring for more information.

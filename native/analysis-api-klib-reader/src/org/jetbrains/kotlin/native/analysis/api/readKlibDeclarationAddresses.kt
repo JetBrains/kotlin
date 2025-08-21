@@ -72,7 +72,7 @@ internal fun readKlibDeclarationAddresses(library: KotlinLibrary): Set<KlibDecla
     return packageMetadataSequence.flatMap { packageMetadata ->
         val packageFragmentProto = parsePackageFragment(packageMetadata)
 
-        with(PackageFragmentReadingContext(library, packageFragmentProto) ?: return@flatMap emptySet()) {
+        with(PackageFragmentReadingContext(library, packageFragmentProto)) {
             packageFragmentProto.readKlibClassAddresses() +
                     packageFragmentProto.readKlibTypeAliasAddresses() +
                     packageFragmentProto.readKlibPropertyAddresses() +

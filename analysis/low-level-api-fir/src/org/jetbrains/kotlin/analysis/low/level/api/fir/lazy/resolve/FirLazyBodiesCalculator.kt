@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.withFirDesignationEnt
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDeclaration
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
-import org.jetbrains.kotlin.fir.contracts.FirErrorContractDescription
-import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
-import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
-import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
+import org.jetbrains.kotlin.fir.contracts.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.getExplicitBackingField
 import org.jetbrains.kotlin.fir.expressions.*
@@ -765,10 +762,6 @@ private fun <E : FirElement> FirTransformer<PersistentList<FirDeclaration>>.recu
 ): E {
     if (element is FirFile || element is FirScript || element is FirRegularClass) {
         val newList = data.add(element as FirDeclaration)
-        element.forEachDeclaration {
-            it.transformSingle(this, newList)
-        }
-
         element.transformChildren(this, newList)
     }
 
@@ -783,17 +776,11 @@ private fun needCalculatingLazyContractsForFunction(function: FirFunction): Bool
 
     if (function !is FirContractDescriptionOwner) return false
 
-    val contractDescription = function.contractDescription
-    return when (contractDescription) {
+    return when (val contractDescription = function.contractDescription) {
+        null -> false
         is FirRawContractDescription -> contractDescription.rawEffects.any { it is FirLazyExpression }
-
-        // Q: Why is it null?
-        // A: There is an ambiguity between `null` and `FirLegacyRawContractDescription` as during PSI2FIR phase we cannot check the body
-        // to set up the description properly.
-        // So, potentially, all functions without `FirRawContractDescription` may have a contract.
-        null, is FirLegacyRawContractDescription -> function.body is FirLazyBlock
-
-        is FirErrorContractDescription, is FirResolvedContractDescription -> errorWithAttachment("Unexpected contract description type: ${contractDescription::class.simpleName}") {
+        is FirLazyContractDescription -> true
+        is FirLegacyRawContractDescription, is FirErrorContractDescription, is FirResolvedContractDescription -> errorWithAttachment("Unexpected contract description type: ${contractDescription::class.simpleName}") {
             withFirEntry("function", function)
         }
     }

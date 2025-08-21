@@ -1,4 +1,4 @@
-PsiJetFileStubImpl[package=]
+FILE[kind=Facade[packageFqName=<root>, facadeFqName=DiagnosticTags_ERRKt]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   TYPEALIAS[classId=/Action, fqName=Action, isTopLevel=true, name=Action]
@@ -10,7 +10,7 @@ PsiJetFileStubImpl[package=]
             REFERENCE_EXPRESSION[referencedName=Unit]
   CLASS[classId=/SAM, fqName=SAM, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=SAM, superNames=[]]
     CLASS_BODY
-      FUN[fqName=SAM.run, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=run]
+      FUN[fqName=SAM.run, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=run]
         VALUE_PARAMETER_LIST
   TYPEALIAS[classId=/Test1, fqName=Test1, isTopLevel=true, name=Test1]
     TYPE_REFERENCE
@@ -218,7 +218,7 @@ PsiJetFileStubImpl[package=]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=ANNOTATION_ARGUMENT_MUST_BE_CONST]
         TYPE_REFERENCE
-  FUN[fqName=<no name provided>, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=null]
+  FUN[fqName=<no name provided>, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=null]
   MODIFIER_LIST[suspend]
   TYPEALIAS[classId=/Test20, fqName=Test20, isTopLevel=true, name=Test20]
     TYPE_REFERENCE
@@ -239,7 +239,7 @@ PsiJetFileStubImpl[package=]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=ANNOTATION_ARGUMENT_MUST_BE_CONST]
         TYPE_REFERENCE
-  FUN[fqName=<no name provided>, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=null]
+  FUN[fqName=<no name provided>, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=null]
   MODIFIER_LIST[suspend]
   CLASS[classId=/Supertype1, fqName=Supertype1, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=Supertype1, superNames=[]]
     SUPER_TYPE_LIST
@@ -257,7 +257,7 @@ PsiJetFileStubImpl[package=]
       SUPER_TYPE_ENTRY
         TYPE_REFERENCE
   MODIFIER_LIST[suspend]
-  FUN[fqName=<no name provided>, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=null]
+  FUN[fqName=<no name provided>, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=null]
   CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[]]
     MODIFIER_LIST[annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
@@ -270,7 +270,7 @@ PsiJetFileStubImpl[package=]
             DOT_QUALIFIED_EXPRESSION
               REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
               REFERENCE_EXPRESSION[referencedName=TYPE]
-    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=A]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=A]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=A.value, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=value]
           TYPE_REFERENCE

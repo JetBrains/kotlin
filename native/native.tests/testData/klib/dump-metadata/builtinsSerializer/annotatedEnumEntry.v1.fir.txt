@@ -12,7 +12,7 @@ library {
     public final annotation class test/Anno : kotlin/Annotation {
 
       // signature: test/Anno.<init>|-2457917570611619111[0]
-      public constructor(value: kotlin/String /* = ... */, x: kotlin/Int /* = ... */)
+      public constructor(value: kotlin/String = "0", x: kotlin/Int = 0)
 
       // signature: test/Anno.value|1987073854177347439[0]
       public final val value: kotlin/String

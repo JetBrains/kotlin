@@ -392,6 +392,9 @@ abstract class FirVisitor<out R, in D> {
     open fun visitResolvedNamedReference(resolvedNamedReference: FirResolvedNamedReference, data: D): R =
         visitElement(resolvedNamedReference, data)
 
+    open fun visitPropertyWithExplicitBackingFieldResolvedNamedReference(propertyWithExplicitBackingFieldResolvedNamedReference: FirPropertyWithExplicitBackingFieldResolvedNamedReference, data: D): R =
+        visitElement(propertyWithExplicitBackingFieldResolvedNamedReference, data)
+
     open fun visitResolvedCallableReference(resolvedCallableReference: FirResolvedCallableReference, data: D): R =
         visitElement(resolvedCallableReference, data)
 
@@ -487,6 +490,9 @@ abstract class FirVisitor<out R, in D> {
 
     open fun visitLegacyRawContractDescription(legacyRawContractDescription: FirLegacyRawContractDescription, data: D): R =
         visitElement(legacyRawContractDescription, data)
+
+    open fun visitLazyContractDescription(lazyContractDescription: FirLazyContractDescription, data: D): R =
+        visitElement(lazyContractDescription, data)
 
     open fun visitErrorContractDescription(errorContractDescription: FirErrorContractDescription, data: D): R =
         visitElement(errorContractDescription, data)

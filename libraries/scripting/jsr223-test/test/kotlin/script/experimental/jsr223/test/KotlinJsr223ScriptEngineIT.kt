@@ -387,7 +387,7 @@ obj
         val result = scriptEngine.eval(script)
 
         assertTrue(result is Function0<*>)
-        assertEquals(3, (result as Function0<*>).invoke())
+        assertEquals(3, result.invoke())
     }
 
     @Test

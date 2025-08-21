@@ -13,8 +13,6 @@ import org.gradle.testkit.runner.internal.DefaultGradleRunner
 import org.gradle.tooling.GradleConnector
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
-import org.jetbrains.kotlin.gradle.model.ModelContainer
-import org.jetbrains.kotlin.gradle.model.ModelFetcherBuildAction
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.util.isTeamCityRun
 import org.jetbrains.kotlin.gradle.util.runProcess
@@ -101,8 +99,6 @@ fun KGPBaseTest.project(
     addHeapDumpOptions.ifTrue { testProject.addHeapDumpOptions() }
     localRepoDir?.let { testProject.configureLocalRepository(localRepoDir) }
     if (buildJdk != null) testProject.setupNonDefaultJdk(buildJdk)
-
-    testProject.customizeProject()
 
     val result = runCatching {
         testProject.test()
@@ -356,36 +352,6 @@ private fun TestProject.ensureKotlinCompilerArgumentsPluginAppliedCorrectly(buil
     }
 }
 
-internal inline fun <reified T> TestProject.getModels(
-    crossinline assertions: ModelContainer<T>.() -> Unit,
-) {
-    val allBuildArguments = commonBuildSetup(
-        buildArguments = emptyList(),
-        buildOptions = buildOptions,
-        enableBuildCacheDebug = false,
-        enableBuildScan = enableBuildScan,
-        enableGradleDaemonMemoryLimitInMb = enableGradleDaemonMemoryLimitInMb,
-        enableKotlinDaemonMemoryLimitInMb = enableKotlinDaemonMemoryLimitInMb,
-        connectSubprocessVMToDebugger = false,
-        gradleVersion = gradleVersion
-    )
-
-    val connector = GradleConnector
-        .newConnector()
-        .useGradleUserHomeDir(getGradleUserHome())
-        .useDistribution(URI("https://cache-redirector.jetbrains.com/services.gradle.org/distributions/gradle-${gradleVersion.version}-bin.zip"))
-        .forProjectDirectory(projectPath.toAbsolutePath().toFile())
-
-    connector.connect().use {
-        assertions(
-            it
-                .action(ModelFetcherBuildAction(T::class.java))
-                .withArguments(allBuildArguments)
-                .run()
-        )
-    }
-}
-
 fun TestProject.enableLocalBuildCache(
     buildCacheLocation: Path,
 ) {
@@ -578,9 +544,10 @@ class TestProject(
     }
 
     /**
-     * Copies the contents of a directory from the test data of another project into this project's directory structure.
+     * Copies a directory from the test data of another project into the current test project.
      *
-     * @param otherProjectName The name of the other project whose directory is copied from its test data.
+     * @param otherProjectName The name of the other project whose directory will be copied.
+     * @param destination The target path in the current project where the directory will be copied. Defaults to the value of [otherProjectName].
      */
     fun embedDirectoryFromTestData(otherProjectName: String, destination: String = otherProjectName) {
         val otherProjectPath = otherProjectName.testProjectPath
@@ -1075,7 +1042,8 @@ internal fun Path.enableAndroidSdk() {
 
 internal fun Path.enableCacheRedirector() {
     // Path relative to the current Gradle module project dir
-    val redirectorScript = Paths.get("../../../repo/gradle-settings-conventions/cache-redirector/src/main/kotlin/cache-redirector.settings.gradle.kts")
+    val redirectorScript =
+        Paths.get("../../../repo/gradle-settings-conventions/cache-redirector/src/main/kotlin/cache-redirector.settings.gradle.kts")
     assert(redirectorScript.exists()) {
         "$redirectorScript does not exist! Please provide correct path to 'cache-redirector.settings.gradle.kts' file."
     }
@@ -1121,11 +1089,12 @@ internal fun Path.enableCacheRedirector() {
 }
 
 private fun GradleProject.addHeapDumpOptions() {
+    val heapDumpPath = Path(System.getProperty("user.dir")).resolve("build").absolute().normalize().invariantSeparatorsPathString
     addPropertyToGradleProperties(
         propertyName = "org.gradle.jvmargs",
         mapOf(
             "-XX:+HeapDumpOnOutOfMemoryError" to "-XX:+HeapDumpOnOutOfMemoryError",
-            "-XX:HeapDumpPath" to "-XX:HeapDumpPath=\"${System.getProperty("user.dir")}${File.separatorChar}build\""
+            "-XX:HeapDumpPath" to "-XX:HeapDumpPath=\"$heapDumpPath\""
         ),
     )
 }

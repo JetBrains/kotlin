@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.expectForActual
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.types.abbreviatedTypeOrSelf
 import org.jetbrains.kotlin.fir.types.coneType
@@ -27,7 +28,7 @@ object FirJsExportedActualMatchExpectChecker : FirBasicDeclarationChecker(MppChe
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirDeclaration) {
         if (
-            !context.languageVersionSettings.supportsFeature(LanguageFeature.AllowExpectDeclarationsInJsExport) ||
+            !LanguageFeature.AllowExpectDeclarationsInJsExport.isEnabled() ||
             declaration !is FirMemberDeclaration ||
             !declaration.isActual
         ) return

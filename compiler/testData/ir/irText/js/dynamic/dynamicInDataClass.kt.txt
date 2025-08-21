@@ -32,7 +32,7 @@ data class Some {
     when {
       other !is Some -> return false
     }
-    val tmp_0: Some = other as Some
+    val tmp_0: Some = other /*as Some */
     when {
       EQEQ(arg0 = <this>.#a, arg1 = tmp_0.#a).not() -> return false
     }
@@ -62,4 +62,3 @@ fun box(): String {
   event.hashCode() /*~> Unit */
   return "OK"
 }
-

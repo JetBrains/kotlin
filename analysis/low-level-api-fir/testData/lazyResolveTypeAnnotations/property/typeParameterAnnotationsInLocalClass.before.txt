@@ -1,22 +1,22 @@
 @R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Int
-  context -> FirPropertySymbol <local>/explicitType
-  anchor -> [FirPropertySymbol <local>/explicitType]
+  context -> FirRegularPropertySymbol <local>/explicitType
+  anchor -> [FirRegularPropertySymbol <local>/explicitType]
 
 @R|Anno|(position = <strcat>(String(receiver type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  F
-  context -> FirReceiverParameterSymbol from FirPropertySymbol <local>/explicitType
-  anchor -> [FirReceiverParameterSymbol from FirPropertySymbol <local>/explicitType]
+  context -> FirReceiverParameterSymbol from FirRegularPropertySymbol <local>/explicitType
+  anchor -> [FirReceiverParameterSymbol from FirRegularPropertySymbol <local>/explicitType]
 
 @R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Int
-  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol <local>/explicitType
-  anchor -> [FirPropertySymbol <local>/explicitType]
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/explicitType
+  anchor -> [FirRegularPropertySymbol <local>/explicitType]
 
 @R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Int
-  context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol <local>/explicitType
-  anchor -> [FirPropertySymbol <local>/explicitType]
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol <local>/explicitType
+  anchor -> [FirRegularPropertySymbol <local>/explicitType]
 
 @R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Number
-  context -> FirTypeParameterSymbol F from FirPropertySymbol <local>/explicitType
-  anchor -> [FirPropertySymbol <local>/explicitType]
+  context -> FirTypeParameterSymbol F from FirRegularPropertySymbol <local>/explicitType
+  anchor -> [FirRegularPropertySymbol <local>/explicitType]
 
 FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClass.kt
     public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {

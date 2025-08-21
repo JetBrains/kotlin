@@ -1,5 +1,5 @@
 // APPROXIMATE_TYPE
-interface T
+int<caret>erface T
 
 fun foo() {
     class B : T

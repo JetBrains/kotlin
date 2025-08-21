@@ -257,12 +257,6 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
     }
 
     @Test
-    @TestMetadata("kt45934.kt")
-    public void testKt45934() {
-      runTest("compiler/testData/ir/irText/classes/kt45934.kt");
-    }
-
-    @Test
     @TestMetadata("localClasses.kt")
     public void testLocalClasses() {
       runTest("compiler/testData/ir/irText/classes/localClasses.kt");
@@ -1153,6 +1147,12 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
       @TestMetadata("compiler/testData/ir/irText/declarations/multiplatform/k2")
       @TestDataPath("$PROJECT_ROOT")
       public class K2 {
+        @Test
+        @TestMetadata("actualizeInterfaceAsAny.kt")
+        public void testActualizeInterfaceAsAny() {
+          runTest("compiler/testData/ir/irText/declarations/multiplatform/k2/actualizeInterfaceAsAny.kt");
+        }
+
         @Test
         public void testAllFilesPresentInK2() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/multiplatform/k2"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
@@ -4902,12 +4902,6 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
     @TestMetadata("dontLeaveStubTypesInSetter.kt")
     public void testDontLeaveStubTypesInSetter() {
       runTest("compiler/testData/ir/irText/types/dontLeaveStubTypesInSetter.kt");
-    }
-
-    @Test
-    @TestMetadata("genericDelegatedDeepProperty.kt")
-    public void testGenericDelegatedDeepProperty() {
-      runTest("compiler/testData/ir/irText/types/genericDelegatedDeepProperty.kt");
     }
 
     @Test

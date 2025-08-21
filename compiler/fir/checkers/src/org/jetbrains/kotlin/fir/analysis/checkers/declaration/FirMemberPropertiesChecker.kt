@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.declarations.processAllDeclaredCallables
 import org.jetbrains.kotlin.fir.declarations.utils.canHaveAbstractDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
+import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.NormalPath
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
@@ -47,7 +48,8 @@ object FirMemberPropertiesChecker : FirClassChecker(MppCheckerKind.Common) {
         for (innerDeclaration in declaration.declarations) {
             if (innerDeclaration is FirProperty) {
                 val symbol = innerDeclaration.symbol
-                val isDefinitelyAssignedInConstructor = info?.get(symbol)?.isDefinitelyVisited() == true
+                val isDefinitelyAssignedInConstructor = info?.get(symbol)
+                    .let { it?.range?.isDefinitelyVisited() == true && (!symbol.isLateInit || !it.mustBeLateinit) }
                 checkProperty(declaration, symbol, isDefinitelyAssignedInConstructor, !reachedDeadEnd)
             }
             // Can't just look at each property's graph's enterNode because they may have no graph if there is no initializer.

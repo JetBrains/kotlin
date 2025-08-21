@@ -2,7 +2,7 @@ FILE: suspendAnonymousFunction.kt
     public final fun take(f: R|suspend () -> kotlin/Unit|): R|kotlin/Unit| {
     }
     public final fun test_1(): R|kotlin/Unit| {
-        suspend fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        suspend fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
         }
 
     }

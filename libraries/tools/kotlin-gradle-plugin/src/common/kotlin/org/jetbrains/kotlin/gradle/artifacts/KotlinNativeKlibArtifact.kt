@@ -57,15 +57,13 @@ internal fun AbstractKotlinNativeCompilation.maybeCreateKlibPackingTask(
 ): TaskProvider<Zip> {
     return maybeCreateKlibPackingTask(
         classifier,
-        klibProducingTask.flatMap { it.klibDirectory },
-        klibProducingTask,
+        klibProducingTask.map { it.klibDirectory.get() },
     )
 }
 
 internal fun AbstractKotlinNativeCompilation.maybeCreateKlibPackingTask(
     classifier: String? = null,
     klibDirectoryProvider: Provider<Directory>,
-    producingTask: Any,
 ): TaskProvider<Zip> {
     val taskName = disambiguateName(lowerCamelCaseName(classifier, "klib"))
     return target.project.locateOrRegisterTask<Zip>(taskName) { task ->
@@ -76,7 +74,6 @@ internal fun AbstractKotlinNativeCompilation.maybeCreateKlibPackingTask(
         task.archiveBaseName.convention("${project.name}-$klibDisambiguator")
         task.isPreserveFileTimestamps = false
         task.isReproducibleFileOrder = true
-        task.dependsOn(producingTask)
     }
 }
 
@@ -91,7 +88,7 @@ internal fun createKlibArtifact(
         val packTask = compilation.maybeCreateKlibPackingTask(classifier, klibProducingTask)
         packTask.map { it.archiveFile.get().asFile }
     } else {
-        klibProducingTask.flatMap { it.klibFile }
+        klibProducingTask.map { it.klibFile }
     }
     with(compilation.project.configurations.getByName(apiElementsName)) {
         outgoing.registerKlibArtifact(packedArtifactFile, compilation.compilationName, classifier)

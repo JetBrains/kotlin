@@ -61,7 +61,7 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.A'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.A [val]
-          TYPE_OP type=<root>.A origin=CAST typeOperand=<root>.A
+          TYPE_OP type=<root>.A origin=IMPLICIT_CAST typeOperand=<root>.A
             GET_VAR 'other: kotlin.Any? declared in <root>.A.equals' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH
@@ -172,7 +172,7 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.B'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:<root>.B [val]
-          TYPE_OP type=<root>.B origin=CAST typeOperand=<root>.B
+          TYPE_OP type=<root>.B origin=IMPLICIT_CAST typeOperand=<root>.B
             GET_VAR 'other: kotlin.Any? declared in <root>.B.equals' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH

@@ -1,4 +1,4 @@
-PsiJetFileStubImpl[package=]
+FILE[kind=File[packageFqName=<root>]]
   FILE_ANNOTATION_LIST
     ANNOTATION
       ANNOTATION_TARGET[useSiteTarget=FILE]

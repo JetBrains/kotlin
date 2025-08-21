@@ -11,6 +11,7 @@ fun copyK2JSCompilerArguments(from: K2JSCompilerArguments, to: K2JSCompilerArgum
     copyK2WasmCompilerArguments(from, to)
 
     to.cacheDirectory = from.cacheDirectory
+    to.compileLongAsBigInt = from.compileLongAsBigInt
     to.extensionFunctionsInExternals = from.extensionFunctionsInExternals
     to.fakeOverrideValidator = from.fakeOverrideValidator
     to.friendModules = from.friendModules
@@ -51,8 +52,6 @@ fun copyK2JSCompilerArguments(from: K2JSCompilerArguments, to: K2JSCompilerArgum
     to.sourceMapPrefix = from.sourceMapPrefix
     to.strictImplicitExportType = from.strictImplicitExportType
     to.target = from.target
-    @Suppress("DEPRECATION")
-    to.typedArrays = from.typedArrays
     to.useEsArrowFunctions = from.useEsArrowFunctions
     to.useEsClasses = from.useEsClasses
     to.useEsGenerators = from.useEsGenerators

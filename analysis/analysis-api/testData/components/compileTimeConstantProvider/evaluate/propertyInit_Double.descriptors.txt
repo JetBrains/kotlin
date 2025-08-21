@@ -1,0 +1,5 @@
+expression: 3.14
+constant: 3.14
+constantValueKind: DoubleValue
+constantValueSource: NOT_EVALUATED
+constantValueSourceText: NOT_EVALUATED

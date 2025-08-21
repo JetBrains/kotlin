@@ -1,6 +1,6 @@
-// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER
+// LANGUAGE: -ParseLambdaWithSuspendModifier
 
 fun <T> select(vararg x: T) = x[0]
 
@@ -22,7 +22,7 @@ fun main() {
 
     // Here, the error should be
     val x2: (Int) -> Unit = <!INITIALIZER_TYPE_MISMATCH!>takeSuspend(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit>")!>id <!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>{ it }<!><!>, <!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH, DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit>")!>{ x -> x }<!>)<!>
-    val x3: suspend (Int) -> Unit = <!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>takeSimpleFunction<!>(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit>")!>id <!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>{ it }<!><!>, <!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH, DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit>")!>{ x -> x }<!>)
+    val x3: suspend (Int) -> Unit = <!UPPER_BOUND_VIOLATED!>takeSimpleFunction<!>(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit>")!>id <!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>{ it }<!><!>, <!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH, DEBUG_INFO_EXPRESSION_TYPE("kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit>")!>{ x -> x }<!>)
     val x4: (Int) -> Unit = takeSimpleFunction(<!ARGUMENT_TYPE_MISMATCH!>id<suspend (Int) -> Unit> {}<!>, <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Int, kotlin.Unit>")!>{}<!>)
 }
 

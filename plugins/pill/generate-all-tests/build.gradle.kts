@@ -4,21 +4,29 @@ plugins {
     id("jps-compatible")
 }
 
-val depenencyProjects = arrayOf(
+val dependency = arrayOf(
     ":generators",
     ":compiler",
-    ":compiler:test-infrastructure",
-    ":compiler:tests-common-new",
     ":compiler:tests-for-compiler-generator",
-    ":js:js.tests",
-    ":compiler:tests-java8",
     ":core:descriptors.runtime",
-    ":generators:analysis-api-generator"
+)
+
+val dependencyFixturesProjects = arrayOf(
+    ":compiler:tests-java8",
+    ":js:js.tests",
+    ":compiler:tests-common-new",
+    ":compiler:test-infrastructure",
+    ":generators:analysis-api-generator",
 )
 
 dependencies {
-    depenencyProjects.forEach {
+    dependency.forEach {
         testApi(projectTests(it))
+        jpsTest(project(it, configuration = "jpsTest"))
+    }
+
+    dependencyFixturesProjects.forEach {
+        testApi(testFixtures(project(it)))
         jpsTest(project(it, configuration = "jpsTest"))
     }
 

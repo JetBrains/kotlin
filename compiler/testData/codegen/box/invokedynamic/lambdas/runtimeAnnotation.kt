@@ -7,8 +7,6 @@
 // CHECK_BYTECODE_TEXT
 // 0 java/lang/invoke/LambdaMetafactory
 
-import kotlin.jvm.internal.Lambda
-
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 public annotation class SomeAnnotation

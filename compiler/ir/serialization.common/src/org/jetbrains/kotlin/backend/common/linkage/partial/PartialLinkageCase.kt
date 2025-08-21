@@ -114,11 +114,39 @@ sealed interface PartialLinkageCase {
      *
      * Applicable to: Expressions.
      */
-    class InvalidSamConversion(
-        val expression: IrTypeOperatorCall,
-        val abstractFunctionSymbols: Set<IrSimpleFunctionSymbol>,
-        val abstractPropertySymbol: IrPropertySymbol?
-    ) : PartialLinkageCase
+    sealed class InvalidSamConversion(
+        val expression: IrExpression,
+    ) : PartialLinkageCase {
+        class NotAFunInterface(
+            expression: IrExpression,
+            val classifier: IrClassifierSymbol,
+        ) : InvalidSamConversion(expression)
+
+        class FunInterfaceHasNotSingleFunction(
+            expression: IrExpression,
+            val funInterface: IrClassifierSymbol,
+            val abstractFunctionSymbols: Set<IrSimpleFunctionSymbol>,
+        ) : InvalidSamConversion(expression)
+
+        class FunInterfaceHasAbstractProperty(
+            expression: IrExpression,
+            val funInterface: IrClassifierSymbol,
+            val abstractPropertySymbol: IrPropertySymbol
+        ) : InvalidSamConversion(expression)
+
+        class FunctionIsIncompatible(
+            expression: IrExpression,
+            val originalOverriddenFunction: IrSimpleFunctionSymbol,
+            val newOverriddenFunction: IrSimpleFunctionSymbol,
+        ) : InvalidSamConversion(expression)
+
+        class SamChanged(
+            expression: IrExpression,
+            val funInterface: IrClassifierSymbol,
+            val originalOverriddenFunction: IrSimpleFunctionSymbol,
+            val newOverriddenFunction: IrSimpleFunctionSymbol,
+        ) : InvalidSamConversion(expression)
+    }
 
     /**
      * An [IrCall] of suspendable function at the place where no coroutine context is available.

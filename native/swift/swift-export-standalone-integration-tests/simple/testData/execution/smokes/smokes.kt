@@ -1,4 +1,5 @@
 // KIND: STANDALONE
+// WITH_PLATFORM_LIBS
 // MODULE: Smokes(deps)
 // FILE: smoke0.kt
 fun fooByte(): Byte {

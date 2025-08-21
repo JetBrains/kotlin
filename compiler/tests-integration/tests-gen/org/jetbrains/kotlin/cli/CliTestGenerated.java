@@ -1081,6 +1081,16 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/XjspecifyAnnotation/jspecifyDefault.args");
     }
 
+    @TestMetadata("jspecifyFileRootsProgressive.args")
+    public void testJspecifyFileRootsProgressive() {
+      runTest("compiler/testData/cli/jvm/XjspecifyAnnotation/jspecifyFileRootsProgressive.args");
+    }
+
+    @TestMetadata("jspecifyFileRootsWarning.args")
+    public void testJspecifyFileRootsWarning() {
+      runTest("compiler/testData/cli/jvm/XjspecifyAnnotation/jspecifyFileRootsWarning.args");
+    }
+
     @TestMetadata("jspecifyIgnore.args")
     public void testJspecifyIgnore() {
       runTest("compiler/testData/cli/jvm/XjspecifyAnnotation/jspecifyIgnore.args");
@@ -1346,6 +1356,11 @@ public class CliTestGenerated extends AbstractCliTest {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/jvm"), Pattern.compile("^(.+)\\.args$"), null, false);
     }
 
+    @TestMetadata("annotatedParameterWithoutName.args")
+    public void testAnnotatedParameterWithoutName() {
+      runTest("compiler/testData/cli/jvm/annotatedParameterWithoutName.args");
+    }
+
     @TestMetadata("annotationDefaultTargetFirstOnly.args")
     public void testAnnotationDefaultTargetFirstOnly() {
       runTest("compiler/testData/cli/jvm/annotationDefaultTargetFirstOnly.args");
@@ -1509,6 +1524,11 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("experimentalCheckers.args")
     public void testExperimentalCheckers() {
       runTest("compiler/testData/cli/jvm/experimentalCheckers.args");
+    }
+
+    @TestMetadata("explicitBackingFields.args")
+    public void testExplicitBackingFields() {
+      runTest("compiler/testData/cli/jvm/explicitBackingFields.args");
     }
 
     @TestMetadata("explicitReturnTypesEnabled.args")
@@ -2099,9 +2119,24 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/js/reifiedIntersectionType.args");
     }
 
+    @TestMetadata("reportDetailedPerf.args")
+    public void testReportDetailedPerf() {
+      runTest("compiler/testData/cli/js/reportDetailedPerf.args");
+    }
+
     @TestMetadata("reportPerf.args")
     public void testReportPerf() {
       runTest("compiler/testData/cli/js/reportPerf.args");
+    }
+
+    @TestMetadata("reportPerf2ndStage.args")
+    public void testReportPerf2ndStage() {
+      runTest("compiler/testData/cli/js/reportPerf2ndStage.args");
+    }
+
+    @TestMetadata("reportPerfLowerings.args")
+    public void testReportPerfLowerings() {
+      runTest("compiler/testData/cli/js/reportPerfLowerings.args");
     }
 
     @TestMetadata("reportPerfPsi.args")
@@ -2197,6 +2232,24 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("withLib.args")
     public void testWithLib() {
       runTest("compiler/testData/cli/js/withLib.args");
+    }
+  }
+
+  @TestMetadata("compiler/testData/cli/wasm")
+  @TestDataPath("$PROJECT_ROOT")
+  @RunWith(JUnit3RunnerWithInners.class)
+  public static class Wasm extends AbstractCliTest {
+    private void runTest(String testDataFilePath) {
+      KotlinTestUtils.runTest(this::doJsTest, this, testDataFilePath);
+    }
+
+    public void testAllFilesPresentInWasm() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/wasm"), Pattern.compile("^(.+)\\.args$"), null, false);
+    }
+
+    @TestMetadata("reportPerfLowerings.args")
+    public void testReportPerfLowerings() {
+      runTest("compiler/testData/cli/wasm/reportPerfLowerings.args");
     }
   }
 

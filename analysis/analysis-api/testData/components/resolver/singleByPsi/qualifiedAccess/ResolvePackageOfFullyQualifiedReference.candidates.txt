@@ -9,8 +9,8 @@ KtNameReferenceExpression(114,117): 'baz'
         extensionReceiver = null
         signature = KaFunctionSignature:
           receiverType = null
-          returnType = foo.bar.baz.AA.BB
-          symbol = <constructor>(): foo.bar.baz.AA.BB
+          returnType = foo.bar.baz.AA
+          symbol = <constructor>(): foo.bar.baz.AA
           valueParameters = []
           contextParameters = []
           callableId = null

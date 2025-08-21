@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.packageName
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
@@ -32,17 +33,8 @@ abstract class FirModuleVisibilityChecker : FirSessionComponent {
     abstract fun isInFriendModule(declaration: FirMemberDeclaration): Boolean
 
     class Standard(val session: FirSession) : FirModuleVisibilityChecker() {
-        private val useSiteModuleData = session.moduleData
-        private val allDependsOnDependencies = useSiteModuleData.allDependsOnDependencies
-
         override fun isInFriendModule(declaration: FirMemberDeclaration): Boolean {
-            return when (declaration.moduleData) {
-                useSiteModuleData,
-                in useSiteModuleData.friendDependencies,
-                in allDependsOnDependencies -> true
-
-                else -> false
-            }
+            return session.moduleData.canSeeInternalsOf(declaration.moduleData)
         }
     }
 }
@@ -605,4 +597,32 @@ fun FirVisibilityChecker.isClassLikeVisible(
         useSiteFileSymbol.fir,
         containingDeclarations.map { it.fir },
     )
+}
+
+fun FirCallableDeclaration.isVisibleInClass(parentClass: FirClass): Boolean {
+    return symbol.isVisibleInClass(parentClass.symbol, symbol.resolvedStatus)
+}
+
+fun FirBasedSymbol<*>.isVisibleInClass(parentClassSymbol: FirClassSymbol<*>): Boolean {
+    val status = when (this) {
+        is FirCallableSymbol<*> -> resolvedStatus
+        is FirClassLikeSymbol -> resolvedStatus
+        else -> return true
+    }
+    return isVisibleInClass(parentClassSymbol, status)
+}
+
+fun FirBasedSymbol<*>.isVisibleInClass(classSymbol: FirClassSymbol<*>, status: FirDeclarationStatus): Boolean {
+    val classPackage = classSymbol.classId.packageFqName
+    val packageName = when (this) {
+        is FirCallableSymbol<*> -> callableId.packageName
+        is FirClassLikeSymbol<*> -> classId.packageFqName
+        else -> return true
+    }
+    val visibility = status.visibility
+    if (visibility == Visibilities.Private || !visibility.visibleFromPackage(classPackage, packageName)) return false
+    if (visibility == Visibilities.Internal) {
+        return classSymbol.moduleData.canSeeInternalsOf(moduleData)
+    }
+    return true
 }

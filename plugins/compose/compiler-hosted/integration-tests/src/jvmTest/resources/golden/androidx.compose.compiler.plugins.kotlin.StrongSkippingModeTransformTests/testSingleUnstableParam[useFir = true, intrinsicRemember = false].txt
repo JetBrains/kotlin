@@ -17,7 +17,6 @@ fun Test(x: Foo) {
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = 526939746, startOffset = 238, endOffset = 291)
 fun Test(x: Foo, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   val %dirty = %changed

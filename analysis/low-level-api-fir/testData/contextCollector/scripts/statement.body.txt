@@ -28,7 +28,7 @@ Tower Data Context:
                 FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
                 FirNamedFunctionSymbol public? final? fun unusedScriptFunction(p: String): <implicit>
             Properties:
-                FirPropertySymbol public final val $$result: <implicit>
+                FirRegularPropertySymbol public final val $$result: <implicit>
                     public get(): <implicit>
     Element 10
         Scope: FirLocalScope

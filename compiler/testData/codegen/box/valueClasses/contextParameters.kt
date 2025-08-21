@@ -12,7 +12,7 @@ value class B(val x: Int, val y: Int) {
     fun f(regular: Int) = x + y + z + regular
 
     context(z: B)
-    fun g(regular: Int) = x + y + z.x + z.y + regular
+    fun g(regular: Int) = this.x + this.y + z.x + z.y + regular
 }
 
 fun box(): String {

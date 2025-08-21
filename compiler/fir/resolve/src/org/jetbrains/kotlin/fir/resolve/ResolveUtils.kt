@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -25,7 +24,6 @@ import org.jetbrains.kotlin.fir.references.builder.buildResolvedErrorReference
 import org.jetbrains.kotlin.fir.resolve.calls.TypeParameterAsExpression
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
-import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirPropertyWithExplicitBackingFieldResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.isVisible
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.FirAnonymousFunctionReturnExpressionInfo
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
@@ -332,6 +330,7 @@ fun createKPropertyType(
 fun BodyResolveComponents.buildResolvedQualifierForClass(
     symbol: FirClassLikeSymbol<*>,
     sourceElement: KtSourceElement?,
+    explicitParent: FirResolvedQualifier?,
     // Note: we need type arguments here, see e.g. testIncompleteConstructorCall in diagnostic group
     typeArgumentsForQualifier: List<FirTypeProjection> = emptyList(),
     diagnostic: ConeDiagnostic? = null,
@@ -347,7 +346,7 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
         diagnostic,
         nonFatalDiagnostics,
         annotations,
-        explicitParent = null,
+        explicitParent,
     )
 }
 
@@ -368,15 +367,6 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
         FirErrorResolvedQualifierBuilder().apply { this.diagnostic = diagnostic }
     }
 
-    // If we resolve to some qualifier, the parent can't have implicitly resolved to the companion object.
-    // In a case like
-    // class Foo { companion object { class Bar } }
-    // Foo.Bar will be unresolved.
-    if (explicitParent?.resolvedToCompanionObject == true) {
-        explicitParent.replaceResolvedToCompanionObject(false)
-        explicitParent.resultType = session.builtinTypes.unitType.coneType
-    }
-
     return builder.apply {
         this.source = sourceElement
         this.packageFqName = packageFqName
@@ -395,6 +385,7 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
         nonFatalDiagnostics?.let(this.nonFatalDiagnostics::addAll)
         this.annotations.addAll(annotations)
         this.explicitParent = explicitParent
+        this.resolvedToCompanionObject = symbol?.fullyExpandedClass(session)?.resolvedCompanionObjectSymbol != null
     }.build().apply {
         if (symbol?.classId?.isLocal == true) {
             resultType = typeForQualifierByDeclaration(symbol.fir, session, element = this@apply, file)
@@ -404,6 +395,28 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
             setTypeOfQualifier(this@buildResolvedQualifierForClass)
         }
     }
+}
+
+fun FirResolvedQualifier.unsetResolvedToCompanionIf(condition: Boolean) {
+    if (condition) {
+        replaceResolvedToCompanionObject(false)
+    }
+}
+
+internal fun FirRegularClassSymbol.toImplicitResolvedQualifierReceiver(
+    bodyResolveComponents: BodyResolveComponents,
+    source: KtSourceElement?,
+): FirResolvedQualifier {
+    val resolvedQualifier = buildResolvedQualifier {
+        packageFqName = classId.packageFqName
+        relativeClassFqName = classId.relativeClassName
+        resolvedToCompanionObject = false
+        symbol = this@toImplicitResolvedQualifierReceiver
+        this.source = source
+    }.apply {
+        setTypeOfQualifier(bodyResolveComponents)
+    }
+    return resolvedQualifier
 }
 
 fun FirResolvedQualifier.setTypeOfQualifier(components: BodyResolveComponents) {
@@ -449,36 +462,6 @@ internal fun typeForQualifierByDeclaration(
     return null
 }
 
-private fun FirPropertySymbol.isEffectivelyFinal(session: FirSession): Boolean {
-    if (isFinal) return true
-    val containingClass = dispatchReceiverType?.toRegularClassSymbol(session)
-        ?: return false
-    return containingClass.modality == Modality.FINAL && containingClass.classKind != ClassKind.ENUM_CLASS
-}
-
-private fun FirPropertyWithExplicitBackingFieldResolvedNamedReference.getNarrowedDownSymbol(session: FirSession): FirBasedSymbol<*> {
-    val propertyReceiver = resolvedSymbol as? FirPropertySymbol ?: return resolvedSymbol
-
-    // This can happen in case of 2 properties referencing
-    // each other recursively. See: Jet81.fir.kt
-    if (
-        propertyReceiver.fir.returnTypeRef is FirImplicitTypeRef ||
-        propertyReceiver.fir.backingField?.returnTypeRef is FirImplicitTypeRef
-    ) {
-        return resolvedSymbol
-    }
-
-    if (
-        propertyReceiver.isEffectivelyFinal(session) &&
-        hasVisibleBackingField &&
-        propertyReceiver.canNarrowDownGetterType
-    ) {
-        return propertyReceiver.fir.backingField?.symbol ?: resolvedSymbol
-    }
-
-    return resolvedSymbol
-}
-
 fun <T : FirResolvable> BodyResolveComponents.typeFromCallee(access: T): ConeKotlinType {
     return typeFromCallee(access.calleeReference)
 }
@@ -490,10 +473,6 @@ fun BodyResolveComponents.typeFromCallee(calleeReference: FirReference): ConeKot
         }
         is FirNamedReferenceWithCandidate -> {
             typeFromSymbol(calleeReference.candidateSymbol)
-        }
-        is FirPropertyWithExplicitBackingFieldResolvedNamedReference -> {
-            val symbol = calleeReference.getNarrowedDownSymbol(session)
-            typeFromSymbol(symbol)
         }
         is FirResolvedNamedReference -> {
             typeFromSymbol(calleeReference.resolvedSymbol)
@@ -541,6 +520,17 @@ fun BodyResolveComponents.transformExpressionUsingSmartcastInfo(expression: FirE
 
     val originalTypeWithAliases = expression.resolvedType
     val originalType = originalTypeWithAliases.fullyExpandedType()
+
+    // TODO(KT-79370): This is a hack related to KT-78595, which should eventually be handled by resolution.
+    // Properties with type parameters must have custom getters and therefore can never be smart-cast.
+    // Resolution currently has trouble resolving type arguments that are part of smart-cast expressions.
+    // When type inference can handle type arguments in smart-cast expressions, this should be removed.
+    if (smartcastStatement.upperTypesStability == SmartcastStability.PROPERTY_WITH_GETTER && expression is FirPropertyAccessExpression) {
+        val symbol = expression.calleeReference.symbol
+        if (symbol is FirPropertySymbol && symbol.typeParameterSymbols.isNotEmpty()) {
+            return expression
+        }
+    }
 
     val allUpperTypes = if (originalType !is ConeStubType) smartcastStatement.upperTypes + originalType else smartcastStatement.upperTypes
 

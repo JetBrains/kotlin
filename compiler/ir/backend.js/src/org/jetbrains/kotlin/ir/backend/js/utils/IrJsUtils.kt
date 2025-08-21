@@ -14,12 +14,11 @@ import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.constructorFactory
 import org.jetbrains.kotlin.ir.backend.js.defaultConstructorForReflection
-import org.jetbrains.kotlin.ir.backend.js.export.isExported
+import org.jetbrains.kotlin.ir.backend.js.tsexport.isExported
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrInlinedFunctionBlock
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
@@ -119,3 +118,12 @@ fun IrClass.findDefaultConstructorForReflection(): IrFunction? =
 
 val IrClass.primaryConstructorReplacement: IrSimpleFunction?
     get() = findDeclaration<IrSimpleFunction> { it.isEs6PrimaryConstructorReplacement }
+
+val IrClass.shouldGenerateObjectWithGetInstanceInEsModuleTypeScript: Boolean
+    get() = !isEffectivelyExternal() && (parent as? IrClass).let { it == null || (it.isInterface && !isCompanion) }
+
+fun IrClass.typeScriptInnerClassReference(): String {
+    val name = getJsNameOrKotlinName().identifier
+    if (parent !is IrClass) return name
+    return "${parentAsClass.typeScriptInnerClassReference()}.$name"
+}

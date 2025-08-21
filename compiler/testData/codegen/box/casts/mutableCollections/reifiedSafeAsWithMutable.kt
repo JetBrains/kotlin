@@ -1,6 +1,7 @@
 // WITH_STDLIB
 // JVM_ABI_K1_K2_DIFF: KT-69522
 
+// FILE: lib.kt
 class Itr : Iterator<String> by ArrayList<String>().iterator()
 class MItr : MutableIterator<String> by ArrayList<String>().iterator()
 class LItr : ListIterator<String> by ArrayList<String>().listIterator()
@@ -53,6 +54,7 @@ inline fun <reified T> reifiedSafeAsReturnsNull(x: Any?, operation: String) {
     }
 }
 
+// FILE: main.kt
 fun box(): String {
     val itr = Itr() as Any
     val mitr = MItr()

@@ -62,6 +62,12 @@ abstract class LLFirSession(
         internal set
 
     /**
+     * Information about where the invalidation occurred used for diagnostic purposes.
+     */
+    var invalidationInformation: String? = null
+        internal set
+
+    /**
      * Creates a [ModificationTracker] which tracks the validity of this session via [isValid].
      */
     fun createValidityTracker(): ModificationTracker = LLFirSessionValidityModificationTracker(WeakReference(this))

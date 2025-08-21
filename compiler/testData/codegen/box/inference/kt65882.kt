@@ -1,3 +1,6 @@
+// IGNORE_BACKEND: WASM
+// WASM_MUTE_REASON: Null leaking is not allowed by Wasm
+
 fun <T> Any?.unsafeCast(): T = this as T
 
 fun <R> foo(returnType: String): R {

@@ -4,7 +4,7 @@ FILE: [ResolvedTo(RAW_FIR)] propertyGetterWithExplicitTypeScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] val prop: Int
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val prop: Int
             public? [ResolvedTo(RAW_FIR)] get(): Int { LAZY_BLOCK }
 
 
@@ -14,7 +14,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterWithExplicitTypeScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] val prop: Int
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val prop: Int
             public? [ResolvedTo(RAW_FIR)] get(): Int { LAZY_BLOCK }
 
 
@@ -24,7 +24,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterWithExplicitTypeScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val prop: Int
+        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ScriptTopLevelDeclaration=true] val prop: Int
             public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): Int { LAZY_BLOCK }
 
 
@@ -34,7 +34,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterWithExplicitTypeScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(COMPANION_GENERATION)] val prop: Int
+        public? final? [ResolvedTo(COMPANION_GENERATION)] [ScriptTopLevelDeclaration=true] val prop: Int
             public? [ResolvedTo(COMPANION_GENERATION)] get(): Int { LAZY_BLOCK }
 
 
@@ -44,7 +44,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterWithExplicitTypeScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(SUPER_TYPES)] val prop: Int
+        public? final? [ResolvedTo(SUPER_TYPES)] [ScriptTopLevelDeclaration=true] val prop: Int
             public? [ResolvedTo(SUPER_TYPES)] get(): Int { LAZY_BLOCK }
 
 
@@ -54,7 +54,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterWithExplicitTypeScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(TYPES)] val prop: R|kotlin/Int|
+        public? final? [ResolvedTo(TYPES)] [ScriptTopLevelDeclaration=true] val prop: R|kotlin/Int|
             public? [ResolvedTo(TYPES)] get(): R|kotlin/Int| { LAZY_BLOCK }
 
 
@@ -64,7 +64,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterWithExplicitTypeScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] val prop: R|kotlin/Int|
+        public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] val prop: R|kotlin/Int|
             public [ResolvedTo(STATUS)] get(): R|kotlin/Int| { LAZY_BLOCK }
 
 
@@ -74,7 +74,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterWithExplicitTypeScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val prop: R|kotlin/Int|
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ScriptTopLevelDeclaration=true] val prop: R|kotlin/Int|
             public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): R|kotlin/Int| { LAZY_BLOCK }
 
 
@@ -84,7 +84,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterWithExplicitTypeScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(CONTRACTS)] val prop: R|kotlin/Int|
+        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] val prop: R|kotlin/Int|
             public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int| { LAZY_BLOCK }
 
 
@@ -94,7 +94,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterWithExplicitTypeScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/Int|
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val prop: R|kotlin/Int|
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int| { LAZY_BLOCK }
 
 
@@ -104,7 +104,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterWithExplicitTypeScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(CONSTANT_EVALUATION)] val prop: R|kotlin/Int|
+        public final [ResolvedTo(CONSTANT_EVALUATION)] [ScriptTopLevelDeclaration=true] val prop: R|kotlin/Int|
             public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/Int| { LAZY_BLOCK }
 
 
@@ -114,7 +114,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterWithExplicitTypeScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val prop: R|kotlin/Int|
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] val prop: R|kotlin/Int|
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int| { LAZY_BLOCK }
 
 
@@ -124,7 +124,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterWithExplicitTypeScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/Int|
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val prop: R|kotlin/Int|
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
                 ^ Int(42)
             }
@@ -136,7 +136,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propertyGetterWithExplicitTypeScript.kts
         [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/Int|
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val prop: R|kotlin/Int|
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
                 ^ Int(42)
             }

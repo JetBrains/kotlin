@@ -17,7 +17,6 @@ import androidx.compose.runtime.Composable
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = 1292064820, startOffset = 81, endOffset = 317)
 fun Example(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Example):Test.kt")
@@ -26,7 +25,6 @@ fun Example(%composer: Composer?, %changed: Int) {
       traceEventStart(<>, %changed, -1, <>)
     }
     @Composable
-    @FunctionKeyMeta(key = -148970947, startOffset = 125, endOffset = 136)
     fun A(%composer: Composer?, %changed: Int) {
       sourceInformationMarkerStart(%composer, <>, "C(A):Test.kt")
       if (isTraceInProgress()) {
@@ -39,7 +37,6 @@ fun Example(%composer: Composer?, %changed: Int) {
     }
     @Composable
     @ComposableInferredTarget(scheme = "[0[0]]")
-    @FunctionKeyMeta(key = 1733765147, startOffset = 165, endOffset = 217)
     fun B(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
       sourceInformationMarkerStart(%composer, <>, "C(B)N(content)<conten...>:Test.kt")
       if (isTraceInProgress()) {
@@ -52,7 +49,6 @@ fun Example(%composer: Composer?, %changed: Int) {
       sourceInformationMarkerEnd(%composer)
     }
     @Composable
-    @FunctionKeyMeta(key = -164489665, startOffset = 246, endOffset = 303)
     fun C(%composer: Composer?, %changed: Int) {
       sourceInformationMarkerStart(%composer, <>, "C(C)<{>,<B>:Test.kt")
       if (isTraceInProgress()) {

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.utils.property
 
 @Deprecated(
-    "Use 'org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenEnvSpec' instead",
+    "Use 'org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenEnvSpec' instead. Scheduled for removal in Kotlin 2.4.",
     ReplaceWith(
         "BinaryenEnvSpec",
         "org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenEnvSpec"

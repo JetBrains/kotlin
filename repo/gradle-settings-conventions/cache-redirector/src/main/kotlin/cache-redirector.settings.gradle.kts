@@ -78,10 +78,7 @@ val cacheMap: Map<String, String> = mapOf(
     "https://archive.mozilla.org/pub/firefox/releases" to "https://cache-redirector.jetbrains.com/archive.mozilla.org/pub/firefox/releases",
     "https://github.com/WasmEdge/WasmEdge/releases/download" to "https://cache-redirector.jetbrains.com/github.com/WasmEdge/WasmEdge/releases/download",
     "https://storage.googleapis.com/chromium-v8/official/canary" to "https://cache-redirector.jetbrains.com/storage.googleapis.com/chromium-v8/official/canary",
-    "https://oss.sonatype.org/content/repositories/snapshots" to "https://cache-redirector.jetbrains.com/oss.sonatype.org/content/repositories/snapshots",
     "https://download.visualstudio.microsoft.com/download/pr" to "https://cache-redirector.jetbrains.com/download.visualstudio.microsoft.com/download/pr",
-    "https://oss.sonatype.org/content/repositories/releases" to "https://cache-redirector.jetbrains.com/oss.sonatype.org/content/repositories/releases",
-    "https://oss.sonatype.org/content/repositories/staging" to "https://cache-redirector.jetbrains.com/oss.sonatype.org/content/repositories/staging",
     "https://jetbrains.bintray.com/intellij-plugin-service" to "https://cache-redirector.jetbrains.com/jetbrains.bintray.com/intellij-plugin-service",
     "https://jetbrains.bintray.com/intellij-plugin-service" to "https://cache-redirector.jetbrains.com/intellij-plugin-service",
     "https://maven.exasol.com/artifactory/exasol-releases" to "https://cache-redirector.jetbrains.com/maven.exasol.com/artifactory/exasol-releases",
@@ -172,6 +169,10 @@ val cacheMap: Map<String, String> = mapOf(
     "https://d2xrhe97vsfxuc.cloudfront.net" to "https://cache-redirector.jetbrains.com/jetbrains.bintray.com/intellij-jdk",
     "https://androidx.dev/snapshots/builds" to "https://cache-redirector.jetbrains.com/androidx.dev/snapshots/builds",
     "https://repo.gradle.org/gradle/libs-releases" to "https://cache-redirector.jetbrains.com/repo.gradle.org/gradle/libs-releases",
+    "https://redirector.kotlinlang.org/maven/kotlin-dependencies" to "https://cache-redirector.jetbrains.com/redirector.kotlinlang.org/maven/kotlin-dependencies",
+    "https://redirector.kotlinlang.org/maven/bootstrap" to "https://cache-redirector.jetbrains.com/redirector.kotlinlang.org/maven/bootstrap",
+    "https://redirector.kotlinlang.org/maven/kotlin-ide-plugin-dependencies" to "https://cache-redirector.jetbrains.com/redirector.kotlinlang.org/maven/kotlin-ide-plugin-dependencies",
+    "https://packages.jetbrains.team/maven/p/plan/litmuskt" to "https://cache-redirector.jetbrains.com/packages.jetbrains.team/maven/p/plan/litmuskt",
 )
 
 val aliases = mapOf(
@@ -271,9 +272,7 @@ abstract class CheckRepositoriesTask : DefaultTask() {
     private fun URI.isCachedOrLocal() = scheme == "file" ||
             host == "cache-redirector.jetbrains.com" ||
             host == "teamcity.jetbrains.com" ||
-            host == "buildserver.labs.intellij.net" ||
-            host == "packages.jetbrains.team" ||
-            host == "redirector.kotlinlang.org"
+            host == "buildserver.labs.intellij.net"
 
     private fun RepositoryHandler.findNonCachedRepositories(): List<String> {
         val mavenNonCachedRepos = filterIsInstance<MavenArtifactRepository>()

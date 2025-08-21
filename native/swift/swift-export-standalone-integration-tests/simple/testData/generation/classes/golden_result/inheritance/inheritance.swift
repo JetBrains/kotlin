@@ -42,7 +42,7 @@ public final class OBJECT_WITH_CLASS_INHERITANCE: inheritance.OPEN_CLASS {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
 }
-open class OPEN_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+open class OPEN_CLASS: KotlinRuntime.KotlinBase {
     public init() {
         if Self.self != inheritance.OPEN_CLASS.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from inheritance.OPEN_CLASS ") }
         let __kt = __root___OPEN_CLASS_init_allocate()

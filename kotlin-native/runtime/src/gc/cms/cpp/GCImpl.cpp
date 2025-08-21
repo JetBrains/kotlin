@@ -16,7 +16,7 @@
 using namespace kotlin;
 
 gc::GC::ThreadData::ThreadData(GC& gc, mm::ThreadData& threadData) noexcept :
-    impl_(std::make_unique<Impl>(gc.impl().markDispatcher_, threadData)) {}
+    impl_(std::make_unique<Impl>(gc.impl().mark_, threadData)) {}
 
 gc::GC::ThreadData::~ThreadData() = default;
 
@@ -38,7 +38,7 @@ PERFORMANCE_INLINE void gc::GC::ThreadData::onAllocation(ObjHeader* object) noex
 
 gc::GC::GC(alloc::Allocator& allocator, gcScheduler::GCScheduler& gcScheduler) noexcept :
     impl_(std::make_unique<Impl>(allocator, gcScheduler, compiler::gcMutatorsCooperate(), compiler::auxGCThreads())) {
-    RuntimeLogInfo({kTagGC}, "Concurrent Mark & Sweep GC initialized");
+    RuntimeLogInfo({kTagGC}, "%s GC initialized", internal::CmsGCTraits::kName);
 }
 
 gc::GC::~GC() {

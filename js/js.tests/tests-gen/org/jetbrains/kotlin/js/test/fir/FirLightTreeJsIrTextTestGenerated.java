@@ -1028,6 +1028,12 @@ public class FirLightTreeJsIrTextTestGenerated extends AbstractFirLightTreeJsIrT
       @TestDataPath("$PROJECT_ROOT")
       public class K2 {
         @Test
+        @TestMetadata("actualizeInterfaceAsAny.kt")
+        public void testActualizeInterfaceAsAny() {
+          runTest("compiler/testData/ir/irText/declarations/multiplatform/k2/actualizeInterfaceAsAny.kt");
+        }
+
+        @Test
         public void testAllFilesPresentInK2() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/multiplatform/k2"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }
@@ -3426,12 +3432,6 @@ public class FirLightTreeJsIrTextTestGenerated extends AbstractFirLightTreeJsIrT
     @TestMetadata("dontLeaveStubTypesInSetter.kt")
     public void testDontLeaveStubTypesInSetter() {
       runTest("compiler/testData/ir/irText/types/dontLeaveStubTypesInSetter.kt");
-    }
-
-    @Test
-    @TestMetadata("genericDelegatedDeepProperty.kt")
-    public void testGenericDelegatedDeepProperty() {
-      runTest("compiler/testData/ir/irText/types/genericDelegatedDeepProperty.kt");
     }
 
     @Test

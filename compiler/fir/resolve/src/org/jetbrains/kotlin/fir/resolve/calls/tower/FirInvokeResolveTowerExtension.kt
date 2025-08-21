@@ -304,20 +304,12 @@ private fun BodyResolveComponents.createExplicitReceiverForInvoke(
         is FirCallableSymbol<*> -> createExplicitReceiverForInvokeByCallable(
             candidate, info, invokeBuiltinExtensionMode, extensionReceiverExpression, symbol, notFunctionAsOperatorDiagnostics
         )
-        is FirRegularClassSymbol -> buildResolvedQualifierForClass(
+        is FirClassLikeSymbol -> buildResolvedQualifierForClass(
             symbol,
             sourceElement = info.fakeSourceForImplicitInvokeCallReceiver,
+            explicitParent = info.explicitReceiver as? FirResolvedQualifier,
             nonFatalDiagnostics = notFunctionAsOperatorDiagnostics,
         )
-        is FirTypeAliasSymbol -> {
-            val type = symbol.fir.expandedTypeRef.coneTypeUnsafe<ConeClassLikeType>().fullyExpandedType()
-            val expansionRegularClassSymbol = type.lookupTag.toSymbol(session) ?: return null
-            buildResolvedQualifierForClass(
-                expansionRegularClassSymbol,
-                sourceElement = symbol.fir.source,
-                nonFatalDiagnostics = notFunctionAsOperatorDiagnostics,
-            )
-        }
         else -> throw AssertionError()
     }
 }
@@ -335,13 +327,13 @@ private fun BodyResolveComponents.createExplicitReceiverForInvokeByCallable(
         val returnTypeRef = returnTypeCalculator.tryCalculateReturnType(symbol.fir)
         calleeReference = when {
             returnTypeRef is FirErrorTypeRef -> FirErrorReferenceWithCandidate(
-                fakeSource, symbol.callableId.callableName, candidate, returnTypeRef.diagnostic,
+                fakeSource, symbol.name, candidate, returnTypeRef.diagnostic,
             )
 
-            candidate.isSuccessful -> FirNamedReferenceWithCandidate(fakeSource, symbol.callableId.callableName, candidate)
+            candidate.isSuccessful -> FirNamedReferenceWithCandidate(fakeSource, symbol.name, candidate)
 
             else -> FirErrorReferenceWithCandidate(
-                fakeSource, symbol.callableId.callableName, candidate,
+                fakeSource, symbol.name, candidate,
                 createConeDiagnosticForCandidateWithError(candidate.applicability, candidate),
             )
         }

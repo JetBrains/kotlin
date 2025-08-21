@@ -11,16 +11,16 @@ import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
+context(ka: KaSession)
 public fun KaNamedClassSymbol.isAllSuperTypesExported(
-    ktAnalysisSession: KaSession,
-    isExported: KaNamedClassSymbol.(KaSession) -> Boolean,
-): Boolean = with(ktAnalysisSession) {
+    isExported: KaNamedClassSymbol.() -> Boolean,
+): Boolean = with(ka) {
     return defaultType.allSupertypes.all { type ->
         val isAny = type.symbol?.classId == ClassId.topLevel(FqName("kotlin.Any"))
         if (isAny) {
             true
         } else {
-            (type.symbol as? KaNamedClassSymbol)?.isExported(ktAnalysisSession) == true
+            (type.symbol as? KaNamedClassSymbol)?.isExported() == true
         }
     }
 }

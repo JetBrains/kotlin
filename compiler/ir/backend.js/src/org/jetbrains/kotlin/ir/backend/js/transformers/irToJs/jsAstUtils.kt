@@ -127,7 +127,11 @@ fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerat
             declaration.parentClassOrNull?.thisReceiver?.acceptVoid(it)
         }
 
-    val functionContext = context.newDeclaration(declaration, localNameGenerator)
+    val functionContext = context.newDeclaration(
+        declaration,
+        localNameGenerator,
+        declaration.sourceFileWhenInlined ?: context.currentFileEntry
+    )
 
     val body = declaration.body?.accept(IrElementToJsStatementTransformer(), functionContext) as? JsBlock ?: JsBlock()
 
@@ -571,7 +575,7 @@ private fun JsLocation.withEmbeddedSource(
 }
 
 fun IrElement.getStartSourceLocation(container: IrDeclaration): JsLocation? {
-    val fileEntry = container.fileOrNull?.fileEntry ?: return null
+    val fileEntry = container.getSourceFile() ?: return null
     return getStartSourceLocation(fileEntry)
 }
 

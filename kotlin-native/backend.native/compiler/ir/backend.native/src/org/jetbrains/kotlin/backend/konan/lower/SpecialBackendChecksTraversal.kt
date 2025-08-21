@@ -457,8 +457,6 @@ private class BackendChecker(
 
                     IntrinsicType.INTEROP_NARROW -> if (receiverTypeIndex < typeOperandIndex)
                         reportError(expression, "unable to narrow ${receiver.type.classFqName} to ${typeOperand.classFqName}")
-
-                    else -> error(intrinsicType)
                 }
             }
             IntrinsicType.INTEROP_CONVERT -> {

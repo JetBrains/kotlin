@@ -2,7 +2,7 @@
 // FULL_JDK
 // JVM_TARGET: 1.8
 // FIR_DUMP
-// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN -DontMakeExplicitJavaTypeArgumentsFlexible
+// LANGUAGE: -DontMakeExplicitJavaTypeArgumentsFlexible
 
 import java.util.function.IntPredicate
 import java.util.stream.Stream

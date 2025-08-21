@@ -158,9 +158,6 @@ class ClosureAnnotator(
             type.arguments.forEach {
                 (it as? IrTypeProjection)?.type?.let(::seeType)
             }
-            type.abbreviation?.arguments?.forEach {
-                (it as? IrTypeProjection)?.type?.let(::seeType)
-            }
         }
     }
 

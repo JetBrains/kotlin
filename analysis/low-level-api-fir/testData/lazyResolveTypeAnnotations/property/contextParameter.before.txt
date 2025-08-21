@@ -1,6 +1,6 @@
 @R|Anno|(LAZY_EXPRESSION)  kotlin/String
-  context -> FirValueParameterSymbol <local>/parameter from FirPropertySymbol /foo
-  anchor -> [FirValueParameterSymbol <local>/parameter from FirPropertySymbol /foo]
+  context -> FirValueParameterSymbol <local>/parameter from FirRegularPropertySymbol /foo
+  anchor -> [FirValueParameterSymbol <local>/parameter from FirRegularPropertySymbol /foo]
 
 FILE: [ResolvedTo(IMPORTS)] contextParameter.kt
     @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {

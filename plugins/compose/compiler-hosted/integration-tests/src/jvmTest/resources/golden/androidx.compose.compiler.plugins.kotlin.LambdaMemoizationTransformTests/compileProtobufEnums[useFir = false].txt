@@ -15,7 +15,6 @@ fun Test(parameter: EnumTestProtos.Enum) {
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = -1480725257, startOffset = 152, endOffset = 260)
 fun Test(parameter: Enum, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)<{>:Test.kt")

@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.IrStatement
@@ -648,7 +649,33 @@ class ComposableFunctionBodyTransformer(
 
         val isTracked = declaration.returnType.isUnit()
 
-        if (declaration.body == null) return declaration
+        if (declaration.body == null) {
+            if (declaration is IrSimpleFunction && declaration.modality == Modality.ABSTRACT) {
+                scope.metrics.recordFunction(
+                    composable = true,
+                    restartable = restartable,
+                    skippable = false,
+                    isLambda = false,
+                    inline = false,
+                    hasDefaults = false,
+                    readonly = false
+                )
+
+                scope.allTrackedParams.forEach {
+                    val stability = stabilityInferencer.stabilityOf(it.varargElementType ?: it.type)
+                    val default = it.defaultValue?.expression
+                    scope.metrics.recordParameter(
+                        declaration = it,
+                        type = it.type,
+                        stability = stability,
+                        default = default,
+                        defaultStatic = default?.isStatic() == true,
+                        used = true,
+                    )
+                }
+            }
+            return declaration
+        }
 
         val changedParam = scope.changedParameter!!
         val defaultParam = scope.defaultParameter
@@ -3054,7 +3081,7 @@ class ComposableFunctionBodyTransformer(
                     // ComposerParamTransformer should not allow for any null arguments on a composable
                     // invocation unless the parameter is vararg. If this is null here, we have
                     // missed something.
-                    error("Unexpected null argument for composable call")
+                    error("Unexpected null argument for composable call: ${expression.dump()}")
                 } else {
                     argsMeta.add(CallArgumentMeta(isVararg = true))
                     continue
@@ -3868,6 +3895,8 @@ class ComposableFunctionBodyTransformer(
             transformed.branches.add(
                 irElseBranch(
                     expression = irBlock(
+                        startOffset = expression.endOffset,
+                        endOffset = expression.endOffset,
                         type = context.irBuiltIns.unitType,
                         statements = emptyList()
                     )

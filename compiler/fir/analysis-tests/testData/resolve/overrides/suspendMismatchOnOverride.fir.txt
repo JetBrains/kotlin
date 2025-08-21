@@ -96,7 +96,7 @@ FILE: suspendMismatchOnOverride.kt
         public final val v: R|kotlin/Int| = R|<local>/v|
             public get(): R|kotlin/Int|
 
-        public final override operator fun component1(): R|kotlin/Int|
+        public final operator fun component1(): R|kotlin/Int|
 
         public final fun copy(v: R|kotlin/Int| = this@R|/DC|.R|/DC.v|): R|DC|
 

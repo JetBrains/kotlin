@@ -122,8 +122,15 @@ public class KmClass : KmDeclarationContainer {
 
     /**
      * Types of context receivers of the class.
+     *
+     * Context receivers feature is replaced with context parameters.
+     * Context parameters on classes are not supported.
+     * This field is still read and written to binary metadata for purposes of working with older Kotlin's files.
+     *
+     * See https://kotl.in/context-parameters for more information about the new proposal.
      */
     @ExperimentalContextReceivers
+    @Deprecated(CtxReceiversDeprecated, level = DeprecationLevel.WARNING) // WARNING instead of ERROR because no replacement
     public val contextReceiverTypes: MutableList<KmType> = ArrayList(0)
 
     /**
@@ -228,14 +235,30 @@ public class KmFunction internal constructor(internal var flags: Int, public var
 
     /**
      * Types of context receivers of the function.
+     *
+     * Context receivers feature is replaced with context parameters.
+     * This list is no longer being read or written. Please use [contextParameters] instead.
+     * Older Kotlin compilations with context receivers are represented as parameters with the "_" name.
+     *
+     * See https://kotl.in/context-parameters for more information about the new proposal.
      */
     @ExperimentalContextReceivers
+    @Deprecated(CtxReceiversDeprecated, level = DeprecationLevel.ERROR)
     public val contextReceiverTypes: MutableList<KmType> = ArrayList(0)
 
     /**
      * Value parameters of the function.
      */
     public val valueParameters: MutableList<KmValueParameter> = ArrayList()
+
+    /**
+     * Context parameters of the function.
+     *
+     * To support the legacy context receivers feature, this list may
+     * also contain parameters with the "_" name representing them.
+     */
+    @ExperimentalContextParameters
+    public val contextParameters: MutableList<KmValueParameter> = ArrayList()
 
     /**
      * Return type of the function.
@@ -341,9 +364,25 @@ public class KmProperty internal constructor(
 
     /**
      * Types of context receivers of the property.
+     *
+     * Context receivers feature is replaced with context parameters.
+     * This list is no longer being read or written. Please use [contextParameters] instead.
+     * Older Kotlin compilations with context receivers are represented as parameters with the "_" name.
+     *
+     * See https://kotl.in/context-parameters for more information about the new proposal.
      */
     @ExperimentalContextReceivers
+    @Deprecated(CtxReceiversDeprecated, level = DeprecationLevel.ERROR)
     public val contextReceiverTypes: MutableList<KmType> = ArrayList(0)
+
+    /**
+     * Context parameters of the property.
+     *
+     * To support the legacy context receivers feature, this list may
+     * also contain parameters with the "_" name representing them.
+     */
+    @ExperimentalContextParameters
+    public val contextParameters: MutableList<KmValueParameter> = ArrayList()
 
     /**
      * Value parameter of the setter of this property, if this is a `var` property and parameter is present.

@@ -73,8 +73,6 @@ class JvmBackendContext(
         this, generatorExtensions.cachedFields
     )
 
-    val allConstructorsWithCapturedConstructorCreated = mutableSetOf<IrConstructor>()
-
     val ktDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(state.diagnosticReporter, config.languageVersionSettings)
 
     override val symbols = JvmSymbols(this)

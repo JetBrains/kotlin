@@ -576,6 +576,44 @@ class Strings {
     }
 
     @Sample
+    fun splitToSequenceWithStringDelimiters() {
+        fun Sequence<String>.toPrettyString() = joinToString(", ", "[", "]")
+
+        val multiCharDelimiter = "apple--banana--cherry".splitToSequence("--").toPrettyString()
+        assertPrints(multiCharDelimiter, "[apple, banana, cherry]")
+
+        val multipleSplit = "apple->banana;;cherry:::orange".splitToSequence("->", ";;", ":::").toPrettyString()
+        assertPrints(multipleSplit, "[apple, banana, cherry, orange]")
+
+        val longerDelimiterFirst = "apple<-banana<--cherry".splitToSequence("<--", "<-").toPrettyString()
+        assertPrints(longerDelimiterFirst, "[apple, banana, cherry]")
+
+        val shorterDelimiterFirst = "apple<-banana<--cherry".splitToSequence("<-", "<--").toPrettyString()
+        assertPrints(shorterDelimiterFirst, "[apple, banana, -cherry]")
+
+        val limitSplit = "a->b->c->d->e".splitToSequence("->", limit = 3).toPrettyString()
+        assertPrints(limitSplit, "[a, b, c->d->e]")
+
+        val emptyInputResult = "".splitToSequence("sep").toList()
+        assertTrue(emptyInputResult == listOf(""))
+
+        val emptyDelimiterSplit = "abc".splitToSequence("").toPrettyString()
+        assertPrints(emptyDelimiterSplit, "[, a, b, c, ]")
+
+        val mixedCase = "abcXYZdef".splitToSequence("xyz").toPrettyString()
+        assertPrints(mixedCase, "[abcXYZdef]")  // No match with case sensitivity
+
+        val mixedCaseIgnored = "abcXYZdef".splitToSequence("xyz", ignoreCase = true).toPrettyString()
+        assertPrints(mixedCaseIgnored, "[abc, def]")  // Matches with case insensitivity
+
+        val emptyResults = "##a##b##c##".splitToSequence("##").toPrettyString()
+        assertPrints(emptyResults, "[, a, b, c, ]")
+
+        val consecutiveSeparators = "a--b------c".splitToSequence("--").toPrettyString()
+        assertPrints(consecutiveSeparators, "[a, b, , , c]")
+    }
+
+    @Sample
     fun splitWithCharDelimiters() {
         val commaSplit = "apple,banana,cherry".split(',')
         assertPrints(commaSplit, "[apple, banana, cherry]")
@@ -599,6 +637,35 @@ class Strings {
         assertPrints(emptyResults, "[, a, b, c, ]")
 
         val consecutiveSeparators = "a,,b,,,c".split(',')
+        assertPrints(consecutiveSeparators, "[a, , b, , , c]")
+    }
+
+    @Sample
+    fun splitToSequenceWithCharDelimiters() {
+        fun Sequence<String>.toPrettyString() = joinToString(", ", "[", "]")
+
+        val commaSplit = "apple,banana,cherry".splitToSequence(',').toPrettyString()
+        assertPrints(commaSplit, "[apple, banana, cherry]")
+
+        val charSplit = "apple,banana;cherry".splitToSequence(',', ';').toPrettyString()
+        assertPrints(charSplit, "[apple, banana, cherry]")
+
+        val limitSplit = "a,b,c,d,e".splitToSequence(',', limit = 3).toPrettyString()
+        assertPrints(limitSplit, "[a, b, c,d,e]")
+
+        val emptyInputResult = "".splitToSequence('|').toList()
+        assertTrue(emptyInputResult == listOf(""))
+
+        val mixedCase = "abcXdef".splitToSequence('x').toPrettyString()
+        assertPrints(mixedCase, "[abcXdef]")  // No match with case sensitivity
+
+        val mixedCaseIgnored = "abcXdef".splitToSequence('x', ignoreCase = true).toPrettyString()
+        assertPrints(mixedCaseIgnored, "[abc, def]")  // Matches with case insensitivity
+
+        val emptyResults = ",a,b,c,".splitToSequence(',').toPrettyString()
+        assertPrints(emptyResults, "[, a, b, c, ]")
+
+        val consecutiveSeparators = "a,,b,,,c".splitToSequence(',').toPrettyString()
         assertPrints(consecutiveSeparators, "[a, , b, , , c]")
     }
 

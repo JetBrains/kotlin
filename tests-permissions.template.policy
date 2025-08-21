@@ -1,7 +1,12 @@
 grant codeBase "file:{{gradle_user_home}}/-" {
     permission java.security.AllPermission;
 };
+{{all_permissions_for_gradle_ro_dep_cache}}
 grant {
+    permission java.io.FilePermission "{{gradle_user_home}}/-", "read";
+    permission java.io.FilePermission "{{gradle_user_home}}", "read";
+    permission java.io.FilePermission "/dev/random", "read";
+    permission java.io.FilePermission "/dev/urandom", "read";
     // Basic permissions needed for tests to run
     permission java.lang.RuntimePermission "*";
     permission java.net.SocketPermission "127.0.0.1:0", "connect,resolve";
@@ -32,6 +37,11 @@ grant {
 
     // Used by com.intellij.openapi.util.SystemInfo.isCrostini() to detect ChromeOs
     permission java.io.FilePermission "/dev/.cros_milestone", "read";
+
+    // com.intellij.openapi.util.registry.EarlyAccessRegistryManager
+    permission java.io.FilePermission "some/non/existent/path/early-access-registry.txt", "read";
+
+    {{native}}
 
     // Temp directory
     {{temp_dir}}

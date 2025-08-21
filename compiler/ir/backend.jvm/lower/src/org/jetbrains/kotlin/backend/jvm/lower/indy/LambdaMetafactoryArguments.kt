@@ -7,19 +7,14 @@ package org.jetbrains.kotlin.backend.jvm.lower.indy
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.ir.findInterfaceImplementation
-import org.jetbrains.kotlin.backend.jvm.ir.findSuperDeclaration
-import org.jetbrains.kotlin.backend.jvm.ir.getSingleAbstractMethod
-import org.jetbrains.kotlin.backend.jvm.ir.isCompiledToJvmDefault
+import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.needsMfvcFlattening
 import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
-import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
@@ -35,6 +30,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SERIALIZABLE_LAMBDA_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
+import java.lang.annotation.RetentionPolicy
 
 internal sealed class MetafactoryArgumentsResult {
     abstract val isSuccess: Boolean
@@ -174,7 +170,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
         // corresponding synthetic class, which doesn't look like a binary compatible change.
         // If 'indyAllowAnnotatedLambdas' is set to true, we can lift this restriction and use indy
         if (!context.config.indyAllowAnnotatedLambdas && reference.origin.isLambda && implFun.annotations.any { annotation ->
-                annotation.symbol.owner.constructedClass.getAnnotationRetention() == KotlinRetention.RUNTIME
+                annotation.symbol.owner.constructedClass.getJvmAnnotationRetention() == RetentionPolicy.RUNTIME
             }) {
             abiHazard = true
         }
@@ -185,10 +181,8 @@ internal class LambdaMetafactoryArgumentsBuilder(
         }
 
         // Don't use JDK LambdaMetafactory for big arity lambdas.
-        if (plainLambda) {
-            var parametersCount = implFun.parameters.size
-            if (parametersCount >= BuiltInFunctionArity.BIG_ARITY)
-                abiHazard = true
+        if (plainLambda && implFun.parameters.size >= BuiltInFunctionArity.BIG_ARITY) {
+            abiHazard = true
         }
 
         // Can't use indy-based SAM conversion inside inline fun (Ok in inline lambda).
@@ -459,19 +453,12 @@ internal class LambdaMetafactoryArgumentsBuilder(
     }
 
     private fun adjustLambdaFunction(lambda: IrSimpleFunction) {
-        lambda.parameters.forEach { parameter ->
+        for (parameter in lambda.parameters) {
             if (parameter.kind != IrParameterKind.DispatchReceiver) {
                 parameter.kind = IrParameterKind.Regular
             }
         }
     }
-
-
-    private fun IrValueParameter.copy(parent: IrSimpleFunction, newName: Name = this.name): IrValueParameter =
-        buildValueParameter(parent) {
-            updateFrom(this@copy)
-            name = newName
-        }
 
     private fun adaptFakeInstanceMethodSignature(fakeInstanceMethod: IrSimpleFunction, constraints: SignatureAdaptationConstraints) {
         for ((valueParameter, constraint) in constraints.parameters) {

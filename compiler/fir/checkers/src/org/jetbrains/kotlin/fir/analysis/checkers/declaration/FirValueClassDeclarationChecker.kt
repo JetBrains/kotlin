@@ -19,8 +19,10 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -74,7 +76,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
             reporter.reportOn(declaration.source, FirErrors.VALUE_CLASS_NOT_FINAL)
         }
 
-        if (declaration.contextParameters.isNotEmpty() && context.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)) {
+        if (declaration.contextParameters.isNotEmpty() && LanguageFeature.ContextReceivers.isEnabled()) {
             reporter.reportOn(declaration.source, FirErrors.VALUE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS)
         }
 
@@ -93,7 +95,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         var primaryConstructorParametersByName = mapOf<Name, FirValueParameterSymbol>()
         val primaryConstructorPropertiesByName = hashMapOf<Name, FirPropertySymbol>()
         var primaryConstructorParametersSymbolsSet = setOf<FirValueParameterSymbol>()
-        val isCustomEqualsSupported = context.languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInValueClasses)
+        val isCustomEqualsSupported = LanguageFeature.CustomEqualsInValueClasses.isEnabled()
 
         declaration.constructors(context.session).forEach { innerDeclaration ->
             when {
@@ -190,7 +192,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
             return
         }
 
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.ValueClasses)) {
+        if (LanguageFeature.ValueClasses.isEnabled()) {
             if (primaryConstructorParametersByName.isEmpty()) {
                 reporter.reportOn(primaryConstructor.source, FirErrors.VALUE_CLASS_EMPTY_CONSTRUCTOR)
                 return
@@ -209,7 +211,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                         FirErrors.VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER
                     )
 
-                !context.languageVersionSettings.supportsFeature(LanguageFeature.GenericInlineClassParameter) &&
+                !LanguageFeature.GenericInlineClassParameter.isEnabled() &&
                         parameterTypeRef.coneType.let {
                             it is ConeTypeParameterType || it.isGenericArrayOfTypeParameter()
                         } -> {

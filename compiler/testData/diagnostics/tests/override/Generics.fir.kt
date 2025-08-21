@@ -44,7 +44,7 @@ abstract class MyAbstractClass1 : MyTrait<Int>, MyAbstractClass<String>() {
 <!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED, ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class MyIllegalGenericClass1<!><T> : MyTrait<T>, MyAbstractClass<T>() {}
 <!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED, ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class MyIllegalGenericClass2<!><T, R>(r : R) : MyTrait<T>, MyAbstractClass<R>() {
     <!NOTHING_TO_OVERRIDE!>override<!> fun foo(r: R) = r
-    <!NOTHING_TO_OVERRIDE!>override<!> <!CONFLICTING_OVERLOADS!>val <<!TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER!>T<!>> pr : R<!> = r
+    <!NOTHING_TO_OVERRIDE!>override<!> <!CONFLICTING_OVERLOADS!>val <<!INCORRECT_TYPE_PARAMETER_OF_PROPERTY!>T<!>> pr : R<!> = r
 }
 <!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED, ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class MyIllegalClass1<!> : MyTrait<Int>, MyAbstractClass<String>() {}
 abstract class MyLegalAbstractClass1 : MyTrait<Int>, MyAbstractClass<String>() {}
@@ -52,12 +52,12 @@ abstract class MyLegalAbstractClass1 : MyTrait<Int>, MyAbstractClass<String>() {
 <!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED, ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class MyIllegalClass2<!><T>(t : T) : MyTrait<Int>, MyAbstractClass<Int>() {
     fun foo(t: T) = t
     fun bar(t: T) = t
-    <!CONFLICTING_OVERLOADS!>val <<!TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER!>R<!>> pr : T<!> = t
+    <!CONFLICTING_OVERLOADS!>val <<!INCORRECT_TYPE_PARAMETER_OF_PROPERTY!>R<!>> pr : T<!> = t
 }
 abstract class MyLegalAbstractClass2<T>(t : T) : MyTrait<Int>, MyAbstractClass<Int>() {
     fun foo(t: T) = t
     fun bar(t: T) = t
-    <!CONFLICTING_OVERLOADS!>val <<!TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER!>R<!>> pr : T<!> = t
+    <!CONFLICTING_OVERLOADS!>val <<!INCORRECT_TYPE_PARAMETER_OF_PROPERTY!>R<!>> pr : T<!> = t
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration, nullableType,

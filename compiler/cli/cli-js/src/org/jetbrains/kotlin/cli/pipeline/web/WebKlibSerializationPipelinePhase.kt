@@ -27,7 +27,7 @@ object WebKlibSerializationPipelinePhase : PipelinePhase<JsFir2IrPipelineArtifac
     name = "JsKlibSerializationPipelinePhase",
 ) {
     override fun executePhase(input: JsFir2IrPipelineArtifact): JsSerializedKlibPipelineArtifact? {
-        val (fir2IrResult, firOutput, configuration, diagnosticCollector, moduleStructure, hasErrors) = input
+        val (fir2IrResult, firOutput, configuration, diagnosticCollector, moduleStructure) = input
 
         val outputKlibPath = configuration.computeOutputKlibPath()
         serializeFirKlib(
@@ -36,12 +36,10 @@ object WebKlibSerializationPipelinePhase : PipelinePhase<JsFir2IrPipelineArtifac
             fir2IrActualizedResult = fir2IrResult,
             outputKlibPath = outputKlibPath,
             nopack = configuration.produceKlibDir,
-            messageCollector = configuration.messageCollector,
             diagnosticsReporter = diagnosticCollector,
             jsOutputName = configuration.perModuleOutputName,
             useWasmPlatform = configuration.wasmCompilation,
             wasmTarget = configuration.wasmTarget,
-            hasErrors = hasErrors,
         )
         return JsSerializedKlibPipelineArtifact(
             outputKlibPath,
@@ -56,12 +54,10 @@ object WebKlibSerializationPipelinePhase : PipelinePhase<JsFir2IrPipelineArtifac
         fir2IrActualizedResult: Fir2IrActualizedResult,
         outputKlibPath: String,
         nopack: Boolean,
-        messageCollector: MessageCollector,
         diagnosticsReporter: BaseDiagnosticsCollector,
         jsOutputName: String?,
         useWasmPlatform: Boolean,
         wasmTarget: WasmTarget?,
-        hasErrors: Boolean = messageCollector.hasErrors() || diagnosticsReporter.hasErrors,
     ) {
         val fir2KlibMetadataSerializer = Fir2KlibMetadataSerializer(
             moduleStructure.compilerConfiguration,
@@ -83,7 +79,6 @@ object WebKlibSerializationPipelinePhase : PipelinePhase<JsFir2IrPipelineArtifac
             irBuiltIns = fir2IrActualizedResult.irBuiltIns,
             cleanFiles = icData ?: emptyList(),
             nopack = nopack,
-            containsErrorCode = hasErrors,
             jsOutputName = jsOutputName,
             builtInsPlatform = if (useWasmPlatform) BuiltInsPlatform.WASM else BuiltInsPlatform.JS,
             wasmTarget = wasmTarget,

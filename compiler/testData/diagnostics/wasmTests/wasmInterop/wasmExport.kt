@@ -1,7 +1,11 @@
 // DIAGNOSTICS: -UNUSED_PARAMETER
 // LANGUAGE: +ContextParameters
+// OPT_IN: kotlin.js.ExperimentalWasmJsInterop
+
+@file:OptIn(ExperimentalWasmInterop::class)
 
 import kotlin.wasm.WasmExport
+import kotlin.wasm.ExperimentalWasmInterop
 
 <!WASM_EXPORT_ON_EXTERNAL_DECLARATION!>@WasmExport("a")<!>
 external fun foo0(): Unit

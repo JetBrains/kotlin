@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.backend.common.originalBeforeInline
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -42,6 +41,8 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 import org.jetbrains.org.objectweb.asm.Type
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 /**
  * Adds continuation classes and parameters to suspend functions.
@@ -72,6 +73,13 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
                 return transformed.retargetToSuspendView(context, null) {
                     IrFunctionReferenceImpl.fromSymbolOwner(startOffset, endOffset, type, it, typeArguments.size, reflectionTarget, origin)
                 }
+            }
+
+            override fun visitRawFunctionReference(expression: IrRawFunctionReference): IrExpression {
+                val transformed = super.visitRawFunctionReference(expression) as IrRawFunctionReference
+                // The only references not yet transformed into objects are inline lambdas; the continuation
+                // for those will be taken from the inline functions they are passed to, not the enclosing scope.
+                return transformed.apply { retargetToSuspendView(context) }
             }
 
             override fun visitCall(expression: IrCall): IrExpression {
@@ -295,6 +303,13 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
 
                 val capturesCrossinline = function.isCapturingCrossinline()
                 val view = function.suspendFunctionViewOrStub(context)
+
+                // if X is original for Y, then (view for X) is an original for the (view for Y)
+                function.originalFunctionForDefaultImpl?.let { originalForDefaultImplBridge ->
+                    val viewForOriginal = originalForDefaultImplBridge.suspendFunctionOriginal().viewOfOriginalSuspendFunction
+                    if (viewForOriginal != null) view.originalFunctionForDefaultImpl = viewForOriginal
+                }
+
                 val continuationParameter = view.continuationParameter()
                 val parameterMap = function.parameters.zip(view.parameters.filter { it != continuationParameter }).toMap()
                 view.body = function.moveBodyTo(view, parameterMap)
@@ -365,7 +380,7 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
 
             private fun IrSimpleFunction.isCapturingCrossinline(): Boolean {
                 var capturesCrossinline = false
-                (this.originalBeforeInline ?: this).acceptVoid(object : IrVisitorVoid() {
+                this.acceptVoid(object : IrVisitorVoid() {
                     override fun visitElement(element: IrElement) {
                         element.acceptChildrenVoid(this)
                     }
@@ -464,10 +479,7 @@ private fun <T : IrMemberAccessExpression<IrFunctionSymbol>> T.retargetToSuspend
 ): T {
     // Calls inside continuation are already generated with continuation parameter as well as calls to suspendImpls
     val owner = symbol.owner
-    if (owner !is IrSimpleFunction || !owner.isSuspend || caller?.isInvokeSuspendOfContinuation() == true
-        || owner.origin == JvmLoweredDeclarationOrigin.SUSPEND_IMPL_STATIC_FUNCTION
-        || owner.continuationParameter() != null
-    ) return this
+    if (!owner.isSuspendFunctionToLower(caller)) return this
     val view = owner.suspendFunctionViewOrStub(context)
     if (view == owner) return this
 
@@ -491,4 +503,23 @@ private fun <T : IrMemberAccessExpression<IrFunctionSymbol>> T.retargetToSuspend
             it.arguments[continuationParameter.indexInParameters] = continuation
         }
     }
+}
+
+private fun IrRawFunctionReference.retargetToSuspendView(context: JvmBackendContext) {
+    // Calls inside continuation are already generated with continuation parameter as well as calls to suspendImpls
+    val owner = symbol.owner
+    if (!owner.isSuspendFunctionToLower(caller = null)) return
+    val view = owner.suspendFunctionViewOrStub(context)
+    if (view == owner) return
+
+    symbol = view.symbol
+}
+
+
+@OptIn(ExperimentalContracts::class)
+private fun IrFunction.isSuspendFunctionToLower(caller: IrFunction?): Boolean {
+    contract { returns(true) implies (this@isSuspendFunctionToLower is IrSimpleFunction) }
+    return this is IrSimpleFunction && isSuspend && caller?.isInvokeSuspendOfContinuation() != true
+            && origin != JvmLoweredDeclarationOrigin.SUSPEND_IMPL_STATIC_FUNCTION
+            && continuationParameter() == null
 }

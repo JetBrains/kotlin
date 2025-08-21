@@ -174,6 +174,12 @@ public class IrJsLocalVariableTestGenerated extends AbstractIrJsLocalVariableTes
   }
 
   @Test
+  @TestMetadata("tryFinally18.kt")
+  public void testTryFinally18() {
+    runTest("compiler/testData/debug/localVariables/tryFinally18.kt");
+  }
+
+  @Test
   @TestMetadata("tryFinally2.kt")
   public void testTryFinally2() {
     runTest("compiler/testData/debug/localVariables/tryFinally2.kt");

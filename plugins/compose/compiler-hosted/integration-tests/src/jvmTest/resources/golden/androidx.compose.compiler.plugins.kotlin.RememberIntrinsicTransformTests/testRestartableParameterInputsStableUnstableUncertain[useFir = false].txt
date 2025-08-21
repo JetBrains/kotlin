@@ -24,7 +24,6 @@ fun test3(x: Uncertain) {
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = -473819879, startOffset = 98, endOffset = 149)
 fun test1(x: KnownStable, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(test1)<rememb...>:Test.kt")
@@ -53,7 +52,6 @@ fun test1(x: KnownStable, %composer: Composer?, %changed: Int) {
   }
 }
 @Composable
-@FunctionKeyMeta(key = -301765569, startOffset = 162, endOffset = 215)
 fun test2(x: KnownUnstable, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(test2)<rememb...>:Test.kt")
@@ -82,7 +80,6 @@ fun test2(x: KnownUnstable, %composer: Composer?, %changed: Int) {
   }
 }
 @Composable
-@FunctionKeyMeta(key = -2145116948, startOffset = 228, endOffset = 277)
 fun test3(x: Uncertain, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(test3)<rememb...>:Test.kt")

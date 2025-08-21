@@ -25,8 +25,12 @@ object CommonTypeCheckers : TypeCheckers() {
         FirContextualFunctionTypeChecker,
         FirKotlinActualAnnotationHasNoEffectInKotlinTypeChecker,
         FirProjectionRelationChecker,
+        FirUpperBoundViolatedTypeChecker,
         FirArrayOfNothingTypeChecker,
         FirInlineExposedLessVisibleTypeChecker,
+        RedundantNullableChecker,
+        PlatformClassMappedToKotlinTypeRefChecker,
+        FirMissingDependencyClassInTypeAliasTypeChecker,
     )
 
     override val intersectionTypeRefCheckers: Set<FirIntersectionTypeRefChecker> = setOf(

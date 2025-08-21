@@ -24,4 +24,4 @@ androidxVersionsPath="$androidxPath/gradle/libs.versions.toml"
 ./gradlew -Dmaven.repo.local="$composeSnapshotRepoPath" install
 
 # Substitute compose compiler snapshot version in libs.versions.toml
-sed -i '' -E 's/composeCompilerPlugin = "[^"]+"/composeCompilerPlugin = "2.2.255-SNAPSHOT"/g' "$androidxVersionsPath"
+sed -i '' -E 's/composeCompilerPlugin = "[^"]+"/composeCompilerPlugin = "2.3.255-SNAPSHOT"/g' "$androidxVersionsPath"

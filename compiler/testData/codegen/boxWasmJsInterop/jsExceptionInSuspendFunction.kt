@@ -5,6 +5,7 @@
 import helpers.*
 import kotlin.coroutines.*
 
+val TEST_JS_STRING = "Test".toJsString()
 fun throwJsException(): Int = js("{ throw new TypeError('Test'); }")
 fun throwJsPrimitive(): Int = js("{ throw 'Test'; }")
 fun throwKotlinException(): Int = throw IllegalStateException("Test")
@@ -12,6 +13,13 @@ fun throwKotlinException(): Int = throw IllegalStateException("Test")
 suspend fun throwSomeJsException(): Int = throwJsException()
 suspend fun throwSomeJsPrimitive(): Int = throwJsPrimitive()
 suspend fun throwSomeKotlinException(): Int = throwKotlinException()
+
+private fun String.contains(moduleName: String, funName: String) =
+    contains("$moduleName.$funName") || contains("$funName@$moduleName")
+
+@JsName("TypeError")
+external class JsTypeError : JsAny
+
 inline fun <reified T: Throwable> wasThrown(fn: () -> Any?): Boolean {
     try {
         fn()
@@ -57,7 +65,9 @@ suspend fun jsPrimitiveWithCatchThrowable(): Boolean {
         throwSomeJsPrimitive()
         return false
     } catch (e: Throwable) {
-        return e is JsException && e.message == "Exception was thrown while running JavaScript code" && e.thrownValue == null
+        return e is JsException &&
+                e.message == "Exception was thrown while running JavaScript code" &&
+                e.thrownValue == TEST_JS_STRING
     }
     return false
 }
@@ -66,7 +76,13 @@ suspend fun jsExceptionWithCatchThrowable(): Boolean {
         throwSomeJsException()
         return false
     } catch (e: Throwable) {
-        return e is JsException && e.message == "Exception was thrown while running JavaScript code" && e.thrownValue == null
+        val stacktrace = e.stackTraceToString()
+        return e is JsException &&
+                e.message == "Test" &&
+                e.thrownValue is JsTypeError &&
+                stacktrace.contains("throwSomeJsException") &&
+                stacktrace.contains("<main>", "jsExceptionWithCatchThrowable") &&
+                stacktrace.contains("<main>", "box")
     }
     return false
 }
@@ -86,7 +102,7 @@ suspend fun jsPrimitiveWithCatchJsException(): Boolean {
         throwSomeJsPrimitive()
         return false
     } catch (e: JsException) {
-        return e.message == "Exception was thrown while running JavaScript code" && e.thrownValue == null
+        return e.message == "Exception was thrown while running JavaScript code" && e.thrownValue == TEST_JS_STRING
     }
     return false
 }
@@ -95,7 +111,12 @@ suspend fun jsExceptionWithCatchJsException(): Boolean {
         throwSomeJsException()
         return false
     } catch (e: JsException) {
-        return e.message == "Exception was thrown while running JavaScript code" && e.thrownValue == null
+        val stacktrace = e.stackTraceToString()
+        return e.message == "Test" &&
+                e.thrownValue is JsTypeError &&
+                stacktrace.contains("throwSomeJsException") &&
+                stacktrace.contains("<main>", "jsExceptionWithCatchJsException") &&
+                stacktrace.contains("<main>", "box")
     }
     return false
 }
@@ -147,7 +168,7 @@ suspend fun jsPrimitiveWithCatchThrowableAndFinally(): Boolean {
     } catch (e: Throwable) {
         finalException = e
     } finally {
-        return finalException is JsException && finalException.message == "Exception was thrown while running JavaScript code" && finalException.thrownValue == null
+        return finalException is JsException && finalException.message == "Exception was thrown while running JavaScript code" && finalException.thrownValue == TEST_JS_STRING
     }
     return false
 }
@@ -159,7 +180,13 @@ suspend fun jsExceptionWithCatchThrowableAndFinally(): Boolean {
     } catch (e: Throwable) {
         finalException = e
     } finally {
-        return finalException is JsException && finalException.message == "Exception was thrown while running JavaScript code" && finalException.thrownValue == null
+        val stacktrace = finalException?.stackTraceToString() ?: ""
+        return finalException is JsException &&
+                finalException.message == "Test" &&
+                finalException.thrownValue is JsTypeError &&
+                stacktrace.contains("throwSomeJsException") &&
+                stacktrace.contains("<main>", "jsExceptionWithCatchThrowableAndFinally") &&
+                stacktrace.contains("<main>", "box")
     }
     return false
 }
@@ -185,7 +212,7 @@ suspend fun jsPrimitiveWithCatchJsExceptionAndFinally(): Boolean {
     } catch (e: JsException) {
         finalException = e
     } finally {
-        return finalException?.message == "Exception was thrown while running JavaScript code" && finalException.thrownValue == null
+        return finalException?.message == "Exception was thrown while running JavaScript code" && finalException.thrownValue == TEST_JS_STRING
     }
     return false
 }
@@ -197,7 +224,12 @@ suspend fun jsExceptionWithCatchJsExceptionAndFinally(): Boolean {
     } catch (e: JsException) {
         finalException = e
     } finally {
-        return finalException?.message == "Exception was thrown while running JavaScript code" && finalException.thrownValue == null
+        val stacktrace = finalException?.stackTraceToString() ?: ""
+        return finalException?.message == "Test" &&
+                finalException.thrownValue is JsTypeError &&
+                stacktrace.contains("throwSomeJsException") &&
+                stacktrace.contains("<main>", "jsExceptionWithCatchJsExceptionAndFinally") &&
+                stacktrace.contains("<main>", "box")
     }
     return false
 }
@@ -258,7 +290,7 @@ suspend fun jsPrimitiveWithCatchJsExceptionAndThrowable(): Boolean {
         throwSomeJsPrimitive()
         return false
     } catch (e: JsException) {
-        return e.message == "Exception was thrown while running JavaScript code" && e.thrownValue == null
+        return e.message == "Exception was thrown while running JavaScript code" && e.thrownValue == TEST_JS_STRING
     } catch (e: Throwable) {
         return false
     }
@@ -269,7 +301,12 @@ suspend fun jsExceptionWithCatchJsExceptionAndThrowable(): Boolean {
         throwSomeJsException()
         return false
     } catch (e: JsException) {
-        return e.message == "Exception was thrown while running JavaScript code" && e.thrownValue == null
+        val stacktrace = e.stackTraceToString()
+        return e.message == "Test" &&
+                e.thrownValue is JsTypeError &&
+                stacktrace.contains("throwSomeJsException") &&
+                stacktrace.contains("<main>", "jsExceptionWithCatchJsExceptionAndThrowable") &&
+                stacktrace.contains("<main>", "box")
     } catch (e: Throwable) {
         return false
     }
@@ -295,7 +332,7 @@ suspend fun jsPrimitiveWithCatchIllegalStateExceptionAndThrowable(): Boolean {
     } catch (e: IllegalStateException) {
         return false
     } catch (e: Throwable) {
-        return e is JsException && e.message == "Exception was thrown while running JavaScript code" && e.thrownValue == null
+        return e is JsException && e.message == "Exception was thrown while running JavaScript code" && e.thrownValue == TEST_JS_STRING
     }
     return false
 }
@@ -306,7 +343,13 @@ suspend fun jsExceptionWithCatchIllegalStateExceptionAndThrowable(): Boolean {
     } catch (e: IllegalStateException) {
         return false
     } catch (e: Throwable) {
-        return e is JsException && e.message == "Exception was thrown while running JavaScript code" && e.thrownValue == null
+        val stacktrace = e.stackTraceToString()
+        return e is JsException &&
+                e.message == "Test" &&
+                e.thrownValue is JsTypeError &&
+                stacktrace.contains("throwSomeJsException") &&
+                stacktrace.contains("<main>", "jsExceptionWithCatchIllegalStateExceptionAndThrowable") &&
+                stacktrace.contains("<main>", "box")
     }
     return false
 }
@@ -328,7 +371,7 @@ suspend fun jsPrimitiveWithCatchThrowableAndJsException(): Boolean {
         throwSomeJsPrimitive()
         return false
     } catch (e: Throwable) {
-        return e is JsException && e.message == "Exception was thrown while running JavaScript code" && e.thrownValue == null
+        return e is JsException && e.message == "Exception was thrown while running JavaScript code" && e.thrownValue == TEST_JS_STRING
     } catch (e: JsException) {
         return false
     }
@@ -339,7 +382,13 @@ suspend fun jsExceptionWithCatchThrowableAndJsException(): Boolean {
         throwSomeJsException()
         return false
     } catch (e: Throwable) {
-        return e is JsException && e.message == "Exception was thrown while running JavaScript code" && e.thrownValue == null
+        val stacktrace = e.stackTraceToString()
+        return e is JsException &&
+                e.message == "Test" &&
+                e.thrownValue is JsTypeError &&
+                stacktrace.contains("throwSomeJsException") &&
+                stacktrace.contains("<main>", "jsExceptionWithCatchThrowableAndJsException") &&
+                stacktrace.contains("<main>", "box")
     } catch (e: JsException) {
         return false
     }
@@ -365,7 +414,7 @@ suspend fun jsPrimitiveWithCatchIllegalStateExceptionAndJsException(): Boolean {
     } catch (e: IllegalStateException) {
         return false
     } catch (e: JsException) {
-        return e.message == "Exception was thrown while running JavaScript code" && e.thrownValue == null
+        return e.message == "Exception was thrown while running JavaScript code" && e.thrownValue == TEST_JS_STRING
     }
     return false
 }
@@ -376,7 +425,12 @@ suspend fun jsExceptionWithCatchIllegalStateExceptionAndJsException(): Boolean {
     } catch (e: IllegalStateException) {
         return false
     } catch (e: JsException) {
-        return e.message == "Exception was thrown while running JavaScript code" && e.thrownValue == null
+        val stacktrace = e.stackTraceToString()
+        return e.message == "Test" &&
+                e.thrownValue is JsTypeError &&
+                stacktrace.contains("throwSomeJsException") &&
+                stacktrace.contains("<main>", "jsExceptionWithCatchIllegalStateExceptionAndJsException") &&
+                stacktrace.contains("<main>", "box")
     }
     return false
 }
@@ -398,7 +452,7 @@ suspend fun jsPrimitiveWithCatchThrowableAndIllegalStateException(): Boolean {
         throwSomeJsPrimitive()
         return false
     } catch (e: Throwable) {
-        return e is JsException && e.message == "Exception was thrown while running JavaScript code" && e.thrownValue == null
+        return e is JsException && e.message == "Exception was thrown while running JavaScript code" && e.thrownValue == TEST_JS_STRING
     } catch (e: IllegalStateException) {
         return false
     }
@@ -409,7 +463,13 @@ suspend fun jsExceptionWithCatchThrowableAndIllegalStateException(): Boolean {
         throwSomeJsException()
         return false
     } catch (e: Throwable) {
-        return e is JsException && e.message == "Exception was thrown while running JavaScript code" && e.thrownValue == null
+        val stacktrace = e.stackTraceToString()
+        return e is JsException &&
+                e.message == "Test" &&
+                e.thrownValue is JsTypeError &&
+                stacktrace.contains("throwSomeJsException") &&
+                stacktrace.contains("<main>", "jsExceptionWithCatchThrowableAndIllegalStateException") &&
+                stacktrace.contains("<main>", "box")
     } catch (e: IllegalStateException) {
         return false
     }
@@ -433,7 +493,7 @@ suspend fun jsPrimitiveWithCatchJsExceptionAndIllegalStateException(): Boolean {
         throwSomeJsPrimitive()
         return false
     } catch (e: JsException) {
-        return e.message == "Exception was thrown while running JavaScript code" && e.thrownValue == null
+        return e.message == "Exception was thrown while running JavaScript code" && e.thrownValue == TEST_JS_STRING
     } catch (e: IllegalStateException) {
         return false
     }
@@ -444,7 +504,12 @@ suspend fun jsExceptionWithCatchJsExceptionAndIllegalStateException(): Boolean {
         throwSomeJsException()
         return false
     } catch (e: JsException) {
-        return e.message == "Exception was thrown while running JavaScript code" && e.thrownValue == null
+        val stacktrace = e.stackTraceToString()
+        return e.message == "Test" &&
+                e.thrownValue is JsTypeError &&
+                stacktrace.contains("throwSomeJsException") &&
+                stacktrace.contains("<main>", "jsExceptionWithCatchJsExceptionAndIllegalStateException") &&
+                stacktrace.contains("<main>", "box")
     } catch (e: IllegalStateException) {
         return false
     }
@@ -476,7 +541,7 @@ suspend fun jsPrimitiveWithCatchJsExceptionAndThrowableAndFinally(): Boolean {
         finalException = null
         somethingWasCaught = true
     } finally {
-        return somethingWasCaught && finalException?.message == "Exception was thrown while running JavaScript code" && finalException.thrownValue == null
+        return somethingWasCaught && finalException?.message == "Exception was thrown while running JavaScript code" && finalException.thrownValue == TEST_JS_STRING
     }
     return false
 }
@@ -493,7 +558,13 @@ suspend fun jsExceptionWithCatchJsExceptionAndThrowableAndFinally(): Boolean {
         finalException = null
         somethingWasCaught = true
     } finally {
-        return somethingWasCaught && finalException?.message == "Exception was thrown while running JavaScript code" && finalException.thrownValue == null
+        val stacktrace = finalException?.stackTraceToString() ?: ""
+        return somethingWasCaught &&
+                finalException?.message == "Test" &&
+                finalException.thrownValue is JsTypeError &&
+                stacktrace.contains("throwSomeJsException") &&
+                stacktrace.contains("<main>", "jsExceptionWithCatchJsExceptionAndThrowableAndFinally") &&
+                stacktrace.contains("<main>", "box")
     }
     return false
 }
@@ -582,7 +653,7 @@ suspend fun jsPrimitiveWithCatchThrowableAndJsExceptionAndFinally(): Boolean {
         finalException = null
         somethingWasCaught = true
     } finally {
-        return somethingWasCaught && finalException is JsException && finalException.message == "Exception was thrown while running JavaScript code" && finalException.thrownValue == null
+        return somethingWasCaught && finalException is JsException && finalException.message == "Exception was thrown while running JavaScript code" && finalException.thrownValue == TEST_JS_STRING
     }
     return false
 }
@@ -599,7 +670,14 @@ suspend fun jsExceptionWithCatchThrowableAndJsExceptionAndFinally(): Boolean {
         finalException = null
         somethingWasCaught = true
     } finally {
-        return somethingWasCaught && finalException is JsException && finalException.message == "Exception was thrown while running JavaScript code" && finalException.thrownValue == null
+        val stacktrace = finalException?.stackTraceToString() ?: ""
+        return somethingWasCaught &&
+                finalException is JsException &&
+                finalException.message == "Test" &&
+                finalException.thrownValue is JsTypeError &&
+                stacktrace.contains("throwSomeJsException") &&
+                stacktrace.contains("<main>", "jsExceptionWithCatchThrowableAndJsExceptionAndFinally") &&
+                stacktrace.contains("<main>", "box")
     }
     return false
 }
@@ -688,7 +766,7 @@ suspend fun jsPrimitiveWithCatchThrowableAndIllegalStateExceptionAndFinally(): B
         finalException = null
         somethingWasCaught = true
     } finally {
-        return somethingWasCaught && finalException is JsException && finalException.message == "Exception was thrown while running JavaScript code" && finalException.thrownValue == null
+        return somethingWasCaught && finalException is JsException && finalException.message == "Exception was thrown while running JavaScript code" && finalException.thrownValue == TEST_JS_STRING
     }
     return false
 }
@@ -705,7 +783,14 @@ suspend fun jsExceptionWithCatchThrowableAndIllegalStateExceptionAndFinally(): B
         finalException = null
         somethingWasCaught = true
     } finally {
-        return somethingWasCaught && finalException is JsException && finalException.message == "Exception was thrown while running JavaScript code" && finalException.thrownValue == null
+        val stacktrace = finalException?.stackTraceToString() ?: ""
+        return somethingWasCaught &&
+                finalException is JsException &&
+                finalException.message == "Test" &&
+                finalException.thrownValue is JsTypeError &&
+                stacktrace.contains("throwSomeJsException") &&
+                stacktrace.contains("<main>", "jsExceptionWithCatchThrowableAndIllegalStateExceptionAndFinally") &&
+                stacktrace.contains("<main>", "box")
     }
     return false
 }
@@ -741,7 +826,7 @@ suspend fun jsPrimitiveWithCatchJsExceptionAndIllegalStateExceptionAndFinally():
         finalException = null
         somethingWasCaught = true
     } finally {
-        return somethingWasCaught && finalException?.message == "Exception was thrown while running JavaScript code" && finalException.thrownValue == null
+        return somethingWasCaught && finalException?.message == "Exception was thrown while running JavaScript code" && finalException.thrownValue == TEST_JS_STRING
     }
     return false
 }
@@ -758,7 +843,13 @@ suspend fun jsExceptionWithCatchJsExceptionAndIllegalStateExceptionAndFinally():
         finalException = null
         somethingWasCaught = true
     } finally {
-        return somethingWasCaught && finalException?.message == "Exception was thrown while running JavaScript code" && finalException.thrownValue == null
+        val stacktrace = finalException?.stackTraceToString() ?: ""
+        return somethingWasCaught &&
+                finalException?.message == "Test" &&
+                finalException.thrownValue is JsTypeError &&
+                stacktrace.contains("throwSomeJsException") &&
+                stacktrace.contains("<main>", "jsExceptionWithCatchJsExceptionAndIllegalStateExceptionAndFinally") &&
+                stacktrace.contains("<main>", "box")
     }
     return false
 }
@@ -786,7 +877,7 @@ suspend fun jsPrimitiveWithCatchJsExceptionAndThrowableAndIllegalStateException(
         throwSomeJsPrimitive()
         return false
     } catch (e: JsException) {
-        return e.message == "Exception was thrown while running JavaScript code" && e.thrownValue == null
+        return e.message == "Exception was thrown while running JavaScript code" && e.thrownValue == TEST_JS_STRING
     } catch (e: Throwable) {
         return false
     } catch (e: IllegalStateException) {
@@ -799,7 +890,12 @@ suspend fun jsExceptionWithCatchJsExceptionAndThrowableAndIllegalStateException(
         throwSomeJsException()
         return false
     } catch (e: JsException) {
-        return e.message == "Exception was thrown while running JavaScript code" && e.thrownValue == null
+        val stacktrace = e.stackTraceToString()
+        return e.message == "Test" &&
+                e.thrownValue is JsTypeError &&
+                stacktrace.contains("throwSomeJsException") &&
+                stacktrace.contains("<main>", "jsExceptionWithCatchJsExceptionAndThrowableAndIllegalStateException") &&
+                stacktrace.contains("<main>", "box")
     } catch (e: Throwable) {
         return false
     } catch (e: IllegalStateException) {
@@ -829,7 +925,7 @@ suspend fun jsPrimitiveWithCatchIllegalStateExceptionAndThrowableAndJsException(
     } catch (e: IllegalStateException) {
         return false
     } catch (e: Throwable) {
-        return e is JsException && e.message == "Exception was thrown while running JavaScript code" && e.thrownValue == null
+        return e is JsException && e.message == "Exception was thrown while running JavaScript code" && e.thrownValue == TEST_JS_STRING
     } catch (e: JsException) {
         return false
     }
@@ -842,7 +938,13 @@ suspend fun jsExceptionWithCatchIllegalStateExceptionAndThrowableAndJsException(
     } catch (e: IllegalStateException) {
         return false
     } catch (e: Throwable) {
-        return e is JsException && e.message == "Exception was thrown while running JavaScript code" && e.thrownValue == null
+        val stacktrace = e.stackTraceToString()
+        return e is JsException &&
+                e.message == "Test" &&
+                e.thrownValue is JsTypeError &&
+                stacktrace.contains("throwSomeJsException") &&
+                stacktrace.contains("<main>", "jsExceptionWithCatchIllegalStateExceptionAndThrowableAndJsException") &&
+                stacktrace.contains("<main>", "box")
     } catch (e: JsException) {
         return false
     }
@@ -868,7 +970,7 @@ suspend fun jsPrimitiveWithCatchThrowableAndJsExceptionAndIllegalStateException(
         throwSomeJsPrimitive()
         return false
     } catch (e: Throwable) {
-        return e is JsException && e.message == "Exception was thrown while running JavaScript code" && e.thrownValue == null
+        return e is JsException && e.message == "Exception was thrown while running JavaScript code" && e.thrownValue == TEST_JS_STRING
     } catch (e: JsException) {
         return false
     } catch (e: IllegalStateException) {
@@ -881,7 +983,13 @@ suspend fun jsExceptionWithCatchThrowableAndJsExceptionAndIllegalStateException(
         throwSomeJsException()
         return false
     } catch (e: Throwable) {
-        return e is JsException && e.message == "Exception was thrown while running JavaScript code" && e.thrownValue == null
+        val stacktrace = e.stackTraceToString()
+        return e is JsException &&
+                e.message == "Test" &&
+                e.thrownValue is JsTypeError &&
+                stacktrace.contains("throwSomeJsException") &&
+                stacktrace.contains("<main>", "jsExceptionWithCatchThrowableAndJsExceptionAndIllegalStateException") &&
+                stacktrace.contains("<main>", "box")
     } catch (e: JsException) {
         return false
     } catch (e: IllegalStateException) {
@@ -911,7 +1019,7 @@ suspend fun jsPrimitiveWithCatchIllegalStateExceptionAndJsExceptionAndThrowable(
     } catch (e: IllegalStateException) {
         return false
     } catch (e: JsException) {
-        return e.message == "Exception was thrown while running JavaScript code" && e.thrownValue == null
+        return e.message == "Exception was thrown while running JavaScript code" && e.thrownValue == TEST_JS_STRING
     } catch (e: Throwable) {
         return false
     }
@@ -924,7 +1032,12 @@ suspend fun jsExceptionWithCatchIllegalStateExceptionAndJsExceptionAndThrowable(
     } catch (e: IllegalStateException) {
         return false
     } catch (e: JsException) {
-        return e.message == "Exception was thrown while running JavaScript code" && e.thrownValue == null
+        val stacktrace = e.stackTraceToString()
+        return e.message == "Test" &&
+                e.thrownValue is JsTypeError &&
+                stacktrace.contains("throwSomeJsException") &&
+                stacktrace.contains("<main>", "jsExceptionWithCatchIllegalStateExceptionAndJsExceptionAndThrowable") &&
+                stacktrace.contains("<main>", "box")
     } catch (e: Throwable) {
         return false
     }
@@ -950,7 +1063,7 @@ suspend fun jsPrimitiveWithCatchThrowableAndIllegalStateExceptionAndJsException(
         throwSomeJsPrimitive()
         return false
     } catch (e: Throwable) {
-        return e is JsException && e.message == "Exception was thrown while running JavaScript code" && e.thrownValue == null
+        return e is JsException && e.message == "Exception was thrown while running JavaScript code" && e.thrownValue == TEST_JS_STRING
     } catch (e: IllegalStateException) {
         return false
     } catch (e: JsException) {
@@ -963,7 +1076,13 @@ suspend fun jsExceptionWithCatchThrowableAndIllegalStateExceptionAndJsException(
         throwSomeJsException()
         return false
     } catch (e: Throwable) {
-        return e is JsException && e.message == "Exception was thrown while running JavaScript code" && e.thrownValue == null
+        val stacktrace = e.stackTraceToString()
+        return e is JsException &&
+                e.message == "Test" &&
+                e.thrownValue is JsTypeError &&
+                stacktrace.contains("throwSomeJsException") &&
+                stacktrace.contains("<main>", "jsExceptionWithCatchThrowableAndIllegalStateExceptionAndJsException") &&
+                stacktrace.contains("<main>", "box")
     } catch (e: IllegalStateException) {
         return false
     } catch (e: JsException) {
@@ -991,7 +1110,7 @@ suspend fun jsPrimitiveWithCatchJsExceptionAndIllegalStateExceptionAndThrowable(
         throwSomeJsPrimitive()
         return false
     } catch (e: JsException) {
-        return e.message == "Exception was thrown while running JavaScript code" && e.thrownValue == null
+        return e.message == "Exception was thrown while running JavaScript code" && e.thrownValue == TEST_JS_STRING
     } catch (e: IllegalStateException) {
         return false
     } catch (e: Throwable) {
@@ -1004,7 +1123,12 @@ suspend fun jsExceptionWithCatchJsExceptionAndIllegalStateExceptionAndThrowable(
         throwSomeJsException()
         return false
     } catch (e: JsException) {
-        return e.message == "Exception was thrown while running JavaScript code" && e.thrownValue == null
+        val stacktrace = e.stackTraceToString()
+        return e.message == "Test" &&
+                e.thrownValue is JsTypeError &&
+                stacktrace.contains("throwSomeJsException") &&
+                stacktrace.contains("<main>", "jsExceptionWithCatchJsExceptionAndIllegalStateExceptionAndThrowable") &&
+                stacktrace.contains("<main>", "box")
     } catch (e: IllegalStateException) {
         return false
     } catch (e: Throwable) {
@@ -1043,7 +1167,7 @@ suspend fun jsPrimitiveWithCatchJsExceptionAndThrowableAndIllegalStateExceptionA
         finalException = null
         somethingWasCaught = false
     } finally {
-        return somethingWasCaught && finalException?.message == "Exception was thrown while running JavaScript code" && finalException.thrownValue == null
+        return somethingWasCaught && finalException?.message == "Exception was thrown while running JavaScript code" && finalException.thrownValue == TEST_JS_STRING
     }
     return false
 }
@@ -1063,7 +1187,13 @@ suspend fun jsExceptionWithCatchJsExceptionAndThrowableAndIllegalStateExceptionA
         finalException = null
         somethingWasCaught = false
     } finally {
-        return somethingWasCaught && finalException?.message == "Exception was thrown while running JavaScript code" && finalException.thrownValue == null
+        val stacktrace = finalException?.stackTraceToString() ?: ""
+        return somethingWasCaught &&
+                finalException?.message == "Test" &&
+                finalException.thrownValue is JsTypeError &&
+                stacktrace.contains("throwSomeJsException") &&
+                stacktrace.contains("<main>", "jsExceptionWithCatchJsExceptionAndThrowableAndIllegalStateExceptionAndFinally") &&
+                stacktrace.contains("<main>", "box")
     }
     return false
 }
@@ -1167,7 +1297,7 @@ suspend fun jsPrimitiveWithCatchThrowableAndJsExceptionAndIllegalStateExceptionA
         finalException = null
         somethingWasCaught = true
     } finally {
-        return somethingWasCaught && finalException is JsException && finalException.message == "Exception was thrown while running JavaScript code" && finalException.thrownValue == null
+        return somethingWasCaught && finalException is JsException && finalException.message == "Exception was thrown while running JavaScript code" && finalException.thrownValue == TEST_JS_STRING
     }
     return false
 }
@@ -1187,7 +1317,14 @@ suspend fun jsExceptionWithCatchThrowableAndJsExceptionAndIllegalStateExceptionA
         finalException = null
         somethingWasCaught = true
     } finally {
-        return somethingWasCaught && finalException is JsException && finalException.message == "Exception was thrown while running JavaScript code" && finalException.thrownValue == null
+        val stacktrace = finalException?.stackTraceToString() ?: ""
+        return somethingWasCaught &&
+                finalException is JsException &&
+                finalException.message == "Test" &&
+                finalException.thrownValue is JsTypeError &&
+                stacktrace.contains("throwSomeJsException") &&
+                stacktrace.contains("<main>", "jsExceptionWithCatchThrowableAndJsExceptionAndIllegalStateExceptionAndFinally") &&
+                stacktrace.contains("<main>", "box")
     }
     return false
 }
@@ -1291,7 +1428,7 @@ suspend fun jsPrimitiveWithCatchThrowableAndIllegalStateExceptionAndJsExceptionA
         finalException = null
         somethingWasCaught = true
     } finally {
-        return somethingWasCaught && finalException is JsException && finalException.message == "Exception was thrown while running JavaScript code" && finalException.thrownValue == null
+        return somethingWasCaught && finalException is JsException && finalException.message == "Exception was thrown while running JavaScript code" && finalException.thrownValue == TEST_JS_STRING
     }
     return false
 }
@@ -1311,7 +1448,14 @@ suspend fun jsExceptionWithCatchThrowableAndIllegalStateExceptionAndJsExceptionA
         finalException = null
         somethingWasCaught = true
     } finally {
-        return somethingWasCaught && finalException is JsException && finalException.message == "Exception was thrown while running JavaScript code" && finalException.thrownValue == null
+        val stacktrace = finalException?.stackTraceToString() ?: ""
+        return somethingWasCaught &&
+                finalException is JsException &&
+                finalException.message == "Test" &&
+                finalException.thrownValue is JsTypeError &&
+                stacktrace.contains("throwSomeJsException") &&
+                stacktrace.contains("<main>", "jsExceptionWithCatchThrowableAndIllegalStateExceptionAndJsExceptionAndFinally") &&
+                stacktrace.contains("<main>", "box")
     }
     return false
 }
@@ -1353,7 +1497,7 @@ suspend fun jsPrimitiveWithCatchJsExceptionAndIllegalStateExceptionAndThrowableA
         finalException = null
         somethingWasCaught = true
     } finally {
-        return somethingWasCaught && finalException?.message == "Exception was thrown while running JavaScript code" && finalException.thrownValue == null
+        return somethingWasCaught && finalException?.message == "Exception was thrown while running JavaScript code" && finalException.thrownValue == TEST_JS_STRING
     }
     return false
 }
@@ -1373,7 +1517,13 @@ suspend fun jsExceptionWithCatchJsExceptionAndIllegalStateExceptionAndThrowableA
         finalException = null
         somethingWasCaught = true
     } finally {
-        return somethingWasCaught && finalException?.message == "Exception was thrown while running JavaScript code" && finalException.thrownValue == null
+        val stacktrace = finalException?.stackTraceToString() ?: ""
+        return somethingWasCaught &&
+                finalException?.message == "Test" &&
+                finalException.thrownValue is JsTypeError &&
+                stacktrace.contains("throwSomeJsException") &&
+                stacktrace.contains("<main>", "jsExceptionWithCatchJsExceptionAndIllegalStateExceptionAndThrowableAndFinally") &&
+                stacktrace.contains("<main>", "box")
     }
     return false
 }

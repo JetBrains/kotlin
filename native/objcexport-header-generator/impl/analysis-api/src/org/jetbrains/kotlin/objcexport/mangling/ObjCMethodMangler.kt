@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.objcexport.mangling
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportStub
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInstanceType
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCMethod
+import org.jetbrains.kotlin.backend.konan.objcexport.swiftNameAttribute
 
 /**
  * ObjC method consists of 3 parts, each part needs to be mangled
@@ -30,10 +31,10 @@ internal class ObjCMethodMangler {
             val attribute = mangledMethods[key] ?: error("No cached item for $member")
             val mangledAttribute = attribute.mangleAttribute()
             val cloned = member.copy(
-                buildMangledSelectors(mangledAttribute),
-                buildMangledParameters(mangledAttribute),
-                buildMangledSwiftNameMethodAttribute(mangledAttribute, containingStub),
-                containingStub.name
+                mangledSelectors = buildMangledSelectors(mangledAttribute),
+                mangledParameters = buildMangledParameters(mangledAttribute),
+                swiftNameAttribute = buildMangledSwiftNameMethodAttribute(mangledAttribute, containingStub),
+                containingStubName = containingStub.name
             )
             mangledMethods[key] = mangledAttribute
             return cloned

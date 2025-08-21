@@ -6,14 +6,17 @@
 package org.jetbrains.sir.lightclasses.utils
 
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.containingSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 
-internal fun KaSession.isInner(symbol: KaSymbol): Boolean {
+context(ka: KaSession)
+internal fun isInner(symbol: KaSymbol): Boolean {
     return (symbol.containingSymbol as? KaNamedClassSymbol)?.isInner ?: false
 }
 
-internal fun KaSession.isInner(symbol: SirFromKtSymbol<*>): Boolean {
+context(ka: KaSession)
+internal fun isInner(symbol: SirFromKtSymbol<*>): Boolean {
     return isInner(symbol.ktSymbol)
 }

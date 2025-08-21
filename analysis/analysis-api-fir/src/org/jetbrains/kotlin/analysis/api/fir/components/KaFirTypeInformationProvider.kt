@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 import org.jetbrains.kotlin.analysis.api.components.KaTypeInformationProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
-import org.jetbrains.kotlin.analysis.api.fir.types.PublicTypeApproximator
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -54,11 +53,9 @@ internal class KaFirTypeInformationProvider(
 
     override val KaType.isDenotable: Boolean
         get() = withValidityAssertion {
-            val coneType = (this as KaFirType).coneType
-            return analysisSession.firSession.typeApproximator.approximateToSuperType(
-                coneType,
-                PublicTypeApproximator.PublicApproximatorConfiguration(false)
-            ) == null
+            with(analysisSession) {
+                approximateToDenotableSupertype(allowLocalDenotableTypes = true) == null
+            }
         }
 
     override val KaType.isArrayOrPrimitiveArray: Boolean

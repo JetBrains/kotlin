@@ -6,12 +6,11 @@
 package org.jetbrains.kotlin.buildtools.api.tests.compilation
 
 import com.intellij.testFramework.TestDataPath
-import org.jetbrains.kotlin.buildtools.api.tests.BaseTest
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 
 @TestDataPath("\$CONTENT_ROOT/../main/resources/modules")
-abstract class BaseCompilationTest : BaseTest() {
+abstract class BaseCompilationTest {
     @TempDir
     lateinit var workingDirectory: Path
 }

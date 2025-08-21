@@ -47,7 +47,7 @@ class ClassPathTest {
         val cp = classpathFromClassloader(cl, true)
         assertTrue(cp != null && cp.isNotEmpty())
 
-        testUnpackedCollection(cp!!, emulatedCollectionFiles)
+        testUnpackedCollection(cp, emulatedCollectionFiles)
     }
 
     @Test

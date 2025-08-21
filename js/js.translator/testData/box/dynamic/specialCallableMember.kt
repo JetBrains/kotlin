@@ -16,11 +16,11 @@ external interface Big {
     fun and(other: Big): dynamic
     fun or(other: Big): dynamic
     fun equals(other: Big): dynamic
-//    fun plusAssign(other: Big): dynamic
-//    fun minusAssign(other: Big): dynamic
-//    fun timesAssign(other: Big): dynamic
-//    fun divAssign(other: Big): dynamic
-//    fun remAssign(other: Big): dynamic
+    fun plusAssign(other: Big): dynamic
+    fun minusAssign(other: Big): dynamic
+    fun timesAssign(other: Big): dynamic
+    fun divAssign(other: Big): dynamic
+    fun remAssign(other: Big): dynamic
 }
 
 class BigImpl(val value: Int): Big {
@@ -35,11 +35,11 @@ class BigImpl(val value: Int): Big {
     override fun and(other: Big): dynamic = "OK"
     override fun or(other: Big): dynamic = "OK"
     override fun equals(other: Big): dynamic = "OK"
-//    override fun plusAssign(other: Big): dynamic = "OK"
-//    override fun minusAssign(other: Big): dynamic = "OK"
-//    override fun timesAssign(other: Big): dynamic = "OK"
-//    override fun divAssign(other: Big): dynamic = "OK"
-//    override fun remAssign(other: Big): dynamic = "OK"
+    override fun plusAssign(other: Big): dynamic = "OK"
+    override fun minusAssign(other: Big): dynamic = "OK"
+    override fun timesAssign(other: Big): dynamic = "OK"
+    override fun divAssign(other: Big): dynamic = "OK"
+    override fun remAssign(other: Big): dynamic = "OK"
 }
 
 fun createBig(value: Int): dynamic = BigImpl(value)
@@ -59,11 +59,11 @@ fun box(): String {
         "and" to a.and(b),
         "or" to a.or(b),
         "equals" to a.equals(b),
-//        "plusAssign" to a.plusAssign(b),
-//        "minusAssign" to a.minusAssign(b),
-//        "timesAssign" to a.timesAssign(b),
-//        "divAssign" to a.divAssign(b),
-//        "remAssign" to a.remAssign(b)
+        "plusAssign" to a.plusAssign(b),
+        "minusAssign" to a.minusAssign(b),
+        "timesAssign" to a.timesAssign(b),
+        "divAssign" to a.divAssign(b),
+        "remAssign" to a.remAssign(b)
     )
 
     val failed = results.filter { it.second != "OK" }

@@ -2,37 +2,38 @@
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("java-test-fixtures")
 }
 
 dependencies {
-    testApi(kotlinStdlib("jdk8"))
-    testApi(project(":kotlin-scripting-compiler"))
-    testApi(project(":core:descriptors"))
-    testApi(project(":core:descriptors.jvm"))
-    testApi(project(":core:deserialization"))
-    testApi(project(":compiler:util"))
-    testApi(project(":compiler:tests-mutes"))
-    testApi(project(":compiler:backend"))
-    testApi(project(":compiler:frontend"))
-    testApi(project(":compiler:frontend.java"))
-    testApi(project(":compiler:util"))
-    testApi(project(":compiler:psi:psi-api"))
-    testApi(project(":compiler:cli-common"))
-    testApi(project(":compiler:cli"))
-    testApi(project(":compiler:cli-js"))
-    testApi(project(":compiler:serialization"))
-    testApi(project(":compiler:fir:entrypoint"))
-    testApi(project(":compiler:fir:fir2ir:jvm-backend"))
-    testApi(project(":compiler:backend.jvm.entrypoint"))
-    testApi(projectTests(":compiler:test-infrastructure-utils"))
-    testApi(project(":kotlin-preloader"))
-    testApi(commonDependency("com.android.tools:r8"))
-    testCompileOnly(intellijCore())
+    testFixturesApi(kotlinStdlib("jdk8"))
+    testFixturesApi(project(":kotlin-scripting-compiler"))
+    testFixturesApi(project(":core:descriptors"))
+    testFixturesApi(project(":core:descriptors.jvm"))
+    testFixturesApi(project(":core:deserialization"))
+    testFixturesApi(project(":compiler:util"))
+    testFixturesApi(project(":compiler:tests-mutes"))
+    testFixturesApi(project(":compiler:backend"))
+    testFixturesApi(project(":compiler:frontend"))
+    testFixturesApi(project(":compiler:frontend.java"))
+    testFixturesApi(project(":compiler:util"))
+    testFixturesApi(project(":compiler:psi:psi-api"))
+    testFixturesApi(project(":compiler:cli-common"))
+    testFixturesApi(project(":compiler:cli"))
+    testFixturesApi(project(":compiler:cli-js"))
+    testFixturesApi(project(":compiler:serialization"))
+    testFixturesApi(project(":compiler:fir:entrypoint"))
+    testFixturesApi(project(":compiler:fir:fir2ir:jvm-backend"))
+    testFixturesApi(project(":compiler:backend.jvm.entrypoint"))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
+    testFixturesApi(project(":kotlin-preloader"))
+    testFixturesApi(commonDependency("com.android.tools:r8"))
+    testFixturesCompileOnly(intellijCore())
 
-    testApi(libs.guava)
-    testApi(libs.intellij.asm)
-    testApi(commonDependency("org.jetbrains.intellij.deps:log4j"))
-    testApi(intellijJDom())
+    testFixturesApi(libs.guava)
+    testFixturesApi(libs.intellij.asm)
+    testFixturesApi(commonDependency("org.jetbrains.intellij.deps:log4j"))
+    testFixturesApi(intellijJDom())
 }
 
 optInToUnsafeDuringIrConstructionAPI()
@@ -41,6 +42,7 @@ optInToK1Deprecation()
 sourceSets {
     "main" { none() }
     "test" { projectDefault() }
+    "testFixtures" { projectDefault() }
 }
 
 testsJar {}

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve.calls.inference.model
 
 import org.jetbrains.kotlin.resolve.calls.inference.ForkPointData
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.TypeApproximatorCachesPerConfiguration
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeCheckerProviderContext
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
@@ -59,6 +60,8 @@ interface ConstraintStorage {
      */
     val typeVariableDependencies: Map<TypeConstructorMarker, Set<TypeConstructorMarker>>
 
+    val approximatorCaches: TypeApproximatorCachesPerConfiguration
+
     /**
      *  Outer system for a call means some set of variables defined beside it/its arguments
      *
@@ -95,6 +98,9 @@ interface ConstraintStorage {
         override val outerSystemVariablesPrefixSize: Int get() = 0
 
         override val usesOuterCs: Boolean get() = false
+
+        override val approximatorCaches: TypeApproximatorCachesPerConfiguration
+            get() = mutableMapOf()
     }
 }
 

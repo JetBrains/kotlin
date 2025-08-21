@@ -21,13 +21,13 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.fileExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
-import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenExec
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer.Companion.generateBinaryName
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.createDefaultDistribution
 import org.jetbrains.kotlin.gradle.targets.js.typescript.TypeScriptValidationTask
+import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenExec
 import org.jetbrains.kotlin.gradle.tasks.configuration.KotlinJsIrLinkConfig
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -56,7 +56,7 @@ sealed class JsIrBinary(
 
     val validateGeneratedTsTaskName: String = validateTypeScriptTaskName()
 
-    @Deprecated("No longer used. To enable TypeScript definitiions use generateTypeScriptDefinitions() in the Kotlin JS target instead. Scheduled for removal in Kotlin 2.4.")
+    @Deprecated("No longer used. To enable TypeScript definitions use generateTypeScriptDefinitions() in the Kotlin JS target instead. Scheduled for removal in Kotlin 2.4.")
     var generateTs: Boolean = false
 
     val outputDirBase: Provider<Directory> = project.layout.buildDirectory
@@ -68,7 +68,8 @@ sealed class JsIrBinary(
     val linkTask: TaskProvider<KotlinJsIrLink> =
         project.registerTask(linkTaskName, KotlinJsIrLink::class.java, listOf(project, target.platformType))
 
-    private val _linkSyncTask: TaskProvider<DefaultIncrementalSyncTask>? =
+    @Suppress("PropertyName")
+    protected val _linkSyncTask: TaskProvider<DefaultIncrementalSyncTask>? =
         if (target.wasmTargetType == KotlinWasmTargetType.WASI) {
             null
         } else {
@@ -259,8 +260,7 @@ class ExecutableWasm(
 ), WasmBinary {
     override fun syncInputConfigure(syncTask: DefaultIncrementalSyncTask) {
         if (mode == KotlinJsBinaryMode.PRODUCTION) {
-            syncTask.from.from(optimizeTask.flatMap { it.outputFileProperty.map { it.asFile.parentFile } })
-            syncTask.dependsOn(optimizeTask)
+            // this is done in optimizeTask "also" block, because optimizeTask cannot be referenced on init stage
         } else {
             super.syncInputConfigure(syncTask)
         }
@@ -279,6 +279,13 @@ class ExecutableWasm(
         }
     }.also { binaryenExec ->
         binaryenExec.configureOptimizeTask(this)
+
+        if (mode == KotlinJsBinaryMode.PRODUCTION) {
+            _linkSyncTask?.configure {
+                it.from.from(binaryenExec.flatMap { it.outputFileProperty.map { it.asFile.parentFile } })
+                it.dependsOn(binaryenExec)
+            }
+        }
     }
 
     val mainOptimizedFile: Provider<RegularFile> = optimizeTask.flatMap {

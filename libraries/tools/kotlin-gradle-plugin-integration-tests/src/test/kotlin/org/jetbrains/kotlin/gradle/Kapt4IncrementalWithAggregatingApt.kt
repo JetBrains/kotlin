@@ -5,16 +5,10 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.jetbrains.kotlin.gradle.testbase.TestProject
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("K2Kapt incremental tests with aggregating apt")
-open class Kapt4IncrementalWithAggregatingApt : Kapt4IncrementalIT() {
-    override fun TestProject.customizeProject() {
-        forceK2Kapt()
-    }
-}
-
+open class Kapt4IncrementalWithAggregatingApt : Kapt4IncrementalIT()
 
 @DisplayName("K2Kapt incremental tests with aggregating apt with disabled precise compilation outputs backup")
 class Kapt4IncrementalWithAggregatingAptAndWithoutPreciseBackup : Kapt4IncrementalWithAggregatingApt() {

@@ -154,8 +154,12 @@ class HostExecutor : Executor {
     private val logger = Logger.getLogger(HostExecutor::class.java.name)
 
     override fun execute(request: ExecuteRequest): ExecuteResponse {
+        val args = if (HostManager.hostIsMingw) request.args.map { arg ->
+            require('\"' !in arg) { "Unexpected double quote in argument: $arg" }
+            if (listOf("=", " ", ";", ",").any { it in arg }) "\"$arg\"" else arg
+        } else request.args
         val workingDirectory = request.workingDirectory ?: File(request.executableAbsolutePath).parentFile
-        val commandLine = "${request.executableAbsolutePath}${request.args.joinToString(separator = " ", prefix = " ")}"
+        val commandLine = "${request.executableAbsolutePath}${args.joinToString(separator = " ", prefix = " ")}"
         val environmentFormatted =
             request.environment.entries.joinToString(prefix = "{", postfix = "}") { "\"${it.key}\": \"${it.value}\"" }
         logger.info(
@@ -166,7 +170,7 @@ class HostExecutor : Executor {
                 |And timeout: ${request.timeout}
                 """.trimMargin()
         )
-        return ProcessBuilder(listOf(request.executableAbsolutePath) + request.args).apply {
+        return ProcessBuilder(listOf(request.executableAbsolutePath) + args).apply {
             directory(workingDirectory)
             environment().putAll(request.environment)
         }.scoped { process ->

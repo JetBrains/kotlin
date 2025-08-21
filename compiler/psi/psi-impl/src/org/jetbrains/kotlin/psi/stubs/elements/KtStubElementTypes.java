@@ -19,6 +19,7 @@ public interface KtStubElementTypes {
     KtObjectElementType OBJECT_DECLARATION = new KtObjectElementType("OBJECT_DECLARATION");
     KtPlaceHolderStubElementType<KtClassInitializer> CLASS_INITIALIZER =
             new KtPlaceHolderStubElementType<>("CLASS_INITIALIZER", KtClassInitializer.class);
+    KtPlaceHolderStubElementType<KtScriptInitializer> SCRIPT_INITIALIZER = KtScriptInitializerElementType.INSTANCE;
     KtSecondaryConstructorElementType SECONDARY_CONSTRUCTOR =
             new KtSecondaryConstructorElementType("SECONDARY_CONSTRUCTOR");
     KtPrimaryConstructorElementType PRIMARY_CONSTRUCTOR =
@@ -89,6 +90,7 @@ public interface KtStubElementTypes {
 
     KtNameReferenceExpressionElementType REFERENCE_EXPRESSION = new KtNameReferenceExpressionElementType("REFERENCE_EXPRESSION");
     KtDotQualifiedExpressionElementType DOT_QUALIFIED_EXPRESSION = new KtDotQualifiedExpressionElementType("DOT_QUALIFIED_EXPRESSION");
+    KtPlaceHolderStubElementType<KtCallExpression> CALL_EXPRESSION = KtCallExpressionElementType.INSTANCE;
     KtEnumEntrySuperClassReferenceExpressionElementType
             ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION =
             new KtEnumEntrySuperClassReferenceExpressionElementType("ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION");

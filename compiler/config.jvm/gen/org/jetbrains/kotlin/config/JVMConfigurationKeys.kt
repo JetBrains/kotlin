@@ -147,9 +147,6 @@ object JVMConfigurationKeys {
     val NO_NEW_JAVA_ANNOTATION_TARGETS = CompilerConfigurationKey.create<Boolean>("Do not generate Java 1.8+ targets for Kotlin annotation classes")
 
     @JvmField
-    val ENABLE_IR_INLINER = CompilerConfigurationKey.create<Boolean>("Enable inlining on IR, instead of inlining on bytecode")
-
-    @JvmField
     val USE_INLINE_SCOPES_NUMBERS = CompilerConfigurationKey.create<Boolean>("Use inline scopes numbers for inline marker variables")
 
     @JvmField
@@ -334,10 +331,6 @@ var CompilerConfiguration.enhancedCoroutinesDebugging: Boolean
 var CompilerConfiguration.noNewJavaAnnotationTargets: Boolean
     get() = getBoolean(JVMConfigurationKeys.NO_NEW_JAVA_ANNOTATION_TARGETS)
     set(value) { put(JVMConfigurationKeys.NO_NEW_JAVA_ANNOTATION_TARGETS, value) }
-
-var CompilerConfiguration.enableIrInliner: Boolean
-    get() = getBoolean(JVMConfigurationKeys.ENABLE_IR_INLINER)
-    set(value) { put(JVMConfigurationKeys.ENABLE_IR_INLINER, value) }
 
 var CompilerConfiguration.useInlineScopesNumbers: Boolean
     get() = getBoolean(JVMConfigurationKeys.USE_INLINE_SCOPES_NUMBERS)

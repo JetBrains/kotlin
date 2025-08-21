@@ -193,7 +193,7 @@ class DataFrameLikeCallsRefinementExtension(session: FirSession) : FirFunctionCa
                     coneType = returnType
                 }
                 val itName = Name.identifier("it")
-                val parameterSymbol = FirValueParameterSymbol(itName)
+                val parameterSymbol = FirValueParameterSymbol()
                 valueParameters += buildValueParameter {
                     moduleData = session.moduleData
                     origin = FirDeclarationOrigin.Plugin(KEY)

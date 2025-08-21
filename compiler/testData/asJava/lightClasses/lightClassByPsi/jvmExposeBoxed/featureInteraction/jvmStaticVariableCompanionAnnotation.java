@@ -3,13 +3,26 @@ public final class Foo /* Foo*/ {
   @org.jetbrains.annotations.NotNull()
   public static final @org.jetbrains.annotations.NotNull() Foo.Companion Companion;
 
+  @kotlin.jvm.JvmExposeBoxed()
+  @org.jetbrains.annotations.NotNull()
+  public static final @org.jetbrains.annotations.NotNull() StringWrapper getBaz();//  getBaz()
+
+  @kotlin.jvm.JvmExposeBoxed()
+  public static final void setBaz(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() StringWrapper);//  setBaz(@org.jetbrains.annotations.NotNull() StringWrapper)
+
   public  Foo();//  .ctor()
 
   class Companion ...
 }
 
-@kotlin.jvm.JvmExposeBoxed()
 public static final class Companion /* Foo.Companion*/ {
+  @kotlin.jvm.JvmExposeBoxed()
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() StringWrapper getBaz();//  getBaz()
+
+  @kotlin.jvm.JvmExposeBoxed()
+  public final void setBaz(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() StringWrapper);//  setBaz(@org.jetbrains.annotations.NotNull() StringWrapper)
+
   private  Companion();//  .ctor()
 }
 

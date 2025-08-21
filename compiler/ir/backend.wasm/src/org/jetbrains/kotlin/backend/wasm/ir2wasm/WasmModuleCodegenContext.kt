@@ -99,20 +99,24 @@ class WasmFileCodegenContext(
         wasmFileFragment.jsModuleImports[irFunction.getReferenceKey()] = module
     }
 
-    val stringPoolSize: WasmSymbol<Int>
-        get() = wasmFileFragment.stringPoolSize
-            ?: WasmSymbol<Int>().also { wasmFileFragment.stringPoolSize = it }
+    fun addJsBuiltin(declarationName: String, polyfillImpl: String) {
+        wasmFileFragment.jsBuiltinsPolyfills[declarationName] = polyfillImpl
+    }
 
-    val throwableTagIndex: WasmSymbol<Int>
-        get() = wasmFileFragment.throwableTagIndex
-            ?: WasmSymbol<Int>().also { wasmFileFragment.throwableTagIndex = it }
+    val wasmStringsElements: WasmStringsElements
+        get() = wasmFileFragment.wasmStringsElements
+            ?: WasmStringsElements().also { wasmFileFragment.wasmStringsElements = it }
 
-    val jsExceptionTagIndex: WasmSymbol<Int>
-        get() = wasmFileFragment.jsExceptionTagIndex
-            ?: WasmSymbol<Int>().also { wasmFileFragment.jsExceptionTagIndex = it }
+    fun addObjectInstanceFieldInitializer(initializer: IrFunctionSymbol) {
+        wasmFileFragment.objectInstanceFieldInitializers.add(initializer.getReferenceKey())
+    }
 
-    fun addFieldInitializer(irField: IrFieldSymbol, instructions: List<WasmInstr>, isObjectInstanceField: Boolean) {
-        wasmFileFragment.fieldInitializers.add(FieldInitializer(irField.getReferenceKey(), instructions, isObjectInstanceField))
+    fun setStringPoolFieldInitializer(initializer: IrFunctionSymbol) {
+        wasmStringsElements.stringPoolFieldInitializer = initializer.getReferenceKey()
+    }
+
+    fun addNonConstantFieldInitializers(initializer: IrFunctionSymbol) {
+        wasmFileFragment.nonConstantFieldInitializers.add(initializer.getReferenceKey())
     }
 
     fun addMainFunctionWrapper(mainFunctionWrapper: IrFunctionSymbol) {
@@ -143,16 +147,21 @@ class WasmFileCodegenContext(
 
     fun defineBuiltinIdSignatures(
         throwable: IrClassSymbol?,
+        kotlinAny: IrClassSymbol?,
         tryGetAssociatedObject: IrFunctionSymbol?,
         jsToKotlinAnyAdapter: IrFunctionSymbol?,
         unitGetInstance: IrFunctionSymbol?,
         runRootSuites: IrFunctionSymbol?,
+        createString: IrFunctionSymbol?,
+        registerModuleDescriptor: IrFunctionSymbol?,
     ) {
-        if (throwable != null || tryGetAssociatedObject != null || jsToKotlinAnyAdapter != null || unitGetInstance != null || runRootSuites != null) {
+        if (throwable != null || kotlinAny != null || tryGetAssociatedObject != null || jsToKotlinAnyAdapter != null || unitGetInstance != null || runRootSuites != null || createString != null || registerModuleDescriptor != null) {
             val originalSignatures = wasmFileFragment.builtinIdSignatures
             wasmFileFragment.builtinIdSignatures = BuiltinIdSignatures(
                 throwable = originalSignatures?.throwable
                     ?: throwable?.getReferenceKey(),
+                kotlinAny = originalSignatures?.kotlinAny
+                    ?: kotlinAny?.getReferenceKey(),
                 tryGetAssociatedObject = originalSignatures?.tryGetAssociatedObject
                     ?: tryGetAssociatedObject?.getReferenceKey(),
                 jsToKotlinAnyAdapter = originalSignatures?.jsToKotlinAnyAdapter
@@ -161,6 +170,10 @@ class WasmFileCodegenContext(
                     ?: unitGetInstance?.getReferenceKey(),
                 runRootSuites = originalSignatures?.runRootSuites
                     ?: runRootSuites?.getReferenceKey(),
+                createString = originalSignatures?.createString
+                    ?: createString?.getReferenceKey(),
+                registerModuleDescriptor = originalSignatures?.registerModuleDescriptor
+                    ?: registerModuleDescriptor?.getReferenceKey(),
             )
         }
     }

@@ -39,14 +39,14 @@ public annotation class UnsafeNumber(val actualPlatformTypes: Array<String>)
 public annotation class BetaInteropApi
 
 /**
- * Marks foreign-language-related API as experimental.
+ * Marks foreign-language-related API as Beta.
  *
  * Foreign API includes all operations and classifiers that are required for operating with
  * unmanaged and foreign memory, including but not limited to such declarations as [CPointer], [CPointed], [StableRef], and `Pinned`.
  * It also includes API of C and Objective-C libraries, except for those that are available in Kotlin by default
  * (like `platform.posix.*` or `platform.Foundation.*`).
  *
- * Such API is considered experimental and has the following known limitations and caveats:
+ * Such API is not considered stable and has the following known limitations and caveats:
  * - It is either undocumented or lacks extensive and sound description.
  * - There is no clear behavioural semantics and explicit mapping between foreign (e.g. C-pointer) concepts
  *     and the corresponding foreign API (e.g. [CPointer]). Such declarations might have an unsound mapping.

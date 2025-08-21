@@ -21,7 +21,6 @@ internal object KotlinJsCompilerOptionsHelper {
         args.sourceMapNamesPolicy = from.sourceMapNamesPolicy.orNull?.policy
         args.sourceMapPrefix = from.sourceMapPrefix.orNull
         args.target = from.target.get()
-        args.typedArrays = from.typedArrays.get()
         args.useEsClasses = from.useEsClasses.orNull
     }
 
@@ -39,7 +38,6 @@ internal object KotlinJsCompilerOptionsHelper {
         into.sourceMapNamesPolicy.convention(from.sourceMapNamesPolicy)
         into.sourceMapPrefix.convention(from.sourceMapPrefix)
         into.target.convention(from.target)
-        into.typedArrays.convention(from.typedArrays)
         into.useEsClasses.convention(from.useEsClasses)
     }
 }

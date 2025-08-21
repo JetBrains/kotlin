@@ -195,7 +195,6 @@ class BuildCacheRelocationIT : KGPBaseTest() {
                     }
                 }
             },
-            suppressAgpWarning = true,
         )
     }
 
@@ -257,7 +256,6 @@ class BuildCacheRelocationIT : KGPBaseTest() {
                     ":app:$kotlinTask${buildType}Kotlin"
                 }
             },
-            suppressAgpWarning = true,
         )
     }
 
@@ -353,18 +351,10 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         secondProject: TestProject,
         tasksToExecute: List<String>,
         cacheableTasks: List<String>,
-        suppressAgpWarning: Boolean = false,
         additionalAssertions: BuildResult.() -> Unit = {},
     ) {
-        val firstProjectBuildOptions = if (suppressAgpWarning) {
-            firstProject.buildOptions.suppressWarningFromAgpWithGradle813(firstProject.gradleVersion)
-        } else {
-            firstProject.buildOptions
-        }
-
         firstProject.build(
             *tasksToExecute.toTypedArray(),
-            buildOptions = firstProjectBuildOptions,
         ) {
             assertTasksPackedToCache(*cacheableTasks.toTypedArray())
             additionalAssertions()

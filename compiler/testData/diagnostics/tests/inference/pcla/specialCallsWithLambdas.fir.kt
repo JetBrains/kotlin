@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 // WITH_STDLIB
 // SKIP_TXT
 // DIAGNOSTICS: -CAST_NEVER_SUCCEEDS -UNUSED_LAMBDA_EXPRESSION -UNCHECKED_CAST -UNUSED_PARAMETER -UNUSED_VARIABLE -OPT_IN_USAGE_ERROR -UNUSED_EXPRESSION
@@ -177,7 +176,7 @@ fun poll83(): Flow<String> {
 
 fun poll84(): Flow<String> {
     return flow {
-        val inv = {<!RETURN_TYPE_MISMATCH!>{1}<!>} in setOf({{1f}})
+        val inv = {{<!RETURN_TYPE_MISMATCH!>1<!>}} in setOf({{1f}})
         <!UNRESOLVED_REFERENCE!>inv<!>()
     }
 }

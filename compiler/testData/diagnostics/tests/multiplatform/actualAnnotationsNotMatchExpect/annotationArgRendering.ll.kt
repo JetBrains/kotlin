@@ -29,7 +29,7 @@ actual annotation class <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT("annotation class 
 actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT("fun stringConcat(): Unit; fun stringConcat(): Unit; Annotation `@Ann2(s = <strcat>(String(1), String(2)))` is missing on actual declaration")!>stringConcat<!>() {}
 
 // Not reported in K1, because supported starting from K2
-actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT("fun onType(): @Ann2(...) Any?; fun onType(): Any?; Annotation `@Ann2(s = String())` is missing on actual declaration")!>onType<!>(): Any? = null
+actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT("fun onType(): Any?; fun onType(): Any?; Annotation `@Ann2(s = String())` is missing on actual declaration")!>onType<!>(): Any? = null
 
 actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT("fun kclassArg(): Unit; fun kclassArg(): Unit; Annotation `@Ann3(kclass = String::class)` is missing on actual declaration")!>kclassArg<!>() {}
 

@@ -33,7 +33,6 @@ import androidx.compose.runtime.Composable
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = -1745160432, startOffset = 88, endOffset = 296)
 fun Test(crossinline content: Function0<Unit>, %composer: Composer?, %changed: Int) {
   sourceInformationMarkerStart(%composer, <>, "CC(Test)<Lazy>,<Box>:Test.kt")
   Box({
@@ -57,7 +56,6 @@ fun Test(crossinline content: Function0<Unit>, %composer: Composer?, %changed: I
   sourceInformationMarkerEnd(%composer)
 }
 @Composable
-@FunctionKeyMeta(key = -954717885, startOffset = 329, endOffset = 559)
 fun TestComposable(crossinline content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   sourceInformationMarkerStart(%composer, <>, "CC(TestComposable)<Lazy>,<Box>:Test.kt")
   Box({
@@ -81,7 +79,6 @@ fun TestComposable(crossinline content: Function2<Composer, Int, Unit>, %compose
   sourceInformationMarkerEnd(%composer)
 }
 @Composable
-@FunctionKeyMeta(key = -2055565320, startOffset = 592, endOffset = 811)
 fun TestSuspend(crossinline content: SuspendFunction0<Unit>, %composer: Composer?, %changed: Int) {
   sourceInformationMarkerStart(%composer, <>, "CC(TestSuspend)<Lazy>,<Box>:Test.kt")
   Box({

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.SerializedIrFile
 import org.jetbrains.kotlin.library.impl.*
 
-class ICData(val icData: List<SerializedIrFile>, val containsErrorCode: Boolean)
+class ICData(val icData: List<SerializedIrFile>)
 
 class ICKotlinLibrary(private val icData: List<SerializedIrFile>) : IrLibrary {
     override val hasIr get() = true

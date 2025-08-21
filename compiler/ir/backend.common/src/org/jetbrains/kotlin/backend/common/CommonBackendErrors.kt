@@ -12,10 +12,13 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
 import org.jetbrains.kotlin.diagnostics.error1
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.Renderer
+import org.jetbrains.kotlin.ir.IrDiagnosticRenderers
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 
 object CommonBackendErrors : KtDiagnosticsContainer() {
     val EVALUATION_ERROR by error1<PsiElement, String>()
 
+    val INLINE_CALL_CYCLE by error1<PsiElement, IrFunction>()
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory {
         return KtDefaultCommonBackendErrorMessages
@@ -28,6 +31,11 @@ object KtDefaultCommonBackendErrorMessages : BaseDiagnosticRendererFactory() {
             CommonBackendErrors.EVALUATION_ERROR,
             "Cannot evaluate constant expression: {0}",
             EVALUATION_ERROR_EXPLANATION,
+        )
+        map.put(
+            CommonBackendErrors.INLINE_CALL_CYCLE,
+            "The ''{0}'' invocation is a part of inline cycle",
+            IrDiagnosticRenderers.DECLARATION_NAME,
         )
     }
 }

@@ -14,14 +14,6 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackCssMode.IMPOR
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackCssMode.INLINE
 import javax.inject.Inject
 
-@Deprecated(
-    message = "Renamed to KotlinWebpackCssRule", replaceWith = ReplaceWith(
-        expression = "KotlinWebpackCssRule",
-        imports = arrayOf("org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackCssRule")
-    )
-)
-typealias KotlinWebpackCssSupport = KotlinWebpackCssRule
-
 @Suppress("LeakingThis")
 abstract class KotlinWebpackCssRule @Inject constructor(name: String) : KotlinWebpackRule(name) {
     @get:Input

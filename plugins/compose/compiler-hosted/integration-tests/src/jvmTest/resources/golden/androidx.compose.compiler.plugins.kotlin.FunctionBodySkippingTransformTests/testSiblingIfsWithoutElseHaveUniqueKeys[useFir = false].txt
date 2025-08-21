@@ -22,7 +22,6 @@ fun Test(cond: Boolean) {
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = -378182080, startOffset = 165, endOffset = 260)
 fun Test(cond: Boolean, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test):Test.kt")
@@ -49,7 +48,7 @@ fun Test(cond: Boolean, %composer: Composer?, %changed: Int) {
       B(%composer, 0)
       %composer.endReplaceGroup()
     } else {
-      %composer.startReplaceGroup(<!DUPLICATE KEY: 723292542!>)
+      %composer.startReplaceGroup(<>)
       %composer.endReplaceGroup()
     }
     if (isTraceInProgress()) {

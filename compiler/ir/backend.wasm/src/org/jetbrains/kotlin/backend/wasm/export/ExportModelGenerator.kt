@@ -10,10 +10,13 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.backend.js.export.*
+import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
+import org.jetbrains.kotlin.ir.backend.js.tsexport.*
+import org.jetbrains.kotlin.ir.backend.js.utils.typeScriptInnerClassReference
 import org.jetbrains.kotlin.ir.backend.js.utils.getFqNameWithJsNameWhenAvailable
 import org.jetbrains.kotlin.ir.backend.js.utils.isJsExport
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
+import org.jetbrains.kotlin.ir.backend.js.utils.shouldGenerateObjectWithGetInstanceInEsModuleTypeScript
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -129,7 +132,6 @@ class ExportModelGenerator(val context: WasmBackendContext) {
                 function.getExportedIdentifier(),
                 returnType = exportType(function.returnType),
                 typeParameters = function.typeParameters.memoryOptimizedMap(::exportTypeParameter),
-                ir = function,
                 isMember = parentClass != null,
                 isStatic = function.isStaticMethodOfClass,
                 isProtected = function.visibility == DescriptorVisibilities.PROTECTED,
@@ -164,8 +166,7 @@ class ExportModelGenerator(val context: WasmBackendContext) {
             isAbstract = parentClass?.isInterface == false && property.modality == Modality.ABSTRACT,
             isProtected = property.visibility == DescriptorVisibilities.PROTECTED,
             isField = parentClass?.isInterface == true,
-            irGetter = property.getter,
-            irSetter = property.setter,
+            isObjectGetter = property.getter?.origin == JsLoweredDeclarationOrigin.OBJECT_GET_INSTANCE_FUNCTION,
             isOptional = isOptional,
             isStatic = (property.getter ?: property.setter)?.isStaticMethodOfClass == true,
         )
@@ -219,14 +220,24 @@ class ExportModelGenerator(val context: WasmBackendContext) {
 
                 when (klass.kind) {
                     ClassKind.OBJECT ->
-                        ExportedType.TypeOf(ExportedType.ClassType(name, emptyList(), klass))
+                        ExportedType.TypeOf(
+                            ExportedType.ClassType(
+                                name,
+                                emptyList(),
+                                isObject = true,
+                                isExternal = klass.isEffectivelyExternal(),
+                                classId = klass.classId,
+                            )
+                        )
 
                     ClassKind.CLASS,
                     ClassKind.INTERFACE ->
                         ExportedType.ClassType(
                             name,
                             type.arguments.memoryOptimizedMap { exportTypeArgument(it) },
-                            klass
+                            isObject = false,
+                            isExternal = klass.isEffectivelyExternal(),
+                            classId = klass.classId,
                         )
                     else -> error("Unexpected class kind ${klass.kind}")
                 }
@@ -296,24 +307,29 @@ class ExportModelGenerator(val context: WasmBackendContext) {
 
         val exportedDeclaration = if (declaration.kind == ClassKind.OBJECT) {
             ExportedObject(
-                ir = declaration,
                 name = name,
                 members = members,
                 superClasses = listOfNotNull(superClass),
                 nestedClasses = emptyList(),
-                superInterfaces = superInterfaces
+                superInterfaces = superInterfaces,
+                originalClassId = declaration.classId,
+                isExternal = declaration.isEffectivelyExternal(),
+                isCompanion = declaration.isCompanion,
+                isInsideInterface = (declaration.parent as? IrClass)?.isInterface == true,
             )
         } else {
             ExportedRegularClass(
                 name = name,
                 isInterface = declaration.isInterface,
                 isAbstract = declaration.modality == Modality.ABSTRACT || declaration.modality == Modality.SEALED,
+                isExternal = declaration.isEffectivelyExternal(),
                 superClasses = listOfNotNull(superClass),
                 superInterfaces = superInterfaces,
                 typeParameters = typeParameters,
                 members = members,
                 nestedClasses = emptyList(),
-                ir = declaration
+                originalClassId = declaration.classId,
+                innerClassReference = runIf(declaration.isInner) { declaration.typeScriptInnerClassReference() },
             )
         }
 

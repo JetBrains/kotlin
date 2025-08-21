@@ -89,7 +89,7 @@ FILE: unsupportedContextParameters.kt
             ^ context(R|<local>/<unused var>|) D|/d|.R|/getValue|(this@R|/d|, ::R|/d|)
         }
         public set(<set-?>: R|kotlin/Any|): R|kotlin/Unit| {
-            ^ context(R|<local>/<unused var>|) D|/d|.R|/setValue<Inapplicable(INAPPLICABLE): /setValue>#|(this@R|/d|, ::R|/d|, R|<local>/d|)
+            ^ context(R|<local>/<unused var>|) D|/d|.R|/setValue<Inapplicable(INAPPLICABLE): /setValue>#|(this@R|/d|, ::R|/d|, R|<local>/<set-?>|)
         }
     context(<unused var>: R|kotlin/String|)
     public final var b: R|kotlin/String| = String()
@@ -189,7 +189,7 @@ FILE: unsupportedContextParameters.kt
     public final fun runWithA(block: R|@ContextFunctionTypeParams(1) context(kotlin/String) () -> kotlin/Unit|): R|kotlin/Unit| {
     }
     public final fun localFunctionsContextParametersWithoutType(): R|kotlin/Unit| {
-        lval t2: R|@ContextFunctionTypeParams(1) context(ERROR CLASS: Symbol not found for a) () -> kotlin/Unit| = context(a@<ERROR TYPE REF: Symbol not found for a>) fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        lval t2: R|@ContextFunctionTypeParams(1) context(ERROR CLASS: Symbol not found for a) () -> kotlin/Unit| = context(a@<ERROR TYPE REF: Symbol not found for a>) fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
         }
 
         R|/runWithA|(context(a@<ERROR TYPE REF: Symbol not found for a>) fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {

@@ -21,7 +21,7 @@ val generateTests by generator("org.jetbrains.kotlin.jps.GenerateJpsPluginTestsK
 
 dependencies {
     compileOnly(project(":jps:jps-platform-api-signatures"))
-    testImplementation(projectTests(":generators:test-generator"))
+    testImplementation(testFixtures(project(":generators:test-generator")))
 
     @Suppress("UNCHECKED_CAST")
     rootProject.extra["kotlinJpsPluginEmbeddedDependencies"]
@@ -73,7 +73,7 @@ dependencies {
     testRuntimeOnly(intellijJDom())
     testRuntimeOnly(libs.kotlinx.coroutines.core.jvm)
 
-    testImplementation(projectTests(":compiler:incremental-compilation-impl"))
+    testImplementation(testFixtures(project(":compiler:incremental-compilation-impl")))
     testImplementation(jpsBuild())
 
     compilerModules.forEach {
@@ -117,7 +117,7 @@ tasks.compileKotlin {
     compilerOptions.jvmTarget = JvmTarget.JVM_1_8
 }
 
-projectTest(parallel = true) {
+projectTest(parallel = true, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)) {
     // do not replace with compile/runtime dependency,
     // because it forces Intellij reindexing after each compiler change
     dependsOn(":kotlin-compiler:dist")
@@ -146,14 +146,6 @@ projectTest(parallel = true) {
 }
 
 testsJar {}
-
-tasks.withType<KotlinCompilationTask<*>>().configureEach {
-    @Suppress("DEPRECATION")
-    compilerOptions.apiVersion.value(KotlinVersion.KOTLIN_1_8).finalizeValueOnRead()
-    @Suppress("DEPRECATION")
-    compilerOptions.languageVersion.value(KotlinVersion.KOTLIN_1_8).finalizeValueOnRead()
-    compilerOptions.freeCompilerArgs.add("-Xsuppress-version-warnings")
-}
 
 /**
  * Dependency Security Overrides

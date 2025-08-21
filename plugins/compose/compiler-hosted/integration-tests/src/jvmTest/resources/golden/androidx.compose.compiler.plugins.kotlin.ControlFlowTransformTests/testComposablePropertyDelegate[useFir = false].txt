@@ -26,11 +26,9 @@ val background by ThemeToken { background }
 interface ThemeToken<T>  {
   @Composable
   @ReadOnlyComposable
-  @FunctionKeyMeta(key = -1767475098, startOffset = 215, endOffset = 245)
   abstract fun MaterialTheme.resolve(%composer: Composer?, %changed: Int): T
   @Composable
   @ReadOnlyComposable
-  @FunctionKeyMeta(key = -625725893, startOffset = 348, endOffset = 425)
   open fun getValue(thisRef: Any?, property: KProperty<*>, %composer: Composer?, %changed: Int): T {
     %composer.startReplaceGroup(<>)
     sourceInformation(%composer, "C(getValue)P(1)<resolv...>:Test.kt")
@@ -47,7 +45,6 @@ interface ThemeToken<T>  {
 }
 val background: ThemeToken<Int> = class <no name provided> : ThemeToken<Int> {
   @Composable
-  @FunctionKeyMeta(key = 1185942797, startOffset = 522, endOffset = 536)
   override fun MaterialTheme.resolve(%composer: Composer?, %changed: Int): Int {
     %composer.startReplaceGroup(<>)
     sourceInformation(%composer, "C(resolve):Test.kt")
@@ -63,7 +60,7 @@ val background: ThemeToken<Int> = class <no name provided> : ThemeToken<Int> {
   }
 }
 <no name provided>()
-  @Composable @JvmName(name = "getBackground") @FunctionKeyMeta(key = 43948912, startOffset = 508, endOffset = 536)
+  @Composable @JvmName(name = "getBackground")
   get() {
     sourceInformationMarkerStart(%composer, <>, "C(<get-background>)<ThemeT...>:Test.kt")
     if (isTraceInProgress()) {

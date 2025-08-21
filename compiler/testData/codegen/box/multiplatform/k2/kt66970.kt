@@ -1,8 +1,6 @@
 // ISSUE: KT-66970
 // LANGUAGE: +MultiPlatformProjects
 // WITH_STDLIB
-// IGNORE_HMPP: JVM_IR
-// ^^^ KT-77337 `IrNoExpectSymbolsHandler` finds expect class reference after enabling annotation traversal in IR
 
 // MODULE: lib-common
 // FILE: lib-common.kt

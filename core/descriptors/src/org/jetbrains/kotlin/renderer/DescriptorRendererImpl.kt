@@ -736,9 +736,9 @@ internal class DescriptorRendererImpl(
         }
     }
 
-    private fun KotlinType.renderForReceiver(): String {
+    private fun KotlinType.renderForReceiver(wrapAnnotated: Boolean = false): String {
         var result = renderType(this)
-        if ((shouldRenderAsPrettyFunctionType(this) && !TypeUtils.isNullableType(this)) || this is DefinitelyNotNullType) {
+        if ((shouldRenderAsPrettyFunctionType(this) && !TypeUtils.isNullableType(this)) || this is DefinitelyNotNullType || wrapAnnotated && !this.annotations.isEmpty()) {
             result = "($result)"
         }
         return result
@@ -751,8 +751,8 @@ internal class DescriptorRendererImpl(
             return
         }
         for ((i, contextReceiver) in contextReceivers.withIndex()) {
-            builder.renderAnnotations(contextReceiver, AnnotationUseSiteTarget.RECEIVER)
-            val typeString = contextReceiver.type.renderForReceiver()
+            // Context receivers have to wrap type annotation to be parsed correctly
+            val typeString = contextReceiver.type.renderForReceiver(wrapAnnotated = true)
             builder.append(typeString)
             if (i == contextReceivers.lastIndex) {
                 builder.append(") ")

@@ -159,16 +159,12 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
         doTest(headersTestDataDir.resolve("functionWithThrowsAnnotation"))
     }
 
-    // Disabled because the public constructor for an error class is missing.
     @Test
-    @TodoAnalysisApi
     fun `test - functionWithErrorType`() {
         doTest(headersTestDataDir.resolve("functionWithErrorType"))
     }
 
-    // Disabled because the public constructor for an error class is missing.
     @Test
-    @TodoAnalysisApi
     fun `test - functionWithErrorTypeAndFrameworkName`() {
         doTest(headersTestDataDir.resolve("functionWithErrorTypeAndFrameworkName"), Configuration(frameworkName = "shared"))
     }
@@ -600,8 +596,8 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     }
 
     @Test
-    fun `test - extensions mangling`() {
-        doTest(headersTestDataDir.resolve("extensionsMangling"))
+    fun `test - super class extensions mangling`() {
+        doTest(headersTestDataDir.resolve("superClassExtensionsMangling"))
     }
 
     @Test
@@ -651,6 +647,37 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     @Test
     fun `test - receiver annotated with ObjCName`() {
         doTest(headersTestDataDir.resolve("objCNameWithReceiver"))
+    }
+
+    @Test
+    @TodoAnalysisApi
+    fun `test - block with explicit parameter names`() {
+        doTest(headersTestDataDir.resolve("blockWithExplicitParameterNames"), Configuration(objcExportBlockExplicitParameterNames = true))
+    }
+
+    @Test
+    fun `test - release keyword as method name`() {
+        doTest(headersTestDataDir.resolve("releaseKeywordAsMethodName"))
+    }
+
+    @Test
+    fun `test - Any methods override`() {
+        doTest(headersTestDataDir.resolve("anyMethodsOverride"))
+    }
+
+    @Test
+    fun `test - property getter without colon`() {
+        doTest(headersTestDataDir.resolve("propertyGetter"))
+    }
+
+    @Test
+    fun `test - private companion`() {
+        doTest(headersTestDataDir.resolve("privateCompanion"))
+    }
+
+    @Test
+    fun `test - extensions mangling`() {
+        doTest(headersTestDataDir.resolve("extensionsMangling"))
     }
 
     private fun doTest(root: File, configuration: Configuration = Configuration()) {

@@ -19,8 +19,8 @@ Tower Data Context:
                 FirNamedFunctionSymbol local final fun outerFunction(): R|kotlin/Boolean|
                 FirNamedFunctionSymbol local final fun unrelatedFunction(): R|kotlin/Unit|
             Properties:
-                FirPropertySymbol lvar outerVariable: R|kotlin/Boolean|
-                FirPropertySymbol lvar unrelatedVariable: R|kotlin/Boolean|
+                FirLocalPropertySymbol lvar outerVariable: R|kotlin/Boolean|
+                FirLocalPropertySymbol lvar unrelatedVariable: R|kotlin/Boolean|
     Element 8
         Scope: FirLocalScope
 

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.common.serialization
 import org.jetbrains.kotlin.backend.common.serialization.encodings.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability
 import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
-import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel.ABI_LEVEL_2_2
+import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel.ABI_LEVEL_2_3
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.INTERNAL
 import org.jetbrains.kotlin.ir.IrElement
@@ -96,7 +96,6 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrSyntheticBodyKi
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrThrow as ProtoThrow
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrTry as ProtoTry
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrType as ProtoType
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation as ProtoTypeAbbreviation
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAlias as ProtoTypeAlias
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeOp as ProtoTypeOp
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeOperator as ProtoTypeOperator
@@ -226,13 +225,6 @@ open class IrFileSerializer(
             return
         }
 
-        if (IrStatementOrigin.IMPLICIT_ARGUMENT == origin && settings.abiCompatibilityLevel == KlibAbiCompatibilityLevel.ABI_LEVEL_2_1) {
-            // Kotlin compiler version 2.1.x fails in an attempt to deserialize unknown statement origins.
-            // So, as a workaround, we try to avoid serializing such statements when exporting to KLIB ABI level 2.1.
-            // For details, see KT-76131, KT-75624, KT-75393.
-            return
-        }
-
         val originIndex = serializeString(origin.debugName)
         saveOriginIndex(originIndex)
     }
@@ -300,27 +292,28 @@ open class IrFileSerializer(
     }
 
     private fun serializeIrSymbol(symbol: IrSymbol, isDeclared: Boolean = false): Long {
-        val signature: IdSignature = runIf(settings.reuseExistingSignaturesForSymbols) { symbol.signature }
-            ?: when (symbol) {
-                is IrFileSymbol -> IdSignature.FileSignature(symbol) // TODO: special signature for files?
-                else -> {
-                    val symbolOwner = symbol.owner
+        val signature: IdSignature = when {
+            !symbol.isBound && settings.reuseExistingSignaturesForSymbols -> symbol.signature
+                ?: error("Given symbol is unbound and have no signature: $symbol")
+            symbol is IrFileSymbol -> IdSignature.FileSignature(symbol) // TODO: special signature for files?
+            else -> {
+                val symbolOwner = symbol.owner
 
-                    // Compute the signature:
-                    when {
-                        symbolOwner is IrDeclaration -> declarationTable.signatureByDeclaration(
-                            declaration = symbolOwner,
-                            compatibleMode = false,
-                            recordInSignatureClashDetector = isDeclared
-                        )
+                // Compute the signature:
+                when {
+                    symbolOwner is IrDeclaration -> declarationTable.signatureByDeclaration(
+                        declaration = symbolOwner,
+                        compatibleMode = false,
+                        recordInSignatureClashDetector = isDeclared
+                    )
 
-                        symbolOwner is IrReturnableBlock && settings.abiCompatibilityLevel.isAtLeast(ABI_LEVEL_2_2) ->
-                            declarationTable.signatureByReturnableBlock(symbolOwner)
+                    symbolOwner is IrReturnableBlock && settings.abiCompatibilityLevel.isAtLeast(ABI_LEVEL_2_3) ->
+                        declarationTable.signatureByReturnableBlock(symbolOwner)
 
-                        else -> error("Expected symbol owner: ${symbolOwner.render()}")
-                    }
+                    else -> error("Expected symbol owner: ${symbolOwner.render()}")
                 }
             }
+        }
 
         val signatureId = idSignatureSerializer.protoIdSignature(signature)
         val symbolKind = protoSymbolKind(symbol)
@@ -371,21 +364,7 @@ open class IrFileSerializer(
         if (type.nullability != SimpleTypeNullability.NOT_SPECIFIED) {
             proto.setNullability(serializeNullability(type.nullability))
         }
-        type.abbreviation?.let { ta ->
-            proto.setAbbreviation(serializeIrTypeAbbreviation(ta))
-        }
         type.arguments.forEach {
-            proto.addArgument(serializeTypeArgument(it))
-        }
-        return proto.build()
-    }
-
-    private fun serializeIrTypeAbbreviation(typeAbbreviation: IrTypeAbbreviation): ProtoTypeAbbreviation {
-        val proto = ProtoTypeAbbreviation.newBuilder()
-            .addAllAnnotation(serializeAnnotations(typeAbbreviation.annotations))
-            .setTypeAlias(serializeIrSymbol(typeAbbreviation.typeAlias))
-            .setHasQuestionMark(typeAbbreviation.hasQuestionMark)
-        typeAbbreviation.arguments.forEach {
             proto.addArgument(serializeTypeArgument(it))
         }
         return proto.build()
@@ -429,8 +408,6 @@ open class IrFileSerializer(
      * - [IrTypeDeduplicationKey.annotations] is just a list of [IrConstructorCall]s that cannot be
      *   fully compared: The [IrConstructorCallImpl.equals] function resolves to [Any.equals], which
      *   compares only object references.
-     * - [IrTypeDeduplicationKey.abbreviation] is just another IR node: [IrTypeAbbreviation]. And it also
-     *   cannot be fully compared.
      *
      * However, [IrTypeDeduplicationKey] can be used as a good approximation to store lesser number of records
      * in [protoTypeMap] and overall speed-up the process of types serialization.
@@ -441,7 +418,6 @@ open class IrFileSerializer(
         val nullability: SimpleTypeNullability?,
         val arguments: List<IrTypeArgumentDeduplicationKey>?,
         val annotations: List<IrConstructorCall>,
-        val abbreviation: IrTypeAbbreviation?,
     )
 
     private data class IrTypeArgumentDeduplicationKey(
@@ -463,7 +439,6 @@ open class IrFileSerializer(
                 nullability = (type as? IrSimpleType)?.nullability,
                 arguments = (type as? IrSimpleType)?.arguments?.map { it.toIrTypeArgumentDeduplicationKey },
                 annotations = type.annotations,
-                abbreviation = (type as? IrSimpleType)?.abbreviation
             )
         }
 
@@ -512,7 +487,7 @@ open class IrFileSerializer(
     }
 
     private fun serializeReturnableBlock(returnableBlock: IrReturnableBlock): ProtoReturnableBlock {
-        requireAbiAtLeast(ABI_LEVEL_2_2) { returnableBlock }
+        requireAbiAtLeast(ABI_LEVEL_2_3) { returnableBlock }
 
         val proto = ProtoReturnableBlock.newBuilder()
         proto.symbol = serializeIrSymbol(returnableBlock.symbol)
@@ -521,7 +496,7 @@ open class IrFileSerializer(
     }
 
     private fun serializeInlinedFunctionBlock(inlinedFunctionBlock: IrInlinedFunctionBlock): ProtoInlinedFunctionBlock {
-        requireAbiAtLeast(ABI_LEVEL_2_2) { inlinedFunctionBlock }
+        requireAbiAtLeast(ABI_LEVEL_2_3) { inlinedFunctionBlock }
 
         val proto = ProtoInlinedFunctionBlock.newBuilder()
         inlinedFunctionBlock.inlinedFunctionSymbol?.let { proto.setInlinedFunctionSymbol(serializeIrSymbol(it)) }
@@ -600,22 +575,8 @@ open class IrFileSerializer(
 
         val proto = ProtoMemberAccessCommon.newBuilder()
 
-        if (settings.abiCompatibilityLevel.isAtLeast(ABI_LEVEL_2_2)) {
-            for (arg in call.arguments) {
-                proto.addArgument(buildProtoNullableIrExpression(arg))
-            }
-        } else { // KLIB ABI 2.1:
-            val callableSymbol = call.symbol
-            require(callableSymbol.isBound) { callableSymbol }
-
-            for ((parameter, arg) in call.getAllArgumentsWithIr()) {
-                when (parameter.kind) {
-                    IrParameterKind.DispatchReceiver -> if (arg != null) proto.dispatchReceiver = serializeExpression(arg)
-                    IrParameterKind.ExtensionReceiver -> if (arg != null) proto.extensionReceiver = serializeExpression(arg)
-                    IrParameterKind.Context -> serializationNotSupportedAtCurrentAbiLevel({ "Context parameter" }) { callableSymbol.owner }
-                    IrParameterKind.Regular -> proto.addRegularArgument(buildProtoNullableIrExpression(arg))
-                }
-            }
+        for (arg in call.arguments) {
+            proto.addArgument(buildProtoNullableIrExpression(arg))
         }
 
         for (typeArg in call.typeArguments) {
@@ -665,7 +626,7 @@ open class IrFileSerializer(
     }
 
     private fun serializeRichFunctionReference(callable: IrRichFunctionReference): ProtoRichFunctionReference {
-        requireAbiAtLeast(ABI_LEVEL_2_2) { callable }
+        requireAbiAtLeast(ABI_LEVEL_2_3) { callable }
 
         return ProtoRichFunctionReference.newBuilder().apply {
             callable.reflectionTargetSymbol?.let { reflectionTargetSymbol = serializeIrSymbol(it) }
@@ -680,7 +641,7 @@ open class IrFileSerializer(
     }
 
     private fun serializeRichPropertyReference(callable: IrRichPropertyReference): ProtoRichPropertyReference {
-        requireAbiAtLeast(ABI_LEVEL_2_2) { callable }
+        requireAbiAtLeast(ABI_LEVEL_2_3) { callable }
 
         return ProtoRichPropertyReference.newBuilder().apply {
             callable.reflectionTargetSymbol?.let { reflectionTargetSymbol = serializeIrSymbol(it) }
@@ -1184,7 +1145,7 @@ open class IrFileSerializer(
 
     private fun serializeIrValueParameter(parameter: IrValueParameter): ProtoValueParameter {
         if (parameter.kind == IrParameterKind.Context) {
-            requireAbiAtLeast(ABI_LEVEL_2_2, { "Context parameter" }) { parameter.parent }
+            requireAbiAtLeast(ABI_LEVEL_2_3, { "Context parameter" }) { parameter.parent }
         }
 
         val proto = ProtoValueParameter.newBuilder()
@@ -1476,8 +1437,11 @@ open class IrFileSerializer(
             .build()
 
     private fun getRelevantOffsets(entry: IrFileEntry, relevantLinesRange: IntRange?): List<Int> {
-        val offsets = entry.lineStartOffsetsForSerialization
-        return relevantLinesRange?.let { offsets.slice(it) } ?: offsets
+        return when {
+            relevantLinesRange == null -> entry.lineStartOffsetsForSerialization
+            relevantLinesRange.start < 0 || relevantLinesRange.endInclusive < 0 -> emptyList() // No real offsets.
+            else -> entry.lineStartOffsetsForSerialization.slice(relevantLinesRange)
+        }
     }
 
     open fun backendSpecificExplicitRoot(node: IrAnnotationContainer): Boolean = false
@@ -1488,6 +1452,7 @@ open class IrFileSerializer(
 
     private fun skipIfPrivate(declaration: IrDeclaration) =
         settings.publicAbiOnly
+                && !isInsideInline
                 && (declaration as? IrDeclarationWithVisibility)?.let { !it.visibility.isPublicAPI && it.visibility != INTERNAL } == true
                 // Always keep private interfaces and type aliases as they can be part of public type hierarchies.
                 && (declaration as? IrClass)?.isInterface != true && declaration !is IrTypeAlias
@@ -1593,12 +1558,7 @@ open class IrFileSerializer(
             }
 
         val includeLineStartOffsets = !settings.publicAbiOnly || fileContainsInline
-        if (settings.abiCompatibilityLevel.isAtLeast(ABI_LEVEL_2_2)) {
-            // KLIBs with ABI version >= 2.2.0 have `fileEntries.knf` file with `file entries` table.
-            proto.setFileEntryId(serializeFileEntryId(file.fileEntry, includeLineStartOffsets = includeLineStartOffsets))
-        } else {
-            proto.setFileEntry(serializeFileEntry(file.fileEntry, includeLineStartOffsets = includeLineStartOffsets))
-        }
+        proto.setFileEntryId(serializeFileEntryId(file.fileEntry, includeLineStartOffsets = includeLineStartOffsets))
 
         // TODO: is it Konan specific?
 
@@ -1626,7 +1586,6 @@ open class IrFileSerializer(
             backendSpecificMetadata = backendSpecificMetadata(file)?.toByteArray(),
             fileEntries = with(protoIrFileEntryArray) {
                 if (isNotEmpty()) {
-                    requireAbiAtLeast(ABI_LEVEL_2_2, { "IR file entries table" }) { file }
                     IrArrayWriter(protoIrFileEntryArray.map { it.toByteArray() }).writeIntoMemory()
                 } else {
                     null

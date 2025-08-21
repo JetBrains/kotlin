@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.backend.common.extensions.FirIncompatiblePluginAPI
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
@@ -25,10 +26,21 @@ import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer
+import org.jetbrains.kotlin.fir.lookupTracker
+import org.jetbrains.kotlin.fir.recordFqNameLookup
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.IrTypeAlias
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.TypeTranslator
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.sourceElement
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -72,7 +84,9 @@ class Fir2IrPluginContext(
     override val platform: TargetPlatform
         get() = c.session.moduleData.platform
 
-    override val symbols: BuiltinSymbolsBase = BuiltinSymbolsBase(irBuiltIns)
+    @Deprecated("This API is deprecated. Use `irBuiltIns` instead.", level = DeprecationLevel.ERROR)
+    override val symbols: BuiltinSymbolsBase
+        get() = error("`symbols` are deprecated")
 
     private val symbolProvider: FirSymbolProvider
         get() = c.session.symbolProvider
@@ -133,6 +147,14 @@ class Fir2IrPluginContext(
         }
 
         return callables.mapNotNull { c.declarationStorage.irExtractor(it) }.filterIsInstance<R>()
+    }
+
+    override fun recordLookup(declaration: IrDeclarationWithName, fromFile: IrFile) {
+        val lookupTracker = c.session.lookupTracker ?: return
+        val fqName = declaration.fqNameWhenAvailable ?: return
+        val firFile = (fromFile.metadata as? FirMetadataSource.File)?.fir ?: return
+        val fileSource = firFile.source ?: return
+        lookupTracker.recordFqNameLookup(fqName, source = null, fileSource = fileSource)
     }
 
     @Deprecated("Use messageCollector or diagnosticReporter properties instead", level = DeprecationLevel.ERROR)

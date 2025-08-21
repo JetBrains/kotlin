@@ -9,9 +9,7 @@ import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import com.google.gson.stream.JsonReader
-import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
+import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.statistics.StatTag
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
@@ -68,6 +66,19 @@ internal fun readJsonReport(jsonReport: Path): BuildExecutionData {
             ): File? {
                 val path: String? = context?.deserialize(/* json = */ json, /* typeOfT = */ String::class.java)
                 return path?.let { File(it) }//ignore source changes right now
+            }
+        })
+        .registerTypeAdapter(DynamicBuildTimeKey::class.java, object : JsonDeserializer<DynamicBuildTimeKey> {
+            override fun deserialize(
+                json: JsonElement?,
+                typeOfT: Type?,
+                context: JsonDeserializationContext?,
+            ): DynamicBuildTimeKey? = json?.asString?.let { keyStr ->
+                val regex = "name=([^,)]+), parent=([^,)]+)".toRegex()
+                val (_, name, parentStr) = regex.find(keyStr)?.groupValues
+                    ?: error("Could not deserialize org.jetbrains.kotlin.build.report.metrics.DynamicBuildTimeKey")
+                val parent = GradleBuildTime.valueOf(parentStr)
+                DynamicBuildTimeKey(name, parent)
             }
         })
 

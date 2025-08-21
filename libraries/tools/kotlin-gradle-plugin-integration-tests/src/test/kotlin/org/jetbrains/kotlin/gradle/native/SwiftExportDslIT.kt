@@ -35,9 +35,7 @@ class SwiftExportDslIT : KGPBaseTest() {
     ) {
         project(
             "empty",
-            gradleVersion,
-            // KT-78385 Swift Export is not compatible with Gradle isolated projects
-            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
+            gradleVersion
         ) {
             plugins {
                 kotlin("multiplatform")
@@ -128,9 +126,7 @@ class SwiftExportDslIT : KGPBaseTest() {
     ) {
         project(
             "empty",
-            gradleVersion,
-            // KT-78385 Swift Export is not compatible with Gradle isolated projects
-            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
+            gradleVersion
         ) {
             plugins {
                 kotlin("multiplatform")
@@ -208,9 +204,7 @@ class SwiftExportDslIT : KGPBaseTest() {
     ) {
         project(
             "empty",
-            gradleVersion,
-            // KT-78385 Swift Export is not compatible with Gradle isolated projects
-            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
+            gradleVersion
         ) {
             plugins {
                 kotlin("multiplatform")
@@ -329,9 +323,7 @@ class SwiftExportDslIT : KGPBaseTest() {
     ) {
         project(
             "empty",
-            gradleVersion,
-            // KT-78385 Swift Export is not compatible with Gradle isolated projects
-            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
+            gradleVersion
         ) {
             plugins {
                 kotlin("multiplatform")

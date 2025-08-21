@@ -73,23 +73,23 @@ public var baz: Swift.Int32 {
         return __root___baz_get()
     }
 }
-public var foo: KotlinRuntime.KotlinBase {
+public var foo: any KotlinRuntimeSupport._KotlinBridgeable {
     get {
-        return KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: __root___foo_get())
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___foo_get()) as! any KotlinRuntimeSupport._KotlinBridgeable
     }
     set {
-        return __root___foo_set__TypesOfArguments__KotlinRuntime_KotlinBase__(newValue.__externalRCRef())
+        return __root___foo_set__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(newValue.__externalRCRef())
     }
 }
-public var lateinit_foo: KotlinRuntime.KotlinBase {
+public var lateinit_foo: any KotlinRuntimeSupport._KotlinBridgeable {
     get {
-        return KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: __root___lateinit_foo_get())
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___lateinit_foo_get()) as! any KotlinRuntimeSupport._KotlinBridgeable
     }
     set {
-        return __root___lateinit_foo_set__TypesOfArguments__KotlinRuntime_KotlinBase__(newValue.__externalRCRef())
+        return __root___lateinit_foo_set__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(newValue.__externalRCRef())
     }
 }
-public extension ExportedKotlinPackages.namespace.main {
+extension ExportedKotlinPackages.namespace.main {
     public static var bar: Swift.Int32 {
         get {
             return namespace_main_bar_get()

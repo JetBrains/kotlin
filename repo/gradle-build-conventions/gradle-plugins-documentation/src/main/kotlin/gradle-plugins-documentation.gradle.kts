@@ -90,6 +90,7 @@ tasks.register<org.jetbrains.dokka.gradle.DokkaMultiModuleTask>("dokkaKotlinlang
     notCompatibleWithConfigurationCache("Dokka is not compatible with Gradle Configuration Cache")
 
     moduleName.set("Kotlin Gradle Plugins API reference")
+    includes.from(documentationExtension.moduleDescription)
     outputDirectory.set(
         documentationExtension.documentationOutput.orElse(
             layout.buildDirectory.dir("dokka/kotlinlangDocumentation")

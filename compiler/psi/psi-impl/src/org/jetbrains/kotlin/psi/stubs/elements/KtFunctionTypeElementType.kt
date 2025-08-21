@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.psi.stubs.elements
 
-import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
@@ -14,20 +13,19 @@ import org.jetbrains.kotlin.psi.KtFunctionType
 import org.jetbrains.kotlin.psi.stubs.KotlinFunctionTypeStub
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFunctionTypeStubImpl
 
-class KtFunctionTypeElementType(@NonNls debugName: String) : KtStubElementType<KotlinFunctionTypeStub, KtFunctionType>(
+class KtFunctionTypeElementType(@NonNls debugName: String) : KtStubElementType<KotlinFunctionTypeStubImpl, KtFunctionType>(
     debugName,
     KtFunctionType::class.java,
     KotlinFunctionTypeStub::class.java,
 ) {
-    override fun createStub(psi: KtFunctionType, parentStub: StubElement<out PsiElement?>?): KotlinFunctionTypeStub =
+    override fun createStub(psi: KtFunctionType, parentStub: StubElement<*>?): KotlinFunctionTypeStubImpl =
         KotlinFunctionTypeStubImpl(parentStub)
 
-    override fun serialize(stub: KotlinFunctionTypeStub, dataStream: StubOutputStream) {
-        require(stub is KotlinFunctionTypeStubImpl)
+    override fun serialize(stub: KotlinFunctionTypeStubImpl, dataStream: StubOutputStream) {
         serializeTypeBean(dataStream, stub.abbreviatedType)
     }
 
-    override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): KotlinFunctionTypeStub {
+    override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): KotlinFunctionTypeStubImpl {
         val abbreviatedType = deserializeClassTypeBean(dataStream)
         return KotlinFunctionTypeStubImpl(parentStub, abbreviatedType)
     }

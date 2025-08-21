@@ -99,8 +99,6 @@ class JvmBackendConfig(configuration: CompilerConfiguration) {
 
     val enhancedCoroutinesDebugging = configuration.getBoolean(JVMConfigurationKeys.ENHANCED_COROUTINES_DEBUGGING)
 
-    val enableIrInliner: Boolean = configuration.getBoolean(JVMConfigurationKeys.ENABLE_IR_INLINER)
-
     val useFir: Boolean = configuration.getBoolean(CommonConfigurationKeys.USE_FIR)
 
     val emitJvmTypeAnnotations: Boolean = configuration.getBoolean(JVMConfigurationKeys.EMIT_JVM_TYPE_ANNOTATIONS)
@@ -108,10 +106,13 @@ class JvmBackendConfig(configuration: CompilerConfiguration) {
     // Fixed coroutines debugging uses stdlib function to null out spilled locals.
     // By default the function returns `null`, the debugger replaces it with implementation, that returns its argument.
     // This way we avoid memory leaks in release builds and do not make coroutines undebuggable.
-    val nullOutSpilledCoroutineLocalsUsingStdlibFunction: Boolean = languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_2_2
+    val nullOutSpilledCoroutineLocalsUsingStdlibFunction: Boolean =
+        languageVersionSettings.supportsFeature(LanguageFeature.JvmNullOutSpilledCoroutineLocals)
 
     val whenGenerationScheme: JvmWhenGenerationScheme =
         if (target.majorVersion >= JvmTarget.JVM_21.majorVersion)
             configuration.get(JVMConfigurationKeys.WHEN_GENERATION_SCHEME, JvmWhenGenerationScheme.INLINE)
         else JvmWhenGenerationScheme.INLINE
+
+    val generateDebugMetadataV2: Boolean = languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_2_3
 }

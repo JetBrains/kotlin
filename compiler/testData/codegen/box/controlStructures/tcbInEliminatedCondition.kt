@@ -1,3 +1,4 @@
+// FILE: lib.kt
 fun foo() {}
 
 inline fun test1(v: Int) {
@@ -36,6 +37,7 @@ inline fun test4(v: Boolean) {
     }
 }
 
+// FILE: main.kt
 fun box(): String {
     test1(1)
     test2(1)

@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpressio
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierList
 import org.jetbrains.kotlin.fir.references.builder.buildPropertyFromParameterResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
@@ -144,7 +144,7 @@ class ValueParameter(
             }
 
             isVar = this@ValueParameter.isVar
-            val propertySymbol = FirPropertySymbol(callableId)
+            val propertySymbol = FirRegularPropertySymbol(callableId)
             val remappedAnnotations = valueParameterAnnotations.map {
                 // We don't need error annotation calls here,
                 // it allows us to avoid double-reporting of INAPPLICABLE_ALL_TARGET_IN_MULTI_ANNOTATION
@@ -156,7 +156,6 @@ class ValueParameter(
 
             symbol = propertySymbol
             dispatchReceiverType = currentDispatchReceiver
-            isLocal = false
             status = FirDeclarationStatusImpl(modifiers.getVisibility(), modifiers.getModality(isClassOrObject = false)).apply {
                 this.isExpect = isExpect
                 isActual = modifiers.hasActual()

@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.builder.buildPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameter
@@ -22,15 +23,20 @@ import org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.impl.PropertyName
 
 internal fun FirDeclarationGenerationExtension.generateExtensionProperty(
-    callableId: CallableId,
+    callableIdOrSymbol: CallableIdOrSymbol,
     receiverType: ConeClassLikeTypeImpl,
     propertyName: PropertyName,
     returnTypeRef: FirResolvedTypeRef,
     symbol: FirClassSymbol<*>? = null,
     effectiveVisibility: EffectiveVisibility = EffectiveVisibility.Public,
     source: KtSourceElement?,
+    typeParameters: List<FirTypeParameter> = emptyList(),
 ): FirProperty {
-    val firPropertySymbol = FirPropertySymbol(callableId)
+    val firPropertySymbol = when (callableIdOrSymbol) {
+        is CallableIdOrSymbol.Id -> FirRegularPropertySymbol(callableIdOrSymbol.callableId)
+        is CallableIdOrSymbol.Symbol -> callableIdOrSymbol.symbol
+    }
+
     return buildProperty {
         this.source = source
         propertyName.columnNameAnnotation?.let {
@@ -44,6 +50,7 @@ internal fun FirDeclarationGenerationExtension.generateExtensionProperty(
             Modality.FINAL,
             effectiveVisibility
         )
+        this.typeParameters += typeParameters
         this.returnTypeRef = returnTypeRef
         receiverParameter = buildReceiverParameter {
             this.symbol = FirReceiverParameterSymbol()
@@ -52,7 +59,7 @@ internal fun FirDeclarationGenerationExtension.generateExtensionProperty(
             origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
             typeRef = receiverType.toFirResolvedTypeRef()
         }
-        val classId = callableId.classId
+        val classId = firPropertySymbol.callableId.classId
         if (classId != null) {
             dispatchReceiverType = if (symbol != null) {
                 ConeClassLikeTypeImpl(
@@ -76,7 +83,7 @@ internal fun FirDeclarationGenerationExtension.generateExtensionProperty(
             this.returnTypeRef = returnTypeRef
             dispatchReceiverType = receiverType
             this.symbol = firPropertyAccessorSymbol
-            propertySymbol = firPropertySymbol
+            this.propertySymbol = firPropertySymbol
             isGetter = true
             status = FirResolvedDeclarationStatusImpl(
                 Visibilities.Public,
@@ -87,6 +94,10 @@ internal fun FirDeclarationGenerationExtension.generateExtensionProperty(
         name = propertyName.identifier
         this.symbol = firPropertySymbol
         isVar = false
-        isLocal = false
     }
+}
+
+internal sealed interface CallableIdOrSymbol {
+    class Id(val callableId: CallableId) : CallableIdOrSymbol
+    class Symbol(val symbol: FirRegularPropertySymbol) : CallableIdOrSymbol
 }

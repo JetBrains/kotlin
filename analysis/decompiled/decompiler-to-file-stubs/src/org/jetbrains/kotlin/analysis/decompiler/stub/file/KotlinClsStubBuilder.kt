@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,6 +12,7 @@ import com.intellij.psi.impl.compiled.ClassFileStubBuilder
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.util.indexing.FileContent
 import org.jetbrains.kotlin.SpecialJvmAnnotations
+import org.jetbrains.kotlin.analysis.decompiler.psi.text.createIncompatibleMetadataVersionDecompiledText
 import org.jetbrains.kotlin.analysis.decompiler.stub.*
 import org.jetbrains.kotlin.constant.AnnotationValue
 import org.jetbrains.kotlin.constant.ArrayValue
@@ -65,13 +66,18 @@ open class KotlinClsStubBuilder : ClsStubBuilder() {
         val packageFqName = header.packageName?.let { FqName(it) } ?: classId.packageFqName
 
         if (!header.metadataVersion.isCompatibleWithCurrentCompilerVersion()) {
-            return createIncompatibleAbiVersionFileStub()
+            return createIncompatibleAbiVersionFileStub(createIncompatibleMetadataVersionDecompiledText(header.metadataVersion))
         }
 
         val components = createStubBuilderComponents(file, packageFqName, fileContent, header.metadataVersion)
         if (header.kind == KotlinClassHeader.Kind.MULTIFILE_CLASS) {
             val partFiles = ClsClassFinder.findMultifileClassParts(file, classId, header.multifilePartNames)
-            return createMultifileClassStub(header, partFiles, classId.asSingleFqName(), components)
+            return createMultifileClassStub(
+                packageFqName = packageFqName,
+                partFiles = partFiles,
+                jvmFqName = classId.asSingleFqName(),
+                components = components,
+            )
         }
 
         val annotationData = header.data
@@ -101,9 +107,14 @@ open class KotlinClsStubBuilder : ClsStubBuilder() {
             KotlinClassHeader.Kind.FILE_FACADE, KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
                 val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(annotationData, strings)
                 val context = components.createContext(nameResolver, packageFqName, TypeTable(packageProto.typeTable))
-                val fqName = header.packageName?.let { ClassId(FqName(it), classId.relativeClassName, classId.isLocal).asSingleFqName() }
-                    ?: classId.asSingleFqName()
-                createFileFacadeStub(packageProto, facadeFqName = fqName, jvmFqName = classId.asSingleFqName(), context)
+                val facadeFqName = packageFqName.child(classId.shortClassName)
+                createFileFacadeStub(
+                    packageFqName = packageFqName,
+                    packageProto = packageProto,
+                    facadeFqName = facadeFqName,
+                    jvmFqName = classId.asSingleFqName(),
+                    c = context,
+                )
             }
             else -> throw IllegalStateException("Should have processed " + file.path + " with header $header")
         }

@@ -45,6 +45,7 @@ public val KaClassifierSymbol.nameOrAnonymous: Name
 /**
  * [KaTypeParameterSymbol] represents a type parameter of a class, function, property, or type alias.
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaTypeParameterSymbol : KaClassifierSymbol(), KaNamedSymbol {
     /**
      * A list of [upper bounds](https://kotlinlang.org/docs/generics.html#upper-bounds) declared for the type parameter.
@@ -101,6 +102,7 @@ public sealed class KaClassLikeSymbol : KaClassifierSymbol() {
  * [KaTypeAliasSymbol] represents a type alias declaration.
  */
 @OptIn(KaImplementationDetail::class)
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaTypeAliasSymbol : KaClassLikeSymbol(), KaNamedSymbol, KaTypeParameterOwnerSymbol {
     final override val modality: KaSymbolModality
         get() = withValidityAssertion { KaSymbolModality.FINAL }
@@ -130,6 +132,7 @@ public abstract class KaTypeAliasSymbol : KaClassLikeSymbol(), KaNamedSymbol, Ka
  * @see org.jetbrains.kotlin.analysis.api.components.KaSymbolRelationProvider.isSubClassOf
  * @see org.jetbrains.kotlin.analysis.api.components.KaScopeProvider
  */
+@OptIn(KaImplementationDetail::class)
 public sealed class KaClassSymbol : KaClassLikeSymbol(), KaDeclarationContainerSymbol {
     /**
      * The kind of the class (e.g. ordinary class, interface, enum class, etc.).
@@ -165,6 +168,7 @@ public sealed class KaClassSymbol : KaClassLikeSymbol(), KaDeclarationContainerS
  * }
  * ```
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaAnonymousObjectSymbol : KaClassSymbol() {
     final override val classKind: KaClassKind get() = withValidityAssertion { KaClassKind.ANONYMOUS_OBJECT }
     final override val classId: ClassId? get() = withValidityAssertion { null }
@@ -187,6 +191,7 @@ public abstract class KaAnonymousObjectSymbol : KaClassSymbol() {
  * anonymous objects, which are represented by [KaAnonymousObjectSymbol].
  */
 @OptIn(KaImplementationDetail::class, KaExperimentalApi::class)
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaNamedClassSymbol : KaClassSymbol(),
     KaTypeParameterOwnerSymbol,
     KaNamedSymbol,

@@ -101,12 +101,5 @@ private fun TestBuilder.unlinkedConstructorSymbol(signature: String, block: () -
 }
 
 private fun TestBuilder.unlinkedSymbol(signature: String, functionName: String, block: () -> Unit) {
-    // Need to slightly adjust the expected IR linkage error message. Reason: When Lazy IR is used the type of the
-    // symbol is determined more accurately.
-    val symbolKind = if ("InnerClass" in functionName && testMode.lazyIr.usedEverywhere)
-        "inner class"
-    else
-        "class"
-
-    expectFailure(linkage("Function '$functionName' can not be called: Function uses unlinked $symbolKind symbol '$signature'"), block)
+    expectFailure(linkage("Function '$functionName' can not be called: Function uses unlinked class symbol '$signature'"), block)
 }

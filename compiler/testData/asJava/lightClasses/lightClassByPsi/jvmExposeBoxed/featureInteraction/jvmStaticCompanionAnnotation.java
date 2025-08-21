@@ -3,13 +3,22 @@ public final class Foo /* Foo*/ {
   @org.jetbrains.annotations.NotNull()
   public static final @org.jetbrains.annotations.NotNull() Foo.Companion Companion;
 
+  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmStatic()
+  @org.jetbrains.annotations.NotNull()
+  public static final @org.jetbrains.annotations.NotNull() StringWrapper foo();//  foo()
+
   public  Foo();//  .ctor()
 
   class Companion ...
 }
 
-@kotlin.jvm.JvmExposeBoxed()
 public static final class Companion /* Foo.Companion*/ {
+  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmStatic()
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() StringWrapper foo();//  foo()
+
   private  Companion();//  .ctor()
 }
 

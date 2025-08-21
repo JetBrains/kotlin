@@ -51,7 +51,6 @@ abstract class FirErrorProperty : FirProperty(), FirDiagnosticHolder {
     abstract override val annotations: List<FirAnnotation>
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract override val delegateFieldSymbol: FirDelegateFieldSymbol?
-    abstract override val isLocal: Boolean
     abstract override val bodyResolveState: FirPropertyBodyResolveState
     abstract override val typeParameters: List<FirTypeParameter>
     abstract override val diagnostic: ConeDiagnostic

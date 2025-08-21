@@ -1,5 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
-// LATEST_LV_DIFFERENCE
+// RUN_PIPELINE_TILL: FRONTEND
 
 fun x(): Boolean { return true }
 

@@ -14,7 +14,6 @@ fun Test() { }
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = 526939746, startOffset = 75, endOffset = 89)
 context(foo: Foo)
 fun Test(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)

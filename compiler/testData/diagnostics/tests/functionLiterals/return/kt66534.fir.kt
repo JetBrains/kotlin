@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 // ISSUE: KT-66534, KT-66954
 // WITH_STDLIB
 
@@ -68,7 +67,7 @@ val expectedNullableUnitExplicitReturnString: () -> Unit? = l@ {
 
 fun expectedFlexibleUnitExplicitReturnString() {
     A.foo = l@ {
-        return@l <!RETURN_TYPE_MISMATCH!>""<!>
+        return@l <!RETURN_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>""<!>
     }
 }
 

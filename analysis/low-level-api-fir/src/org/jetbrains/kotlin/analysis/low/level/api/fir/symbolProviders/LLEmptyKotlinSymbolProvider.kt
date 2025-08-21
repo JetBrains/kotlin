@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinEmptyDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinEmptyPackageProvider
@@ -41,8 +42,11 @@ internal class LLEmptyKotlinSymbolProvider(session: FirSession) : LLKotlinSymbol
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? = null
 
-    @FirSymbolProviderInternals
+    @LLModuleSpecificSymbolProviderAccess
     override fun getClassLikeSymbolByClassId(classId: ClassId, classLikeDeclaration: KtClassLikeDeclaration): FirClassLikeSymbol<*>? = null
+
+    @LLModuleSpecificSymbolProviderAccess
+    override fun getClassLikeSymbolByPsi(classId: ClassId, declaration: PsiElement): FirClassLikeSymbol<*>? = null
 
     @FirSymbolProviderInternals
     override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {

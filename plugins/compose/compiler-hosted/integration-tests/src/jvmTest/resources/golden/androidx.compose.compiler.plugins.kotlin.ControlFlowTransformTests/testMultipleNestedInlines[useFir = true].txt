@@ -21,7 +21,6 @@ fun AttemptedToRealizeGroupTwice() {
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = -1718825506, startOffset = 93, endOffset = 371)
 fun AttemptedToRealizeGroupTwice(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(AttemptedToRealizeGroupTwice)<Wrappe...>:Test.kt")

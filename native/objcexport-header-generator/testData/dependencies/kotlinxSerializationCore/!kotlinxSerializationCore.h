@@ -1976,23 +1976,8 @@ __attribute__((swift_name("KotlinKTypeProjection.Companion")))
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
 @property (class, readonly, getter=shared) KotlinKTypeProjectionCompanion *shared __attribute__((swift_name("shared")));
-
-/**
- * @note annotations
- *   kotlin.jvm.JvmStatic
-*/
 - (KotlinKTypeProjection *)contravariantType:(id<KotlinKType>)type __attribute__((swift_name("contravariant(type:)")));
-
-/**
- * @note annotations
- *   kotlin.jvm.JvmStatic
-*/
 - (KotlinKTypeProjection *)covariantType:(id<KotlinKType>)type __attribute__((swift_name("covariant(type:)")));
-
-/**
- * @note annotations
- *   kotlin.jvm.JvmStatic
-*/
 - (KotlinKTypeProjection *)invariantType:(id<KotlinKType>)type __attribute__((swift_name("invariant(type:)")));
 @property (readonly) KotlinKTypeProjection *STAR __attribute__((swift_name("STAR")));
 @end

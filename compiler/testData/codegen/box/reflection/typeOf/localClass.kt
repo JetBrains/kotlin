@@ -1,6 +1,5 @@
 // WITH_REFLECT
 // KJS_WITH_FULL_RUNTIME
-// IGNORE_INLINER: IR
 
 
 import kotlin.reflect.*

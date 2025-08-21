@@ -17,7 +17,6 @@ import androidx.compose.runtime.*
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = 1181320132, startOffset = 47, endOffset = 94)
 fun NonInlined(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(NonInlined):Test.kt")
@@ -37,7 +36,6 @@ fun NonInlined(%composer: Composer?, %changed: Int) {
   }
 }
 @Composable
-@FunctionKeyMeta(key = -1106141195, startOffset = 115, endOffset = 158)
 fun Inlined(%composer: Composer?, %changed: Int) {
   sourceInformationMarkerStart(%composer, <>, "CC(Inlined)<{}>:Test.kt")
   val b = rememberComposableLambda(<>, false, { %composer: Composer?, %changed: Int ->

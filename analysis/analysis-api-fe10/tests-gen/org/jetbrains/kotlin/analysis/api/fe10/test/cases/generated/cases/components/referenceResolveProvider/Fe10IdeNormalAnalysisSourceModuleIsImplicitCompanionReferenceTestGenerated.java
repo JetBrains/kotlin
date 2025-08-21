@@ -46,6 +46,18 @@ public class Fe10IdeNormalAnalysisSourceModuleIsImplicitCompanionReferenceTestGe
   }
 
   @Test
+  @TestMetadata("callableReference.kt")
+  public void testCallableReference() {
+    runTest("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion/callableReference.kt");
+  }
+
+  @Test
+  @TestMetadata("callableReference2.kt")
+  public void testCallableReference2() {
+    runTest("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion/callableReference2.kt");
+  }
+
+  @Test
   @TestMetadata("classAccessWithExplicitReferenceToCompanion.kt")
   public void testClassAccessWithExplicitReferenceToCompanion() {
     runTest("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion/classAccessWithExplicitReferenceToCompanion.kt");
@@ -139,5 +151,23 @@ public class Fe10IdeNormalAnalysisSourceModuleIsImplicitCompanionReferenceTestGe
   @TestMetadata("qualifierReferenceToClassWithCompanion.kt")
   public void testQualifierReferenceToClassWithCompanion() {
     runTest("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion/qualifierReferenceToClassWithCompanion.kt");
+  }
+
+  @Test
+  @TestMetadata("typealiasInvokeInCompanion.kt")
+  public void testTypealiasInvokeInCompanion() {
+    runTest("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion/typealiasInvokeInCompanion.kt");
+  }
+
+  @Test
+  @TestMetadata("typealiasReferenceToCompanion.kt")
+  public void testTypealiasReferenceToCompanion() {
+    runTest("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion/typealiasReferenceToCompanion.kt");
+  }
+
+  @Test
+  @TestMetadata("typealiasReferenceToCompanionReceiver.kt")
+  public void testTypealiasReferenceToCompanionReceiver() {
+    runTest("analysis/analysis-api/testData/components/referenceResolveProvider/isImplicitReferenceToCompanion/typealiasReferenceToCompanionReceiver.kt");
   }
 }

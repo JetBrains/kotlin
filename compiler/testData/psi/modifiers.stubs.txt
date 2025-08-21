@@ -1,4 +1,4 @@
-PsiJetFileStubImpl[package=test]
+FILE[kind=File[packageFqName=test]]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST
@@ -8,25 +8,25 @@ PsiJetFileStubImpl[package=test]
         REFERENCE_EXPRESSION[referencedName=coroutines]
   CLASS[classId=test/Modifiers, fqName=test.Modifiers, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Modifiers, superNames=[]]
     MODIFIER_LIST[data]
-    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Modifiers]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Modifiers]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=test.Modifiers.x, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=x]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Int]
     CLASS_BODY
-      FUN[fqName=test.Modifiers.extFun, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=extFun]
+      FUN[fqName=test.Modifiers.extFun, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=extFun]
         MODIFIER_LIST[external]
         VALUE_PARAMETER_LIST
       PROPERTY[fqName=test.Modifiers.extVar, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=extVar]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
-        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
+        PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
           MODIFIER_LIST[external]
-        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=false]
+        PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
           MODIFIER_LIST[external]
-      FUN[fqName=test.Modifiers.sum, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=sum]
+      FUN[fqName=test.Modifiers.sum, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=sum]
         MODIFIER_LIST[tailrec]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
@@ -40,7 +40,7 @@ PsiJetFileStubImpl[package=test]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Long]
-      FUN[fqName=test.Modifiers.inlined, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=inlined]
+      FUN[fqName=test.Modifiers.inlined, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=inlined]
         MODIFIER_LIST[inline]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=arg1]
@@ -62,7 +62,7 @@ PsiJetFileStubImpl[package=test]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Unit]
-      FUN[fqName=test.Modifiers.equals, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
+      FUN[fqName=test.Modifiers.equals, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
         MODIFIER_LIST[override operator]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=other]
@@ -72,7 +72,7 @@ PsiJetFileStubImpl[package=test]
                   REFERENCE_EXPRESSION[referencedName=Any]
       CLASS[classId=test/Modifiers.Ann, fqName=test.Modifiers.Ann, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Ann, superNames=[]]
         MODIFIER_LIST[annotation]
-      FUN[fqName=test.Modifiers.suspend, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=suspend]
+      FUN[fqName=test.Modifiers.suspend, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=suspend]
         MODIFIER_LIST[suspend]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
@@ -84,7 +84,7 @@ PsiJetFileStubImpl[package=test]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=test.Modifiers.builder, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=builder]
+      FUN[fqName=test.Modifiers.builder, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=builder]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=c]
             TYPE_REFERENCE

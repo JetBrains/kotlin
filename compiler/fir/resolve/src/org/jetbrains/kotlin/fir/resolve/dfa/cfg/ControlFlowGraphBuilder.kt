@@ -223,7 +223,7 @@ class ControlFlowGraphBuilder private constructor(
 
     // ----------------------------------- Utils -----------------------------------
 
-    private inline fun <T, E : T, EnterNode, ExitNode> enterGraph(
+    private inline fun <T : FirElement, E : T?, EnterNode, ExitNode> enterGraph(
         fir: E,
         name: String,
         kind: ControlFlowGraph.Kind,
@@ -276,6 +276,7 @@ class ControlFlowGraphBuilder private constructor(
         }
         if (localFunctionNode != null) {
             addEdge(localFunctionNode, enterNode)
+            addBackEdge(enterNode.owner.exitNode, enterNode) // Local functions can be called repeatedly.
         } else {
             addEdgeIfLocalClassMember(enterNode)
         }
@@ -399,11 +400,17 @@ class ControlFlowGraphBuilder private constructor(
             // skipped. Or if the entry node is dead, because at the time we added the hack-edge we didn't know that.
             CFGNode.killEdge(splitNode, postponedExitNode, propagateDeadness = !isDefinitelyVisited)
         }
-        if (invocationKind?.canBeVisited() == true) {
-            addEdge(exitNode, postponedExitNode, propagateDeadness = isDefinitelyVisited)
-            if (invocationKind.canBeRevisited()) {
-                addBackEdge(postponedExitNode, splitNode)
+
+        if (invocationKind != null) {
+            if (invocationKind.canBeVisited()) {
+                addEdge(exitNode, postponedExitNode, propagateDeadness = isDefinitelyVisited)
+                if (invocationKind.canBeRevisited()) {
+                    addBackEdge(postponedExitNode, splitNode)
+                }
             }
+        } else {
+            // Non-in-place lambdas could be invoked repeatedly.
+            addBackEdge(graph.exitNode, graph.enterNode)
         }
 
         // Lambdas called inline do not capture any variables, so the capture edge needs to be marked as dead.
@@ -1696,9 +1703,6 @@ class ControlFlowGraphBuilder private constructor(
         val exits: MutableList<Pair<CFGNode<*>, EdgeKind>> = mutableListOf(),
     )
 }
-
-fun FirDeclaration?.isLocalClassOrAnonymousObject(): Boolean = ((this as? FirRegularClass)?.isLocal == true) || this is FirAnonymousObject
-fun FirBasedSymbol<*>?.isLocalClassOrAnonymousObject(): Boolean = this?.fir.isLocalClassOrAnonymousObject()
 
 private val FirControlFlowGraphOwner.memberShouldHaveGraph: Boolean
     get() = when (this) {

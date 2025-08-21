@@ -1,3 +1,5 @@
+// FILE: main.kt
+
 fun foo(x: Int, y: Int, z: String): Int = js("x + y + Number(z)")
 
 val x: String = js("typeof 10")
@@ -9,7 +11,7 @@ external interface EIA
 external class EIB : EIA
 
 val eia10: EIA = js("'10'")
-val eib1000: EIB = js("'1000'")
+val eib1000: EIB = js("new EIB()")
 
 fun <T : EIA> fooDefaultT(x: T? = null): T? =
     js("x")
@@ -35,4 +37,12 @@ fun box(): String {
     if (fooVararg(2, 1, *intArrayOf(2, 3)) != 3) return "Wrong fooVararg 3"
 
     return "OK"
+}
+
+// FILE: ext.js
+
+class EIB {
+    toString() {
+        return "1000"
+    }
 }

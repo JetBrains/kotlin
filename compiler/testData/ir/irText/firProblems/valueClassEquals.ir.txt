@@ -41,7 +41,7 @@ FILE fqName:<root> fileName:/valueClassEquals.kt
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Z'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.Z [val]
-          TYPE_OP type=<root>.Z origin=CAST typeOperand=<root>.Z
+          TYPE_OP type=<root>.Z origin=IMPLICIT_CAST typeOperand=<root>.Z
             GET_VAR 'other: kotlin.Any? declared in <root>.Z.equals' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH

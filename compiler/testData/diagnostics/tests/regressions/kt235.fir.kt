@@ -1,34 +1,33 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 //KT-235 Illegal assignment return type
 
 package kt235
 
 fun main() {
     val array = MyArray()
-    val f: () -> String = <!INITIALIZER_TYPE_MISMATCH!>{
-        array[2] = 23 //error: Type mismatch: inferred type is Int (!!!) but String was expected
-    }<!>
-    val g: () -> String = <!INITIALIZER_TYPE_MISMATCH!>{
+    val f: () -> String = {
+        <!RETURN_TYPE_MISMATCH!>array[2] = 23<!> //error: Type mismatch: inferred type is Int (!!!) but String was expected
+    }
+    val g: () -> String = {
         var x = 1
-        x += 2  //no error, but it should be here
-    }<!>
-    val h: () -> String = <!INITIALIZER_TYPE_MISMATCH!>{
+        <!RETURN_TYPE_MISMATCH!>x += 2<!>  //no error, but it should be here
+    }
+    val h: () -> String = {
         var x = 1
-        x = 2  //the same
-    }<!>
+        <!RETURN_TYPE_MISMATCH!>x = 2<!>  //the same
+    }
     val array1 = MyArray1()
-    val i: () -> String = <!INITIALIZER_TYPE_MISMATCH!>{
-        array1[2] = 23
-    }<!>
+    val i: () -> String = {
+        <!RETURN_TYPE_MISMATCH!>array1[2] = 23<!>
+    }
 
-    val fi: () -> String = <!INITIALIZER_TYPE_MISMATCH!>{
-        array[2] = 23
-    }<!>
-    val gi: () -> String = <!INITIALIZER_TYPE_MISMATCH!>{
+    val fi: () -> String = {
+        <!RETURN_TYPE_MISMATCH!>array[2] = 23<!>
+    }
+    val gi: () -> String = {
         var x = 1
-        x += 21
-    }<!>
+        <!RETURN_TYPE_MISMATCH!>x += 21<!>
+    }
 
     var m: MyNumber = MyNumber()
     val a: () -> MyNumber = {

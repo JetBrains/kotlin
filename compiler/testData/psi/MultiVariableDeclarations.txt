@@ -369,9 +369,12 @@ KtFile: MultiVariableDeclarations.kt
         DESTRUCTURING_DECLARATION_ENTRY
           PsiErrorElement:Expecting a name
             <empty list>
-        PsiElement(EQ)('=')
-        PsiWhiteSpace(' ')
-        INTEGER_CONSTANT
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          REFERENCE_EXPRESSION
+            PsiErrorElement:Expecting an identifier
+              <empty list>
+        PsiErrorElement:Expecting ')'
           PsiElement(INTEGER_LITERAL)('1')
       PsiWhiteSpace('\n    ')
       DESTRUCTURING_DECLARATION
@@ -384,12 +387,13 @@ KtFile: MultiVariableDeclarations.kt
         PsiWhiteSpace(' ')
         DESTRUCTURING_DECLARATION_ENTRY
           PsiElement(IDENTIFIER)('b')
+          PsiWhiteSpace(' ')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          REFERENCE_EXPRESSION
+            PsiErrorElement:Expecting an identifier
+              <empty list>
         PsiErrorElement:Expecting ')'
-          <empty list>
-        PsiWhiteSpace(' ')
-        PsiElement(EQ)('=')
-        PsiWhiteSpace(' ')
-        INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('1')
       PsiWhiteSpace('\n    ')
       DESTRUCTURING_DECLARATION

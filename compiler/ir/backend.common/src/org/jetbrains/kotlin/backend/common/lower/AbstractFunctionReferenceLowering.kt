@@ -5,74 +5,35 @@
 
 package org.jetbrains.kotlin.backend.common.lower
 
-import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.functionWithContinuations
+import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
-import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
-import org.jetbrains.kotlin.ir.builders.declarations.addField
-import org.jetbrains.kotlin.ir.builders.declarations.addFunction
-import org.jetbrains.kotlin.ir.builders.declarations.buildClass
-import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
-import org.jetbrains.kotlin.ir.builders.irBlock
-import org.jetbrains.kotlin.ir.builders.irBlockBody
-import org.jetbrains.kotlin.ir.builders.irCallConstructor
-import org.jetbrains.kotlin.ir.builders.irExprBody
-import org.jetbrains.kotlin.ir.builders.irGet
-import org.jetbrains.kotlin.ir.builders.irGetField
-import org.jetbrains.kotlin.ir.builders.irReturn
-import org.jetbrains.kotlin.ir.builders.irTemporary
-import org.jetbrains.kotlin.ir.builders.setSourceRange
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrParameterKind
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.expressions.IrBlockBody
-import org.jetbrains.kotlin.ir.expressions.IrBody
-import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
-import org.jetbrains.kotlin.ir.expressions.IrReturn
-import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.declarations.*
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
-import org.jetbrains.kotlin.ir.expressions.implicitCastTo
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.IrTypeProjection
-import org.jetbrains.kotlin.ir.types.IrTypeSubstitutor
-import org.jetbrains.kotlin.ir.types.classOrFail
-import org.jetbrains.kotlin.ir.types.extractTypeParameters
-import org.jetbrains.kotlin.ir.types.isNothing
-import org.jetbrains.kotlin.ir.types.typeWith
-import org.jetbrains.kotlin.ir.util.addFakeOverrides
-import org.jetbrains.kotlin.ir.util.copyTo
-import org.jetbrains.kotlin.ir.util.createDispatchReceiverParameterWithClassParent
-import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.erasedUpperBound
-import org.jetbrains.kotlin.ir.util.isLambda
-import org.jetbrains.kotlin.ir.util.nonDispatchParameters
-import org.jetbrains.kotlin.ir.util.primaryConstructor
+import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
-import kotlin.collections.plus
+
+
+/**
+ * This attribute is used to store declarations as they were at this lowering.
+ * This is needed to avoid creating fake overrides of declarations at later state.
+ * @see org.jetbrains.kotlin.ir.overrides.IrFakeOverrideBuilder.buildFakeOverridesForClassUsingOverriddenSymbols for more details.
+ */
+internal var IrClass.declarationsAtFunctionReferenceLowering: List<IrDeclaration>? by irAttribute(copyByDefault = true)
 
 /**
  * This lowering transforms [IrRichFunctionReference] nodes to an anonymous class.
@@ -122,21 +83,36 @@ import kotlin.collections.plus
  * Note that as all these classes are defined as local ones, they don't need to explicitly capture local variables or any type parameters.
  * But it can happen, that [LocalDeclarationsLowering] would later capture something additional into the classes.
  */
-abstract class AbstractFunctionReferenceLowering<C : CommonBackendContext>(val context: C) : BodyLoweringPass {
-    override fun lower(irBody: IrBody, container: IrDeclaration) {
-        irBody.transform(object : IrTransformer<IrDeclarationParent>() {
-            override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclarationParent): IrStatement {
-                return super.visitDeclaration(declaration, declaration as? IrDeclarationParent ?: data)
+abstract class AbstractFunctionReferenceLowering<C : CommonBackendContext>(val context: C) : FileLoweringPass {
+    override fun lower(irFile: IrFile) {
+        irFile.transform(object : IrTransformer<IrDeclaration?>() {
+            override fun visitClass(declaration: IrClass, data: IrDeclaration?): IrStatement {
+                if (declaration.isFun || declaration.symbol.isSuspendFunction() || declaration.symbol.isKSuspendFunction()) {
+                    declaration.declarationsAtFunctionReferenceLowering = declaration.declarations.toList()
+                }
+                declaration.transformChildren(this, declaration)
+                return declaration
             }
 
-            override fun visitRichFunctionReference(expression: IrRichFunctionReference, data: IrDeclarationParent): IrExpression {
+            override fun visitBody(body: IrBody, data: IrDeclaration?): IrBody {
+                return data!!.factory.stageController.restrictTo(data) {
+                    super.visitBody(body, data)
+                }
+            }
+
+            override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclaration?): IrStatement {
+                declaration.transformChildren(this, declaration)
+                return declaration
+            }
+
+            override fun visitRichFunctionReference(expression: IrRichFunctionReference, data: IrDeclaration?): IrExpression {
                 expression.transformChildren(this, data)
                 val irBuilder = context.createIrBuilder(
-                    (data as IrSymbolOwner).symbol,
+                    data!!.symbol,
                     expression.startOffset, expression.endOffset
                 )
 
-                val clazz = buildClass(expression, data)
+                val clazz = buildClass(expression, irBuilder.scope.getLocalDeclarationParent())
                 val constructor = clazz.primaryConstructor!!
                 val newExpression = irBuilder.irCallConstructor(constructor.symbol, emptyList()).apply {
                     origin = getConstructorCallOrigin(expression)
@@ -153,10 +129,10 @@ abstract class AbstractFunctionReferenceLowering<C : CommonBackendContext>(val c
                 }
             }
 
-            override fun visitFunctionReference(expression: IrFunctionReference, data: IrDeclarationParent): IrExpression {
+            override fun visitFunctionReference(expression: IrFunctionReference, data: IrDeclaration?): IrExpression {
                 shouldNotBeCalled()
             }
-        }, container as? IrDeclarationParent ?: container.parent)
+        }, null)
     }
 
     // SAM class used as a superclass can sometimes have type projections.
@@ -246,12 +222,13 @@ abstract class AbstractFunctionReferenceLowering<C : CommonBackendContext>(val c
 
         generateExtraMethods(functionReferenceClass, functionReference)
 
+        val superInterfaceClass = superInterfaceType.classOrFail.owner
+
         functionReferenceClass.addFakeOverrides(
             context.typeSystem,
-            // Built function overrides originalSuperMethod, while, if parent class is already lowered, it would
-            // transformedSuperMethod in its declaration list. We need not fake override in that case.
-            // Later lowerings will fix it and replace function with one overriding transformedSuperMethod.
-            ignoredParentSymbols = listOfNotNull(functionReference.overriddenFunctionSymbol.owner.functionWithContinuations?.symbol),
+            buildMap {
+                superInterfaceClass.declarationsAtFunctionReferenceLowering?.let { put(superInterfaceClass, it) }
+            }
         )
         postprocessClass(functionReferenceClass, functionReference)
         return functionReferenceClass

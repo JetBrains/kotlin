@@ -85,7 +85,7 @@ the Kotlin IntelliJ IDEA plugin:
       - License: Apache 2 ([license/third_party/gwt_license.txt][gwt])
       - Origin: Derived from GWT, (C) 2007-08 Google Inc.
 
- - Path: libraries/stdlib/js/runtime/longJs.kt
+ - Path: libraries/stdlib/js/runtime/boxedLong.kt
       - License: Apache 2 ([license/third_party/closure-compiler_LICENSE.txt][closure-compiler])
       - Origin: Google Closure Library, Copyright 2009 The Closure Library Authors
 
@@ -261,6 +261,10 @@ any distributions of the tools or libraries:
  - Path: libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/targets/js/nodejs/Platform.kt
       - License: Apache License 2.0 ([license/third_party/gradle-node-plugin_LICENSE.txt](third_party/gradle-node-plugin_LICENSE.txt))
       - Origin: Copyright (c) 2013 node-gradle/gradle-node-plugin
+
+ - Path: libraries/tools/gradle/fus-statistics-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/fus/internal/ciUtil.kt
+      - License: Apache 2 ([license/third_party/gradle_custom_user_plugin_license.txt](third_party/gradle_custom_user_plugin_license.txt))
+      - Origin: Gradle, Copyright 2002-2025 Gradle, Inc.
 
 ## Example Code
 

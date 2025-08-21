@@ -12,7 +12,6 @@ val validateSwiftExportEmbeddable by tasks.registering
 
 dependencies {
     embedded(project(":native:swift:sir")) { isTransitive = false }
-    embedded(project(":native:swift:sir-compiler-bridge")) { isTransitive = false }
     embedded(project(":native:swift:sir-light-classes")) { isTransitive = false }
     embedded(project(":native:swift:sir-printer")) { isTransitive = false }
     embedded(project(":native:swift:sir-providers")) { isTransitive = false }
@@ -99,8 +98,9 @@ sourceSets {
 
 val swiftExportEmbeddableJar = runtimeJar(rewriteDefaultJarDepsToShadedCompiler())
 registerSwiftExportEmbeddableValidationTasks(swiftExportEmbeddableJar)
-sourcesJar { includeEmptyDirs = false; eachFile { exclude() } } // empty Jar, no public sources
-javadocJar { includeEmptyDirs = false; eachFile { exclude() } } // empty Jar, no public javadocs
+
+sourcesJar { exclude("**") } // empty Jar, no public sources
+javadocJar { exclude("**") } // empty Jar, no public javadocs
 
 /**
  * Run swift-export-standalone tests against swift-export-embeddable and its runtime classpath to reproduce the environment in SwiftExportAction
@@ -142,12 +142,12 @@ val intransitiveTestDependenciesJars = configurations.detachedConfiguration().ap
     dependencies.add(project.dependencies.project(":kotlin-test"))
     dependencies.add(project.dependencies.project(":native:external-projects-test-utils"))
 
-    dependencies.add(project.dependencies.projectTests(":native:native.tests"))
-    dependencies.add(project.dependencies.projectTests(":compiler:tests-compiler-utils"))
-    dependencies.add(project.dependencies.projectTests(":compiler:tests-common"))
-    dependencies.add(project.dependencies.projectTests(":compiler:tests-common-new"))
-    dependencies.add(project.dependencies.projectTests(":compiler:test-infrastructure"))
-    dependencies.add(project.dependencies.projectTests(":compiler:test-infrastructure-utils"))
+    dependencies.add(project.dependencies.testFixtures(project(":native:native.tests")))
+    dependencies.add(project.dependencies.testFixtures(project(":compiler:tests-compiler-utils")))
+    dependencies.add(project.dependencies.testFixtures(project(":compiler:tests-common")))
+    dependencies.add(project.dependencies.testFixtures(project(":compiler:tests-common-new")))
+    dependencies.add(project.dependencies.testFixtures(project(":compiler:test-infrastructure")))
+    dependencies.add(project.dependencies.testFixtures(project(":compiler:test-infrastructure-utils")))
 
     dependencies.add(project.dependencies.project(":native:swift:swift-export-standalone-integration-tests"))
 }

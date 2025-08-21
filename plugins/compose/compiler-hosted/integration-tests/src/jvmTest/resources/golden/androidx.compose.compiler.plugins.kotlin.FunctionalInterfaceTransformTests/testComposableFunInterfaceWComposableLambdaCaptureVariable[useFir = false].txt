@@ -29,7 +29,6 @@ fun interface Decoration {
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = 2083614743, startOffset = 92, endOffset = 317)
 private fun Decorated(boolean: Boolean, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Decorated)<Decora...>:Test.kt")
@@ -46,7 +45,6 @@ private fun Decorated(boolean: Boolean, %composer: Composer?, %changed: Int) {
       class <no name provided> : Decoration {
         @Composable
         @ComposableInferredTarget(scheme = "[0[0]]")
-        @FunctionKeyMeta(key = -874628406, startOffset = 206, endOffset = 302)
         override fun Decoration(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
           %composer = %composer.startRestartGroup(<>)
           sourceInformation(%composer, "C(Decoration)<conten...>:Test.kt")
@@ -89,7 +87,6 @@ private fun Decorated(boolean: Boolean, %composer: Composer?, %changed: Int) {
 }
 @Composable
 @ComposableInferredTarget(scheme = "[0[0]]")
-@FunctionKeyMeta(key = 487175084, startOffset = 363, endOffset = 475)
 private fun Decoratable(decorator: Decoration, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Decoratable)<Decora...>:Test.kt")
@@ -119,7 +116,6 @@ private fun Decoratable(decorator: Decoration, %composer: Composer?, %changed: I
 }
 interface Decoration {
   @Composable
-  @FunctionKeyMeta(key = -1554132280, startOffset = 544, endOffset = 591)
   abstract fun Decoration(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int)
 }
 internal object ComposableSingletons%TestKt {

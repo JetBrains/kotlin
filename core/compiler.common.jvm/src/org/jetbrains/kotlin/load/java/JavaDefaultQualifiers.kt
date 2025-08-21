@@ -13,6 +13,7 @@ data class JavaDefaultQualifiers(
     val qualifierApplicabilityTypes: Collection<AnnotationQualifierApplicabilityType>,
     val definitelyNotNull: Boolean = nullabilityQualifier.qualifier == NullabilityQualifier.NOT_NULL,
     val preferQualifierOverBound: Boolean = false,
+    val preferQualifierOverSupertype: Boolean = false,
 )
 
 val APPLICABILITY_OF_JSPECIFY_DEFAULTS = listOf(
@@ -34,6 +35,7 @@ val JSPECIFY_DEFAULT_ANNOTATIONS = mapOf(
                 APPLICABILITY_OF_JSPECIFY_DEFAULTS,
                 definitelyNotNull = false,
                 preferQualifierOverBound = true,
+                preferQualifierOverSupertype = true,
             ),
     JSPECIFY_NULL_MARKED_ANNOTATION_FQ_NAME to
             JavaDefaultQualifiers(
@@ -41,12 +43,14 @@ val JSPECIFY_DEFAULT_ANNOTATIONS = mapOf(
                 APPLICABILITY_OF_JSPECIFY_DEFAULTS,
                 definitelyNotNull = false,
                 preferQualifierOverBound = true,
+                preferQualifierOverSupertype = true,
             ),
     JSPECIFY_NULL_UNMARKED_ANNOTATION_FQ_NAME to
             JavaDefaultQualifiers(
                 NullabilityQualifierWithMigrationStatus(NullabilityQualifier.FORCE_FLEXIBILITY),
                 APPLICABILITY_OF_JSPECIFY_DEFAULTS,
                 preferQualifierOverBound = true,
+                preferQualifierOverSupertype = true,
             ),
 )
 

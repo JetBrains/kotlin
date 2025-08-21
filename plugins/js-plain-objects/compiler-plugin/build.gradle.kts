@@ -28,16 +28,16 @@ dependencies {
     testApi(project(":compiler:cli"))
     testApi(project(":plugins:js-plain-objects:compiler-plugin:js-plain-objects.cli"))
 
-    testApi(projectTests(":compiler:test-infrastructure"))
-    testApi(projectTests(":compiler:test-infrastructure-utils"))
-    testApi(projectTests(":compiler:tests-compiler-utils"))
-    testApi(projectTests(":compiler:tests-common-new"))
+    testApi(testFixtures(project(":compiler:test-infrastructure")))
+    testApi(testFixtures(project(":compiler:test-infrastructure-utils")))
+    testApi(testFixtures(project(":compiler:tests-compiler-utils")))
+    testApi(testFixtures(project(":compiler:tests-common-new")))
 
-    testImplementation(projectTests(":js:js.tests"))
-    testImplementation(projectTests(":generators:test-generator"))
+    testApi(testFixtures(project(":js:js.tests")))
+    testFixtures(testFixtures(project(":generators:test-generator")))
 
     testApi(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupiter.api)
+    testFixtures(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 
     if (!project.kotlinBuildProperties.isInJpsBuildIdeaSync) {
@@ -62,6 +62,7 @@ sourceSets {
     "main" { none() }
     "test" {
         projectDefault()
+        java.srcDirs("testFixtures")
         generatedTestDir()
     }
 }

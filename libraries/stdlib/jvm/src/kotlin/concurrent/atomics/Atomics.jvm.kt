@@ -96,7 +96,7 @@ public actual inline fun AtomicInt.update(transform: (Int) -> Int): Unit {
     contract {
         callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
     }
-    fetchAndUpdate(transform)
+    val _ = fetchAndUpdate(transform)
 }
 
 /**
@@ -172,7 +172,7 @@ public actual inline fun AtomicLong.update(transform: (Long) -> Long): Unit {
     contract {
         callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
     }
-    fetchAndUpdate(transform)
+    val _ = fetchAndUpdate(transform)
 }
 
 /**
@@ -248,7 +248,7 @@ public actual inline fun <T> AtomicReference<T>.update(transform: (T) -> T): Uni
     contract {
         callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
     }
-    fetchAndUpdate(transform)
+    val _ = fetchAndUpdate(transform)
 }
 
 /**

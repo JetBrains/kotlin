@@ -61,7 +61,6 @@ class IrActualizer(
                 if (!hmppSchemeEnabled && !symbol.owner.isExpect) return symbol
                 if (symbol.owner.containsOptionalExpectation()) return symbol
                 val classId = symbol.owner.classId ?: return symbol
-                classActualizationInfo.actualTypeAliases[classId]?.let { return it.owner.expandedType.classOrFail }
                 classActualizationInfo.actualClasses[classId]?.let { return it }
                 // Can't happen normally, but possible on incorrect code.
                 // In that case, it would later fail with error in matching inside [actualizeCallablesAndMergeModules]
@@ -69,7 +68,7 @@ class IrActualizer(
                 return symbol
             }
         }
-        dependentFragments.forEach { it.transform(ActualizerVisitor(classSymbolRemapper), null) }
+        dependentFragments.forEach { it.transform(ActualizerVisitor(classSymbolRemapper, membersActualization = false), null) }
     }
 
     fun actualizeCallablesAndMergeModules(): IrExpectActualMap {
@@ -81,7 +80,7 @@ class IrActualizer(
         FunctionDefaultParametersActualizer(symbolRemapper, expectActualMap).actualize()
 
         // 3. Actualize expect calls in dependent fragments using info obtained in the previous steps
-        val actualizerVisitor = ActualizerVisitor(symbolRemapper)
+        val actualizerVisitor = ActualizerVisitor(symbolRemapper, membersActualization = true)
         dependentFragments.forEach { it.transform(actualizerVisitor, data = null) }
 
         // 4. Actualize property accessors actualized by java fields

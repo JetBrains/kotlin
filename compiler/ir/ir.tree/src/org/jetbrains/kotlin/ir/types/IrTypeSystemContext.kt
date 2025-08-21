@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.types
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.builtins.functions.AllowedToUsedOnlyInK1
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -97,6 +98,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     // Note: `isProjectionNotNull` is used inside inference along with intersection types.
     // IrTypes are not used in type inference and do not have intersection type so implemenation is default (false)
+    @AllowedToUsedOnlyInK1
     override fun CapturedTypeMarker.isProjectionNotNull(): Boolean = false
 
     override fun CapturedTypeMarker.captureStatus(): CaptureStatus =
@@ -262,7 +264,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
                 } else null
 
                 IrCapturedType(
-                    status, lowerType, argument, typeParameters[index], SimpleTypeNullability.DEFINITELY_NOT_NULL, emptyList(), null
+                    status, lowerType, argument, typeParameters[index], SimpleTypeNullability.DEFINITELY_NOT_NULL, emptyList()
                 )
             }
         }

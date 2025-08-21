@@ -25,6 +25,10 @@ public expect interface KClass<T : Any> : KClassifier {
     /**
      * The fully qualified dot-separated name of the class,
      * or `null` if the class is local or a class of an anonymous object.
+     *
+     * This property is currently not supported in Kotlin/JS and Kotlin/Wasm.
+     * In Kotlin/Wasm, however, it could be enabled using compiler options.
+     * Please refer to the documentation for these targets for more details.
      */
     public val qualifiedName: String?
 

@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -ForbidExposingPackagePrivateInInternal
 // FILE: javapackage/PackagePrivateGrandparentAbstractClass.java
 package javapackage;
 

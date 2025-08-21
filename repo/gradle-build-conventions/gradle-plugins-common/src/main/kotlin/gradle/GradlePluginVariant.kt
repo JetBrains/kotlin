@@ -21,6 +21,9 @@ enum class GradlePluginVariant(
     val gradleApiJavadocUrl: String,
     val bundledKotlinVersion: String,
 ) {
+    /**
+     * Tests rely on these entries being sorted
+     */
     GRADLE_MIN("main", "7.6", "7.6", "https://docs.gradle.org/7.6.1/javadoc/", "1.7"),
     GRADLE_80("gradle80", "8.0", "8.0", "https://docs.gradle.org/8.0.2/javadoc/", "1.8"),
     GRADLE_81("gradle81", "8.1", "8.1", "https://docs.gradle.org/8.1.1/javadoc/", "1.8"),
@@ -30,4 +33,12 @@ enum class GradlePluginVariant(
     GRADLE_88("gradle88", "8.8", "8.8", "https://docs.gradle.org/8.8/javadoc/", "1.9"),
     GRADLE_811("gradle811", "8.11", "8.11", "https://docs.gradle.org/8.11/javadoc/", "2.0"),
     GRADLE_813("gradle813", "8.13", "8.13", "https://docs.gradle.org/current/javadoc/", "2.0"),
+    ;
+
+    companion object {
+        const val GRADLE_COMMON_COMPILE_API_VERSION = "8.14"
+
+        val MIDDLE_GRADLE_VARIANT_FOR_TESTS = GradlePluginVariant.values().run { this[size / 2] }
+        val MAXIMUM_SUPPORTED_GRADLE_VARIANT = GradlePluginVariant.values().last()
+    }
 }

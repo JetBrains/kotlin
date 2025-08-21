@@ -1,10 +1,10 @@
 Arrays.kt:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/Arrays, fqName=Arrays, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Arrays, superNames=[]]
       MODIFIER_LIST[annotation]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Arrays]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Arrays]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=Arrays.ia, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=ia]
             TYPE_REFERENCE
@@ -33,7 +33,7 @@ Arrays.kt:
 
 
 WithArrays.kt:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/WithArrays, fqName=WithArrays, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithArrays, superNames=[]]
@@ -67,7 +67,7 @@ WithArrays.kt:
 
 
 WithExplicitArrays.kt:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/WithExplicitArrays, fqName=WithExplicitArrays, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithExplicitArrays, superNames=[]]
@@ -79,8 +79,42 @@ WithExplicitArrays.kt:
                 REFERENCE_EXPRESSION[referencedName=Arrays]
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION[referencedName=intArrayOf]
+                VALUE_ARGUMENT_LIST
+                  VALUE_ARGUMENT[isSpread=false]
+                    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+                  VALUE_ARGUMENT[isSpread=false]
+                    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
+                  VALUE_ARGUMENT[isSpread=false]
+                    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
             VALUE_ARGUMENT[isSpread=false]
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION[referencedName=longArrayOf]
+                VALUE_ARGUMENT_LIST
+                  VALUE_ARGUMENT[isSpread=false]
+                    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1L]
             VALUE_ARGUMENT[isSpread=false]
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION[referencedName=floatArrayOf]
+                VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION[referencedName=doubleArrayOf]
+                VALUE_ARGUMENT_LIST
+                  VALUE_ARGUMENT[isSpread=false]
+                    FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=2.2]
             VALUE_ARGUMENT[isSpread=false]
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION[referencedName=charArrayOf]
+                VALUE_ARGUMENT_LIST
+                  VALUE_ARGUMENT[isSpread=false]
+                    CHARACTER_CONSTANT[kind=CHARACTER_CONSTANT, value='a']
             VALUE_ARGUMENT[isSpread=false]
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION[referencedName=booleanArrayOf]
+                VALUE_ARGUMENT_LIST
+                  VALUE_ARGUMENT[isSpread=false]
+                    BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=true]
+                  VALUE_ARGUMENT[isSpread=false]
+                    BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=false]

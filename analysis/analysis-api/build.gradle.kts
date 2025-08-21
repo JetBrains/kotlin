@@ -28,6 +28,9 @@ dependencies {
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
+
+    testImplementation(testFixtures(project(":compiler:psi:psi-api")))
+    testImplementation(testFixtures(project(":compiler:tests-common")))
 }
 
 kotlin {
@@ -45,7 +48,8 @@ apiValidation {
         "org.jetbrains.kotlin.analysis.api.KaNonPublicApi",
         "org.jetbrains.kotlin.analysis.api.KaIdeApi",
         "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
-        "org.jetbrains.kotlin.analysis.api.KaPlatformInterface" // Platform interface is not stable yet
+        "org.jetbrains.kotlin.analysis.api.KaPlatformInterface", // Platform interface is not stable yet
+        "org.jetbrains.kotlin.analysis.api.KaContextParameterApi",
     )
 }
 

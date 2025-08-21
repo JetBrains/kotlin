@@ -12,9 +12,9 @@ assert(A::foo.isInfix)
 ---
 test3: ---
 assert((A::foo)(A(), 4))
-        |       |
-        |       false
-        |       A
+        |      ||
+        |      |A
+        |      false
         fun A.foo(kotlin.Int): kotlin.Boolean
 ---
 test4: ---
@@ -32,26 +32,26 @@ assert(List<Int>::bar.isInfix)
 ---
 test6: ---
 assert((List<Int>::bar)(listOf(1,2,3), 1))
-        |               |
-        |               false
-        |               [1, 2, 3]
+        |              ||
+        |              |[1, 2, 3]
+        |              false
         fun kotlin.collections.List<kotlin.Int>.bar(kotlin.Int): kotlin.Boolean
 ---
 test7: ---
 assert((a::foo)())
-       ||
-       |fun kotlin.String.foo(): kotlin.Boolean
-       |Some text
-       false
+        |      |
+        |      false
+        fun kotlin.String.foo(): kotlin.Boolean
+        Some text
 ---
 test8: ---
 assert(((a+b)::foo)())
-       |||||
-       ||||b
-       |||ab
-       ||a
-       |fun kotlin.String.foo(): kotlin.Boolean
-       false
+        ||||       |
+        ||||       false
+        |||b
+        ||ab
+        |a
+        fun kotlin.String.foo(): kotlin.Boolean
 ---
 test9: ---
 assert(a::foo == b::foo)

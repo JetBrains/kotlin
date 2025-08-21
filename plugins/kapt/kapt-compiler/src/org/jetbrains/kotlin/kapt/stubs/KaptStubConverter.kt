@@ -49,6 +49,8 @@ import org.jetbrains.kotlin.fir.references.impl.FirPropertyFromParameterResolved
 import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.references.toResolvedEnumEntrySymbol
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.PackageResolutionResult
@@ -95,8 +97,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
-import org.jetbrains.kotlin.kapt.util.replaceAnonymousTypeWithSuperType
-import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.KotlinType
@@ -154,7 +154,6 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
     private val correctErrorTypes = kaptContext.options[KaptFlag.CORRECT_ERROR_TYPES]
     private val strictMode = kaptContext.options[KaptFlag.STRICT]
     private val stripMetadata = kaptContext.options[KaptFlag.STRIP_METADATA]
-    private val keepKdocComments = kaptContext.options[KaptFlag.KEEP_KDOC_COMMENTS_IN_STUBS]
 
     private val mutableBindings = mutableMapOf<String, KaptJavaFileObject>()
 
@@ -167,7 +166,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
 
     private val signatureParser = SignatureParser(treeMaker)
 
-    private val kdocCommentKeeper = if (keepKdocComments) KaptDocCommentKeeper(kaptContext) else null
+    private val kdocCommentKeeper = KaptDocCommentKeeper(kaptContext)
 
     private val importsFromRoot by lazy(::collectImportsFromRootPackage)
 
@@ -287,9 +286,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         val classes = JavacList.of<JCTree>(classDeclaration)
 
         val topLevel = treeMaker.TopLevelJava9Aware(packageClause, imports + classes)
-        if (kdocCommentKeeper != null) {
-            topLevel.docComments = kdocCommentKeeper.getDocTable(topLevel)
-        }
+        topLevel.docComments = kdocCommentKeeper.getDocTable(topLevel)
 
         KaptJavaFileObject(topLevel, classDeclaration).apply {
             topLevel.sourcefile = this
@@ -1461,7 +1458,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
                 val useSimpleName = '.' in fqName && fqName.substringBeforeLast('.', "") == packageFqName
 
                 when {
-                    useSimpleName -> treeMaker.FqName(fqName.substring(packageFqName!!.length + 1))
+                    useSimpleName -> treeMaker.FqName(fqName.substring(packageFqName.length + 1))
                     else -> treeMaker.Type(annotationType)
                 }
             }
@@ -1572,27 +1569,34 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         return treeMaker.Select(typeExpression, treeMaker.name("class"))
     }
 
-    private fun convertFirType(type: ConeKotlinType): JCExpression? {
-        val fqName = when (type) {
-            is ConeErrorType -> (type.diagnostic as? ConeUnresolvedError)?.qualifier
-            is ConeLookupTagBasedType -> {
-                val classId = (type.lookupTag as? ConeClassLikeLookupTag)?.classId ?: return null
-                val fqName = classId.asSingleFqName()
-                if (classId.packageFqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME) {
-                    val primitiveType = PrimitiveType.getByShortName(classId.relativeClassName.asString())
-                    if (primitiveType != null) {
-                        return treeMaker.Type(Type.getType(JvmPrimitiveType.get(primitiveType).desc))
-                    }
-                    val primitiveArrayType = PrimitiveType.getByShortArrayName(classId.relativeClassName.asString())
-                    if (primitiveArrayType != null) {
-                        return treeMaker.Type(Type.getType("[" + JvmPrimitiveType.get(primitiveArrayType).desc))
-                    }
-                }
-                JavaToKotlinClassMap.mapKotlinToJava(fqName.toUnsafe())?.asSingleFqName()?.asString() ?: fqName.asString()
+    private fun convertFirType(originalType: ConeKotlinType): JCExpression? {
+        val type = originalType.fullyExpandedType(kaptContext.firSession!!)
+        if (type is ConeErrorType) {
+            val diagnostic = type.diagnostic as? ConeUnresolvedError
+            val simpleName = diagnostic?.qualifier ?: return null
+            val outerType = (diagnostic as? ConeUnresolvedNameError)?.receiverType
+            return if (outerType == null) {
+                treeMaker.SimpleName(simpleName)
+            } else {
+                treeMaker.Select(convertFirType(outerType), treeMaker.name(simpleName))
             }
-            else -> null
-        } ?: return null
-        return treeMaker.FqName(fqName)
+        }
+        if (type !is ConeLookupTagBasedType) return null
+        val classId = (type.lookupTag as? ConeClassLikeLookupTag)?.classId ?: return null
+        val fqName = classId.asSingleFqName()
+        if (classId.packageFqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME) {
+            val primitiveType = PrimitiveType.getByShortName(classId.relativeClassName.asString())
+            if (primitiveType != null) {
+                return treeMaker.Type(Type.getType(JvmPrimitiveType.get(primitiveType).desc))
+            }
+            val primitiveArrayType = PrimitiveType.getByShortArrayName(classId.relativeClassName.asString())
+            if (primitiveArrayType != null) {
+                return treeMaker.Type(Type.getType("[" + JvmPrimitiveType.get(primitiveArrayType).desc))
+            }
+        }
+        return treeMaker.FqName(
+            JavaToKotlinClassMap.mapKotlinToJava(fqName.toUnsafe())?.asSingleFqName()?.asString() ?: fqName.asString()
+        )
     }
 
     private fun convertAnnotationArgumentWithName(
@@ -1847,7 +1851,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
     }
 
     private fun <T : JCTree> T.keepKdocCommentsIfNecessary(node: Any): T {
-        kdocCommentKeeper?.saveKDocComment(this, node)
+        kdocCommentKeeper.saveKDocComment(this, node)
         return this
     }
 

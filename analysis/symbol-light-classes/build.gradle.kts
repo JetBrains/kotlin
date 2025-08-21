@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("java-test-fixtures")
 }
 
 dependencies {
@@ -18,23 +19,22 @@ dependencies {
     implementation(intellijCore())
     implementation(kotlinxCollectionsImmutable())
 
-    testImplementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
-    testImplementation(projectTests(":analysis:analysis-test-framework"))
-    testImplementation(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))
-    testImplementation(projectTests(":analysis:analysis-api-impl-base"))
-    testImplementation(projectTests(":analysis:analysis-api-fir"))
-    testImplementation(projectTests(":compiler:tests-common-new"))
-    testImplementation(projectTests(":analysis:low-level-api-fir"))
-    testImplementation(libs.junit.jupiter.api)
+    testFixturesImplementation(project(":analysis:decompiled:light-classes-for-decompiled"))
+    testFixturesApi(project(":analysis:decompiled:decompiler-to-file-stubs"))
+    testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
+    testFixturesApi(testFixtures(project(":analysis:decompiled:decompiler-to-file-stubs")))
+    testFixturesApi(testFixtures(project(":analysis:analysis-api-impl-base")))
+    testFixturesApi(testFixtures(project(":analysis:analysis-api-fir")))
+    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesApi(testFixtures(project(":analysis:low-level-api-fir")))
+    testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 }
 
 sourceSets {
     "main" { projectDefault() }
-    "test" {
-        projectDefault()
-        generatedTestDir()
-    }
+    "test" { generatedTestDir() }
+    "testFixtures" { projectDefault() }
 }
 
 projectTest(jUnitMode = JUnitMode.JUnit5) {

@@ -29,14 +29,20 @@ object FirConflictsExpressionChecker : FirBlockChecker(MppCheckerKind.Common) {
     private fun checkForLocalConflictingFunctions(
         expression: FirBlock,
     ) {
-        val conflictingFunctions = collectConflictingLocalFunctionsFrom(expression)
+        val inspector = collectConflictingLocalFunctionsFrom(expression) ?: return
 
-        for ((function, otherFunctionsThatConflictWithIt) in conflictingFunctions) {
+        for ((function, otherFunctionsThatConflictWithIt) in inspector.declarationConflictingSymbols) {
             if (otherFunctionsThatConflictWithIt.isEmpty()) {
                 continue
             }
 
             reporter.reportOn(function.source, FirErrors.CONFLICTING_OVERLOADS, otherFunctionsThatConflictWithIt)
+        }
+
+        for ((conflictingDeclaration, symbols) in inspector.declarationShadowedViaContextParameters) {
+            if (symbols.isNotEmpty()) {
+                reporter.reportOn(conflictingDeclaration.source, FirErrors.CONTEXTUAL_OVERLOAD_SHADOWED, symbols)
+            }
         }
     }
 }

@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN -ProhibitReturningIncorrectNullabilityValuesFromSamConstructorLambdaOfJdkInterfaces
+// LANGUAGE: -ProhibitReturningIncorrectNullabilityValuesFromSamConstructorLambdaOfJdkInterfaces
 // RENDER_DIAGNOSTICS_FULL_TEXT
 // ISSUE: KT-57014, KT-66730
 // FULL_JDK
@@ -107,7 +107,7 @@ fun main() {
     )
 
     val sam4: Supplier<String> = Supplier {
-        <!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>fun(): String {
+        <!RETURN_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>fun(): String {
             if (true) return <!RETURN_TYPE_MISMATCH!>returnNullableString()<!>
             return ""
         }<!>
@@ -121,7 +121,7 @@ fun main() {
     )
 
     val sam5: Supplier<String> = Supplier {
-        <!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>fun(): String? {
+        <!RETURN_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>fun(): String? {
             if (true) return returnNullableString()
             return ""
         }<!>

@@ -18,13 +18,13 @@ Tower Data Context:
             Functions
                 FirNamedFunctionSymbol local final fun outerFunction(): R|kotlin/Boolean|
             Properties:
-                FirPropertySymbol lvar outerVariable: R|kotlin/Boolean|
+                FirLocalPropertySymbol lvar outerVariable: R|kotlin/Boolean|
     Element 8
         Scope: FirLocalScope
             Functions
                 FirNamedFunctionSymbol local final fun innerFunction(): R|kotlin/Boolean|
             Properties:
-                FirPropertySymbol lvar innerVariable: R|kotlin/Boolean|
+                FirLocalPropertySymbol lvar innerVariable: R|kotlin/Boolean|
 
 FILE: [ResolvedTo(IMPORTS)] doWhile.kt
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyAnalysisStateKey=3(3/5) #1] fun foo(): R|kotlin/Unit| {

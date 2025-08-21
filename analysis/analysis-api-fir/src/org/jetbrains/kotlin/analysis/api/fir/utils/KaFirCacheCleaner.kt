@@ -295,7 +295,10 @@ internal class KaFirStopWorldCacheCleaner(private val project: Project) : KaFirC
             analysisSessionStatistics?.lowMemoryCacheCleanupInvocationCounter?.add(1)
 
             val cleanupMs = measureTimeMillis {
-                invalidationService.invalidateAll(includeLibraryModules = true)
+                invalidationService.invalidateAll(
+                    includeLibraryModules = true,
+                    diagnosticInformation = "low-memory cache cleanup",
+                )
             }
 
             val totalMs = System.currentTimeMillis() - cleanupScheduleMs

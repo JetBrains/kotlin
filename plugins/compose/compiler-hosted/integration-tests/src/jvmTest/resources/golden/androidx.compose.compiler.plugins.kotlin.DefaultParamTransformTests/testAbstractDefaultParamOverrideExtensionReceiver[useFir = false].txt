@@ -30,7 +30,6 @@ interface Test {
   abstract fun Int.foo(param: Int, %composer: Composer?, %changed: Int)
   class ComposeDefaultImpls {
     @Composable
-    @ComposableInferredTarget(scheme = "[0[0]]")
     fun foo%default(param: Int, %this%: Test, %this%: Int, %composer: Composer?, %changed: Int, %default: Int) {
       %composer = %composer.startRestartGroup(<>)
       sourceInformation(%composer, "C(foo%default)<rememb...>:Test.kt")
@@ -96,7 +95,6 @@ class TestImpl : Test {
   static val %stable: Int = 0
 }
 @Composable
-@ComposableInferredTarget(scheme = "[0[0]]")
 @FunctionKeyMeta(key = 53166890, startOffset = 204, endOffset = 298)
 fun CallWithDefaults(test: Test, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)

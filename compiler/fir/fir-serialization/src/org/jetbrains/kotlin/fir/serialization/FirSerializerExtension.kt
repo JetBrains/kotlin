@@ -122,7 +122,8 @@ abstract class FirSerializerExtension {
 
     open fun serializeTypeAlias(typeAlias: FirTypeAlias, proto: ProtoBuf.TypeAlias.Builder) {
         for (annotation in typeAlias.nonSourceAnnotations(session)) {
-            proto.addAnnotation(annotationSerializer.serializeAnnotation(annotation))
+            val serializedAnnotation = annotationSerializer.serializeAnnotation(annotation) ?: continue
+            proto.addAnnotation(serializedAnnotation)
         }
     }
 

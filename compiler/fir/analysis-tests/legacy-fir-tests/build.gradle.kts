@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.ideaExt.idea
-
 /*
  * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
@@ -8,26 +6,25 @@ import org.jetbrains.kotlin.ideaExt.idea
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("java-test-fixtures")
 }
 
 dependencies {
-    compileOnly(intellijCore())
+    testFixturesApi(libs.junit4)
+    testFixturesCompileOnly(kotlinTest("junit"))
+    testFixturesApi(testFixtures(project(":compiler:tests-common")))
+    testFixturesApi(project(":compiler:fir:checkers"))
+    testFixturesApi(project(":compiler:fir:checkers:checkers.jvm"))
+    testFixturesApi(project(":compiler:fir:checkers:checkers.js"))
+    testFixturesApi(project(":compiler:fir:checkers:checkers.native"))
+    testFixturesApi(project(":compiler:fir:checkers:checkers.wasm"))
+    testFixturesApi(project(":compiler:fir:entrypoint"))
+    testFixturesApi(project(":compiler:frontend"))
 
-    testImplementation(libs.junit4)
-    testCompileOnly(kotlinTest("junit"))
-    testApi(projectTests(":compiler:tests-common"))
-    testApi(project(":compiler:fir:checkers"))
-    testApi(project(":compiler:fir:checkers:checkers.jvm"))
-    testApi(project(":compiler:fir:checkers:checkers.js"))
-    testApi(project(":compiler:fir:checkers:checkers.native"))
-    testApi(project(":compiler:fir:checkers:checkers.wasm"))
-    testApi(project(":compiler:fir:entrypoint"))
-    testApi(project(":compiler:frontend"))
-
-    testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+    testFixturesApi(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testRuntimeOnly(project(":core:descriptors.runtime"))
 
-    testCompileOnly(intellijCore())
+    testFixturesCompileOnly(intellijCore())
     testRuntimeOnly(intellijCore())
 }
 
@@ -35,10 +32,8 @@ optInToK1Deprecation()
 
 sourceSets {
     "main" { none() }
-    "test" {
-        projectDefault()
-        generatedTestDir()
-    }
+    "test" { generatedTestDir() }
+    "testFixtures" { projectDefault() }
 }
 
 projectTest(parallel = true, maxHeapSizeMb = 3072) {

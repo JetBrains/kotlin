@@ -41,7 +41,7 @@ data class A {
     when {
       other !is A -> return false
     }
-    val tmp_0: A = other as A
+    val tmp_0: A = other /*as A */
     when {
       EQEQ(arg0 = <this>.#x, arg1 = tmp_0.#x).not() -> return false
     }
@@ -62,4 +62,3 @@ data class A {
   }
 
 }
-

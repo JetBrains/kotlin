@@ -35,7 +35,6 @@ class Foo {
   static val %stable: Int = 0
 }
 @Composable
-@FunctionKeyMeta(key = 1275113351, startOffset = 334, endOffset = 401)
 fun Foo.getValue(thisObj: Any?, property: KProperty<*>, %composer: Composer?, %changed: Int): Foo {
   sourceInformationMarkerStart(%composer, <>, "CC(getValue)P(1):Test.kt#2487m")
   val tmp0 = <this>
@@ -43,7 +42,6 @@ fun Foo.getValue(thisObj: Any?, property: KProperty<*>, %composer: Composer?, %c
   return tmp0
 }
 @Composable
-@FunctionKeyMeta(key = 592035792, startOffset = 415, endOffset = 482)
 fun test(foo: Foo, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(test)<delega...>:Test.kt#2487m")
@@ -57,7 +55,7 @@ fun test(foo: Foo, %composer: Composer?, %changed: Int) {
     }
     val delegated by {
       val delegated%delegate = foo
-      @Composable @FunctionKeyMeta(key = 1504416980, startOffset = 454, endOffset = 460)
+      @Composable
       get(%composer: Composer?, %changed: Int) {
         sourceInformationMarkerStart(%composer, <>, "C(<get-delegated>)<foo>:Test.kt#2487m")
         if (isTraceInProgress()) {

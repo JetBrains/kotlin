@@ -41,12 +41,16 @@ import org.jetbrains.kotlin.kmp.lexer.KtTokens.VAL_KEYWORD
 import org.jetbrains.kotlin.kmp.lexer.KtTokens.VAR_KEYWORD
 import org.jetbrains.kotlin.kmp.lexer.KtTokens.WHEN_KEYWORD
 import org.jetbrains.kotlin.kmp.lexer.KtTokens.WHILE_KEYWORD
+import org.jetbrains.kotlin.kmp.parser.BinaryOperationPrecedence
 import org.jetbrains.kotlin.kmp.parser.KtNodeTypes
+import org.jetbrains.kotlin.kmp.parser.utils.KotlinParsing.Companion.EXPRESSION_FIRST
+import org.jetbrains.kotlin.kmp.parser.utils.KotlinParsing.Companion.EXPRESSION_FOLLOW
+import org.jetbrains.kotlin.kmp.parser.utils.KotlinParsing.MultiDeclarationMode
 
 internal open class KotlinExpressionParsing(
     builder: SemanticWhitespaceAwareSyntaxBuilder,
     private val kotlinParsing: KotlinParsing,
-    isLazy: Boolean = true
+    isLazy: Boolean = true,
 ) : AbstractKotlinParsing(builder, isLazy) {
     companion object {
         private val WHEN_CONDITION_RECOVERY_SET = syntaxElementTypeSetOf(
@@ -150,49 +154,6 @@ internal open class KotlinExpressionParsing(
             KtTokens.COLON
         )
 
-        val EXPRESSION_FIRST: SyntaxElementTypeSet = syntaxElementTypeSetOf( // Prefix
-            KtTokens.MINUS, KtTokens.PLUS, KtTokens.MINUSMINUS, KtTokens.PLUSPLUS,
-            KtTokens.EXCL, KtTokens.EXCLEXCL,  // Joining complex tokens makes it necessary to put EXCLEXCL here
-            // Atomic
-
-            KtTokens.COLONCOLON,  // callable reference
-
-            KtTokens.LPAR,  // parenthesized
-            // literal constant
-
-            TRUE_KEYWORD, FALSE_KEYWORD,
-            KtTokens.INTERPOLATION_PREFIX, KtTokens.OPEN_QUOTE,
-            KtTokens.INTEGER_LITERAL, KtTokens.CHARACTER_LITERAL, KtTokens.FLOAT_LITERAL,
-            NULL_KEYWORD,
-
-            KtTokens.LBRACE,  // functionLiteral
-            FUN_MODIFIER,  // expression function
-
-            THIS_KEYWORD,  // this
-            SUPER_KEYWORD,  // super
-
-            IF_KEYWORD,  // if
-            WHEN_KEYWORD,  // when
-            TRY_KEYWORD,  // try
-            OBJECT_KEYWORD,  // object
-            // jump
-
-            THROW_KEYWORD,
-            RETURN_KEYWORD,
-            CONTINUE_KEYWORD,
-            BREAK_KEYWORD,  // loop
-
-            FOR_KEYWORD,
-            WHILE_KEYWORD,
-            DO_KEYWORD,
-
-            KtTokens.IDENTIFIER,  // SimpleName
-
-            KtTokens.AT,  // Just for better recovery and maybe for annotations
-
-            KtTokens.LBRACKET // Collection literal expression
-        )
-
         val STATEMENT_FIRST: SyntaxElementTypeSet = EXPRESSION_FIRST +
                 syntaxElementTypeSetOf( // declaration
                     FUN_MODIFIER,
@@ -207,10 +168,6 @@ internal open class KotlinExpressionParsing(
         private val STATEMENT_NEW_LINE_QUICK_RECOVERY_SET: SyntaxElementTypeSet =
             STATEMENT_FIRST.intersect(KtTokens.HARD_KEYWORDS_AND_MODIFIERS - IN_MODIFIER) + KtTokens.EOL_OR_SEMICOLON
 
-        val EXPRESSION_FOLLOW: SyntaxElementTypeSet = syntaxElementTypeSetOf(
-            KtTokens.EOL_OR_SEMICOLON, KtTokens.ARROW, KtTokens.COMMA, KtTokens.RBRACE, KtTokens.RPAR, KtTokens.RBRACKET
-        )
-
         private val ALLOW_NEWLINE_OPERATIONS = syntaxElementTypeSetOf(
             KtTokens.DOT, KtTokens.SAFE_ACCESS,
             KtTokens.COLON,
@@ -224,7 +181,7 @@ internal open class KotlinExpressionParsing(
         private fun doneOrDrop(
             marker: SyntaxTreeBuilder.Marker,
             type: SyntaxElementType,
-            condition: Boolean
+            condition: Boolean,
         ) {
             if (condition) {
                 marker.done(type)
@@ -234,52 +191,13 @@ internal open class KotlinExpressionParsing(
         }
 
         // typeArguments? valueArguments : typeArguments : arrayAccess
-        val POSTFIX_OPERATIONS = syntaxElementTypeSetOf(KtTokens.PLUSPLUS, KtTokens.MINUSMINUS, KtTokens.EXCLEXCL, KtTokens.DOT, KtTokens.SAFE_ACCESS)
+        val POSTFIX_OPERATIONS =
+            syntaxElementTypeSetOf(KtTokens.PLUSPLUS, KtTokens.MINUSMINUS, KtTokens.EXCLEXCL, KtTokens.DOT, KtTokens.SAFE_ACCESS)
         val PREFIX_OPERATIONS = syntaxElementTypeSetOf(KtTokens.MINUS, KtTokens.PLUS, KtTokens.MINUSMINUS, KtTokens.PLUSPLUS, KtTokens.EXCL)
 
-        val BINARY_PRECEDENCES_TO_CURRENT_AND_HIGHER_OPERATIONS: Array<Map<SyntaxElementType, BinaryOperationPrecedence>> =
-            getPrecedencesToOperations(BinaryOperationPrecedence.AS)
+        val MIN_BINARY_OPERATION_PRECEDENCE: BinaryOperationPrecedence = BinaryOperationPrecedence.entries.first()
 
-        val BINARY_PRECEDENCES_TO_CURRENT_AND_HIGHER_OPERATIONS_UP_TO_IS: Array<Map<SyntaxElementType, BinaryOperationPrecedence>> =
-            getPrecedencesToOperations(BinaryOperationPrecedence.IN_OR_IS)
-
-        private fun getPrecedencesToOperations(startPrecedence: BinaryOperationPrecedence): Array<Map<SyntaxElementType, BinaryOperationPrecedence>> {
-            return buildList<Map<SyntaxElementType, BinaryOperationPrecedence>> {
-                for (entry in BinaryOperationPrecedence.entries) {
-                    add(
-                        if (entry < startPrecedence) {
-                            emptyMap()
-                        } else {
-                            val currentOrHigherOperations = mutableMapOf<SyntaxElementType, BinaryOperationPrecedence>()
-                            elementAtOrNull(entry.ordinal - 1)?.let { currentOrHigherOperations.putAll(it) }
-                            for (operation in entry.operations) {
-                                val existingHigherOperation = currentOrHigherOperations[operation]
-                                require(existingHigherOperation == null) {
-                                    "All precedences have unique operations. The $operation already assigned to ${existingHigherOperation}."
-                                }
-                                currentOrHigherOperations[operation] = entry
-                            }
-                            currentOrHigherOperations
-                        }
-                    )
-                }
-            }.toTypedArray()
-        }
-    }
-
-    enum class BinaryOperationPrecedence(val higher: BinaryOperationPrecedence?, val operations: SyntaxElementTypeSet) {
-        AS(null, syntaxElementTypeSetOf(AS_KEYWORD, AS_SAFE)),
-        MULTIPLICATIVE(AS, syntaxElementTypeSetOf(KtTokens.MUL, KtTokens.DIV, KtTokens.PERC)),
-        ADDITIVE(MULTIPLICATIVE, syntaxElementTypeSetOf(KtTokens.PLUS, KtTokens.MINUS)),
-        RANGE(ADDITIVE, syntaxElementTypeSetOf(KtTokens.RANGE, KtTokens.RANGE_UNTIL)),
-        INFIX(RANGE, syntaxElementTypeSetOf(KtTokens.IDENTIFIER) + KtTokens.SOFT_KEYWORDS_AND_MODIFIERS),
-        ELVIS(INFIX, syntaxElementTypeSetOf(KtTokens.ELVIS)),
-        IN_OR_IS(ELVIS, syntaxElementTypeSetOf(IN_MODIFIER, NOT_IN, IS_KEYWORD, NOT_IS)),
-        COMPARISON(IN_OR_IS, syntaxElementTypeSetOf(KtTokens.LT, KtTokens.GT, KtTokens.LTEQ, KtTokens.GTEQ)),
-        EQUALITY(COMPARISON, syntaxElementTypeSetOf(KtTokens.EQEQ, KtTokens.EXCLEQ, KtTokens.EQEQEQ, KtTokens.EXCLEQEQEQ)),
-        CONJUNCTION(EQUALITY, syntaxElementTypeSetOf(KtTokens.ANDAND)),
-        DISJUNCTION(CONJUNCTION, syntaxElementTypeSetOf(KtTokens.OROR)),
-        ASSIGNMENT(DISJUNCTION, syntaxElementTypeSetOf(KtTokens.EQ, KtTokens.PLUSEQ, KtTokens.MINUSEQ, KtTokens.MULTEQ, KtTokens.DIVEQ, KtTokens.PERCEQ)),
+        val MAX_BINARY_OPERATION_PRECEDENCE: BinaryOperationPrecedence = BinaryOperationPrecedence.entries.last()
     }
 
     /*
@@ -312,88 +230,80 @@ internal open class KotlinExpressionParsing(
         parseBinaryExpression(BinaryOperationPrecedence.ASSIGNMENT)
     }
 
-    /*
+    /**
+     * ```
      * element (operation element)*
+     * ```
      *
-     * see the precedence table
-     *
-     * Returns `true` if the last operation is `is` expression.
-     * It's handled in a special way because it doesn't use recursive parsing on RHS and
-     * `is` precedence is not the highest unlike `as` operation that also doesn't use RHS recursive parsing.
+     * @return minPrecedence that should be considered during further parsing.
+     * It's actual for `IS` operation because it's handled in a special way since it doesn't use recursive parsing on RHS
      */
-    private fun parseBinaryExpression(precedence: BinaryOperationPrecedence?): Boolean {
-        if (precedence == null) {
-            error("Shouldn't be here")
-            return false
-        }
+    private fun parseBinaryExpression(maxPrecedence: BinaryOperationPrecedence?): BinaryOperationPrecedence {
+        requireNotNull(maxPrecedence) { "Shouldn't be here" }
 
         var expression = mark()
 
         parsePrefixExpression()
 
-        // Match all possible operations with the current or higher precedence at once.
-        // For instance, if the precedence is COMPARISON, we can match ADDITIVE, MULTIPLICATIVE but cannot parse CONJUNCTION.
-        // The lowest precedence is ASSIGNMENT.
-        // All Kotlin binary operations are syntactically left-associative,
-        // that's why always use higher precedence on recursive `parseBinaryExpression` call.
-        // If a right-associative operation existed, the same precedence instead of the highest would be passed to the recursive call.
-        val originalOperationsToPrecedences = BINARY_PRECEDENCES_TO_CURRENT_AND_HIGHER_OPERATIONS[precedence.ordinal]
-        var possibleOperationsToPrecedences = originalOperationsToPrecedences
-        var lastResultIsIsOperation = false
+        var minPrecedence = MIN_BINARY_OPERATION_PRECEDENCE
 
         while (!interruptedWithNewLine()) {
             val operation = tt()
 
-            val currentPrecedence = possibleOperationsToPrecedences[operation] ?: break
+            /*
+                Match all allowed operations with the current or higher priority (lower precedence) at once.
+                For instance, if the precedence is COMPARISON, we can match ADDITIVE, MULTIPLICATIVE but cannot match CONJUNCTION.
+                The lowest priority is ASSIGNMENT.
 
-            if (currentPrecedence == BinaryOperationPrecedence.INFIX && operation in KtTokens.SOFT_KEYWORDS_AND_MODIFIERS) {
+                If the map doesn't contain the given token, the further parsing is not performed. Later that token either will be handled
+                by an outer 'parseBinaryExpression()' call with a lower binary priority (higher precedence) or will not be handled at all
+                if the expression is not binary.
+
+                All Kotlin binary operations are syntactically left-associative.
+                That's why we always use higher priority on recursive `parseBinaryExpression` call.
+
+                If a right-associative operation is added, the same priority instead of the highest should be passed to the recursive call.
+            */
+            val nextPrecedence = BinaryOperationPrecedence.TOKEN_TO_BINARY_PRECEDENCE_MAP_WITH_SOFT_IDENTIFIERS[operation]
+            if (nextPrecedence == null || nextPrecedence.ordinal > maxPrecedence.ordinal || nextPrecedence.ordinal < minPrecedence.ordinal) {
+                break
+            }
+
+            if (nextPrecedence == BinaryOperationPrecedence.INFIX && KtTokens.SOFT_KEYWORDS_AND_MODIFIERS.contains(operation)) {
                 // Remap soft keywords and modifiers that are treated as infix functions since there is no mutating `atSetWithRemap` call
                 builder.remapCurrentToken(KtTokens.IDENTIFIER)
             }
 
             parseOperationReference()
 
-            val resultType = when (currentPrecedence) {
-                BinaryOperationPrecedence.AS -> {
+            val resultType: SyntaxElementType = when (KtTokens.getElementTypeId(operation)) {
+                KtTokens.AS_KEYWORD_ID, KtTokens.AS_SAFE_ID -> {
                     kotlinParsing.parseTypeRefWithoutIntersections()
-                    lastResultIsIsOperation = false
+                    minPrecedence = BinaryOperationPrecedence.AS
                     KtNodeTypes.BINARY_WITH_TYPE
                 }
-                BinaryOperationPrecedence.IN_OR_IS -> {
-                    if (operation === IS_KEYWORD || operation === NOT_IS) {
-                        kotlinParsing.parseTypeRefWithoutIntersections()
-                        // The handling of `is` and `as` operations is special, it doesn't parse RHS recursively and greedily.
-                        // To prevent parsing of more prioritized operations after `is` (for instance, INFIX, RANGE and other),
-                        // use the following map on the next operations.
-                        // It's also applicable to `as`, however, AS binary precedence is the highest and no special map is needed.
-                        lastResultIsIsOperation = true
-                        KtNodeTypes.IS_EXPRESSION
-                    } else {
-                        lastResultIsIsOperation = parseBinaryExpression(currentPrecedence.higher)
-                        KtNodeTypes.BINARY_EXPRESSION
-                    }
+                KtTokens.IS_KEYWORD_ID, KtTokens.NOT_IS_ID -> {
+                    kotlinParsing.parseTypeRefWithoutIntersections()
+                    // The handling of `is`, it doesn't parse RHS recursively and greedily.
+                    // To prevent parsing of more prioritized operations next to `is` (for instance, INFIX, RANGE, and others),
+                    // use the `minPrecedence` in addition to `maxPrecedence`.
+                    minPrecedence = BinaryOperationPrecedence.IN_OR_IS
+                    KtNodeTypes.IS_EXPRESSION
                 }
                 else -> {
-                    // Parse operations with higher precedences greedily.
-                    // It handles precedences correctly.
-                    lastResultIsIsOperation = parseBinaryExpression(currentPrecedence.higher)
+                    // Parse operations with higher priorities greedily.
+                    minPrecedence = parseBinaryExpression(nextPrecedence.higherPriority)
                     KtNodeTypes.BINARY_EXPRESSION
                 }
             }
 
             expression.done(resultType)
             expression = expression.precede()
-
-            possibleOperationsToPrecedences = if (lastResultIsIsOperation) {
-                BINARY_PRECEDENCES_TO_CURRENT_AND_HIGHER_OPERATIONS_UP_TO_IS[precedence.ordinal]
-            } else {
-                originalOperationsToPrecedences
-            }
         }
 
         expression.drop()
 
-        return lastResultIsIsOperation
+        return minPrecedence
     }
 
     /*
@@ -697,9 +607,11 @@ internal open class KotlinExpressionParsing(
             }
             KtTokens.LBRACE_ID -> parseFunctionLiteral()
             KtTokens.INTERPOLATION_PREFIX_ID,
-            KtTokens.OPEN_QUOTE_ID -> parseStringTemplate()
+            KtTokens.OPEN_QUOTE_ID,
+                -> parseStringTemplate()
             KtTokens.TRUE_KEYWORD_ID,
-            KtTokens.FALSE_KEYWORD_ID -> parseOneTokenExpression(KtNodeTypes.BOOLEAN_CONSTANT)
+            KtTokens.FALSE_KEYWORD_ID,
+                -> parseOneTokenExpression(KtNodeTypes.BOOLEAN_CONSTANT)
             KtTokens.INTEGER_LITERAL_ID -> parseOneTokenExpression(KtNodeTypes.INTEGER_CONSTANT)
             KtTokens.CHARACTER_LITERAL_ID -> parseOneTokenExpression(KtNodeTypes.CHARACTER_CONSTANT)
             KtTokens.FLOAT_LITERAL_ID -> parseOneTokenExpression(KtNodeTypes.FLOAT_CONSTANT)
@@ -709,7 +621,8 @@ internal open class KotlinExpressionParsing(
             KtTokens.FUN_MODIFIER_ID,
             KtTokens.VAL_KEYWORD_ID,
             KtTokens.VAR_KEYWORD_ID,
-            KtTokens.TYPE_ALIAS_KEYWORD_ID -> {
+            KtTokens.TYPE_ALIAS_KEYWORD_ID,
+                -> {
                 if (!parseLocalDeclaration(
                         rollbackIfDefinitelyNotExpression = builder.newlineBeforeCurrentToken(),
                         isScriptTopLevel = false
@@ -970,7 +883,8 @@ internal open class KotlinExpressionParsing(
         builder.disableNewlines()
         when (tokenId) {
             KtTokens.IN_MODIFIER_ID,
-            KtTokens.NOT_IN_ID -> {
+            KtTokens.NOT_IN_ID,
+                -> {
                 val mark = mark()
                 advance() // IN_KEYWORD or NOT_IN
                 mark.done(KtNodeTypes.OPERATION_REFERENCE)
@@ -983,7 +897,8 @@ internal open class KotlinExpressionParsing(
                 condition.done(KtNodeTypes.WHEN_CONDITION_IN_RANGE)
             }
             KtTokens.IS_KEYWORD_ID,
-            KtTokens.NOT_IS_ID -> {
+            KtTokens.NOT_IS_ID,
+                -> {
                 advance() // IS_KEYWORD or NOT_IS
 
                 if (atSetWithRemap(WHEN_CONDITION_RECOVERY_SET_WITH_ARROW)) {
@@ -996,7 +911,8 @@ internal open class KotlinExpressionParsing(
             KtTokens.RBRACE_ID,
             KtTokens.ELSE_KEYWORD_ID,
             KtTokens.ARROW_ID,
-            KtTokens.DOT_ID -> {
+            KtTokens.DOT_ID,
+                -> {
                 error("Expecting an expression, is-condition or in-condition")
                 condition.done(KtNodeTypes.WHEN_CONDITION_EXPRESSION)
             }
@@ -1012,7 +928,8 @@ internal open class KotlinExpressionParsing(
         when (tokenId) {
             KtTokens.ANDAND_ID -> {
                 errorUntil(
-                    "Unexpected '&&', use 'if' to introduce additional conditions; see https://kotl.in/guards-in-when", syntaxElementTypeSetOf(
+                    "Unexpected '&&', use 'if' to introduce additional conditions; see https://kotl.in/guards-in-when",
+                    syntaxElementTypeSetOf(
                         KtTokens.LBRACE, KtTokens.RBRACE, KtTokens.ARROW
                     )
                 )
@@ -1195,7 +1112,7 @@ internal open class KotlinExpressionParsing(
                 advance() // ARROW
                 paramsFound = true
             }
-            KtTokens.IDENTIFIER_ID, KtTokens.COLON_ID, KtTokens.LPAR_ID -> {
+            KtTokens.IDENTIFIER_ID, KtTokens.COLON_ID, KtTokens.LPAR_ID, KtTokens.LBRACKET_ID -> {
                 // Try to parse a simple name list followed by an ARROW
                 //   {a -> ...}
                 //   {a, b -> ...}
@@ -1273,11 +1190,13 @@ internal open class KotlinExpressionParsing(
                 KtTokens.COLON_ID -> {
                     error("Expecting parameter name")
                 }
-                KtTokens.LPAR_ID -> {
+                KtTokens.LPAR_ID, KtTokens.LBRACKET_ID -> {
                     val destructuringDeclaration = mark()
-                    kotlinParsing.parseMultiDeclarationName(
+                    kotlinParsing.parseMultiDeclarationEntry(
                         TOKEN_SET_TO_FOLLOW_AFTER_DESTRUCTURING_DECLARATION_IN_LAMBDA,
-                        TOKEN_SET_TO_FOLLOW_AFTER_DESTRUCTURING_DECLARATION_IN_LAMBDA_RECOVERY
+                        TOKEN_SET_TO_FOLLOW_AFTER_DESTRUCTURING_DECLARATION_IN_LAMBDA_RECOVERY,
+                        // No var in lambda parameter destructuring
+                        if(lookahead(1) == VAL_KEYWORD) MultiDeclarationMode.FullValOnly else MultiDeclarationMode.Short,
                     )
                     destructuringDeclaration.done(KtNodeTypes.DESTRUCTURING_DECLARATION)
                 }
@@ -1411,7 +1330,7 @@ internal open class KotlinExpressionParsing(
     private fun parseLocalDeclarationRest(
         modifierDetector: KotlinParsing.ModifierDetector,
         failIfDefinitelyNotExpression: Boolean,
-        isScriptTopLevel: Boolean
+        isScriptTopLevel: Boolean,
     ): SyntaxElementType? {
         val keywordToken = tt()
         if (failIfDefinitelyNotExpression) {
@@ -1510,9 +1429,14 @@ internal open class KotlinExpressionParsing(
                     advance()
                 }
 
-                if (at(KtTokens.LPAR)) {
+                if (at(KtTokens.LPAR) || at(KtTokens.LBRACKET)) {
                     val destructuringDeclaration = mark()
-                    kotlinParsing.parseMultiDeclarationName(IN_KEYWORD_L_BRACE_SET, IN_KEYWORD_L_BRACE_RECOVERY_SET)
+                    kotlinParsing.parseMultiDeclarationEntry(
+                        IN_KEYWORD_L_BRACE_SET,
+                        IN_KEYWORD_L_BRACE_RECOVERY_SET,
+                        // No var in destructured loop parameter
+                        if (lookahead(1) == VAL_KEYWORD) MultiDeclarationMode.FullValOnly else MultiDeclarationMode.Short,
+                    )
                     destructuringDeclaration.done(KtNodeTypes.DESTRUCTURING_DECLARATION)
                 } else {
                     expectIdentifierWithRemap("Expecting a variable name", COLON_IN_KEYWORD_SET)

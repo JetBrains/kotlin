@@ -30,7 +30,7 @@ FILE fqName:<root> fileName:/inlineClass.kt
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Test'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.Test [val]
-          TYPE_OP type=<root>.Test origin=CAST typeOperand=<root>.Test
+          TYPE_OP type=<root>.Test origin=IMPLICIT_CAST typeOperand=<root>.Test
             GET_VAR 'other: kotlin.Any? declared in <root>.Test.equals' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH

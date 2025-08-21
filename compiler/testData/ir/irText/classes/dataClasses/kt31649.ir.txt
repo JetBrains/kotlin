@@ -53,7 +53,7 @@ FILE fqName:<root> fileName:/kt31649.kt
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.TestData'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.TestData [val]
-          TYPE_OP type=<root>.TestData origin=CAST typeOperand=<root>.TestData
+          TYPE_OP type=<root>.TestData origin=IMPLICIT_CAST typeOperand=<root>.TestData
             GET_VAR 'other: kotlin.Any? declared in <root>.TestData.equals' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH
@@ -128,7 +128,7 @@ FILE fqName:<root> fileName:/kt31649.kt
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.TestInline'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:<root>.TestInline [val]
-          TYPE_OP type=<root>.TestInline origin=CAST typeOperand=<root>.TestInline
+          TYPE_OP type=<root>.TestInline origin=IMPLICIT_CAST typeOperand=<root>.TestInline
             GET_VAR 'other: kotlin.Any? declared in <root>.TestInline.equals' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH

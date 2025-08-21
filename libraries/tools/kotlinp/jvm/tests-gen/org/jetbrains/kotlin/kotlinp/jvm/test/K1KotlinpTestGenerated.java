@@ -61,6 +61,12 @@ public class K1KotlinpTestGenerated extends AbstractK1KotlinpTest {
   }
 
   @Test
+  @TestMetadata("ContextParameters.kt")
+  public void testContextParameters() {
+    runTest("libraries/tools/kotlinp/jvm/testData/ContextParameters.kt");
+  }
+
+  @Test
   @TestMetadata("ContextReceivers.kt")
   public void testContextReceivers() {
     runTest("libraries/tools/kotlinp/jvm/testData/ContextReceivers.kt");

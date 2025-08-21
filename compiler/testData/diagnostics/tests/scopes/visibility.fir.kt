@@ -42,7 +42,7 @@ class B {
 
 fun test3(a: A) {
     a.<!INVISIBLE_REFERENCE!>v<!> //todo .bMethod()
-    a.<!INVISIBLE_REFERENCE!>f<!>(0, 1) //todo .bMethod()
+    a.f(0, <!TOO_MANY_ARGUMENTS!>1<!>) //todo .bMethod()
 }
 
 interface T

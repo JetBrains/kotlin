@@ -23,7 +23,6 @@ fun Example(x: Int): Int {
 
 @NonRestartableComposable
 @Composable
-@FunctionKeyMeta(key = -170087108, startOffset = 227, endOffset = 316)
 fun Example(x: Int, %composer: Composer?, %changed: Int): Int {
   %composer.startReplaceGroup(<>)
   sourceInformation(%composer, "C(Example)<A()>:Test.kt")

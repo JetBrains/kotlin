@@ -1,4 +1,4 @@
-PsiJetFileStubImpl[package=test]
+FILE[kind=File[packageFqName=test]]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST
@@ -201,13 +201,13 @@ PsiJetFileStubImpl[package=test]
                         NULLABLE_TYPE
                           USER_TYPE
                             REFERENCE_EXPRESSION[referencedName=String]
-      FUN[fqName=test.Types.extOnFunctionType, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, mayHaveContract=false, name=extOnFunctionType]
+      FUN[fqName=test.Types.extOnFunctionType, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, mayHaveContract=false, name=extOnFunctionType]
         MODIFIER_LIST[public]
         TYPE_PARAMETER_LIST
-          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=P1]
-          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=P2]
-          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=P3]
-          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=R]
+          TYPE_PARAMETER[fqName=null, name=P1]
+          TYPE_PARAMETER[fqName=null, name=P2]
+          TYPE_PARAMETER[fqName=null, name=P3]
+          TYPE_PARAMETER[fqName=null, name=R]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Function3]
@@ -298,7 +298,7 @@ PsiJetFileStubImpl[package=test]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=test.Types.functionTypeWithNamedArgs, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=functionTypeWithNamedArgs]
+      FUN[fqName=test.Types.functionTypeWithNamedArgs, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=functionTypeWithNamedArgs]
         MODIFIER_LIST[abstract]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=fType]

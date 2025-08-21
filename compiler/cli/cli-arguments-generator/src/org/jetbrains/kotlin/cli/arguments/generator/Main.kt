@@ -12,16 +12,12 @@ import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
 import org.jetbrains.kotlin.arguments.dsl.types.StringArrayType
-import org.jetbrains.kotlin.cli.common.arguments.DefaultValue
 import org.jetbrains.kotlin.cli.common.arguments.Disables
 import org.jetbrains.kotlin.cli.common.arguments.Enables
-import org.jetbrains.kotlin.cli.common.arguments.GradleDeprecatedOption
-import org.jetbrains.kotlin.cli.common.arguments.GradleInputTypes
-import org.jetbrains.kotlin.cli.common.arguments.GradleOption
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import org.jetbrains.kotlin.utils.SmartPrinter
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.withIndent
 import java.io.File
 
@@ -117,6 +113,12 @@ val levelToClassNameMap = listOf(
     ),
 ).associateBy { it.levelName }
 
+// Removed arguments which are still needed in CLI classes but should be hidden
+private val hiddenArguments = setOf(
+    CompilerArgumentsLevelNames.jsArguments to "output", // Needed by IDEA
+    CompilerArgumentsLevelNames.commonCompilerArguments to "Xuse-k2", // Needed by IDEA
+)
+
 private fun generateArgumentsClass(
     genDir: File,
     level: KotlinCompilerArgumentsLevel,
@@ -131,10 +133,9 @@ private fun generateArgumentsClass(
         dir = dir.resolve(packagePart)
     }
     dir.mkdirs()
-    dir.resolve(info.className + ".kt").printWriter().use {
-        val printer = SmartPrinter(it)
-        printer.generateArgumentsClass(level, parent, info)
-    }
+    val file = dir.resolve(info.className + ".kt")
+    val newText = buildString { SmartPrinter(this).generateArgumentsClass(level, parent, info) }
+    GeneratorsFileUtil.writeFileIfContentChanged(file, newText, logNotChanged = false)
 }
 
 private fun SmartPrinter.generateArgumentsClass(
@@ -170,9 +171,14 @@ private fun SmartPrinter.generateArgumentsClass(
     withIndent {
         generateAdditionalSyntheticArguments(info)
         for (argument in level.arguments) {
-            if (argument.releaseVersionsMetadata.removedVersion != null) continue
+            if (
+                hiddenArguments.none { (argLevelName, name) ->
+                    argLevelName == level.name && argument.name == name
+                } && argument.releaseVersionsMetadata.removedVersion != null
+            ) continue
+            validateDeprecationConsistency(argument)
             generateGradleAnnotations(argument)
-            generateArgumentAnnotation(argument)
+            generateArgumentAnnotation(argument, level)
             generateFeatureAnnotations(argument)
             generateProperty(argument)
             println()
@@ -198,15 +204,6 @@ private fun KotlinCompilerArgumentsLevel.collectImports(info: ArgumentsInfo): Li
                 when (it) {
                     is Enables -> listOf(Enables::class.qualifiedName!!, LanguageFeature::class.qualifiedName!!)
                     is Disables -> listOf(Disables::class.qualifiedName!!, LanguageFeature::class.qualifiedName!!)
-                    is GradleOption -> listOf(
-                        GradleOption::class.qualifiedName!!,
-                        DefaultValue::class.qualifiedName!!,
-                        GradleInputTypes::class.qualifiedName!!,
-                    )
-                    is GradleDeprecatedOption -> listOf(
-                        GradleDeprecatedOption::class.qualifiedName!!,
-                        LanguageVersion::class.qualifiedName!!,
-                    )
                     is Deprecated -> emptyList()
                     else -> error("Unknown annotation ${it::class}")
                 }
@@ -229,7 +226,10 @@ private fun SmartPrinter.generateAdditionalSyntheticArguments(info: ArgumentsInf
     }
 }
 
-private fun SmartPrinter.generateArgumentAnnotation(argument: KotlinCompilerArgument) {
+private fun SmartPrinter.generateArgumentAnnotation(
+    argument: KotlinCompilerArgument,
+    level: KotlinCompilerArgumentsLevel,
+) {
     println("@Argument(")
     withIndent {
         println("""value = "-${argument.name}",""")
@@ -244,7 +244,11 @@ private fun SmartPrinter.generateArgumentAnnotation(argument: KotlinCompilerArgu
         }
         println("description = $description,")
         argument.delimiter?.let { println("delimiter = Argument.Delimiters.${it.constantName},") }
-        if (argument.isObsolete) {
+
+        if (hiddenArguments.any { (levelName, argName) ->
+                level.name == levelName && argument.name == argName
+            }
+        ) {
             println("isObsolete = true,")
         }
     }
@@ -254,6 +258,20 @@ private fun SmartPrinter.generateArgumentAnnotation(argument: KotlinCompilerArgu
 private enum class AnnotationKind {
     Gradle,
     LanguageFeature
+}
+
+private fun validateDeprecationConsistency(argument: KotlinCompilerArgument) {
+    if (argument.releaseVersionsMetadata.removedVersion != null) return
+    val deprecatedAnnotation = argument.additionalAnnotations.firstIsInstanceOrNull<Deprecated>()
+    val deprecatedVersion = argument.releaseVersionsMetadata.deprecatedVersion
+    when {
+        deprecatedVersion == null && deprecatedAnnotation != null -> {
+            error("Argument ${argument.name} is deprecated but has no deprecated version specified")
+        }
+        deprecatedVersion != null && deprecatedAnnotation == null -> {
+            error("Argument ${argument.name} is deprecated but has no @Deprecated annotation")
+        }
+    }
 }
 
 private fun SmartPrinter.generateGradleAnnotations(argument: KotlinCompilerArgument) {
@@ -274,36 +292,17 @@ private fun SmartPrinter.generateAnnotation(annotation: Annotation, kind: Annota
     when (annotation) {
         is Enables if kind == AnnotationKind.LanguageFeature -> {
             val feature = annotation.feature
+            val ifValue = annotation.ifValueIs
             val featureName = feature.name
-            println("@Enables(LanguageFeature.$featureName)")
+            val optionalValue = if (ifValue.isNotBlank()) ", \"$ifValue\"" else ""
+            println("@Enables(LanguageFeature.$featureName$optionalValue)")
         }
         is Disables if kind == AnnotationKind.LanguageFeature-> {
             val feature = annotation.feature
+            val ifValue = annotation.ifValueIs
             val featureName = feature.name
-            println("@Disables(LanguageFeature.$featureName)")
-        }
-        is GradleOption if kind == AnnotationKind.Gradle-> {
-            println("@GradleOption(")
-            withIndent {
-                println("value = DefaultValue.${annotation.value.name},")
-                println("gradleInputType = GradleInputTypes.${annotation.gradleInputType.name},")
-                if (annotation.shouldGenerateDeprecatedKotlinOptions) {
-                    println("shouldGenerateDeprecatedKotlinOptions = true,")
-                }
-                if (annotation.gradleName != "") {
-                    println("""gradleName = "${annotation.gradleName}",""")
-                }
-            }
-            println(")")
-        }
-        is GradleDeprecatedOption if kind == AnnotationKind.Gradle -> {
-            println("@GradleDeprecatedOption(")
-            withIndent {
-                println("""message = "${annotation.message}",""")
-                println("removeAfter = LanguageVersion.${annotation.removeAfter.name},")
-                println("level = DeprecationLevel.${annotation.level.name}")
-            }
-            println(")")
+            val optionalValue = if (ifValue.isNotBlank()) ", \"$ifValue\"" else ""
+            println("@Disables(LanguageFeature.$featureName$optionalValue)")
         }
         is Deprecated if kind == AnnotationKind.Gradle -> {
             print("@Deprecated(")
@@ -333,10 +332,7 @@ private fun SmartPrinter.generateAnnotation(annotation: Annotation, kind: Annota
 }
 
 private fun SmartPrinter.generateProperty(argument: KotlinCompilerArgument) {
-    val name = argument.compilerName ?: argument.name
-        .removePrefix("X").removePrefix("X")
-        .split("-").joinToString("") { it.replaceFirstChar(Char::uppercaseChar) }
-        .replaceFirstChar(Char::lowercaseChar)
+    val name = argument.calculateName()
     val type = when (val type = argument.valueType) {
         is BooleanType -> when (type.isNullable.current) {
             true -> "Boolean?"
@@ -351,6 +347,11 @@ private fun SmartPrinter.generateProperty(argument: KotlinCompilerArgument) {
     println("var $name: $type = ${argument.defaultValueInArgs}")
     generateSetter(type, argument)
 }
+
+fun KotlinCompilerArgument.calculateName(): String = compilerName ?: name
+    .removePrefix("X").removePrefix("X")
+    .split("-").joinToString("") { it.replaceFirstChar(Char::uppercaseChar) }
+    .replaceFirstChar(Char::lowercaseChar)
 
 private fun SmartPrinter.generateSetter(type: String, argument: KotlinCompilerArgument?) {
     withIndent {
@@ -421,7 +422,7 @@ private fun SmartPrinter.generateFreeArgsAndErrors() {
 private val KotlinCompilerArgument.defaultValueInArgs: String
     get() {
         @Suppress("UNCHECKED_CAST")
-        val valueType = valueType as KotlinArgumentValueType<Any?>
+        val valueType = valueType as KotlinArgumentValueType<Any>
         return valueType.stringRepresentation(valueType.defaultValue.current) ?: "null"
     }
 

@@ -30,7 +30,7 @@ value class IC<TT : Any?> {
     when {
       other !is IC<TT> -> return false
     }
-    val tmp_0: IC<TT> = other as IC<TT>
+    val tmp_0: IC<TT> = other /*as IC<TT> */
     when {
       EQEQ(arg0 = <this>.#c, arg1 = tmp_0.#c).not() -> return false
     }
@@ -58,4 +58,3 @@ fun box(): String {
   }
   return "OK"
 }
-

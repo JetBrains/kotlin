@@ -1,37 +1,37 @@
 @R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>>
-  context -> FirPropertySymbol one/two/MyDataClass.prop
+  context -> FirRegularPropertySymbol one/two/MyDataClass.prop
   anchor -> [FirConstructorSymbol one/two/MyDataClass.MyDataClass]
 
 @R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirPropertySymbol one/two/MyDataClass.prop
+  context -> FirRegularPropertySymbol one/two/MyDataClass.prop
   anchor -> [FirConstructorSymbol one/two/MyDataClass.MyDataClass]
 
 @R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirPropertySymbol one/two/MyDataClass.prop
+  context -> FirRegularPropertySymbol one/two/MyDataClass.prop
   anchor -> [FirConstructorSymbol one/two/MyDataClass.MyDataClass]
 
 @R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>>
-  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol one/two/MyDataClass.prop
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol one/two/MyDataClass.prop
   anchor -> [FirConstructorSymbol one/two/MyDataClass.MyDataClass]
 
 @R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol one/two/MyDataClass.prop
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol one/two/MyDataClass.prop
   anchor -> [FirConstructorSymbol one/two/MyDataClass.MyDataClass]
 
 @R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol one/two/MyDataClass.prop
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol one/two/MyDataClass.prop
   anchor -> [FirConstructorSymbol one/two/MyDataClass.MyDataClass]
 
 @R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>>
-  context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol one/two/MyDataClass.prop
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol one/two/MyDataClass.prop
   anchor -> [FirConstructorSymbol one/two/MyDataClass.MyDataClass]
 
 @R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol one/two/MyDataClass.prop
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol one/two/MyDataClass.prop
   anchor -> [FirConstructorSymbol one/two/MyDataClass.MyDataClass]
 
 @R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol one/two/MyDataClass.prop
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol one/two/MyDataClass.prop
   anchor -> [FirConstructorSymbol one/two/MyDataClass.MyDataClass]
 
 FILE: [ResolvedTo(IMPORTS)] propertyTypeCollisionAndAnnotationsScript.kts
@@ -39,7 +39,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyTypeCollisionAndAnnotationsScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol one.two.<script-propertyTypeCollisionAndAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol one.two.<script-propertyTypeCollisionAndAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/two/Anno.i] i: Int): R|one/two/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -49,17 +49,17 @@ FILE: [ResolvedTo(IMPORTS)] propertyTypeCollisionAndAnnotationsScript.kts
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-propertyTypeCollisionAndAnnotationsScript.kts>] class MyClass<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-propertyTypeCollisionAndAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] class MyClass<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] A>(): R|one/two/MyClass<A>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? data [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol one.two.<script-propertyTypeCollisionAndAnnotationsScript.kts>] class MyDataClass : R|kotlin/Any| {
+        public final? data [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol one.two.<script-propertyTypeCollisionAndAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] class MyDataClass : R|kotlin/Any| {
             public? [ResolvedTo(TYPES)] [ContainingClassKey=MyDataClass] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=one/two/MyDataClass.prop] prop: R|@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|one/two/MyDataClass| {
                 LAZY_super<R|kotlin/Any|>
             }

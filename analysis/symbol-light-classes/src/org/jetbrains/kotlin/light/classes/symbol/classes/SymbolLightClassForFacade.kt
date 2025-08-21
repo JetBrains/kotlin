@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaKotlinPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
-import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
 import org.jetbrains.kotlin.fileClasses.isJvmMultifileClassFile
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
@@ -62,7 +61,7 @@ internal class SymbolLightClassForFacade(
     private val firstFileInFacade: KtFile get() = files.first()
 
     @OptIn(KaImplementationDetail::class)
-    private val _modifierList: PsiModifierList by lazyPub {
+    override fun getModifierList(): PsiModifierList = cachedValue {
         SymbolLightClassModifierList(
             containingDeclaration = this,
             modifiersBox = InitializedModifiersBox(PsiModifier.PUBLIC, PsiModifier.FINAL),
@@ -80,8 +79,6 @@ internal class SymbolLightClassForFacade(
             },
         )
     }
-
-    override fun getModifierList(): PsiModifierList = _modifierList
 
     override fun getScope(): PsiElement = parent
 

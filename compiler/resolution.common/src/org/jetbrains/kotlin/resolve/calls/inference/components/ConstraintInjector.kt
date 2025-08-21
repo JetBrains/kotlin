@@ -13,10 +13,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.ForkPointData
 import org.jetbrains.kotlin.resolve.calls.inference.extractAllContainingTypeVariables
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind.*
-import org.jetbrains.kotlin.types.AbstractTypeApproximator
-import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
-import org.jetbrains.kotlin.types.TypeCheckerState
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -51,6 +48,8 @@ class ConstraintInjector(
          * @see org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage.typeVariableDependencies
          */
         val typeVariableDependencies: Map<TypeConstructorMarker, Set<TypeConstructorMarker>>
+
+        val approximatorCaches: TypeApproximatorCachesPerConfiguration
 
         val atCompletionState: Boolean
 
@@ -385,9 +384,9 @@ class ConstraintInjector(
                 )
 
             if (!isSubtypeOf(upperType)) {
-                // TODO: Get rid of this additional workarounds for flexible types once KT-59138 is fixed and
-                //  the relevant feature for disabling it will be removed.
-                // Also we should get rid of it once LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible is removed
+                // TODO: remove these additional workarounds for flexible types once
+                // LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible and K1 are removed
+                // shouldTryUseDifferentFlexibilityForUpperType should always be false
                 if (shouldTryUseDifferentFlexibilityForUpperType && upperType.isRigidType()) {
                     /*
                      * Please don't reuse this logic.
@@ -472,7 +471,7 @@ class ConstraintInjector(
             isFromNullabilityConstraint: Boolean,
             isFromDeclaredUpperBound: Boolean,
             isNoInfer: Boolean,
-        ) = with(c) {
+        ): Unit = with(c) {
             // Avoid checking trivial incorporated constraints
             if (isK2) {
                 if (lowerType == upperType) return
@@ -570,6 +569,9 @@ class ConstraintInjector(
 
         override val allTypeVariablesWithConstraints: Collection<VariableWithConstraints>
             get() = c.notFixedTypeVariables.values
+
+        override val approximatorCaches: TypeApproximatorCachesPerConfiguration
+            get() = c.approximatorCaches
 
         override fun getVariablesWithConstraintsContainingGivenTypeVariable(
             variableConstructorMarker: TypeConstructorMarker

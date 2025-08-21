@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -42,7 +42,7 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
     public boolean hasTypeParameterListBeforeFunctionName() {
         KotlinFunctionStub stub = getGreenStub();
         if (stub != null) {
-            return stub.hasTypeParameterListBeforeFunctionName();
+            return stub.getHasTypeParameterListBeforeFunctionName();
         }
         return hasTypeParameterListBeforeFunctionNameByTree();
     }
@@ -63,7 +63,7 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
     public boolean hasBlockBody() {
         KotlinFunctionStub stub = getGreenStub();
         if (stub != null) {
-            return stub.hasBlockBody();
+            return stub.getHasNoExpressionBody();
         }
         return getEqualsToken() == null;
     }
@@ -114,7 +114,7 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
     public KtExpression getBodyExpression() {
         KotlinFunctionStub stub = getStub();
         if (stub != null) {
-            if (!stub.hasBody()) {
+            if (!stub.getHasBody()) {
                 return null;
             }
             if (getContainingKtFile().isCompiled()) {
@@ -131,7 +131,7 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
     public KtBlockExpression getBodyBlockExpression() {
         KotlinFunctionStub stub = getStub();
         if (stub != null) {
-            if (!(stub.hasBlockBody() && stub.hasBody())) {
+            if (!(stub.getHasNoExpressionBody() && stub.getHasBody())) {
                 return null;
             }
             if (getContainingKtFile().isCompiled()) {
@@ -152,7 +152,7 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
     public boolean hasBody() {
         KotlinFunctionStub stub = getGreenStub();
         if (stub != null) {
-            return stub.hasBody();
+            return stub.getHasBody();
         }
         return getBodyExpression() != null;
     }
@@ -265,14 +265,20 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
         return getStubOrPsiChild(KtStubBasedElementTypes.CONTRACT_EFFECT_LIST);
     }
 
+    @Override
     public boolean mayHaveContract() {
-        return mayHaveContract(true);
+        KotlinFunctionStub stub = getGreenStub();
+        if (stub != null) {
+            return stub.getMayHaveContract();
+        }
+
+        return KtPsiUtilKt.isLegacyContractPresentPsiCheck(this);
     }
 
     public boolean mayHaveContract(boolean isAllowedOnMembers) {
         KotlinFunctionStub stub = getGreenStub();
         if (stub != null) {
-            return stub.mayHaveContract();
+            return stub.getMayHaveContract();
         }
 
         return KtPsiUtilKt.isContractPresentPsiCheck(this, isAllowedOnMembers);

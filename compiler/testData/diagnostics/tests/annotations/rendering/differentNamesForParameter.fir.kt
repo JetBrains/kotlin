@@ -16,6 +16,6 @@ interface B {
     fun foo(@An b : @An Int)
 }
 
-<!DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES("a; b; 0; 'fun foo(a: @An() Int): Unit' defined in '/A', 'fun foo(b: @An() Int): Unit' defined in '/B'")!>interface C<!> : A, B
+<!DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES("a; b; 0; 'fun foo(a: Int): Unit' defined in 'A', 'fun foo(b: Int): Unit' defined in 'B'")!>interface C<!> : A, B
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, interfaceDeclaration */

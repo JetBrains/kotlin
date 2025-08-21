@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,10 +17,29 @@ import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionS
 class KaBaseAnalysisScopeProviderImpl(
     override val analysisSessionProvider: () -> KaSession,
     private val resolutionScope: KaResolutionScope,
-) : KaBaseSessionComponent<KaSession>(), KaAnalysisScopeProvider {
+) : KaBaseSessionComponent<KaSession>(), KaBaseAnalysisScopeProviderEx {
     override val analysisScope: GlobalSearchScope
         get() = withValidityAssertion { resolutionScope }
 
-    override fun PsiElement.canBeAnalysed(): Boolean =
-        withValidityAssertion { resolutionScope.contains(this) }
+    override fun canBeAnalysedImpl(element: PsiElement): Boolean {
+        return resolutionScope.contains(element)
+    }
+}
+
+/**
+ * The implementation detail of [KaAnalysisScopeProvider] which exposes the internal implementation details
+ * to reuse it in other places.
+ */
+@KaImplementationDetail
+interface KaBaseAnalysisScopeProviderEx : KaAnalysisScopeProvider {
+    /**
+     * The implementation of [canBeAnalysed] without [withValidityAssertion] check.
+     *
+     * @see canBeAnalysed
+     */
+    fun canBeAnalysedImpl(element: PsiElement): Boolean
+
+    override fun PsiElement.canBeAnalysed(): Boolean = withValidityAssertion {
+        canBeAnalysedImpl(this)
+    }
 }

@@ -77,6 +77,7 @@ public expect inline fun AutoCloseable(crossinline closeAction: () -> Unit): Aut
 @SinceKotlin("2.0")
 @WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public expect inline fun <T : AutoCloseable?, R> T.use(block: (T) -> R): R {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)

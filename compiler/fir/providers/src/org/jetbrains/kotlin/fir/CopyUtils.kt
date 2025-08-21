@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.fir.declarations.getStringArgument
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.FirImplicitInvokeCallBuilder
@@ -16,9 +17,8 @@ import org.jetbrains.kotlin.fir.extensions.typeAttributeExtensions
 import org.jetbrains.kotlin.fir.resolve.directExpansionType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
-import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 
 inline fun FirFunctionCall.copyAsImplicitInvokeCall(
     setupCopy: FirImplicitInvokeCallBuilder.() -> Unit
@@ -87,10 +87,12 @@ fun List<FirAnnotation>.computeTypeAttributes(
                 // ConeAttributes.create() will always take the last attribute of a given type,
                 // where ParameterName should prefer the first annotation.
                 if (parameterName == null) {
-                    parameterName = ParameterNameTypeAttribute(annotation)
+                    // The name is only available at this stage when reading for metadata but can help cut down on memory use if known.
+                    val knownName = annotation.getStringArgument(StandardNames.NAME, session)?.let { Name.identifier(it) }
+                    parameterName = ParameterNameTypeAttribute(name = knownName, listOf(annotation))
                 } else {
-                    // Preserve repeated ParameterName annotations to check for repeated errors.
-                    parameterName = ParameterNameTypeAttribute(parameterName.annotation, parameterName.others + annotation)
+                    // Preserve all ParameterName annotations to check for repeated errors.
+                    parameterName = ParameterNameTypeAttribute(parameterName.name, parameterName.annotations + annotation)
                 }
             }
             CompilerConeAttributes.UnsafeVariance.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.UnsafeVariance

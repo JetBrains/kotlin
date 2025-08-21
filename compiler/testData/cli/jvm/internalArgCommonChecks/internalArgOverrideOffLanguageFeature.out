@@ -1,14 +1,13 @@
 warning: ATTENTION!
 This build uses unsafe internal compiler arguments:
 
--XXLanguage:-GenericInlineClassParameter
+-XXLanguage:-NullableNothingInReifiedPosition
 
 This mode is not recommended for production use,
 as no stability/compatibility guarantees are given on
 compiler or generated code. Use it at your own risk!
 
-warning: language version 1.9 is deprecated and its support will be removed in a future version of Kotlin
-compiler/testData/cli/jvm/internalArgCommonChecks/languageVersion.kt:4:34: error: the feature "generic inline class parameter" is disabled
-value class Holder<T>(val value: T)
-                                 ^
+compiler/testData/cli/jvm/internalArgCommonChecks/languageVersion.kt:18:5: error: cannot use 'Nothing?' as reified type parameter.
+    foo(b)
+    ^^^
 COMPILATION_ERROR

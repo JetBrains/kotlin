@@ -45,7 +45,7 @@ KaKotlinPropertySymbol:
     isNotDefault: false
     isOverride: false
     location: PROPERTY
-    modality: OPEN
+    modality: ABSTRACT
     origin: SOURCE
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -78,7 +78,7 @@ KaKotlinPropertySymbol:
   isStatic: false
   isVal: false
   location: CLASS
-  modality: OPEN
+  modality: ABSTRACT
   name: prop
   origin: SOURCE
   receiverParameter: null
@@ -99,7 +99,7 @@ KaKotlinPropertySymbol:
     isNotDefault: false
     isOverride: false
     location: PROPERTY
-    modality: OPEN
+    modality: ABSTRACT
     origin: SOURCE
     parameter: KaValueParameterSymbol:
       annotations: []

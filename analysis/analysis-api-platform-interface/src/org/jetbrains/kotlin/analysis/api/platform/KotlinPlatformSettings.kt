@@ -44,6 +44,8 @@ public interface KotlinPlatformSettings : KotlinPlatformComponent {
 public enum class KotlinDeserializedDeclarationsOrigin {
     /**
      * Library content is deserialized from `.class` files, KLIBs, and metadata.
+     *
+     * Kotlin FIR declarations deserialized from binaries don't have associated PSI elements.
      */
     BINARIES,
 

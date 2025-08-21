@@ -37,7 +37,6 @@ fun updateCompilerXml() {
         "libraries/tools/kotlin-gradle-plugin-idea-for-compatibility-tests",
         "libraries/tools/kotlin-gradle-plugin-idea-proto",
         "libraries/tools/kotlin-gradle-plugin-integration-tests",
-        "libraries/tools/kotlin-gradle-plugin-model",
         "libraries/tools/kotlin-gradle-plugin-npm-versions-codegen",
         "libraries/tools/kotlin-gradle-plugin-tcs-android",
         "libraries/tools/kotlin-gradle-plugin-test-utils-embeddable",

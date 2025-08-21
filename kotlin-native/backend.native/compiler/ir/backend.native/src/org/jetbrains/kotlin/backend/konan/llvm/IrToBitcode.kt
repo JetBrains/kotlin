@@ -18,6 +18,9 @@ import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.objc.processBindClassToObjCNameAnnotations
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.builtins.UnsignedType
+import org.jetbrains.kotlin.config.nativeBinaryOptions.AndroidProgramType
+import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
+import org.jetbrains.kotlin.config.nativeBinaryOptions.SourceInfoType
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -2684,6 +2687,10 @@ internal class CodeGeneratorVisitor(
         overrideRuntimeGlobal("Kotlin_swiftExport", llvm.constInt32(if (context.config.swiftExport) 1 else 0))
         overrideRuntimeGlobal("Kotlin_latin1Strings", llvm.constInt32(if (context.config.latin1Strings) 1 else 0))
         overrideRuntimeGlobal("Kotlin_mmapTag", llvm.constUInt8(context.config.mmapTag))
+        val minidumpLocation = context.config.minidumpLocation?.let {
+            llvm.staticData.cStringLiteral(it)
+        } ?: constValue(llvm.kNullInt8Ptr)
+        overrideRuntimeGlobal("Kotlin_minidumpLocation", minidumpLocation)
     }
 
     //-------------------------------------------------------------------------//

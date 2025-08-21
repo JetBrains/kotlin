@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  */
 internal class InlineFunctionBodyPreprocessor(
     val typeArguments: Map<IrTypeParameterSymbol, IrType?>,
-    val strategy: CallInlinerStrategy,
 ) {
     @Suppress("UNCHECKED_CAST")
     private val parametersToSubstitute: Map<IrTypeParameterSymbol, IrType> =
@@ -170,7 +169,9 @@ internal class InlineFunctionBodyPreprocessor(
             return copier.typeOfNodes[expression]?.let { oldType ->
                 // We should neither erase nor substitute non-reified type parameters in the `typeOf` call so that reflection is able
                 // to create a proper KTypeParameter for it. See KT-60175, KT-30279.
-                strategy.postProcessTypeOf(expression, nonReifiedTypeParameterUnsubsitutor.substitute(oldType))
+                expression.apply {
+                    typeArguments[0] = nonReifiedTypeParameterUnsubsitutor.substitute(oldType)
+                }
             } ?: expression
         }
     }

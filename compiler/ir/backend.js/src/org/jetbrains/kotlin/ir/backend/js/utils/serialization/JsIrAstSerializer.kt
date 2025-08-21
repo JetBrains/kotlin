@@ -415,6 +415,11 @@ private class JsIrAstSerializer {
                 writeInt(x.value)
             }
 
+            override fun visitBigInt(x: JsBigIntLiteral) {
+                writeByte(ExpressionIds.BIGINT_LITERAL)
+                writeByteArray(x.value.toByteArray())
+            }
+
             override fun visitDouble(x: JsDoubleLiteral) {
                 writeByte(ExpressionIds.DOUBLE_LITERAL)
                 writeDouble(x.value)

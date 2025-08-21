@@ -96,7 +96,7 @@ object BuiltinMethodsWithDifferentJvmName {
 object ClassicBuiltinSpecialProperties {
     fun FirCallableSymbol<*>.getBuiltinSpecialPropertyGetterName(containingScope: FirTypeScope): String? {
         val overridden = findBuiltinSpecialPropertyFqName(this, containingScope) ?: return null
-        return BuiltinSpecialProperties.PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP[overridden.callableId.asSingleFqName()]?.asString()
+        return BuiltinSpecialProperties.PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP[overridden.callableId!!.asSingleFqName()]?.asString()
     }
 
     fun findBuiltinSpecialPropertyFqName(symbol: FirCallableSymbol<*>, containingScope: FirTypeScope): FirCallableSymbol<*>? {
@@ -106,7 +106,7 @@ object ClassicBuiltinSpecialProperties {
     }
 
     private fun FirCallableSymbol<*>.hasBuiltinSpecialPropertyFqNameImpl(containingScope: FirTypeScope): FirCallableSymbol<*>? {
-        if (callableId.asSingleFqName() in BuiltinSpecialProperties.SPECIAL_FQ_NAMES && valueParametersAreEmpty()) return this
+        if (callableId!!.asSingleFqName() in BuiltinSpecialProperties.SPECIAL_FQ_NAMES && valueParametersAreEmpty()) return this
         // if (!KotlinBuiltIns.isBuiltIn(this)) return false
         var result: FirCallableSymbol<*>? = null
 

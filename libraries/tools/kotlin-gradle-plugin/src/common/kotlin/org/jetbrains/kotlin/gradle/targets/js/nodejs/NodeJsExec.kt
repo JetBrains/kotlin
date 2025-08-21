@@ -8,14 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.nodejs
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.AbstractExecTask
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.Optional
-import org.gradle.api.tasks.PathSensitive
-import org.gradle.api.tasks.PathSensitivity
-import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
@@ -169,7 +162,7 @@ constructor(
         }
 
         @Deprecated(
-            "Use create(KotlinJsIrCompilation, name, configuration)",
+            "Use create(KotlinJsIrCompilation, name, configuration). Scheduled for removal in Kotlin 2.4.",
             replaceWith = ReplaceWith("create(compilation, name, configuration)"),
             level = DeprecationLevel.HIDDEN
         )
@@ -185,7 +178,7 @@ constructor(
             )
 
         @Deprecated(
-            "Use register instead",
+            "Use register instead. Scheduled for removal in Kotlin 2.4.",
             ReplaceWith("register(compilation, name, configuration)")
         )
         fun create(

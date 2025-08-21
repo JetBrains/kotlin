@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -31,11 +31,13 @@ class ConeContractRenderer : KtContractDescriptionVisitor<Unit, Nothing?, ConeKo
         val prefix = when (contractDescription) {
             is FirResolvedContractDescription -> "R|"
             is FirErrorContractDescription -> "E|"
-            else -> ""
+            is FirLazyContractDescription -> "L|"
+            is FirLegacyRawContractDescription, is FirRawContractDescription -> ""
         }
 
         printer.print("[${prefix}Contract description]")
         when (contractDescription) {
+            is FirLazyContractDescription -> {}
             is FirLegacyRawContractDescription -> render(contractDescription)
             is FirRawContractDescription -> render(contractDescription)
             is FirResolvedContractDescription -> {

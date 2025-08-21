@@ -55,7 +55,9 @@ enum class F <!REDUNDANT_VISIBILITY_MODIFIER!>private<!> constructor(val x: Int)
 }
 
 sealed class G constructor(val y: Int) {
-    <!REDUNDANT_VISIBILITY_MODIFIER!>private<!> constructor(): this(42)
+    private constructor(): this(42)
+
+    <!REDUNDANT_VISIBILITY_MODIFIER!>protected<!> constructor(x: Double): this(x.toInt())
 
     object H : G()
 }

@@ -100,6 +100,7 @@ internal fun Project.registerKotlinPluginExtensions() {
             register(project, SetUpMultiplatformJvmResourcesPublicationAction)
             register(project, SetUpMultiplatformAndroidAssetsAndResourcesPublicationAction)
             register(project, SetUpSwiftExportAction)
+            register(project, ConfigureKotlinTopLevelDependenciesDSL)
 
             if (isKmpProjectIsolationEnabled) {
                 register(project, ProjectStructureMetadataForKMPSetupAction)
@@ -185,11 +186,13 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, ComposePluginSuggestApplyChecker)
         register(project, AndroidPublicationNotConfiguredChecker)
         register(project, KonanHomeConflictDeclarationChecker)
+        register(project, KmpPartiallyResolvedDependenciesChecker)
 
         if (isMultiplatform) {
             register(project, NativeVersionChecker)
             register(project, MultipleSourceSetRootsInCompilationChecker)
             register(project, SwiftExportModuleNameChecker)
+            register(project, CinteropCrossCompilationChecker)
         }
     }
 }

@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.library.encodings
 
 import org.junit.Assert.*
 import org.junit.Test
-import java.lang.Character.*
+import java.lang.Character.MAX_CODE_POINT
+import java.lang.Character.MIN_CODE_POINT
+import java.lang.Character.MIN_SUPPLEMENTARY_CODE_POINT
 import kotlin.experimental.and
 import kotlin.experimental.inv
 import kotlin.experimental.or
@@ -152,9 +154,9 @@ class WobblyTF8Test {
         fun ByteArray.decodeWithWobbly(): String = WobblyTF8.decode(this)
         fun ByteArray.decodeWithUTF8(): String = toString(Charsets.UTF_8)
 
-        val CODE_POINTS_BEFORE_SURROGATES = MIN_CODE_POINT until MIN_SURROGATE.code
-        val CODE_POINTS_SURROGATES = MIN_SURROGATE.code..MAX_SURROGATE.code
-        val CODE_POINTS_AFTER_SURROGATES = (MAX_SURROGATE.code + 1) until MIN_SUPPLEMENTARY_CODE_POINT
+        val CODE_POINTS_BEFORE_SURROGATES = MIN_CODE_POINT until Char.MIN_SURROGATE.code
+        val CODE_POINTS_SURROGATES = Char.MIN_SURROGATE.code..Char.MAX_SURROGATE.code
+        val CODE_POINTS_AFTER_SURROGATES = (Char.MAX_SURROGATE.code + 1) until MIN_SUPPLEMENTARY_CODE_POINT
         val CODE_POINTS_SUPPLEMENTARY = MIN_SUPPLEMENTARY_CODE_POINT..MAX_CODE_POINT
 
         fun generateWellFormedString(

@@ -10,7 +10,8 @@ dependencies {
     api(kotlinStdlib())
     compileOnly(project(":kotlin-tooling-core")) // to reuse `KotlinToolingVersion`
     compileOnly(project(":compiler:build-tools:kotlin-build-tools-api"))
-    api(projectTests(":compiler:test-infrastructure-utils")) // for `@TestDataPath`/`@TestMetadata`
+    compileOnly(project(":compiler:build-tools:kotlin-build-tools-compat"))
+    api(testFixtures(project(":compiler:test-infrastructure-utils"))) // for `@TestDataPath`/`@TestMetadata`
 
     api(platform(libs.junit.bom))
     compileOnly(libs.junit.jupiter.engine)
@@ -70,7 +71,7 @@ val businessLogicTestSuits = setOf(
     "testEscapableCharacters",
     "testInputChangesTracking",
     "testCrossModuleIncrementalChanges",
-    "testFirRunner"
+    "testFirRunner",
 )
 
 testing {
@@ -87,6 +88,7 @@ testing {
                     configuredIdeaSourceSets = true
                 }
                 dependencies {
+                    runtimeOnly(project(":compiler:build-tools:kotlin-build-tools-compat"))
                     if (implVersion.isCurrent) {
                         runtimeOnly(project(":compiler:build-tools:kotlin-build-tools-impl"))
                     } else {
@@ -113,6 +115,7 @@ testing {
                 }
                 implementation(project(":kotlin-tooling-core"))
                 implementation(project(":compiler:build-tools:kotlin-build-tools-api"))
+                runtimeOnly(project(":compiler:build-tools:kotlin-build-tools-compat"))
                 if (isRegular) {
                     runtimeOnly(project(":compiler:build-tools:kotlin-build-tools-impl"))
                 }

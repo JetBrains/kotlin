@@ -17,6 +17,7 @@ import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.tasks.testing.filter.DefaultTestFilter
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.tasks.ClasspathNormalizer
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
@@ -34,7 +35,6 @@ import java.lang.management.ManagementFactory
 import java.nio.file.Files
 import java.nio.file.Path
 import javax.inject.Inject
-import kotlin.collections.toTypedArray
 
 val kotlinGradlePluginAndItsRequired = arrayOf(
     ":kotlin-assignment",
@@ -59,7 +59,6 @@ val kotlinGradlePluginAndItsRequired = arrayOf(
     ":kotlin-gradle-plugin-idea",
     ":kotlin-gradle-plugin-idea-proto",
     ":kotlin-gradle-plugin",
-    ":kotlin-gradle-plugin-model",
     ":kotlin-tooling-metadata",
     ":kotlin-tooling-core",
     ":kotlin-reflect",
@@ -97,6 +96,7 @@ val kotlinGradlePluginAndItsRequired = arrayOf(
     ":libraries:tools:abi-validation:abi-tools",
     ":kotlin-metadata-jvm",
     ":gradle:kotlin-gradle-ecosystem-plugin",
+    ":kotlin-klib-abi-reader",
 )
 
 fun Task.dependsOnKotlinGradlePluginInstall() {
@@ -258,12 +258,14 @@ fun Project.projectTest(
 
         if (shouldInstrument) {
             val instrumentationArgsProperty = project.providers.gradleProperty("kotlin.test.instrumentation.args")
-            dependsOn(":test-instrumenter:jar")
-            val testInstrumenterOutput = project.rootProject.subprojects.single { it.path == ":test-instrumenter" }
-                .tasks.named("jar")
-                .map { it.outputs.files.singleFile }
+            val testInstrumenterJar: FileCollection =
+                configurations.detachedConfiguration(dependencies.create(dependencies.project(":test-instrumenter")))
+                    .also { it.isTransitive = false }
+            inputs.files(testInstrumenterJar)
+                .withNormalizer(ClasspathNormalizer::class)
+                .withPropertyName("testInstrumenterClasspath")
             doFirst {
-                val agent = testInstrumenterOutput.get()
+                val agent = testInstrumenterJar.singleFile
                 val args = instrumentationArgsProperty.orNull?.let { "=$it" }.orEmpty()
                 jvmArgs("-javaagent:$agent$args")
             }

@@ -99,6 +99,8 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] T of <root>.A?, @[FlexibleNullability] T of <root>.A?>
       VALUE_PARAMETER kind:Regular name:key index:1 type:@[FlexibleNullability] T of <root>.A?
       VALUE_PARAMETER kind:Regular name:value index:2 type:@[FlexibleNullability] T of <root>.A?
+      annotations:
+        IgnorableReturnValue
       overridden:
         public abstract fun put (key: @[FlexibleNullability] T of <root>.Java1?, value: @[FlexibleNullability] T of <root>.Java1?): T of <root>.Java1? declared in <root>.Java1
     FUN FAKE_OVERRIDE name:putAll visibility:public modality:ABSTRACT returnType:kotlin.Unit [fake_override]
@@ -115,6 +117,8 @@ FILE fqName:<root> fileName:/1.kt
     FUN FAKE_OVERRIDE name:remove visibility:public modality:ABSTRACT returnType:T of <root>.A? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] T of <root>.A?, @[FlexibleNullability] T of <root>.A?>
       VALUE_PARAMETER kind:Regular name:key index:1 type:@[FlexibleNullability] T of <root>.A?
+      annotations:
+        IgnorableReturnValue
       overridden:
         public abstract fun remove (key: @[FlexibleNullability] T of <root>.Java1?): T of <root>.Java1? declared in <root>.Java1
     FUN FAKE_OVERRIDE name:remove visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
@@ -317,6 +321,8 @@ FILE fqName:<root> fileName:/1.kt
     FUN FAKE_OVERRIDE name:remove visibility:public modality:ABSTRACT returnType:T of <root>.B? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] T of <root>.B?, @[FlexibleNullability] T of <root>.B?>
       VALUE_PARAMETER kind:Regular name:key index:1 type:@[FlexibleNullability] T of <root>.B?
+      annotations:
+        IgnorableReturnValue
       overridden:
         public abstract fun remove (key: @[FlexibleNullability] T of <root>.Java1?): T of <root>.Java1? declared in <root>.Java1
     FUN FAKE_OVERRIDE name:replace visibility:public modality:OPEN returnType:@[EnhancedNullability] T of <root>.B? [fake_override]

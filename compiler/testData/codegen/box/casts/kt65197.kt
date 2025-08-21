@@ -2,8 +2,6 @@
 // WITH_STDLIB
 // KT-65402
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6
-// KT-65403
-// IGNORE_BACKEND: WASM
 
 private fun <T> some(): T =
     Some1() as T
@@ -19,7 +17,7 @@ fun box(): String {
         some<Some2>()
     } catch(cce: ClassCastException) {
         val message = cce.toString()
-        return if (Regex(".*Some1 cannot be cast to .*Some2.*").matches(message))
+        return if (Regex(".*Some1( cannot be cast)? to .*Some2.*").matches(message))
             "OK"
         else
             message

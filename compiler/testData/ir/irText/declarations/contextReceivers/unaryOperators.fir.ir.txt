@@ -68,7 +68,7 @@ FILE fqName:<root> fileName:/unaryOperators.kt
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Result'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.Result [val]
-          TYPE_OP type=<root>.Result origin=CAST typeOperand=<root>.Result
+          TYPE_OP type=<root>.Result origin=IMPLICIT_CAST typeOperand=<root>.Result
             GET_VAR 'other: kotlin.Any? declared in <root>.Result.equals' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH

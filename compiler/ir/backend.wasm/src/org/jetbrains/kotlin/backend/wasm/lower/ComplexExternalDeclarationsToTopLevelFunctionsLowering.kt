@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.wasm.utils.getWasmImportDescriptor
 import org.jetbrains.kotlin.backend.wasm.getInstanceFunctionForExternalObject
 import org.jetbrains.kotlin.backend.wasm.instanceCheckForExternalClass
 import org.jetbrains.kotlin.backend.wasm.getJsClassForExternalClass
+import org.jetbrains.kotlin.backend.wasm.utils.getJsBuiltinDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -237,7 +238,7 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
     fun processExternalSimpleFunction(function: IrSimpleFunction) {
         // Skip JS interop adapters form WasmImport.
         // It needs to keep original signature to interop with other Wasm modules.
-        if (function.getWasmImportDescriptor() != null)
+        if (function.getWasmImportDescriptor() != null || function.getJsBuiltinDescriptor() != null)
             return
 
         val jsFun = function.getJsFunAnnotation()
@@ -452,8 +453,10 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
         }
 
         val qualifierReference = JsModuleAndQualifierReference(module, qualifier)
-        context.getFileContext(currentFile).jsModuleAndQualifierReferences += qualifierReference
-        return name?.toSavePropertyAccess(qualifierReference.jsVariableName) ?: qualifierReference.jsVariableName
+        if (module != null) {
+            context.getFileContext(currentFile).jsModuleAndQualifierReferences += qualifierReference
+        }
+        return name?.toSavePropertyAccess(qualifierReference.jsReference) ?: qualifierReference.jsReference
     }
 }
 

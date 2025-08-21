@@ -16,14 +16,17 @@ import kotlin.wasm.internal.returnArgumentIfItIsKotlinAny
  * When passed back to Kotlin/Wasm, the original value can be retrieved using the [get] method.
  */
 @Suppress("WRONG_JS_INTEROP_TYPE")  // Exception to the rule
-public sealed external interface JsReference<out T : Any> : JsAny
+@ExperimentalWasmJsInterop
+public actual sealed external interface JsReference<out T : Any> : JsAny
 
 @WasmOp(WasmOp.EXTERN_EXTERNALIZE)
-public fun <T : Any> T.toJsReference(): JsReference<T> =
+@ExperimentalWasmJsInterop
+public actual fun <T : Any> T.toJsReference(): JsReference<T> =
     implementedAsIntrinsic
 
 /** Retrieve original Kotlin value from JsReference */
-public fun <T : Any> JsReference<T>.get(): T {
+@ExperimentalWasmJsInterop
+public actual fun <T : Any> JsReference<T>.get(): T {
     returnArgumentIfItIsKotlinAny()
     throw ClassCastException("JsReference doesn't contain a Kotlin type")
 }

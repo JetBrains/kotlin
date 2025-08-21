@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.cli.pipeline.web.js.JsConfigurationUpdater
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmConfigurationUpdater
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
+import org.jetbrains.kotlin.incremental.components.ICFileMappingTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker
@@ -117,13 +118,6 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
         services: Services,
     ) {
         val messageCollector = configuration.messageCollector
-        @Suppress("DEPRECATION")
-        if (arguments.typedArrays) {
-            messageCollector.report(
-                WARNING,
-                "The '-Xtyped-arrays' command line option does nothing and will be removed in Kotlin 2.3"
-            )
-        }
 
         if (arguments.generateDwarf) {
             configuration.put(WasmConfigurationKeys.WASM_GENERATE_DWARF, true)
@@ -176,6 +170,7 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
         configuration.incrementalNextRoundChecker = services[IncrementalNextRoundChecker::class.java]
         configuration.lookupTracker = services[LookupTracker::class.java]
         configuration.expectActualTracker = services[ExpectActualTracker::class.java]
+        configuration.fileMappingTracker = services[ICFileMappingTracker::class.java]
 
         val sourceMapEmbedContentString = arguments.sourceMapEmbedSources
         var sourceMapContentEmbedding: SourceMapSourceEmbedding? = if (sourceMapEmbedContentString != null) {

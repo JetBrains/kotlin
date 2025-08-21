@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
+import org.jetbrains.kotlin.js.config.compileLongAsBigint
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.atMostOne
 
@@ -24,6 +25,7 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
     private val intrinsics = context.intrinsics
     private val irBuiltIns = context.irBuiltIns
     private val icUtils = context.inlineClassesUtils
+    private val longAsBigInt = context.configuration.compileLongAsBigint
 
     private val symbolToTransformer: SymbolToTransformer = hashMapOf()
 
@@ -49,15 +51,19 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
     }
 
     private fun transformLongComparison(comparator: IrSimpleFunctionSymbol): (IrFunctionAccessExpression) -> IrExpression = { call ->
-        IrCallImpl(
-            call.startOffset,
-            call.endOffset,
-            comparator.owner.returnType,
-            comparator,
-            typeArgumentsCount = 0
-        ).apply {
-            arguments[0] = irCall(call, intrinsics.longCompareToLong)
-            arguments[1] = JsIrBuilder.buildInt(irBuiltIns.intType, 0)
+        if (longAsBigInt) {
+            irCall(call, comparator)
+        } else {
+            IrCallImpl(
+                call.startOffset,
+                call.endOffset,
+                comparator.owner.returnType,
+                comparator,
+                typeArgumentsCount = 0
+            ).apply {
+                arguments[0] = irCall(call, intrinsics.longCompareToLong!!)
+                arguments[1] = JsIrBuilder.buildInt(irBuiltIns.intType, 0)
+            }
         }
     }
 
@@ -109,6 +115,12 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
             // For non-float primitives of the same type use JS `==`
             lhsJsType == rhsJsType && lhsJsType.canBeUsedWithJsEq() ->
                 chooseEqualityOperatorForPrimitiveTypes(call)
+
+            lhs.type.isLong() && rhs.type.isLong() -> if (longAsBigInt) {
+                chooseEqualityOperatorForPrimitiveTypes(call)
+            } else {
+                irCall(call, intrinsics.longEquals!!)
+            }
 
             !lhsJsType.isBuiltin() && !lhs.type.isNullable() && equalsMethod != null ->
                 irCall(call, equalsMethod.symbol)
@@ -184,6 +196,27 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
             .filter { it.isEqualsInheritedFromAny() && !it.isFakeOverriddenFromAny() }
             .atMostOne()
     }
+
+    private enum class PrimitiveType {
+        FLOATING_POINT_NUMBER,
+        INTEGER_NUMBER,
+        BIGINT_NUMBER,
+        STRING,
+        BOOLEAN,
+        OTHER
+    }
+
+    private fun IrType.getPrimitiveType() = makeNotNull().run {
+        when {
+            isBoolean() -> PrimitiveType.BOOLEAN
+            isByte() || isShort() || isInt() -> PrimitiveType.INTEGER_NUMBER
+            isFloat() || isDouble() -> PrimitiveType.FLOATING_POINT_NUMBER
+            isString() -> PrimitiveType.STRING
+            isLong() && longAsBigInt -> PrimitiveType.BIGINT_NUMBER
+            else -> PrimitiveType.OTHER
+        }
+    }
+
 
     private fun IrFunction.isMethodOfPrimitiveJSType() =
         dispatchReceiverParameter?.let {

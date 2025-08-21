@@ -10,27 +10,18 @@ import org.jetbrains.kotlin.KtIoFileSourceFile
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.KtVirtualFileSourceFile
-import org.jetbrains.kotlin.backend.common.checkers.IrInlineDeclarationChecker
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibSingleFileMetadataSerializer
 import org.jetbrains.kotlin.backend.common.serialization.metadata.serializeKlibHeader
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.forcesPreReleaseBinariesIfEnabled
-import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.impl.deduplicating
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.validation.checkers.IrInlineDeclarationChecker
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.konan.properties.Properties
-import org.jetbrains.kotlin.library.KLIB_PROPERTY_MANUALLY_ALTERED_LANGUAGE_FEATURES
-import org.jetbrains.kotlin.library.KLIB_PROPERTY_MANUALLY_ENABLED_POISONING_LANGUAGE_FEATURES
-import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.SerializedIrFile
-import org.jetbrains.kotlin.library.SerializedIrModule
-import org.jetbrains.kotlin.library.SerializedMetadata
+import org.jetbrains.kotlin.library.*
 import java.io.File
 
 /**
@@ -202,11 +193,12 @@ fun <Dependency : KotlinLibrary, SourceFile> serializeModuleIntoKlib(
 }
 
 fun addLanguageFeaturesToManifest(manifestProperties: Properties, languageVersionSettings: LanguageVersionSettings) {
-    val enabledFeatures = languageVersionSettings.getManuallyEnabledLanguageFeatures()
-
+    val enabledFeatures = languageVersionSettings.getCustomizedEffectivelyEnabledLanguageFeatures()
     val presentableEnabledFeatures = enabledFeatures.sortedBy(LanguageFeature::name).joinToString(" ") { "+$it" }
-    val presentableDisabledFeatures =
-        languageVersionSettings.getManuallyDisabledLanguageFeatures().sortedBy(LanguageFeature::name).joinToString(" ") { "-$it" }
+
+    val disabledFeatures = languageVersionSettings.getCustomizedEffectivelyDisabledLanguageFeatures()
+    val presentableDisabledFeatures = disabledFeatures.sortedBy(LanguageFeature::name).joinToString(" ") { "-$it" }
+
     val presentableAlteredFeatures = "$presentableEnabledFeatures $presentableDisabledFeatures".trim()
     if (presentableAlteredFeatures.isNotBlank()) {
         manifestProperties.setProperty(KLIB_PROPERTY_MANUALLY_ALTERED_LANGUAGE_FEATURES, presentableAlteredFeatures)

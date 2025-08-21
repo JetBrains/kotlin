@@ -18,7 +18,9 @@
     <artifactId>kotlin-maven-power-assert</artifactId>
     <packaging>jar</packaging>
 
+    <name>Kotlin Maven Power-assert</name>
     <description>Power-assert plugin for Maven</description>
+    <url>https://kotlinlang.org/</url>
 
     <dependencies>
         <dependency>

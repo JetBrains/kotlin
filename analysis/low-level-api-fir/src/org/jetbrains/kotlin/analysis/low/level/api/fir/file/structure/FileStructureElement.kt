@@ -13,26 +13,31 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveCompone
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirResolvableSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.body
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isPartialBodyResolvable
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findStringPlusSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isPartialAnalyzable
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isPartialBodyResolvable
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
-import org.jetbrains.kotlin.fir.expressions.FirBlock
-import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirLazyBlock
+import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.realPsi
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.fir.expressions.FirStringConcatenationCall
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
+import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.toKtPsiSourceElement
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /**
@@ -73,9 +78,7 @@ internal class KtToFirMapping(private val elementMapper: LLElementMapper) {
         ): FirElement? {
             var current: PsiElement? = element
             var fir: FirElement? = null
-            while (fir == null &&
-                (current is KtBinaryExpression || current is KtParenthesizedExpression || current is KtOperationReferenceExpression)
-            ) {
+            while (fir == null && (current is KtBinaryExpression || current is KtOperationReferenceExpression)) {
                 fir = mapping[current]
                 if (fir is FirStringConcatenationCall && fir.isFoldedStrings) {
                     // In case of folded string literals, we have to return plus operator reference for operation reference.
@@ -101,6 +104,60 @@ internal class KtToFirMapping(private val elementMapper: LLElementMapper) {
             return null
         }
 
+        /**
+         * If [element] is a reference with the name "suspend", returns a fake [FirResolvedNamedReference] to `kotlin.suspend`.
+         */
+        private fun fakeReferenceToBuiltInSuspendOrNull(
+            element: KtElement,
+            session: FirSession,
+        ): FirResolvedNamedReference? {
+            if (element !is KtNameReferenceExpression) return null
+            if (element.getReferencedName() != StandardClassIds.Callables.suspend.callableName.identifier) return null
+
+            return session.symbolProvider
+                .getTopLevelCallableSymbols(
+                    packageFqName = StandardClassIds.Callables.suspend.packageName,
+                    name = StandardClassIds.Callables.suspend.callableName
+                )
+                .singleOrNull()
+                ?.let {
+                    buildResolvedNamedReference {
+                        source = element.toKtPsiSourceElement()
+                        name = StandardClassIds.Callables.suspend.callableName
+                        resolvedSymbol = it
+                    }
+                }
+        }
+
+        private fun fakeCallToBuiltInSuspendOrNull(
+            call: KtCallExpression,
+            mapping: Map<KtElement, FirElement>,
+            session: FirSession,
+        ): FirFunctionCall? {
+            val calleeExpression = call.calleeExpression ?: return null
+            val lambdaArgument = call.lambdaArguments.firstOrNull()?.getLambdaExpression() ?: return null
+            val argument = mapping[lambdaArgument] as? FirAnonymousFunctionExpression ?: return null
+            val reference = fakeReferenceToBuiltInSuspendOrNull(calleeExpression, session) ?: return null
+            val symbol = reference.resolvedSymbol as? FirFunctionSymbol ?: return null
+            val valueParameter = symbol.valueParameterSymbols.singleOrNull() ?: return null
+            return buildFunctionCall {
+                calleeReference = reference
+                source = call.toKtPsiSourceElement()
+                argumentList = buildResolvedArgumentList(
+                    original = null,
+                    mapping = LinkedHashMap<FirExpression, FirValueParameter>().apply {
+                        put(argument, valueParameter.fir)
+                    }
+                )
+                typeArguments += buildTypeProjectionWithVariance {
+                    typeRef = buildResolvedTypeRef {
+                        coneType = argument.anonymousFunction.returnTypeRef.coneType
+                    }
+                    variance = Variance.INVARIANT
+                }
+            }
+        }
+
         fun getFir(element: KtElement, session: FirSession, mapping: Map<KtElement, FirElement>): FirElement? {
             var current: PsiElement? = element
             while (
@@ -113,6 +170,9 @@ internal class KtToFirMapping(private val elementMapper: LLElementMapper) {
                 // We are still referring to the same element with possible type parameter/name qualification/nullability,
                 // hence it is always correct to return a corresponding element if present
                 if (current is KtElement) mapping[current]?.let { return it }
+                if (current is KtCallExpression) fakeCallToBuiltInSuspendOrNull(current, mapping, session)?.let {
+                    return it
+                }
                 current = current.parent
             }
 
@@ -153,7 +213,7 @@ internal class KtToFirMapping(private val elementMapper: LLElementMapper) {
                     ) {
                         mapping[parent]
                     } else {
-                        mapping[current]
+                        mapping[current] ?: fakeReferenceToBuiltInSuspendOrNull(element, session)
                     }
                 }
                 is KtParenthesizedExpression -> checkStringLiteralFolderExpression(element, session, mapping)

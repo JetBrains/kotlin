@@ -792,6 +792,7 @@ public inline fun <T> Iterable<T>.filterIndexed(predicate: (index: Int, T) -> Bo
  * 
  * @sample samples.collections.Collections.Filtering.filterIndexedTo
  */
+@IgnorableReturnValue
 public inline fun <T, C : MutableCollection<in T>> Iterable<T>.filterIndexedTo(destination: C, predicate: (index: Int, T) -> Boolean): C {
     forEachIndexed { index, element ->
         if (predicate(index, element)) destination.add(element)
@@ -813,6 +814,7 @@ public inline fun <reified R> Iterable<*>.filterIsInstance(): List<@kotlin.inter
  * 
  * @sample samples.collections.Collections.Filtering.filterIsInstanceTo
  */
+@IgnorableReturnValue
 public inline fun <reified R, C : MutableCollection<in R>> Iterable<*>.filterIsInstanceTo(destination: C): C {
     for (element in this) if (element is R) destination.add(element)
     return destination
@@ -841,6 +843,7 @@ public fun <T : Any> Iterable<T?>.filterNotNull(): List<T> {
  * 
  * @sample samples.collections.Collections.Filtering.filterNotNullTo
  */
+@IgnorableReturnValue
 public fun <C : MutableCollection<in T>, T : Any> Iterable<T?>.filterNotNullTo(destination: C): C {
     for (element in this) if (element != null) destination.add(element)
     return destination
@@ -851,6 +854,7 @@ public fun <C : MutableCollection<in T>, T : Any> Iterable<T?>.filterNotNullTo(d
  * 
  * @sample samples.collections.Collections.Filtering.filterTo
  */
+@IgnorableReturnValue
 public inline fun <T, C : MutableCollection<in T>> Iterable<T>.filterNotTo(destination: C, predicate: (T) -> Boolean): C {
     for (element in this) if (!predicate(element)) destination.add(element)
     return destination
@@ -861,6 +865,7 @@ public inline fun <T, C : MutableCollection<in T>> Iterable<T>.filterNotTo(desti
  * 
  * @sample samples.collections.Collections.Filtering.filterTo
  */
+@IgnorableReturnValue
 public inline fun <T, C : MutableCollection<in T>> Iterable<T>.filterTo(destination: C, predicate: (T) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
     return destination
@@ -946,7 +951,7 @@ public inline fun <T> List<T>.takeLastWhile(predicate: (T) -> Boolean): List<T> 
     val iterator = listIterator(size)
     while (iterator.hasPrevious()) {
         if (!predicate(iterator.previous())) {
-            iterator.next()
+            val _ = iterator.next()
             val expectedSize = size - iterator.nextIndex()
             if (expectedSize == 0) return emptyList()
             return ArrayList<T>(expectedSize).apply {
@@ -1232,6 +1237,7 @@ public inline fun <T, K, V> Iterable<T>.associateBy(keySelector: (T) -> K, value
  * 
  * @sample samples.collections.Collections.Transformations.associateByTo
  */
+@IgnorableReturnValue
 public inline fun <T, K, M : MutableMap<in K, in T>> Iterable<T>.associateByTo(destination: M, keySelector: (T) -> K): M {
     for (element in this) {
         destination.put(keySelector(element), element)
@@ -1248,6 +1254,7 @@ public inline fun <T, K, M : MutableMap<in K, in T>> Iterable<T>.associateByTo(d
  * 
  * @sample samples.collections.Collections.Transformations.associateByToWithValueTransform
  */
+@IgnorableReturnValue
 public inline fun <T, K, V, M : MutableMap<in K, in V>> Iterable<T>.associateByTo(destination: M, keySelector: (T) -> K, valueTransform: (T) -> V): M {
     for (element in this) {
         destination.put(keySelector(element), valueTransform(element))
@@ -1263,6 +1270,7 @@ public inline fun <T, K, V, M : MutableMap<in K, in V>> Iterable<T>.associateByT
  * 
  * @sample samples.collections.Collections.Transformations.associateTo
  */
+@IgnorableReturnValue
 public inline fun <T, K, V, M : MutableMap<in K, in V>> Iterable<T>.associateTo(destination: M, transform: (T) -> Pair<K, V>): M {
     for (element in this) {
         destination += transform(element)
@@ -1295,6 +1303,7 @@ public inline fun <K, V> Iterable<K>.associateWith(valueSelector: (K) -> V): Map
  * @sample samples.collections.Collections.Transformations.associateWithTo
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> Iterable<K>.associateWithTo(destination: M, valueSelector: (K) -> V): M {
     for (element in this) {
         destination.put(element, valueSelector(element))
@@ -1305,6 +1314,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> Iterable<K>.associateWithTo
 /**
  * Appends all elements to the given [destination] collection.
  */
+@IgnorableReturnValue
 public fun <T, C : MutableCollection<in T>> Iterable<T>.toCollection(destination: C): C {
     for (item in this) {
         destination.add(item)
@@ -1425,6 +1435,7 @@ public inline fun <T, R> Iterable<T>.flatMapIndexed(transform: (index: Int, T) -
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("flatMapIndexedIterableTo")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapIndexedTo(destination: C, transform: (index: Int, T) -> Iterable<R>): C {
     var index = 0
@@ -1443,6 +1454,7 @@ public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapIndexed
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("flatMapIndexedSequenceTo")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapIndexedTo(destination: C, transform: (index: Int, T) -> Sequence<R>): C {
     var index = 0
@@ -1456,6 +1468,7 @@ public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapIndexed
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original collection, to the given [destination].
  */
+@IgnorableReturnValue
 public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(destination: C, transform: (T) -> Iterable<R>): C {
     for (element in this) {
         val list = transform(element)
@@ -1471,6 +1484,7 @@ public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(dest
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("flatMapSequenceTo")
+@IgnorableReturnValue
 public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(destination: C, transform: (T) -> Sequence<R>): C {
     for (element in this) {
         val list = transform(element)
@@ -1512,6 +1526,7 @@ public inline fun <T, K, V> Iterable<T>.groupBy(keySelector: (T) -> K, valueTran
  * 
  * @sample samples.collections.Collections.Transformations.groupBy
  */
+@IgnorableReturnValue
 public inline fun <T, K, M : MutableMap<in K, MutableList<T>>> Iterable<T>.groupByTo(destination: M, keySelector: (T) -> K): M {
     for (element in this) {
         val key = keySelector(element)
@@ -1530,6 +1545,7 @@ public inline fun <T, K, M : MutableMap<in K, MutableList<T>>> Iterable<T>.group
  * 
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
+@IgnorableReturnValue
 public inline fun <T, K, V, M : MutableMap<in K, MutableList<V>>> Iterable<T>.groupByTo(destination: M, keySelector: (T) -> K, valueTransform: (T) -> V): M {
     for (element in this) {
         val key = keySelector(element)
@@ -1589,6 +1605,7 @@ public inline fun <T, R : Any> Iterable<T>.mapIndexedNotNull(transform: (index: 
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
+@IgnorableReturnValue
 public inline fun <T, R : Any, C : MutableCollection<in R>> Iterable<T>.mapIndexedNotNullTo(destination: C, transform: (index: Int, T) -> R?): C {
     forEachIndexed { index, element -> transform(index, element)?.let { destination.add(it) } }
     return destination
@@ -1600,6 +1617,7 @@ public inline fun <T, R : Any, C : MutableCollection<in R>> Iterable<T>.mapIndex
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
+@IgnorableReturnValue
 public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.mapIndexedTo(destination: C, transform: (index: Int, T) -> R): C {
     var index = 0
     for (item in this)
@@ -1621,6 +1639,7 @@ public inline fun <T, R : Any> Iterable<T>.mapNotNull(transform: (T) -> R?): Lis
  * Applies the given [transform] function to each element in the original collection
  * and appends only the non-null results to the given [destination].
  */
+@IgnorableReturnValue
 public inline fun <T, R : Any, C : MutableCollection<in R>> Iterable<T>.mapNotNullTo(destination: C, transform: (T) -> R?): C {
     forEach { element -> transform(element)?.let { destination.add(it) } }
     return destination
@@ -1630,6 +1649,7 @@ public inline fun <T, R : Any, C : MutableCollection<in R>> Iterable<T>.mapNotNu
  * Applies the given [transform] function to each element of the original collection
  * and appends the results to the given [destination].
  */
+@IgnorableReturnValue
 public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.mapTo(destination: C, transform: (T) -> R): C {
     for (item in this)
         destination.add(transform(item))
@@ -3590,8 +3610,11 @@ public inline fun <T, R> Iterable<T>.zipWithNext(transform: (a: T, b: T) -> R): 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
+ * @return the [buffer] argument with appended elements.
+ * 
  * @sample samples.collections.Collections.Transformations.joinTo
  */
+@IgnorableReturnValue
 public fun <T, A : Appendable> Iterable<T>.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((T) -> CharSequence)? = null): A {
     buffer.append(prefix)
     var count = 0

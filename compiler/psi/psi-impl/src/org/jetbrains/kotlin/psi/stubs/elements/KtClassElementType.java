@@ -26,14 +26,14 @@ import org.jetbrains.kotlin.psi.stubs.impl.Utils;
 import java.io.IOException;
 import java.util.List;
 
-public class KtClassElementType extends KtStubElementType<KotlinClassStub, KtClass> {
+public class KtClassElementType extends KtStubElementType<KotlinClassStubImpl, KtClass> {
     public KtClassElementType(@NotNull @NonNls String debugName) {
         super(debugName, KtClass.class, KotlinClassStub.class);
     }
 
     @NotNull
     @Override
-    public KtClass createPsi(@NotNull KotlinClassStub stub) {
+    public KtClass createPsi(@NotNull KotlinClassStubImpl stub) {
         return !stub.isEnumEntry() ? new KtClass(stub) : new KtEnumEntry(stub);
     }
 
@@ -45,7 +45,7 @@ public class KtClassElementType extends KtStubElementType<KotlinClassStub, KtCla
 
     @NotNull
     @Override
-    public KotlinClassStub createStub(@NotNull KtClass psi, StubElement parentStub) {
+    public KotlinClassStubImpl createStub(@NotNull KtClass psi, StubElement parentStub) {
         FqName fqName = KtPsiUtilKt.safeFqNameForLazyResolve(psi);
         boolean isEnumEntry = psi instanceof KtEnumEntry;
         List<String> superNames = KtPsiUtilKt.getSuperNames(psi);
@@ -57,7 +57,7 @@ public class KtClassElementType extends KtStubElementType<KotlinClassStub, KtCla
     }
 
     @Override
-    public void serialize(@NotNull KotlinClassStub stub, @NotNull StubOutputStream dataStream) throws IOException {
+    public void serialize(@NotNull KotlinClassStubImpl stub, @NotNull StubOutputStream dataStream) throws IOException {
         dataStream.writeName(stub.getName());
 
         FqName fqName = stub.getFqName();
@@ -77,16 +77,13 @@ public class KtClassElementType extends KtStubElementType<KotlinClassStub, KtCla
             dataStream.writeName(name);
         }
 
-        if (stub instanceof KotlinClassStubImpl) {
-            KotlinClassStubImpl stubImpl = (KotlinClassStubImpl) stub;
-            KotlinValueClassRepresentation representation = stubImpl.getValueClassRepresentation();
-            dataStream.writeVarInt(representation == null ? 0 : representation.ordinal() + 1);
-        }
+        KotlinValueClassRepresentation representation = stub.getValueClassRepresentation();
+        dataStream.writeVarInt(representation == null ? 0 : representation.ordinal() + 1);
     }
 
     @NotNull
     @Override
-    public KotlinClassStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
+    public KotlinClassStubImpl deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
         StringRef name = dataStream.readName();
         StringRef qualifiedName = dataStream.readName();
 
@@ -117,7 +114,7 @@ public class KtClassElementType extends KtStubElementType<KotlinClassStub, KtCla
     }
 
     @Override
-    public void indexStub(@NotNull KotlinClassStub stub, @NotNull IndexSink sink) {
+    public void indexStub(@NotNull KotlinClassStubImpl stub, @NotNull IndexSink sink) {
         StubIndexService.getInstance().indexClass(stub, sink);
     }
 

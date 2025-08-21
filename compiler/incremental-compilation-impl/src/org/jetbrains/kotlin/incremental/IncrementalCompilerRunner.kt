@@ -20,13 +20,13 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
-import org.jetbrains.kotlin.compilerRunner.MessageCollectorToOutputItemsCollectorAdapter
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.compilerRunner.toGeneratedFile
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.ChangedFiles.DeterminableFiles
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
+import org.jetbrains.kotlin.incremental.components.ICFileMappingTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.dirtyFiles.DirtyFilesContainer
 import org.jetbrains.kotlin.incremental.dirtyFiles.DirtyFilesProvider
@@ -381,6 +381,7 @@ abstract class IncrementalCompilerRunner<
         args: Args,
         lookupTracker: LookupTracker,
         expectActualTracker: ExpectActualTracker,
+        fileMappingTracker: ICFileMappingTracker,
         caches: CacheManager,
         dirtySources: Set<File>,
         isIncremental: Boolean,
@@ -389,6 +390,7 @@ abstract class IncrementalCompilerRunner<
             register(LookupTracker::class.java, lookupTracker)
             register(ExpectActualTracker::class.java, expectActualTracker)
             register(CompilationCanceledStatus::class.java, EmptyCompilationCanceledStatus)
+            register(ICFileMappingTracker::class.java, fileMappingTracker)
         }
 
     protected abstract fun runCompiler(
@@ -475,6 +477,11 @@ abstract class IncrementalCompilerRunner<
 
             val lookupTracker = LookupTrackerImpl(getLookupTrackerDelegate())
             val expectActualTracker = ExpectActualTrackerImpl()
+
+            val outputItemsCollector = OutputItemsCollectorImpl()
+            val transactionOutputsRegistrar = TransactionOutputsRegistrar(transaction, outputItemsCollector)
+            val fileMappingTracker = ICFileMappingTrackerImpl(transactionOutputsRegistrar)
+
             val (sourcesToCompile, removedKotlinSources) = dirtySources.partition { it.exists() && allKotlinSources.contains(it) }
 
             icContext.fragmentContext?.let {
@@ -484,20 +491,16 @@ abstract class IncrementalCompilerRunner<
             }
 
             val services = makeServices(
-                args, lookupTracker, expectActualTracker, caches,
+                args, lookupTracker, expectActualTracker, fileMappingTracker, caches,
                 dirtySources.toSet(), compilationMode is CompilationMode.Incremental
             ).build()
 
             args.reportOutputFiles = true
-            val outputItemsCollector = OutputItemsCollectorImpl()
-            val transactionOutputsRegistrar = TransactionOutputsRegistrar(transaction, outputItemsCollector)
             val bufferingMessageCollector = MessageCollectorImpl()
-            val messageCollectorAdapter =
-                MessageCollectorToOutputItemsCollectorAdapter(bufferingMessageCollector, transactionOutputsRegistrar)
 
             val compiledSources = reporter.measure(GradleBuildTime.COMPILATION_ROUND) {
                 runCompiler(
-                    sourcesToCompile, args, caches, services, messageCollectorAdapter,
+                    sourcesToCompile, args, caches, services, bufferingMessageCollector,
                     allKotlinSources, compilationMode is CompilationMode.Incremental
                 )
             }.let { (ec, compiled) ->
@@ -655,15 +658,27 @@ abstract class IncrementalCompilerRunner<
 fun extractKotlinSourcesFromFreeCompilerArguments(
     compilerArguments: CommonCompilerArguments,
     kotlinFilenameExtensions: Set<String>,
+    includeJavaSources: Boolean, // Java files should be passed too to the incremental JVM compiler so that it could track changes in Java sources
 ): List<File> {
-    val dotExtensions = kotlinFilenameExtensions.map { ".$it" }
+    val kotlinDotExtensions = kotlinFilenameExtensions.map { ".$it" }
     val freeArgs = arrayListOf<String>()
     val allKotlinFiles = arrayListOf<File>()
     for (arg in compilerArguments.freeArgs) {
         val file = File(arg)
-        if (file.isFile && dotExtensions.any { ext -> file.path.endsWith(ext, ignoreCase = true) }) {
+        if (!file.isFile) {
+            freeArgs.add(arg)
+            continue
+        }
+
+        if (kotlinDotExtensions.any { ext -> file.path.endsWith(ext, ignoreCase = true) }) {
+            // a kotlin source file
             allKotlinFiles.add(file)
+        } else if (includeJavaSources && file.path.endsWith(".java", ignoreCase = true)) {
+            // a java source file
+            allKotlinFiles.add(file)
+            freeArgs.add(arg)
         } else {
+            // an unknown file
             freeArgs.add(arg)
         }
     }

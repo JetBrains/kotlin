@@ -25,9 +25,6 @@ import kotlin.properties.ReadOnlyProperty
  * see [ReleaseDependent] on how to define the description for older versions.
  * @param additionalAnnotations additional annotations that should be added for the Kotlin compiler argument representation (e.g. [Deprecated]).
  * @param compilerName alternative property name in the generated Kotlin compiler argument representation
- * @param isObsolete if `true` - still add this argument to the generated Kotlin compiler argument representation and emit a warning that
- * this argument is unknown.
- * **Note**: Please avoid using this option - it is planned to be removed in future updates.
  *
  * Usually compiler arguments should either be defined via compiler argument level builder [KotlinCompilerArgumentsLevelBuilder.compilerArgument]
  * or via special standalone builder DSL - [compilerArgument].
@@ -53,6 +50,9 @@ data class KotlinCompilerArgument(
 
     @kotlinx.serialization.Transient
     val isObsolete: Boolean = false,
+
+    @kotlinx.serialization.Transient
+    val additionalMetadata: List<Any> = emptyList(),
 ) : WithKotlinReleaseVersionsMetadata {
 
     // corresponds to [org.jetbrains.kotlin.cli.common.arguments.Argument.Delimiters]
@@ -112,12 +112,6 @@ internal class KotlinCompilerArgumentBuilder {
     var delimiter: KotlinCompilerArgument.Delimiter? = null
 
     /**
-     * @see KotlinCompilerArgument.isObsolete
-     */
-    var isObsolete: Boolean = false
-
-
-    /**
      * @see KotlinCompilerArgument.releaseVersionsMetadata
      */
     private lateinit var releaseVersionsMetadata: KotlinReleaseVersionLifecycle
@@ -126,6 +120,11 @@ internal class KotlinCompilerArgumentBuilder {
      * @see KotlinCompilerArgument.additionalAnnotations
      */
     private val additionalAnnotations: MutableList<Annotation> = mutableListOf()
+
+    /**
+     * @see KotlinCompilerArgument.additionalMetadata
+     */
+    private val additionalMetadata: MutableList<Any> = mutableListOf()
 
     /**
      * Convenient method to define this argument [KotlinReleaseVersionLifecycle] metadata.
@@ -152,6 +151,13 @@ internal class KotlinCompilerArgumentBuilder {
     }
 
     /**
+     * Convenient method to add additional into [KotlinCompilerArgument.additionalMetadata].
+     */
+    fun additionalMetadata(vararg metadata: Any) {
+        additionalMetadata.addAll(metadata)
+    }
+
+    /**
      * Build a new instance of [KotlinCompilerArgument].
      */
     fun build(): KotlinCompilerArgument = KotlinCompilerArgument(
@@ -165,12 +171,12 @@ internal class KotlinCompilerArgumentBuilder {
         additionalAnnotations = additionalAnnotations,
         compilerName = compilerName,
         delimiter = delimiter,
-        isObsolete = isObsolete,
+        additionalMetadata = additionalMetadata,
     )
 }
 
 /**
- * Allows creating compiler argument definitions that are separate from the main DSL and could later be added to the main DSL.	
+ * Allows creating compiler argument definitions that are separate from the main DSL and could later be added to the main DSL.
  *
  * Usage example:
  * ```

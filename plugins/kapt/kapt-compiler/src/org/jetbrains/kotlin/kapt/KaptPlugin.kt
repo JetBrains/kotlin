@@ -121,7 +121,6 @@ class KaptCommandLineProcessor : CommandLineProcessor {
             INFO_AS_WARNINGS_OPTION -> setFlag(KaptFlag.INFO_AS_WARNINGS, value)
             STRICT_MODE_OPTION -> setFlag(KaptFlag.STRICT, value)
             STRIP_METADATA_OPTION -> setFlag(KaptFlag.STRIP_METADATA, value)
-            KEEP_KDOC_COMMENTS_IN_STUBS -> setFlag(KaptFlag.KEEP_KDOC_COMMENTS_IN_STUBS, value)
             USE_K2 -> {}
 
             SHOW_PROCESSOR_STATS -> setFlag(KaptFlag.SHOW_PROCESSOR_STATS, value)

@@ -30,7 +30,7 @@ ALWAYS_INLINE void gc::GC::ThreadData::onAllocation(ObjHeader* object) noexcept 
 
 gc::GC::GC(alloc::Allocator& allocator, gcScheduler::GCScheduler& gcScheduler) noexcept :
     impl_(std::make_unique<Impl>(allocator, gcScheduler)) {
-    RuntimeLogDebug({kTagGC}, "Stop-the-world Mark & Sweep GC initialized");
+    RuntimeLogDebug({kTagGC}, "%s GC initialized", internal::StwmsGCTraits::kName);
 }
 
 gc::GC::~GC() {

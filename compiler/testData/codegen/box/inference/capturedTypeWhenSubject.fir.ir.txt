@@ -92,7 +92,7 @@ FILE fqName:<root> fileName:/capturedTypeWhenSubject.kt
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.LoadConstant'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.LoadConstant<J of <root>.LoadConstant, T of <root>.LoadConstant> [val]
-          TYPE_OP type=<root>.LoadConstant<J of <root>.LoadConstant, T of <root>.LoadConstant> origin=CAST typeOperand=<root>.LoadConstant<J of <root>.LoadConstant, T of <root>.LoadConstant>
+          TYPE_OP type=<root>.LoadConstant<J of <root>.LoadConstant, T of <root>.LoadConstant> origin=IMPLICIT_CAST typeOperand=<root>.LoadConstant<J of <root>.LoadConstant, T of <root>.LoadConstant>
             GET_VAR 'other: kotlin.Any? declared in <root>.LoadConstant.equals' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH

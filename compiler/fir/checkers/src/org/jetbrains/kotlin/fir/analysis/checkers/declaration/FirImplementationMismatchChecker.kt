@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.diagnostics.impl.deduplicating
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.isVisibleInClass
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.containingClassLookupTag
@@ -26,7 +25,9 @@ import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.delegatedWrapperData
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.isSubstitutionOverride
+import org.jetbrains.kotlin.fir.isVisibleInClass
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.ScopeFunctionRequiresPrewarm
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
@@ -74,7 +75,7 @@ sealed class FirImplementationMismatchChecker(mppKind: MppCheckerKind) : FirClas
         val typeCheckerState = context.session.typeContext.newTypeCheckerState(
             errorTypesEqualToAnything = false,
             stubTypesEqualToAnything = false,
-            dnnTypesEqualToFlexible = context.languageVersionSettings.supportsFeature(LanguageFeature.AllowDnnTypeOverridingFlexibleType)
+            dnnTypesEqualToFlexible = LanguageFeature.AllowDnnTypeOverridingFlexibleType.isEnabled()
         )
         val classScope = declaration.unsubstitutedScope()
 
@@ -137,7 +138,7 @@ sealed class FirImplementationMismatchChecker(mppKind: MppCheckerKind) : FirClas
          * @see org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScopeContext.convertGroupedCallablesToIntersectionResults
          */
         fun FirCallableSymbol<*>.isTrivialIntersectionOverride(): Boolean {
-            return callableId.classId != containingClass.classId || MemberWithBaseScope(this, classScope).isTrivialIntersection()
+            return callableId?.classId != containingClass.classId || MemberWithBaseScope(this, classScope).isTrivialIntersection()
         }
 
         val intersectionSymbols = when {

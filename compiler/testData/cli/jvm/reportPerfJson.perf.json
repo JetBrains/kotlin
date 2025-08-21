@@ -1,5 +1,6 @@
 {
   "name": "main-java-production",
+  "timeStampMs": $UINT$,
   "platform": "JVM",
   "compilerType": "K2",
   "hasErrors": false,
@@ -30,6 +31,8 @@
     "userNanos": $UINT$,
     "cpuNanos": $UINT$
   },
+  "dynamicStats": [
+  ],
   "findJavaClassStats": {
     "count": 1,
     "time": {

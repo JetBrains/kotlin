@@ -1,8 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
 fun cornerCases() {
     val a = "a" + "b" + "c"
-    val b = "a" + ("b" + "c")
-    val c = ("a" + "b") + "c"
     val d = dummy("a" + "b" + "c")
     val e = dummy("a" + "b" + "c") + "d"
     val f = "a" + dummy("b" + "c" + "d")

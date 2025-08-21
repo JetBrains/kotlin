@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErro
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirWebCommonExternalChecker
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.WebCommonStandardClassIds
@@ -41,7 +42,7 @@ object FirWasmExternalChecker : FirWebCommonExternalChecker(allowCompanionInInte
             if (declaration.isSuspend) {
                 reporter.reportOn(declaration.source, FirWebCommonErrors.WRONG_EXTERNAL_DECLARATION, "suspend function")
             }
-            if (context.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) {
+            if (LanguageFeature.ContextParameters.isEnabled()) {
                 if (declaration.contextParameters.isNotEmpty()) {
                     reporter.reportOn(declaration.source, FirWasmErrors.EXTERNAL_DECLARATION_WITH_CONTEXT_PARAMETERS)
                 }
@@ -52,7 +53,7 @@ object FirWasmExternalChecker : FirWebCommonExternalChecker(allowCompanionInInte
             if (declaration.isLateInit) {
                 reporter.reportOn(declaration.source, FirWebCommonErrors.WRONG_EXTERNAL_DECLARATION, "lateinit property")
             }
-            if (context.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) {
+            if (LanguageFeature.ContextParameters.isEnabled()) {
                 if (declaration.contextParameters.isNotEmpty()) {
                     reporter.reportOn(declaration.source, FirWasmErrors.EXTERNAL_DECLARATION_WITH_CONTEXT_PARAMETERS)
                 }
@@ -60,7 +61,7 @@ object FirWasmExternalChecker : FirWebCommonExternalChecker(allowCompanionInInte
         }
     }
 
-    override fun isDefinedExternallyCallableId(callableId: CallableId): Boolean =
+    override fun isDefinedExternallyCallableId(callableId: CallableId?): Boolean =
         callableId == WebCommonStandardClassIds.Callables.JsDefinedExternally
 
     override fun hasExternalLikeAnnotations(declaration: FirDeclaration, session: FirSession): Boolean =

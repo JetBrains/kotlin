@@ -13,15 +13,15 @@ import org.jetbrains.kotlin.abi.tools.api.v2.KlibTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHostForKlibCompilation
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.utils.createResolvable
 
 private const val ABI_TOOLS_DEPENDENCY_CONFIGURATION = "kotlinInternalAbiValidation"
+
+internal const val ANDROID_RELEASE_BUILD_TYPE = "release"
 
 /**
  * Converts a [KotlinTarget] to a [KlibTarget].
@@ -40,16 +40,6 @@ internal fun KotlinTarget.toKlibTarget(): KlibTarget {
         else -> throw IllegalArgumentException("Unsupported platform type: $platformType")
     }
     return KlibTarget(name, targetName)
-}
-
-/**
- * Checks the specified target is supported by the host compiler.
- */
-internal fun targetIsSupported(target: KotlinTarget, propertiesProvider: PropertiesProvider): Boolean {
-    return when (target) {
-        is KotlinNativeTarget -> target.konanTarget.enabledOnCurrentHostForKlibCompilation(propertiesProvider)
-        else -> true
-    }
 }
 
 /**
@@ -83,11 +73,14 @@ internal fun Project.prepareAbiClasspath(): Configuration {
 }
 
 /**
- * Executes a given [action] against the compilation with the name [SourceSet.MAIN_SOURCE_SET_NAME].
+ * Executes a given [action] against the compilation with the name [compilationName].
  */
-internal inline fun <T : KotlinCompilation<*>> NamedDomainObjectContainer<T>.withMainCompilationIfExists(crossinline action: T.() -> Unit) {
-    if (names.contains(SourceSet.MAIN_SOURCE_SET_NAME)) {
-        named(SourceSet.MAIN_SOURCE_SET_NAME).configure { compilation ->
+internal inline fun <T : KotlinCompilation<*>> NamedDomainObjectContainer<T>.withCompilationIfExists(
+    compilationName: String,
+    crossinline action: T.() -> Unit,
+) {
+    if (names.contains(compilationName)) {
+        named(compilationName).configure { compilation ->
             compilation.action()
         }
     }

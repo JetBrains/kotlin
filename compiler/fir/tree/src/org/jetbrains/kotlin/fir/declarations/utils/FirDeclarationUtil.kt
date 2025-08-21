@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.types.isNullableAny
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.isLocal
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -77,7 +78,7 @@ val FirBasedSymbol<*>.memberDeclarationNameOrNull: Name?
 
 val FirMemberDeclaration.nameOrSpecialName: Name
     get() = when (this) {
-        is FirCallableDeclaration -> symbol.callableId.callableName
+        is FirCallableDeclaration -> symbol.name
         is FirClassLikeDeclaration -> classId.shortClassName
     }
 

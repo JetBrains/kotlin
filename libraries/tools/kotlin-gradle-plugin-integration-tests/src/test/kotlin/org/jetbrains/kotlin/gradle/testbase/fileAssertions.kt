@@ -19,15 +19,18 @@ import kotlin.test.*
  */
 fun assertFileExists(
     file: File,
+    message: String? = null,
 ) = assertFileExists(
     file.toPath(),
+    message
 )
 
 fun assertFileExists(
     file: Path,
+    message: String? = null,
 ) {
     assert(file.exists()) {
-        buildString {
+        message ?: buildString {
             appendLine("File '${file}' does not exist!")
             if (file.parent.exists()) {
                 val parentDirEntries = file.parent.listDirectoryEntries()
@@ -219,9 +222,10 @@ fun GradleProject.assertDirectoryInProjectDoesNotExist(
 
 fun assertDirectoryDoesNotExist(
     dirPath: Path,
+    message: String? = null,
 ) {
     assert(!Files.exists(dirPath)) {
-        buildString {
+        message ?: buildString {
             append("Directory $dirPath is expected to not exist. ")
             if (Files.isDirectory(dirPath)) {
                 appendLine("The directory contents: ")

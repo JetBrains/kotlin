@@ -228,6 +228,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
                     coneTypeOrNull = session.builtinTypes.unitType.coneType
                     this.symbol = symbol
                     isFullyQualified = segments.isNotEmpty()
+                    resolvedToCompanionObject = false
                 }
 
                 // Resolve enum entry by name from the declarations of the receiver.
@@ -283,7 +284,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
     private val metaAnnotationsFromPlugins: Set<AnnotationFqn> = session.registeredPluginAnnotations.metaAnnotations
 
     protected open val shouldRecordIntoPredicateBasedProvider: Boolean
-        get() = true
+        get() = session.registeredPluginAnnotations.hasRegisteredAnnotations
 
     @PrivateForInline
     val typeResolverTransformer: FirSpecificTypeResolverTransformer = FirSpecificTypeResolverTransformer(

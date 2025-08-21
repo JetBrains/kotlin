@@ -65,7 +65,6 @@ data class ChatRequestConfig(val a: Int = 10) {
   static val %stable: Int = 0
 }
 @Composable
-@FunctionKeyMeta(key = 1476494640, startOffset = 152, endOffset = 231)
 fun TextField(onValueChange: Function1<String, Unit>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(TextField):Test.kt")
@@ -84,7 +83,6 @@ fun TextField(onValueChange: Function1<String, Unit>, %composer: Composer?, %cha
   }
 }
 @Composable
-@FunctionKeyMeta(key = 61783979, startOffset = 269, endOffset = 655)
 fun App(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(App)<{>,<TextFi...>:Test.kt")

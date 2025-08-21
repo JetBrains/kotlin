@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.backend.utils
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirComponentCall
@@ -183,4 +183,8 @@ fun FirQualifiedAccessExpression.isConstructorCallOnTypealiasWithInnerRhs(): Boo
     return (calleeReference.symbol as? FirConstructorSymbol)?.let {
         it.origin == FirDeclarationOrigin.Synthetic.TypeAliasConstructor && it.receiverParameterSymbol != null
     } == true
+}
+
+internal fun <T : FirDeclaration, R> filterOutSymbolsFromCache(cache: Map<T, R>, filterOutSymbols: Set<FirBasedSymbol<*>>): Map<T, R> {
+    return cache.filterKeys { !filterOutSymbols.contains(it.symbol) }
 }

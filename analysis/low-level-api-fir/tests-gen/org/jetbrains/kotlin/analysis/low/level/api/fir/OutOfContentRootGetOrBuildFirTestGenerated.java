@@ -786,6 +786,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("suspendLambda.kt")
+    public void testSuspendLambda() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/suspendLambda.kt");
+    }
+
+    @Test
     @TestMetadata("whenConditionInRange.kt")
     public void testWhenConditionInRange() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/whenConditionInRange.kt");

@@ -6,9 +6,11 @@
 package kotlin.coroutines
 
 import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
+import kotlin.internal.UsedFromCompilerGeneratedCode
 
 @SinceKotlin("1.3")
 @JsName("CoroutineImpl")
+@UsedFromCompilerGeneratedCode
 internal abstract class CoroutineImpl(
     private val resultContinuation: Continuation<Any?>?
 ) : InterceptedCoroutine(), Continuation<Any?> {
@@ -58,7 +60,7 @@ internal abstract class CoroutineImpl(
                 } else {
                     // top-level completion reached -- invoke and return
                     if (currentException != null) {
-                        completion.resumeWithException(currentException!!)
+                        completion.resumeWithException(currentException)
                     } else {
                         completion.resume(currentResult)
                     }

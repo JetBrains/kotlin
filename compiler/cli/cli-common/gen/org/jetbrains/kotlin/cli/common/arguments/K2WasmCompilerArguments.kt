@@ -110,10 +110,10 @@ abstract class K2WasmCompilerArguments : CommonKlibBasedCompilerArguments() {
         }
 
     @Argument(
-        value = "-Xwasm-attach-js-exception",
-        description = "Attach a thrown by JS-value to the JsException class",
+        value = "-Xwasm-no-jstag",
+        description = "Don't use WebAssembly.JSTag for throwing and catching exceptions",
     )
-    var wasmUseJsTag: Boolean = false
+    var wasmNoJsTag: Boolean = false
         set(value) {
             checkFrozen()
             field = value

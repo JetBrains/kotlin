@@ -35,13 +35,6 @@ internal class TailCallOptimizationLowering(private val context: JvmBackendConte
             override fun visitSimpleFunction(declaration: IrSimpleFunction, data: TailCallOptimizationData?) =
                 super.visitSimpleFunction(declaration, if (declaration.isSuspend) TailCallOptimizationData(declaration) else null)
 
-            override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: TailCallOptimizationData?): IrExpression {
-                if (inlinedBlock.isFunctionInlining()) {
-                    return inlinedBlock
-                }
-                return super.visitInlinedFunctionBlock(inlinedBlock, data)
-            }
-
             override fun visitCall(expression: IrCall, data: TailCallOptimizationData?): IrExpression {
                 val transformed = super.visitCall(expression, data) as IrExpression
                 return if (data == null || expression !in data.tailCalls) transformed else IrReturnImpl(
@@ -66,8 +59,7 @@ private class TailCallOptimizationData(val function: IrSimpleFunction) {
         when {
             this is IrCall && isSuspend && !immediateReturn && (returnsUnit || type == function.returnType) ->
                 tailCalls += this
-            // We want to avoid tail call optimization in inlined block because it ruins line number generation
-            this is IrBlock && !(this is IrInlinedFunctionBlock && this.isFunctionInlining()) ->
+            this is IrBlock ->
                 statements.findTailCall(returnsUnit)?.findCallsOnTailPositionWithoutImmediateReturn()
             this is IrWhen ->
                 branches.forEach { it.result.findCallsOnTailPositionWithoutImmediateReturn() }

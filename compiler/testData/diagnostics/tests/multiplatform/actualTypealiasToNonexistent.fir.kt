@@ -1,5 +1,6 @@
 // IGNORE_FIR_DIAGNOSTICS
 // RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +ForbidTypeAliasWithMissingDependencyType
 // ISSUE: KT-70179
 
 // MODULE: m1-common
@@ -22,7 +23,7 @@ actual typealias Ann = some.my.Ann
 // MODULE: m4-jvm(m3-jvm)
 // FILE: test.kt
 
-@<!NOT_AN_ANNOTATION_CLASS!>Ann<!>
+@<!MISSING_DEPENDENCY_CLASS, NOT_AN_ANNOTATION_CLASS!>Ann<!>
 fun foo() {}
 
 /* GENERATED_FIR_TAGS: actual, annotationDeclaration, expect, functionDeclaration, primaryConstructor,

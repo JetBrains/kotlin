@@ -1,6 +1,6 @@
 KT element: KtPropertyAccessor
 KT element text:
-internal final get() {/* compiled code */ }
+internal final get() { /* compiled code */ }
 FIR element: FirPropertyAccessorImpl
 FIR source kind: KtRealSourceElementKind
 

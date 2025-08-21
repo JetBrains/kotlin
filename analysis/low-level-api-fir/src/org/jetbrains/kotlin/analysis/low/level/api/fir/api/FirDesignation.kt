@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
-import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.nullableJavaSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirLibraryOrLibrarySourceResolvableModuleSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.nullableJavaSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
 import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -204,9 +204,9 @@ private fun collectDesignationPathWithContainingClass(
     }
 
     val fallbackClassPath = collectDesignationPathWithContainingClassFallback(target, containingClassId)
-    val fallbackFile = providedFile ?: fallbackClassPath?.lastOrNull()?.getContainingFile() ?: file
+    val fallbackFile = providedFile ?: fallbackClassPath.lastOrNull()?.getContainingFile() ?: file
     val fallbackScript = fallbackFile?.declarations?.singleOrNull() as? FirScript
-    val fallbackPath = listOfNotNull(fallbackFile, fallbackScript) + fallbackClassPath.orEmpty()
+    val fallbackPath = listOfNotNull(fallbackFile, fallbackScript) + fallbackClassPath
     val patchedPath = patchDesignationPathIfNeeded(target, fallbackPath)
     return FirDesignation(patchedPath, target)
 }
@@ -214,7 +214,7 @@ private fun collectDesignationPathWithContainingClass(
 private fun collectDesignationPathWithContainingClassFallback(
     target: FirDeclaration,
     containingClassId: ClassId?,
-): List<FirDeclaration>? {
+): List<FirDeclaration> {
     val useSiteSession = getTargetSession(target)
 
     fun resolveChunk(classId: ClassId): FirRegularClass {

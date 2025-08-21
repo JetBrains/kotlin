@@ -1,16 +1,16 @@
-PsiJetFileStubImpl[package=]
+FILE[kind=Facade[packageFqName=<root>, facadeFqName=UnionFindKt]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   CLASS[classId=/UnionFind, fqName=UnionFind, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=UnionFind, superNames=[]]
     CLASS_BODY
       PROPERTY[fqName=UnionFind.data, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=data]
         MODIFIER_LIST[private]
-      FUN[fqName=UnionFind.add, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=add]
+      FUN[fqName=UnionFind.add, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=add]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=UnionFind.parent, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=parent]
+      FUN[fqName=UnionFind.parent, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=parent]
         MODIFIER_LIST[private]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
@@ -20,7 +20,7 @@ PsiJetFileStubImpl[package=]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=UnionFind.union, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=union]
+      FUN[fqName=UnionFind.union, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=union]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
             TYPE_REFERENCE
@@ -37,5 +37,5 @@ PsiJetFileStubImpl[package=]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Boolean]
-    PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+    PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
       VALUE_PARAMETER_LIST

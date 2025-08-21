@@ -11,7 +11,8 @@ public final class ConstructorWithInlineContextParameterAndJvmOverloads /* Const
 }
 
 public enum Foo /* Foo*/ {
-  ;
+  A,
+  B;
 
   private final int x;
 
@@ -42,6 +43,8 @@ public final class InlinedDelegate /* InlinedDelegate*/<T>  {
   public boolean equals(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(@org.jetbrains.annotations.Nullable() java.lang.Object)
 
   public final T getNode();//  getNode()
+
+  public final void setNode(T);//  setNode(T)
 
   public int hashCode();//  hashCode()
 }

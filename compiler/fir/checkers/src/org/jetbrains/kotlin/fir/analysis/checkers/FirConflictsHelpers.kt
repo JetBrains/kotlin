@@ -13,13 +13,11 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirNameConflictsTracker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isEffectivelyFinal
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOverloadabilityHelper.ContextParameterShadowing.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl.Companion.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl.Companion.DEFAULT_STATUS_FOR_SUSPEND_MAIN_FUNCTION
 import org.jetbrains.kotlin.fir.declarations.impl.modifiersRepresentation
 import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
@@ -43,17 +41,19 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.resolve.ReturnValueStatus
 import org.jetbrains.kotlin.utils.SmartSet
 
-val DEFAULT_STATUS_FOR_NORMAL_MAIN_FUNCTION: FirResolvedDeclarationStatus = DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
-
-private val FirNamedFunctionSymbol.hasMainFunctionStatus
-    get() = when (resolvedStatus.modifiersRepresentation) {
-        DEFAULT_STATUS_FOR_NORMAL_MAIN_FUNCTION.modifiersRepresentation,
-        DEFAULT_STATUS_FOR_SUSPEND_MAIN_FUNCTION.modifiersRepresentation,
-        -> true
-        else -> false
-    }
+private fun FirResolvedDeclarationStatus.isAllowedForMainFunction(): Boolean {
+    val defaultStatusForMain = DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
+    if (visibility != defaultStatusForMain.visibility && modality != defaultStatusForMain.modality && effectiveVisibility != defaultStatusForMain.effectiveVisibility) return false
+    val cleanedStatus = this.copy(
+        // main() function is allowed but not obliged to have the following flags:
+        isSuspend = false,
+        returnValueStatus = ReturnValueStatus.Unspecified
+    )
+    return cleanedStatus.modifiersRepresentation == defaultStatusForMain.modifiersRepresentation
+}
 
 private val CallableId.isTopLevel get() = className == null
 
@@ -204,9 +204,9 @@ fun FirDeclarationCollector<FirBasedSymbol<*>>.collectClassMembers(klass: FirCla
         }
     }
 
-    fun processClassifier(it: FirClassifierSymbol<*>) {
+    fun processClassifier(it: FirClassifierSymbol<*>, isDeclared: Boolean) {
         when {
-            !it.isCollectable() || !it.isVisibleInClass(klass) -> return
+            !it.isCollectable() || !isDeclared && !it.isVisibleInClass(klass) -> return
             it is FirRegularClassSymbol -> collect(it, FirRedeclarationPresenter.represent(it), otherDeclarations)
             it is FirTypeAliasSymbol -> collect(it, FirRedeclarationPresenter.represent(it), otherDeclarations)
             else -> {}
@@ -239,11 +239,11 @@ fun FirDeclarationCollector<FirBasedSymbol<*>>.collectClassMembers(klass: FirCla
     @OptIn(DirectDeclarationsAccess::class)
     for (declaredClassifier in klass.declarationSymbols) {
         if (declaredClassifier is FirClassifierSymbol<*>) {
-            processClassifier(declaredClassifier)
+            processClassifier(declaredClassifier, isDeclared = true)
 
             unsubstitutedScope.processClassifiersByName(declaredClassifier.name) { anotherClassifier ->
                 if (anotherClassifier != declaredClassifier) {
-                    processClassifier(anotherClassifier)
+                    processClassifier(anotherClassifier, isDeclared = false)
                 }
             }
         }
@@ -259,13 +259,13 @@ private val FirClassifierSymbol<*>.name: Name
 context(context: CheckerContext)
 fun collectConflictingLocalFunctionsFrom(
     block: FirBlock
-): Map<FirFunctionSymbol<*>, Set<FirBasedSymbol<*>>> {
+): FirDeclarationCollector<FirFunctionSymbol<*>>? {
     val collectables =
         block.statements.filter {
             (it is FirSimpleFunction || it is FirRegularClass) && (it as FirDeclaration).symbol.isCollectable()
         }
 
-    if (collectables.isEmpty()) return emptyMap()
+    if (collectables.isEmpty()) return null
 
     val inspector = FirDeclarationCollector<FirFunctionSymbol<*>>(context)
     val functionDeclarations = mutableMapOf<String, MutableSet<FirFunctionSymbol<*>>>()
@@ -285,7 +285,7 @@ fun collectConflictingLocalFunctionsFrom(
         }
     }
 
-    return inspector.declarationConflictingSymbols
+    return inspector
 }
 
 private fun <D : FirBasedSymbol<*>, S : D> FirDeclarationCollector<D>.collect(
@@ -412,9 +412,13 @@ fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevel(
             }
 
             // session.nameConflictsTracker will contain more classifiers with the same name.
-            session.nameConflictsTracker?.let { it as? FirNameConflictsTracker }
-                ?.redeclaredClassifiers?.get(ClassId(file.packageFqName, declarationName))?.forEach {
-                    collectFromClassifierSource(conflictingSymbol = it.classifier, conflictingFile = it.file)
+            session.nameConflictsTracker
+                ?.getClassifierRedeclarations(ClassId(file.packageFqName, declarationName))
+                ?.forEach { redeclaration ->
+                    collectFromClassifierSource(
+                        conflictingSymbol = redeclaration.classifierSymbol,
+                        conflictingFile = redeclaration.containingFile,
+                    )
                 }
 
             // session.nameConflictsTracker doesn't seem to work for LL API for redeclarations in the same file, for this reason
@@ -473,10 +477,14 @@ private fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevelConflict(
         }
     if (!conflictingSymbol.isCollectable()) return
     if (areCompatibleMainFunctions(declaration, containingFile, conflictingSymbol, actualConflictingFile, session)) return
+
     @OptIn(SymbolInternals::class)
     val conflicting = conflictingSymbol.fir
+
+    // Private callables are allowed to be redeclared across multiple files, but private classifiers are not. Hence, we only check the
+    // visibility of callables, as classifiers of any visibility can conflict.
     if (
-        conflicting is FirMemberDeclaration &&
+        conflicting is FirCallableDeclaration &&
         !session.visibilityChecker.isVisible(conflicting, session, containingFile, emptyList(), dispatchReceiver = null)
     ) return
 
@@ -488,7 +496,7 @@ private fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevelConflict(
 }
 
 private fun FirNamedFunctionSymbol.representsMainFunctionAllowingConflictingOverloads(session: FirSession): Boolean {
-    if (name != StandardNames.MAIN || !callableId.isTopLevel || !hasMainFunctionStatus) return false
+    if (name != StandardNames.MAIN || !callableId.isTopLevel || !resolvedStatus.isAllowedForMainFunction()) return false
     if (receiverParameterSymbol != null || typeParameterSymbols.isNotEmpty() || hasContextParameters) return false
     val returnType = resolvedReturnType.fullyExpandedType(session)
     if (!returnType.isUnit) return false
@@ -544,7 +552,7 @@ private fun FirDeclarationCollector<*>.getConflictState(
 
     return if (session.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) {
         overloadabilityHelper.getConflictStateWithContextParameters(declaration, conflicting)
-    } else if (overloadabilityHelper.isConflicting(declaration, conflicting, ignoreContextParameters = false)) {
+    } else if (overloadabilityHelper.isConflicting(declaration, conflicting)) {
         ConflictState.Conflict
     } else {
         ConflictState.NoConflict
@@ -555,10 +563,6 @@ private fun FirDeclarationOverloadabilityHelper.getConflictStateWithContextParam
     declaration: FirCallableSymbol<*>,
     conflicting: FirCallableSymbol<*>,
 ): ConflictState {
-    if (!isConflicting(declaration, conflicting, ignoreContextParameters = true)) {
-        return ConflictState.NoConflict
-    }
-
     return when (getContextParameterShadowing(declaration, conflicting)) {
         BothWays -> ConflictState.Conflict
         Shadowing -> ConflictState.ContextParameterShadowing
@@ -567,7 +571,7 @@ private fun FirDeclarationOverloadabilityHelper.getConflictStateWithContextParam
 }
 
 context(context: CheckerContext, reporter: DiagnosticReporter)
-        /** Checks for redeclarations of value and type parameters, and local variables. */
+/** Checks for redeclarations of value and type parameters, and local variables. */
 fun checkForLocalRedeclarations(elements: List<FirElement>) {
     if (elements.size <= 1) return
 
@@ -585,6 +589,7 @@ fun checkForLocalRedeclarations(elements: List<FirElement>) {
                 }
             }
             is FirVariable -> element.symbol to element.name
+            is FirClassLikeDeclaration -> element.symbol.let { it to it.name }
             is FirOuterClassTypeParameterRef -> continue
             is FirTypeParameterRef -> element.symbol.let { it to it.name }
             else -> null to null

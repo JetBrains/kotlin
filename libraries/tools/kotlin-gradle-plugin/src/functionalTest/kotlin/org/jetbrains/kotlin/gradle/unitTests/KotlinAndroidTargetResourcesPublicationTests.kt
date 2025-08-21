@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExte
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.configureDefaults
 import org.jetbrains.kotlin.gradle.util.kotlin
-import org.jetbrains.kotlin.gradle.utils.androidExtension
 import org.junit.Test
 import java.io.File
 
@@ -50,9 +49,9 @@ class KotlinAndroidTargetResourcesPublicationTests {
         project.publishFakeResources(project.multiplatformExtension.androidTarget())
         project.publishFakeAssets(project.multiplatformExtension.androidTarget())
 
-        val androidVariantSourceSets = project.multiplatformExtension.androidTarget()
+        @Suppress("DEPRECATION") val androidVariantSourceSets = project.multiplatformExtension.androidTarget()
             .compilations.getByName("release")
-            .androidVariant.sourceSets
+            .androidVariant?.sourceSets ?: throw IllegalStateException("Android variant for 'release' compilation is 'null'")
         val actualResourcesDirectories = androidVariantSourceSets.flatMapTo(linkedSetOf()) { it.resourcesDirectories }
 
         assert(
@@ -77,9 +76,9 @@ class KotlinAndroidTargetResourcesPublicationTests {
         project.evaluate()
         project.publishFakeResources(project.multiplatformExtension.androidTarget())
 
-        val androidVariantSourceSets = project.multiplatformExtension.androidTarget()
+        @Suppress("DEPRECATION") val androidVariantSourceSets = project.multiplatformExtension.androidTarget()
             .compilations.getByName("demoRelease")
-            .androidVariant.sourceSets
+            .androidVariant?.sourceSets ?: throw IllegalStateException("Android variant for 'demoRelease' compilation is 'null'")
         val actualResourcesDirectories = androidVariantSourceSets.flatMapTo(linkedSetOf()) {
             it.resourcesDirectories
         }
@@ -101,9 +100,10 @@ class KotlinAndroidTargetResourcesPublicationTests {
 
         project.evaluate()
 
-        val actualSourcesDirectories = project.multiplatformExtension.androidTarget()
+        @Suppress("DEPRECATION") val actualSourcesDirectories = project.multiplatformExtension.androidTarget()
             .compilations.getByName("release")
-            .androidVariant.sourceSets.flatMapTo(linkedSetOf()) { it.resourcesDirectories }
+            .androidVariant?.sourceSets?.flatMapTo(linkedSetOf()) { it.resourcesDirectories }
+            ?: throw IllegalStateException("Android variant for 'release' compilation is 'null'")
 
         assert(
             !actualSourcesDirectories.contains(project.expectedReleaseResourcePath)

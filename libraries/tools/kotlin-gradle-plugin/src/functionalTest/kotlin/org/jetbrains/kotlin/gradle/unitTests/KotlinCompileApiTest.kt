@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
@@ -13,6 +14,8 @@ import org.jetbrains.kotlin.gradle.internal.KOTLIN_COMPILER_EMBEDDABLE
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.plugin.COMPILER_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinApiPlugin
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
+import org.jetbrains.kotlin.gradle.plugin.sources.android.AndroidVariantType
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.jetbrains.kotlin.gradle.util.buildProject
@@ -23,6 +26,7 @@ import org.junit.rules.TemporaryFolder
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 
 class KotlinCompileApiTest {
 
@@ -257,5 +261,32 @@ class KotlinCompileApiTest {
         val androidExtension2 = plugin.createKotlinAndroidExtension()
 
         assertNotEquals(androidExtension1, androidExtension2)
+    }
+
+    @Test
+    fun testCreatingAndroidJvmCompilation() {
+        val androidExtension = plugin.createKotlinAndroidExtension()
+        project.extensions.add("kotlin", androidExtension)
+        val javaCompileTask = project.tasks.register("mainJavaCompile", JavaCompile::class.java)
+        val compilation = plugin.createKotlinAndroidCompilation(
+            "main",
+            androidExtension.target as KotlinAndroidTarget,
+            javaCompileTask,
+            AndroidVariantType.Main
+        )
+        val kotlinCompileTask = plugin.registerKotlinJvmCompileTask(
+            compilation.compileKotlinTaskName,
+            plugin.createCompilerJvmOptions(),
+            project.provider { ExplicitApiMode.Disabled }
+        )
+
+        project.evaluate()
+
+        assertEquals(androidExtension.target, compilation.target)
+        assertEquals(javaCompileTask, compilation.compileJavaTaskProvider)
+        @Suppress("DEPRECATION")
+        assertNull(compilation.androidVariant)
+        assertEquals("main", compilation.name)
+        assertEquals(kotlinCompileTask, compilation.compileTaskProvider)
     }
 }

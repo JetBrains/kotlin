@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.cfa.util.VariableInitializationInfoData
 import org.jetbrains.kotlin.fir.analysis.cfa.util.previousCfgNodes
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingSymbol
+import org.jetbrains.kotlin.fir.resolve.getContainingSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.hasDiagnosticKind
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.RenderingInternals
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -120,7 +121,7 @@ abstract class VariableInitializationCheckProcessor {
 
             for (previousNode in previousCfgNodes) {
                 if (edgeFrom(previousNode).kind.isBack) continue
-                when (val assignmentNode = getValue(previousNode)[path]?.get(symbol)?.location) {
+                when (val assignmentNode = getValue(previousNode)[path]?.get(symbol)?.range?.location) {
                     is VariableDeclarationNode -> {} // unreachable - `val`s with initializers do not require hindsight
                     is VariableAssignmentNode -> reportCapturedInitialization(assignmentNode, symbol)
                     else -> // merge node for a branching construct, e.g. `if (p) { x = 1 } else { x = 2 }` - report on all branches
@@ -133,11 +134,11 @@ abstract class VariableInitializationCheckProcessor {
             if (path == CapturedByValue) continue // CaptureByValue path does not contain enough information for captured initialization checks.
 
             for ((symbol, range) in data) {
-                if (!symbol.isVal || !range.canBeRevisited() || symbol !in properties) continue
+                if (!symbol.isVal || !range.range.canBeRevisited() || symbol !in properties) continue
                 // This can be something like `f({ x = 1 }, { x = 2 })` where `f` calls both lambdas in-place.
                 // At each assignment it was only considered in isolation, but now that we're merging their control flows,
                 // we can see that the assignments clash, so we need to go back and emit errors on these nodes.
-                if (node.previousCfgNodes.all { getValue(it)[path]?.get(symbol)?.canBeRevisited() != true }) {
+                if (node.previousCfgNodes.all { getValue(it)[path]?.get(symbol)?.range?.canBeRevisited() != true }) {
                     node.reportErrorsOnInitializationsInInputs(symbol, path, visited = persistentSetOf())
                 }
             }
@@ -169,8 +170,13 @@ abstract class VariableInitializationCheckProcessor {
         if (!symbol.isVal || node.fir.unwrapLValue()?.hasMatchingReceiver(this) != true || symbol !in properties) return
 
         val info = getValue(node)
+        val isRevisited = info.values.any { it[symbol]?.range?.canBeRevisited() == true }
+
+        // If the variable has an initializer, this is definitely a reassignment if revisited.
+        // Otherwise, prefer reporting captured or non-inline initialization before falling back
+        // to reporting reassignment.
         when {
-            info.values.any { it[symbol]?.canBeRevisited() == true } -> {
+            isRevisited && symbol.resolvedInitializer != null -> {
                 reportValReassignment(node, symbol)
             }
             scope != scopes[symbol] -> {
@@ -182,6 +188,9 @@ abstract class VariableInitializationCheckProcessor {
                 // If we try to initialize non-static final field there, we will get exception at
                 // runtime, since we can initialize such fields only inside constructors.
                 reportNonInlineMemberValInitialization(node, symbol)
+            }
+            isRevisited -> {
+                reportValReassignment(node, symbol)
             }
         }
     }
@@ -213,7 +222,7 @@ abstract class VariableInitializationCheckProcessor {
 
     private fun FirVariableSymbol<*>.isInitializedAt(node: CFGNode<*>, data: VariableInitializationInfoData): Boolean {
         return data.getValue(node).all { (key, value) ->
-            (key == CapturedByValue && !isCapturedByValue) || value[this]?.isDefinitelyVisited() == true
+            (key == CapturedByValue && !isCapturedByValue) || value[this]?.range?.isDefinitelyVisited() == true
         }
     }
 
@@ -359,7 +368,7 @@ private fun CFGNode<*>.firstGraphDeclaration(): FirDeclaration? {
     return owner.enterNode.previousNodes.firstNotNullOfOrNull { it.firstGraphDeclaration() }
 }
 
-@OptIn(SymbolInternals::class)
+@OptIn(SymbolInternals::class, RenderingInternals::class)
 private fun FirBasedSymbol<*>.getDebugFqName(): FqName {
     return when (val fir = this.fir) {
         is FirFile -> fir.packageFqName.child(Name.identifier(fir.name))
@@ -368,7 +377,7 @@ private fun FirBasedSymbol<*>.getDebugFqName(): FqName {
         is FirClassLikeDeclaration -> fir.symbol.classId.asSingleFqName()
         is FirTypeParameter -> fir.containingDeclarationSymbol.getDebugFqName().child(fir.name)
         is FirAnonymousInitializer -> fir.containingDeclarationSymbol.getDebugFqName().child(Name.special("<init>"))
-        is FirCallableDeclaration -> fir.symbol.callableId.asFqNameForDebugInfo()
+        is FirCallableDeclaration -> fir.symbol.callableIdForRendering.asFqNameForDebugInfo()
         is FirCodeFragment -> FqName.topLevel(Name.special("<fragment>"))
         is FirDanglingModifierList -> FqName.topLevel(Name.special("<dangling>"))
         is FirReceiverParameter -> FqName.topLevel(Name.special("<extension-receiver-parameter>"))

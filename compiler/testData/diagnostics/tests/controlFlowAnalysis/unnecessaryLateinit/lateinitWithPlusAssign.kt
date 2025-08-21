@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: BACKEND
 class Foo {
     lateinit var bar: String

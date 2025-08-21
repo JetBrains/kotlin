@@ -15,7 +15,7 @@ value class VcString(val s: String) : Runnable {
     override fun run() {}
 }
 
-fun testCallArguments(p1: Int, p2: LocalDate, p3: VcString, p4: java.lang.Character, p5: java.lang.Runtime.Version, p6: java.time.chrono.JapaneseDate, p7: java.lang.ProcessHandle) {
+fun testCallArguments(p1: Int, p2: LocalDate, p3: VcString, p4: <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.lang.Character<!>, p5: java.lang.Runtime.Version, p6: java.time.chrono.JapaneseDate, p7: java.lang.ProcessHandle) {
     System.identityHashCode(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p1<!>)
     System.identityHashCode(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p2<!>)
     System.identityHashCode(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p3<!>)
@@ -27,7 +27,7 @@ fun testCallArguments(p1: Int, p2: LocalDate, p3: VcString, p4: java.lang.Charac
     WeakReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p1<!>)
     WeakReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p2<!>)
     WeakReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p3<!>)
-    WeakReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p4<!>)
+    <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>WeakReference<!>(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p4<!>)
     WeakReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p5<!>)
     WeakReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p6<!>)
     WeakReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p7<!>)
@@ -35,7 +35,7 @@ fun testCallArguments(p1: Int, p2: LocalDate, p3: VcString, p4: java.lang.Charac
     SoftReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p1<!>)
     SoftReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p2<!>)
     SoftReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p3<!>)
-    SoftReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p4<!>)
+    <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>SoftReference<!>(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p4<!>)
     SoftReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p5<!>)
     SoftReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p6<!>)
     SoftReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p7<!>)
@@ -44,7 +44,7 @@ fun testCallArguments(p1: Int, p2: LocalDate, p3: VcString, p4: java.lang.Charac
     PhantomReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p1<!>, refQueue)
     PhantomReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p2<!>, refQueue)
     PhantomReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p3<!>, refQueue)
-    PhantomReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p4<!>, refQueue)
+    <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>PhantomReference<!>(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p4<!>, refQueue)
     PhantomReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p5<!>, refQueue)
     PhantomReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p6<!>, refQueue)
     PhantomReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p7<!>, refQueue)

@@ -20,11 +20,12 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.isLegacyContextReceiver
+import org.jetbrains.kotlin.fir.isEnabled
 
 object FirContextReceiversDeprecatedDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirDeclaration) {
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) return
+        if (LanguageFeature.ContextParameters.isEnabled()) return
 
         if (declaration is FirCallableDeclaration &&
             // Skip the lambdas. They don't have `context` explicitly written => `context` is written somewhere else.

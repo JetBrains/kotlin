@@ -22,14 +22,14 @@ import org.jetbrains.kotlin.cpp.CompilationDatabasePlugin
 import org.jetbrains.kotlin.cpp.CppUsage
 import org.jetbrains.kotlin.cpp.GitClangFormatPlugin
 import org.jetbrains.kotlin.CompareDistributionSignatures
+import org.jetbrains.kotlin.nativeDistribution.InvalidateStaleCaches
 import org.jetbrains.kotlin.nativeDistribution.LLVMDistributionKind
 import org.jetbrains.kotlin.nativeDistribution.LLVMDistributionSourceKt
 import org.jetbrains.kotlin.nativeDistribution.NativeDistributionKt
 import org.jetbrains.kotlin.nativeDistribution.NativeProtoDistributionKt
+import org.jetbrains.kotlin.nativeDistribution.PrepareDistributionFingerprint
 import org.jetbrains.kotlin.nativeDistribution.PrepareKonanProperties
 import org.jetbrains.kotlin.xcode.XcodeOverridePlugin
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.apache.tools.ant.filters.ReplaceTokens
 import org.jetbrains.kotlin.UtilsKt
 import plugins.KotlinBuildPublishingPluginKt
 import java.security.MessageDigest
@@ -41,10 +41,6 @@ buildscript {
     repositories {
         mavenCentral()
         gradlePluginPortal()
-    }
-
-    dependencies {
-        classpath libs.shadow.gradlePlugin
     }
 }
 
@@ -76,7 +72,6 @@ def cacheableTargetNames = platformManager.hostPlatform.cacheableTargets
 def nativeDistribution = NativeDistributionKt.getNativeDistribution(project)
 
 configurations {
-    distPack
     commonSources
 
     runtimeBitcode {
@@ -112,7 +107,6 @@ configurations {
 apply plugin: CompilationDatabasePlugin
 
 dependencies {
-    distPack project(path: ':kotlin-native:utilities:cli-runner', configuration: 'runtimeElements')
     commonSources project(path: ':kotlin-stdlib', configuration: 'metadataSourcesElements')
     commonSources project(path: ':kotlin-test', configuration: 'metadataSourcesElements')
     compilationDatabase project(":kotlin-native:runtime")
@@ -181,16 +175,6 @@ tasks.register("distSources") {
     dependsOn(distNativeSources)
 }
 
-def shadowJar = tasks.register("shadowJar", ShadowJar) {
-    mergeServiceFiles()
-    destinationDirectory.set(layout.buildDirectory)
-    archiveBaseName.set("kotlin-native")
-    archiveVersion.set("")
-    archiveClassifier.set("")
-    exclude("META-INF/versions/9/module-info.class")
-    configurations = [project.configurations.distPack]
-}
-
 tasks.register("distCompiler") {
     // Workaround: make distCompiler no-op if we are using custom dist:
     // the dist is already in place and has the compiler, so we don't have to
@@ -208,6 +192,7 @@ tasks.register("distCompiler") {
         dependsOn 'distSwiftExport'
         dependsOn 'distKonanPlatforms'
         dependsOn 'distKonanProperties'
+        dependsOn 'distCompilerFingerprint'
     }
 }
 
@@ -235,6 +220,8 @@ tasks.register("distStdlibCache") {
     if (hostName in cacheableTargetNames) {
         dependsOn("${hostName}StdlibCache")
     }
+    // Make sure any tasks depending on this one see cleaned-up distribution.
+    mustRunAfter("distInvalidateStaleCaches")
 }
 
 tasks.register("distStdlib", Sync) {
@@ -252,7 +239,6 @@ tasks.register("distNativeLibs", Sync) {
 }
 
 tasks.register("distCompilerJars", Sync) {
-    from(shadowJar.map { it.archiveFile })
     from(configurations.embeddableJar) {
         rename {
             "kotlin-native-compiler-embeddable.jar"
@@ -263,6 +249,16 @@ tasks.register("distCompilerJars", Sync) {
     }
 
     into(nativeDistribution.map { it.compilerJars })
+}
+
+tasks.register("distCompilerFingerprint", PrepareDistributionFingerprint) {
+    input.from(tasks.named("distNativeLibs"))
+    input.from(tasks.named("distCompilerJars"))
+    input.from(tasks.named("distKonanProperties"))
+
+    output = nativeDistribution.map { it.compilerFingerprint }
+
+    finalizedBy("distInvalidateStaleCaches") // if the fingerprint has updated, some caches may need to be invalidated
 }
 
 tasks.register("distTools", Sync) {
@@ -318,6 +314,8 @@ tasks.register("crossDistPlatformLibs") {
 
 tasks.register("crossDistStdlibCache") {
     dependsOn.addAll(targetList.findAll { it in cacheableTargetNames }.collect { "${it}StdlibCache" })
+    // Make sure any tasks depending on this one see cleaned-up distribution.
+    mustRunAfter("distInvalidateStaleCaches")
 }
 
 targetList.each { target ->
@@ -335,9 +333,17 @@ targetList.each { target ->
         }
     }
 
+    tasks.register("${target}CrossDistRuntimeFingerprint", PrepareDistributionFingerprint) {
+        input.from(tasks.named("${target}CrossDistBitcodeCopy"))
+        output = nativeDistribution.map { it.runtimeFingerprint(target) }
+
+        finalizedBy("distInvalidateStaleCaches") // if the fingerprint has updated, some caches may need to be invalidated
+    }
+
     tasks.register("${target}CrossDistRuntime") {
         dependsOn ":kotlin-native:distStdlib"
         dependsOn "${target}CrossDistBitcodeCopy"
+        dependsOn "${target}CrossDistRuntimeFingerprint"
     }
 
     tasks.register("${target}PlatformLibs") {
@@ -345,12 +351,16 @@ targetList.each { target ->
         if (target in cacheableTargetNames) {
             dependsOn(":kotlin-native:platformLibs:${target}Cache")
         }
+        // Make sure any tasks depending on this one see cleaned-up distribution.
+        mustRunAfter("distInvalidateStaleCaches")
     }
 
     if (target in cacheableTargetNames) {
         tasks.register("${target}StdlibCache", Sync) {
             dependsOn "distStdlib"
             dependsOn ":kotlin-native:runtime:${target}StdlibCache"
+            // Make sure the cache clean-up has happened, so this task can safely write into the shared cache folder
+            mustRunAfter("distInvalidateStaleCaches")
 
             into(nativeDistribution.map { it.cache("stdlib", target) })
 
@@ -365,6 +375,8 @@ targetList.each { target ->
         if (target in cacheableTargetNames) {
             dependsOn "${target}StdlibCache"
         }
+        // Make sure any tasks depending on this one see cleaned-up distribution.
+        mustRunAfter("distInvalidateStaleCaches")
     }
 }
 
@@ -386,6 +398,18 @@ tasks.register("crossDist") {
             "distDef",
             "distStdlib",
             "crossDistStdlibCache"
+}
+
+tasks.register("distInvalidateStaleCaches", InvalidateStaleCaches) {
+    distributionAsDirectory.set(nativeDistribution.map { it.root })
+    // If the build graph includes any of the fingerprint updates, this task must run after them.
+    // However, it shouldn't force any of the fingerprints to be computed (e.g. when building :kotlin-native:dist
+    // this task should run after compiler and host runtime fingerprint updates, but shouldn't force fingerprint from an iOS simulator
+    // to be computed)
+    mustRunAfter("distCompilerFingerprint")
+    targetList.each { target ->
+        mustRunAfter("${target}CrossDistRuntimeFingerprint")
+    }
 }
 
 tasks.register("bundle") {
@@ -492,6 +516,9 @@ configure([bundleRegular, bundlePrebuilt]) {
     } else {
         dependsOn(mergeCrossBundleTask)
     }
+
+    // Bundle tasks read the entire contents of the Native distribution. Make sure this happens after invalid stale caches are removed
+    mustRunAfter("distInvalidateStaleCaches")
 
     destinationDirectory.set(file('.'))
 

@@ -70,7 +70,8 @@ private abstract class AbstractToolingDiagnostic(
     val severity: ToolingDiagnostic.Severity
 ) : ToolingDiagnosticOutput {
     override val name: String by lazy { buildName() }
-    override val message: String by lazy { buildMessage() }
+    override val message: String
+        get() = buildMessage()
     override val solution: String? by lazy { buildSolution() }
     override val documentation: String? by lazy { buildDocumentation() }
 
@@ -78,6 +79,7 @@ private abstract class AbstractToolingDiagnostic(
         if (showEmoji) {
             val iconSeverity = when (severity) {
                 WARNING -> DiagnosticIcon.WARNING
+                STRONG_WARNING,
                 ERROR -> DiagnosticIcon.ERROR
                 FATAL -> DiagnosticIcon.FATAL
             }
@@ -179,7 +181,7 @@ private class DefaultStyledToolingDiagnostic(
 
     private fun String.applyColor(severity: ToolingDiagnostic.Severity) = when (severity) {
         WARNING -> yellow()
-        ERROR, FATAL -> red()
+        STRONG_WARNING, ERROR, FATAL -> red()
     }
 
     private fun StringBuilder.processCodeBlocks(lines: List<String>) {

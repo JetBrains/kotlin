@@ -26,7 +26,6 @@ class JvmIrSerializerSession(
     IrSerializationSettings(
         configuration = configuration,
         bodiesOnlyForInlines = mode == JvmSerializeIrMode.INLINE,
-        reuseExistingSignaturesForSymbols = false,
     ),
     declarationTable,
 ) {

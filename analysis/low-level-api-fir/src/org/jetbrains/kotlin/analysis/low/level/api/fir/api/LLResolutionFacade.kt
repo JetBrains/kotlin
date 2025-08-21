@@ -6,24 +6,24 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLDiagnosticProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLModuleProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLModuleResolutionStrategyProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLSessionProvider
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import com.intellij.psi.PsiTypeParameter
+import com.intellij.psi.impl.compiled.ClsElementImpl
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisElement
-import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLDefaultScopeSessionProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLModuleResolutionStrategy
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirDeclarationForCompiledElementSearcher
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFirDeclaration
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.state.*
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLModuleSpecificSymbolProviderAccess
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.getClassLikeSymbolByPsiWithoutDependencies
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
+import org.jetbrains.kotlin.analysis.utils.classId
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
+import org.jetbrains.kotlin.analysis.utils.isLocalClass
+import org.jetbrains.kotlin.asJava.KtLightClassMarker
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
@@ -34,13 +34,13 @@ import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.psi.KtCodeFragment
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
@@ -65,6 +65,12 @@ class LLResolutionFacade internal constructor(
     fun getSessionFor(module: KaModule): LLFirSession {
         return sessionProvider.getSession(module)
     }
+
+    /**
+     * @see LLSessionProvider.getDependencySession
+     */
+    fun getDependencySessionFor(module: KaModule): LLFirSession? =
+        sessionProvider.getDependencySession(module)
 
     fun getScopeSessionFor(firSession: FirSession): ScopeSession {
         requireIsInstance<LLFirSession>(firSession)
@@ -188,6 +194,57 @@ class LLResolutionFacade internal constructor(
         val searcher = FirDeclarationForCompiledElementSearcher(session)
         val firDeclaration = searcher.findNonLocalDeclaration(ktDeclaration)
         return firDeclaration.symbol
+    }
+
+    /**
+     * Resolves a **non-Kotlin** [PsiClass] to a [FirRegularClassSymbol].
+     */
+    internal fun resolveToFirSymbol(psiClass: PsiClass): FirRegularClassSymbol {
+        checkPsiClassApplicability(psiClass)
+
+        val module = getModule(psiClass)
+        val classId = psiClass.classIdOrError()
+
+        val symbolProvider = getSessionFor(module).symbolProvider
+
+        // We're using the symbol provider for the PSI class's module, so module-specific accesses are valid.
+        @OptIn(LLModuleSpecificSymbolProviderAccess::class)
+        return symbolProvider.getClassLikeSymbolByPsiWithoutDependencies(classId, psiClass) as? FirRegularClassSymbol
+            ?: errorWithAttachment("Class symbol not found for PSI class") {
+                withEntry("classId", classId) { it.asString() }
+                withPsiEntry("psiClass", psiClass, module)
+            }
+    }
+
+    private fun checkPsiClassApplicability(psiClass: PsiClass) {
+        require(psiClass !is PsiTypeParameter) {
+            "`PsiClass.resolveToFirSymbol` can only resolve regular classes."
+        }
+
+        require(psiClass !is KtLightClassMarker) {
+            "`PsiClass.resolveToFirSymbol` can only provide non-Kotlin classes."
+        }
+
+        checkWithAttachment(
+            psiClass !is ClsElementImpl || !psiClass.hasAnnotation(JvmAnnotationNames.METADATA_FQ_NAME.asString()),
+            {
+                "`PsiClass.resolveToFirSymbol` can only provide non-Kotlin classes, but got `${psiClass::class}` with" +
+                        " `${JvmAnnotationNames.METADATA_FQ_NAME.asString()}` annotation."
+            }
+        ) {
+            withEntry("virtualFilePath", psiClass.containingFile.virtualFile?.path)
+            withPsiEntry("psiClass", psiClass, useSiteFirSession.ktModule)
+        }
+
+        checkWithAttachment(
+            !psiClass.isLocalClass(),
+            { "`PsiClass.resolveToFirSymbol` can only provide non-local classes, but `${psiClass::class}` is local." },
+        ) {
+            withEntry("virtualFilePath", psiClass.containingFile.virtualFile?.path)
+            withPsiEntry("psiClass", psiClass, useSiteFirSession.ktModule)
+            withEntry("psiClass.qualifiedName", psiClass.qualifiedName)
+            withEntry("psiClass.classId", psiClass.classId?.asString())
+        }
     }
 }
 

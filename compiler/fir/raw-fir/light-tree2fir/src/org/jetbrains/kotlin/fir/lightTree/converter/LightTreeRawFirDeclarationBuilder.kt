@@ -12,13 +12,9 @@ import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.ElementTypeUtils.isExpression
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
-import org.jetbrains.kotlin.descriptors.isObject
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.firstFunctionCallInBlockHasLambdaArgumentWithLabel
 import org.jetbrains.kotlin.fir.analysis.isCallTheFirstStatement
@@ -32,6 +28,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.DanglingTypeConstraint
 import org.jetbrains.kotlin.fir.declarations.utils.addDeclarations
 import org.jetbrains.kotlin.fir.declarations.utils.addDefaultBoundIfNecessary
 import org.jetbrains.kotlin.fir.declarations.utils.danglingTypeConstraints
+import org.jetbrains.kotlin.fir.declarations.utils.isScriptTopLevelDeclaration
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
@@ -1365,6 +1362,10 @@ class LightTreeRawFirDeclarationBuilder(
                     }
                 }
             }
+        }.also {
+            if (typeAlias.getParent()?.elementType == KtStubElementTypes.CLASS_BODY) {
+                it.initContainingClassForLocalAttr()
+            }
         }
     }
 
@@ -1396,9 +1397,9 @@ class LightTreeRawFirDeclarationBuilder(
             else -> identifier.nameAsSafeName()
         }
         val propertySymbol = if (isLocal) {
-            FirPropertySymbol(propertyName)
+            FirLocalPropertySymbol()
         } else {
-            FirPropertySymbol(callableIdForName(propertyName))
+            FirRegularPropertySymbol(callableIdForName(propertyName))
         }
 
         withContainerSymbol(propertySymbol, isLocal) {
@@ -1460,7 +1461,6 @@ class LightTreeRawFirDeclarationBuilder(
                 )
 
                 if (isLocal) {
-                    this.isLocal = true
                     val delegateBuilder = delegate?.let {
                         FirWrappedDelegateExpressionBuilder().apply {
                             source = delegateSource?.fakeElement(KtFakeSourceElementKind.WrappedDelegate)
@@ -1481,8 +1481,6 @@ class LightTreeRawFirDeclarationBuilder(
                         explicitDeclarationSource = propertySource,
                     )
                 } else {
-                    this.isLocal = false
-
                     dispatchReceiverType = currentDispatchReceiverType()
                     withCapturedTypeParameters(true, propertySource, firTypeParameters) {
                         typeParameters += firTypeParameters
@@ -1580,14 +1578,16 @@ class LightTreeRawFirDeclarationBuilder(
     internal fun convertDestructingDeclaration(destructingDeclaration: LighterASTNode): DestructuringDeclaration {
         val annotations = mutableListOf<FirAnnotationCall>()
         var isVar = false
+        var isPositional = false
         val entries = mutableListOf<DestructuringEntry>()
         val source = destructingDeclaration.toFirSourceElement()
         var firExpression: FirExpression? = null
         destructingDeclaration.forEachChildren {
             when (it.tokenType) {
+                LBRACKET -> isPositional = true
                 MODIFIER_LIST -> convertAnnotationsOnlyTo(it, annotations)
                 VAR_KEYWORD -> isVar = true
-                DESTRUCTURING_DECLARATION_ENTRY -> entries += convertDestructingDeclarationEntry(it)
+                DESTRUCTURING_DECLARATION_ENTRY -> entries += convertDestructingDeclarationEntry(it, isVar)
                 // Property delegates should be ignored as they aren't a valid initializer
                 PROPERTY_DELEGATE -> {}
                 else -> if (it.isExpression()) firExpression =
@@ -1596,7 +1596,8 @@ class LightTreeRawFirDeclarationBuilder(
         }
 
         return DestructuringDeclaration(
-            isVar,
+            isVar = isVar,
+            isNameBased = !isPositional && (entries.any { it.isFullForm } || nameBasedDestructuringShortForm),
             entries,
             firExpression ?: buildErrorExpression(
                 destructingDeclaration.toFirSourceElement(),
@@ -1608,17 +1609,30 @@ class LightTreeRawFirDeclarationBuilder(
     }
 
     /**
-     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseMultiDeclarationName
+     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseMultiDeclarationEntry
      */
-    private fun convertDestructingDeclarationEntry(entry: LighterASTNode): DestructuringEntry {
+    private fun convertDestructingDeclarationEntry(entry: LighterASTNode, isVar: Boolean): DestructuringEntry {
         val annotations = mutableListOf<FirAnnotationCall>()
         var identifier: String? = null
         var firType: FirTypeRef? = null
+        var isVar = isVar
+        var initializerName: Name? = null
+        var initializerSource: KtSourceElement? = null
+        var isFullForm = false
         entry.forEachChildren {
             when (it.tokenType) {
                 MODIFIER_LIST -> convertAnnotationsOnlyTo(it, annotations)
                 IDENTIFIER -> identifier = it.asText
                 TYPE_REFERENCE -> firType = convertType(it)
+                VAL_KEYWORD -> isFullForm = true
+                VAR_KEYWORD -> {
+                    isFullForm = true
+                    isVar = true
+                }
+                REFERENCE_EXPRESSION -> {
+                    initializerName = it.getReferencedNameAsName()
+                    initializerSource = it.toFirSourceElement()
+                }
             }
         }
 
@@ -1630,8 +1644,12 @@ class LightTreeRawFirDeclarationBuilder(
 
         return DestructuringEntry(
             source = entry.toFirSourceElement(),
+            initializerSource = initializerSource,
             returnTypeRef = firType ?: implicitType,
             name = name,
+            initializerName = initializerName,
+            isVar = isVar,
+            isFullForm = isFullForm,
             annotations = annotations,
         )
     }
@@ -1659,7 +1677,7 @@ class LightTreeRawFirDeclarationBuilder(
             origin = FirDeclarationOrigin.Source
             source = sourceElement.fakeElement(KtFakeSourceElementKind.DefaultAccessor)
             returnTypeRef = propertyTypeRefToUse
-            symbol = FirValueParameterSymbol(StandardNames.DEFAULT_VALUE_PARAMETER)
+            symbol = FirValueParameterSymbol()
         }
         var block: LighterASTNode? = null
         var expression: LighterASTNode? = null
@@ -1796,7 +1814,7 @@ class LightTreeRawFirDeclarationBuilder(
                 origin = FirDeclarationOrigin.Source
                 returnTypeRef = returnType
                 name = StandardNames.BACKING_FIELD
-                symbol = FirBackingFieldSymbol(CallableId(name))
+                symbol = FirBackingFieldSymbol()
                 this.status = status
                 modifiers?.convertAnnotationsTo(annotations)
                 annotations += annotationsFromProperty
@@ -1891,7 +1909,7 @@ class LightTreeRawFirDeclarationBuilder(
             origin = FirDeclarationOrigin.Source
             returnTypeRef = if (firValueParameter.returnTypeRef == implicitType) propertyTypeRef else firValueParameter.returnTypeRef
             name = firValueParameter.name
-            symbol = FirValueParameterSymbol(firValueParameter.name)
+            symbol = FirValueParameterSymbol()
             defaultValue = firValueParameter.defaultValue
             isCrossinline = calculatedModifiers.hasCrossinline() || firValueParameter.isCrossinline
             isNoinline = calculatedModifiers.hasNoinline() || firValueParameter.isNoinline
@@ -2681,7 +2699,7 @@ class LightTreeRawFirDeclarationBuilder(
         }
 
         val name = convertValueParameterName(identifier.nameAsSafeName(), valueParameterDeclaration) { identifier }
-        val valueParameterSymbol = FirValueParameterSymbol(name)
+        val valueParameterSymbol = FirValueParameterSymbol()
         withContainerSymbol(valueParameterSymbol, isLocal = !valueParameterDeclaration.isAnnotationOwner) {
             valueParameter.forEachChildren {
                 when (it.tokenType) {
@@ -2774,7 +2792,7 @@ class LightTreeRawFirDeclarationBuilder(
                     // Luckily, legacy context receivers are getting removed soon.
                     this.name = customLabelName ?: labelNameFromTypeRef ?: SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
 
-                    this.symbol = FirValueParameterSymbol(name)
+                    this.symbol = FirValueParameterSymbol()
                     withContainerSymbol(this.symbol) {
                         this.returnTypeRef = typeReference?.let { convertType(it) }
                             ?: buildErrorTypeRef { diagnostic = ConeSimpleDiagnostic("Type missing") }
@@ -2827,6 +2845,7 @@ class LightTreeRawFirDeclarationBuilder(
                                 isLocal = isLast,
                             )
 
+                            initializer.isScriptTopLevelDeclaration = true
                             declarations.add(initializer)
                         }
 
@@ -2840,23 +2859,26 @@ class LightTreeRawFirDeclarationBuilder(
                                 extractedAnnotations = destructuringDeclaration.annotations,
                                 origin = FirDeclarationOrigin.Synthetic.ScriptTopLevelDestructuringDeclarationContainer
                             ).apply {
+                                isScriptTopLevelDeclaration = true
                                 isDestructuringDeclarationContainerVariable = true
                             }
-                            addDestructuringVariables(
+                            addDestructuringStatements(
                                 declarations,
-                                DestructuringEntry,
                                 baseModuleData,
+                                destructuringDeclaration,
                                 destructuringContainerVar,
-                                destructuringDeclaration.entries,
-                                destructuringDeclaration.isVar,
-                                tmpVariable = true,
+                                isTmpVariable = true,
                                 forceLocal = false,
                             ) {
                                 configureScriptDestructuringDeclarationEntry(it, destructuringContainerVar)
+                                it.isScriptTopLevelDeclaration = true
                             }
                         }
 
-                        else -> convertDeclarationFromClassBody(declarationSource, declarations, classWrapper = null, modifierLists)
+                        else -> {
+                            convertDeclarationFromClassBody(declarationSource, declarations, classWrapper = null, modifierLists)
+                            declarations.lastOrNull()?.isScriptTopLevelDeclaration = true
+                        }
                     }
                 }
                 convertDanglingModifierListsInClassBody(modifierLists, declarations)

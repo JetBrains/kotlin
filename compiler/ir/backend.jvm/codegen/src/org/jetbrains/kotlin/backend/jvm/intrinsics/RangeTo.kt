@@ -5,43 +5,23 @@
 
 package org.jetbrains.kotlin.backend.jvm.intrinsics
 
-import org.jetbrains.kotlin.backend.jvm.codegen.BlockInfo
-import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
-import org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.backend.jvm.codegen.*
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 object RangeTo : IntrinsicMethod() {
-    override fun toCallable(
-        expression: IrFunctionAccessExpression, signature: JvmMethodSignature, classCodegen: ClassCodegen,
-    ): IntrinsicFunction {
+    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
+        val signature = codegen.methodSignatureMapper.mapSignatureSkipGeneric(expression.symbol.owner)
         val argType = mapRangeTypeToPrimitiveType(signature.returnType)
-        return object : IntrinsicFunction(
-            expression, signature, classCodegen, listOf(argType) + signature.parameters.map { argType }
-        ) {
-            override fun genInvokeInstruction(v: InstructionAdapter) {
-                v.invokespecial(
-                    signature.returnType.internalName,
-                    "<init>",
-                    Type.getMethodDescriptor(Type.VOID_TYPE, argType, argType),
-                    false
-                )
-            }
-
-            override fun invoke(
-                v: InstructionAdapter,
-                codegen: ExpressionCodegen,
-                data: BlockInfo,
-                expression: IrFunctionAccessExpression,
-            ) {
-                with(codegen) { expression.markLineNumber(startOffset = true) }
-                v.anew(signature.returnType)
-                v.dup()
-                super.invoke(v, codegen, data, expression)
-            }
-        }
+        with(codegen) { expression.markLineNumber(startOffset = true) }
+        val v = codegen.mv
+        v.anew(signature.returnType)
+        v.dup()
+        val (arg0, arg1) = expression.arguments
+        arg0!!.accept(codegen, data).materializeAt(argType, arg0.type)
+        arg1!!.accept(codegen, data).materializeAt(argType, arg1.type)
+        v.invokespecial(signature.returnType.internalName, "<init>", Type.getMethodDescriptor(Type.VOID_TYPE, argType, argType), false)
+        return MaterialValue(codegen, signature.returnType, expression.type)
     }
 
     private fun mapRangeTypeToPrimitiveType(rangeType: Type): Type {

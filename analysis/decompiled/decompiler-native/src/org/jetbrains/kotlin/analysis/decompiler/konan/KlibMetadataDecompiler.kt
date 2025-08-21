@@ -32,7 +32,7 @@ abstract class KlibMetadataDecompiler<out V : BinaryVersion>(
         fileWithMetadata: FileWithMetadata.Compatible,
         virtualFile: VirtualFile,
         serializerProtocol: SerializerExtensionProtocol,
-        flexibleTypeDeserializer: FlexibleTypeDeserializer
+        flexibleTypeDeserializer: FlexibleTypeDeserializer,
     ): DecompiledText
 
     override fun accepts(file: VirtualFile) = FileTypeRegistry.getInstance().isFileOfType(file, fileType)
@@ -65,15 +65,12 @@ abstract class KlibMetadataDecompiler<out V : BinaryVersion>(
         assert(FileTypeRegistry.getInstance().isFileOfType(virtualFile, fileType)) { "Unexpected file type ${virtualFile.fileType}" }
 
         return when (val fileWithMetadata = readFileSafely(virtualFile)) {
-            is FileWithMetadata.Incompatible -> {
-                createIncompatibleMetadataVersionDecompiledText(MetadataVersion.INSTANCE_NEXT, fileWithMetadata.version)
-            }
+            is FileWithMetadata.Incompatible -> DecompiledText(createIncompatibleMetadataVersionDecompiledText(fileWithMetadata.version))
             is FileWithMetadata.Compatible -> {
                 getDecompiledText(fileWithMetadata, virtualFile, serializerProtocol(), flexibleTypeDeserializer)
             }
-            null -> {
-                createIncompatibleMetadataVersionDecompiledText(MetadataVersion.INSTANCE_NEXT, MetadataVersion.INVALID_VERSION)
-            }
+
+            null -> DecompiledText(createIncompatibleMetadataVersionDecompiledText(MetadataVersion.INVALID_VERSION))
         }
     }
 

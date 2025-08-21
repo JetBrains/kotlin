@@ -5,18 +5,11 @@
 
 package org.jetbrains.kotlin.backend.common
 
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.irAttribute
-
-/**
- * Original element before inlining. Useful only with IR
- * inliner. `null` if the element wasn't inlined. Unlike [attributeOwnerId], doesn't have the
- * idempotence invariant and can contain a chain of declarations.
- *
- * `null` <=> `this` element wasn't inlined.
- */
-var IrElement.originalBeforeInline: IrElement? by irAttribute(copyByDefault = true)
+import org.jetbrains.kotlin.ir.irFlag
+import org.jetbrains.kotlin.name.Name
 
 var IrFunction.defaultArgumentsDispatchFunction: IrFunction? by irAttribute(copyByDefault = false)
 
@@ -38,3 +31,13 @@ var IrSimpleFunction.suspendFunction: IrSimpleFunction? by irAttribute(copyByDef
 var IrFunction.defaultArgumentsOriginalFunction: IrFunction? by irAttribute(copyByDefault = true)
 
 var IrConstructor.capturedConstructor: IrConstructor? by irAttribute(copyByDefault = false)
+
+/**
+ * A name that is going to be returned by `KFunction.name`, if it's different than `IrSimpleFunction.name`.
+ */
+var IrSimpleFunction.customNameInReflection: Name? by irAttribute(copyByDefault = false)
+
+/**
+ * Flags calls which are the result of an implicit `invoke` operator call.
+ */
+var IrCall.implicitInvoke: Boolean by irFlag(copyByDefault = false)

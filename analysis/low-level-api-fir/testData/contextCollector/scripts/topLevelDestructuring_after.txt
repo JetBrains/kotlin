@@ -24,11 +24,11 @@ Tower Data Context:
             Classifiers:
                 FirRegularClassSymbol public final data class TwoValues : R|kotlin/Any|
             Properties:
-                FirPropertySymbol public final val $$result: R|kotlin/Int|
+                FirRegularPropertySymbol public final val $$result: R|kotlin/Int|
                     public get(): R|kotlin/Int|
-                FirPropertySymbol public final val one: R|kotlin/Int|
+                FirRegularPropertySymbol public final val one: R|kotlin/Int|
                     public get(): R|kotlin/Int|
-                FirPropertySymbol public final val two: <implicit>
+                FirRegularPropertySymbol public final val two: <implicit>
                     public get(): <implicit>
     Element 10
         Scope: FirLocalScope

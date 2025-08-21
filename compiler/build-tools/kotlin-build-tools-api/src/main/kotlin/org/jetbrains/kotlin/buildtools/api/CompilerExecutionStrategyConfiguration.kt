@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.api
 
-import java.io.File
+import java.time.Duration
 
 /**
  * Allows users to customize the compiler execution strategy.
@@ -22,10 +22,21 @@ public interface CompilerExecutionStrategyConfiguration {
 
     /**
      * Marks the compilation to be run in Kotlin daemon launched as a separate process and shared across similar compilation requests.
-     * See Kotlin daemon documentation here: https://kotlinlang.org/docs/gradle-compilation-and-caches.html#the-kotlin-daemon-and-how-to-use-it-with-gradle
+     * See Kotlin daemon documentation: https://kotl.in/daemon
      * @param jvmArguments a list of JVM startup arguments for the daemon
      */
     public fun useDaemonStrategy(
         jvmArguments: List<String>,
+    ): CompilerExecutionStrategyConfiguration
+
+    /**
+     * Marks the compilation to be run in Kotlin daemon launched as a separate process and shared across similar compilation requests.
+     * See Kotlin daemon documentation: https://kotl.in/daemon
+     * @param jvmArguments a list of JVM startup arguments for the daemon
+     * @param shutdownDelay the time that the daemon process continues to live after all clients have disconnected
+     */
+    public fun useDaemonStrategy(
+        jvmArguments: List<String>,
+        shutdownDelay: Duration,
     ): CompilerExecutionStrategyConfiguration
 }

@@ -9,6 +9,7 @@ import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.CompiledScriptClassLoader
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.KJvmCompiledModuleInMemoryImpl
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
@@ -93,7 +94,7 @@ class ScriptingHostTest {
     fun testErrorResult() {
         val resVal = evalScriptWithResult("throw RuntimeException(\"abc\")")
         assertTrue(resVal is ResultValue.Error)
-        val resValError = (resVal as ResultValue.Error).error
+        val resValError = resVal.error
         assertTrue(resValError is RuntimeException)
         assertEquals("abc", resValError.message)
     }
@@ -172,7 +173,7 @@ class ScriptingHostTest {
             val mainMethod = scriptClass.methods.find { it.name == "main" }
             assertNotNull(mainMethod)
             val output = captureOutAndErr {
-                mainMethod!!.invoke(null, emptyArray<String>())
+                mainMethod.invoke(null, emptyArray<String>())
             }.toList().filterNot(String::isEmpty).joinToString("\n")
             assertEquals(greeting, output)
         }
@@ -660,7 +661,7 @@ class ScriptingHostTest {
         assertTrue(res is ResultWithDiagnostics.Failure)
         val report = res.reports.find { it.message.startsWith("Imported source file not found") }
         assertNotNull(report)
-        assertEquals("script.kts", report?.sourcePath)
+        assertEquals("script.kts", report.sourcePath)
     }
 
     @Test
@@ -676,7 +677,8 @@ class ScriptingHostTest {
         """.trimIndent()
         val compilationConfiguration1 = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate> {
             compilerOptions(
-                CommonCompilerArguments::languageVersion.cliArgument, "1.8",
+                CommonCompilerArguments::languageVersion.cliArgument,
+                LanguageVersion.FIRST_SUPPORTED.versionString,
                 CommonCompilerArguments::suppressVersionWarnings.cliArgument,
                 CommonCompilerArguments::whenGuards.cliArgument,
             )
@@ -844,8 +846,8 @@ class ScriptingHostTest {
         assertNotNull(classAsResourceUrl)
         assertNotNull(classAssResourceStream)
 
-        val classAsResourceData = classAsResourceUrl!!.openConnection().getInputStream().readBytes()
-        val classAsResourceStreamData = classAssResourceStream!!.readBytes()
+        val classAsResourceData = classAsResourceUrl.openConnection().getInputStream().readBytes()
+        val classAsResourceStreamData = classAssResourceStream.readBytes()
 
         assertContentEquals(classAsResourceData, classAsResourceStreamData)
 

@@ -456,6 +456,7 @@ internal class MapBuilder<K, V> private constructor(
         return false
     }
 
+    @IgnorableReturnValue
     private fun putAllEntries(from: Collection<Map.Entry<K, V>>): Boolean {
         if (from.isEmpty()) return false
         ensureExtraCapacity(from.size)

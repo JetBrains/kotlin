@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.common.perfManager
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.config.ClassicFrontendSpecificJvmConfigurationKeys.JAVA_CLASSES_TRACKER
@@ -50,7 +51,6 @@ import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import org.jetbrains.kotlin.utils.fileUtils.resolveSymlinksGracefully
 import java.io.File
 
 object KotlinToJVMBytecodeCompiler {
@@ -199,19 +199,8 @@ object KotlinToJVMBytecodeCompiler {
     )
 
     fun compileBunchOfSources(environment: KotlinCoreEnvironment): Boolean {
-        val moduleVisibilityManager = ModuleVisibilityManager.SERVICE.getInstance(environment.project)
-
-        val friendPaths = environment.configuration.getList(JVMConfigurationKeys.FRIEND_PATHS)
-        for (path in friendPaths) {
-            moduleVisibilityManager.addFriendPath(path)
-        }
-
-        if (!checkKotlinPackageUsageForPsi(environment.configuration, environment.getSourceFiles())) return false
-
-        val generationState = analyzeAndGenerate(environment) ?: return false
-
-        writeOutput(environment.configuration, generationState.factory, null)
-        return true
+        val module = ModuleBuilder("test", environment.configuration.outputDirectory!!.path, "test")
+        return compileModules(environment, buildFile = null, listOf(module))
     }
 
     private fun repeatAnalysisIfNeeded(result: AnalysisResult?, environment: KotlinCoreEnvironment): AnalysisResult? {
@@ -253,7 +242,7 @@ object KotlinToJVMBytecodeCompiler {
         return result
     }
 
-    @Suppress("MemberVisibilityCanBePrivate") // Used in ExecuteKotlinScriptMojo
+    @Suppress("unused") // Used in ExecuteKotlinScriptMojo. To be removed (KT-71729).
     fun analyzeAndGenerate(environment: KotlinCoreEnvironment): GenerationState? {
         val result = environment.configuration.perfManager.let {
             it?.notifyPhaseFinished(PhaseType.Initialization)
@@ -471,11 +460,10 @@ fun CompilerConfiguration.configureSourceRoots(chunk: List<Module>, buildFile: F
 
     for (module in chunk) {
         for (classpathRoot in module.getClasspathRoots()) {
-            val file = resolveSymlinksGracefully(classpathRoot).toFile()
             if (isJava9Module) {
-                add(CLIConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(file))
+                add(CLIConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(File(classpathRoot)))
             }
-            add(CLIConfigurationKeys.CONTENT_ROOTS, JvmClasspathRoot(file))
+            add(CLIConfigurationKeys.CONTENT_ROOTS, JvmClasspathRoot(File(classpathRoot)))
         }
     }
 

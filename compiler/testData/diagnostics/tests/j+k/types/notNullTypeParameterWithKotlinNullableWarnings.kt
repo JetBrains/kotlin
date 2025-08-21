@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // SKIP_JAVAC
-// LANGUAGE: -ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
+// LANGUAGE: -ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated -PreciseSimplificationToFlexibleLowerConstraint
 // RENDER_DIAGNOSTICS_FULL_TEXT
 // FILE: SLRUMap.java
 

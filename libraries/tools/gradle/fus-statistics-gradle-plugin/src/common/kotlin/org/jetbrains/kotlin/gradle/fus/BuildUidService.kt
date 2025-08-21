@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.fus
 
-import org.gradle.api.Project
+import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
@@ -25,8 +25,8 @@ abstract class BuildUidService : BuildService<BuildServiceParameters.None>, Auto
     companion object {
         private val serviceName = "${BuildUidService::class.java.canonicalName}_${BuildUidService::class.java.classLoader.hashCode()}"
 
-        fun registerIfAbsent(project: Project): Provider<BuildUidService> {
-            return project.gradle.sharedServices.registerIfAbsent(serviceName, BuildUidService::class.java) {
+        fun registerIfAbsent(gradle: Gradle): Provider<BuildUidService> {
+            return gradle.sharedServices.registerIfAbsent(serviceName, BuildUidService::class.java) {
             }.also {
                 // There is a specific behavior in Gradle 8.0 where: the BuildUidService gets closed during the build execution process.
                 // This results in having different buildIds for BuildCloseFusStatisticsBuildService and BuildFusService.

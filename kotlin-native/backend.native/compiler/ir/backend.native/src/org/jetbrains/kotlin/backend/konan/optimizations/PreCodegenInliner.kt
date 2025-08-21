@@ -20,16 +20,14 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrSuspensionPoint
-import org.jetbrains.kotlin.ir.inline.CallInlinerStrategy
 import org.jetbrains.kotlin.ir.inline.FunctionInlining
 import org.jetbrains.kotlin.ir.inline.InlineFunctionResolver
-import org.jetbrains.kotlin.ir.inline.InlineMode
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
-import kotlin.collections.*
 
 /*
  * A simple greedy inliner. Traverses the call graph and inlines all the callees with size less than a specified threshold.
@@ -155,7 +153,7 @@ internal class PreCodegenInliner(
                                         return symbol.owner.takeIf { it in functionsToInline }
                                     }
 
-                                    override fun shouldSkipBecauseOfCallSite(expression: IrFunctionAccessExpression): Boolean {
+                                    override fun shouldSkipBecauseOfCallSite(expression: IrMemberAccessExpression<IrFunctionSymbol>): Boolean {
                                         return expression is IrCall && expression.isVirtualCall
                                     }
                                 },

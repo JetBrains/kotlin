@@ -22,7 +22,6 @@ fun Example() {
 
 @Composable
 @ComposableInferredTarget(scheme = "[0[0]]")
-@FunctionKeyMeta(key = -2001519407, startOffset = 165, endOffset = 227)
 fun SomeThing(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(SomeThing)N(content)<conten...>:Test.kt")
@@ -46,7 +45,6 @@ fun SomeThing(content: Function2<Composer, Int, Unit>, %composer: Composer?, %ch
   }
 }
 @Composable
-@FunctionKeyMeta(key = 1292064820, startOffset = 241, endOffset = 307)
 fun Example(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Example)<SomeTh...>:Test.kt")

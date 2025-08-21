@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.backend.common.implicitInvoke
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -40,17 +41,13 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.util.primaryConstructor
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import org.jetbrains.kotlin.ir.util.toIrConst
 
 class CallAndReferenceGenerator(
     private val c: Fir2IrComponents,
@@ -453,6 +450,12 @@ class CallAndReferenceGenerator(
         }
     }
 
+    internal fun convertSubstitutedInlineLambda(expression: FirQualifiedAccessExpression): IrExpression? {
+        val valueParam = (expression as? FirPropertyAccessExpression)?.toResolvedCallableSymbol() as? FirValueParameterSymbol ?: return null
+        val argument = extensions.findInjectedInlineLambdaArgument(valueParam) ?: return null
+        return visitor.convertToIrExpression(argument)
+    }
+
     internal fun injectGetValueCall(element: FirElement, calleeReference: FirReference): IrExpression? {
         val injectedValue = findInjectedValue(calleeReference)
         if (injectedValue != null) {
@@ -485,6 +488,10 @@ class CallAndReferenceGenerator(
     ): IrExpression = convertCatching(qualifiedAccess, conversionScope) {
         injectGetValueCall(qualifiedAccess, qualifiedAccess.calleeReference)?.let { return it }
 
+        convertSubstitutedInlineLambda(qualifiedAccess)?.let {
+            return it.patchDeclarationParents(conversionScope.parent())
+        }
+
         val irType = type.toIrType()
         val samConstructorCall = qualifiedAccess.tryConvertToSamConstructorCall(irType)
         if (samConstructorCall != null) return samConstructorCall
@@ -493,7 +500,12 @@ class CallAndReferenceGenerator(
         val calleeReference = qualifiedAccess.calleeReference
 
         if (qualifiedAccess is FirSuperReceiverExpression && dispatchReceiver != null) {
-            return visitor.convertToIrExpression(dispatchReceiver)
+            return qualifiedAccess.convertWithOffsets { startOffset, endOffset ->
+                visitor.convertToIrExpression(dispatchReceiver).apply {
+                    this.startOffset = startOffset
+                    this.endOffset = endOffset
+                }
+            }
         }
 
         val firSymbol = calleeReference.extractDeclarationSiteSymbol()
@@ -580,7 +592,11 @@ class CallAndReferenceGenerator(
                         hasExtensionReceiver = firSymbol.isExtension,
                         origin = callOrigin,
                         superQualifierSymbol = dispatchReceiver?.superQualifierSymbolForFunctionAndPropertyAccess()
-                    )
+                    ).apply {
+                        if (qualifiedAccess is FirImplicitInvokeCall) {
+                            implicitInvoke = true
+                        }
+                    }
                 }
 
                 is IrLocalDelegatedPropertySymbol -> {
@@ -1065,7 +1081,7 @@ class CallAndReferenceGenerator(
         argument: FirExpression,
         parameter: FirValueParameter?,
     ): IrExpression {
-        if (!session.languageVersionSettings.supportsFeature(LanguageFeature.ImplicitSignedToUnsignedIntegerConversion)) return this
+        if (!LanguageFeature.ImplicitSignedToUnsignedIntegerConversion.isEnabled()) return this
 
         if (parameter == null || !parameter.isMarkedWithImplicitIntegerCoercion) return this
         if (!argument.getExpectedType(session, parameter).fullyExpandedType().isUnsignedTypeOrNullableUnsignedType) return this

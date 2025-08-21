@@ -1,0 +1,14 @@
+// IntelliJ API Decompiler stub source generated from a class file
+// Implementation of methods is not available
+
+package test
+
+public final class LocalClass public constructor() {
+    private final val bar: kotlin.Any /* compiled code */ /* hasBackingField: true */
+
+    private final val sam: java.lang.Runnable /* compiled code */ /* hasBackingField: true */
+
+    private final val sub: kotlin.Any /* compiled code */ /* hasBackingField: true */
+
+    private final fun foo(): kotlin.Any { /* compiled code */ }
+}

@@ -33,11 +33,11 @@ int32_t __root___baz_get();
 
 void * __root___foo_get();
 
-void __root___foo_set__TypesOfArguments__KotlinRuntime_KotlinBase__(void * newValue);
+void __root___foo_set__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * newValue);
 
 void * __root___lateinit_foo_get();
 
-void __root___lateinit_foo_set__TypesOfArguments__KotlinRuntime_KotlinBase__(void * newValue);
+void __root___lateinit_foo_set__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * newValue);
 
 int32_t namespace_main_bar_get();
 

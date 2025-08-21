@@ -1,6 +1,6 @@
 @R|Anno|(s = String(foo))  kotlin/String
-  context -> FirValueParameterSymbol <local>/par from FirPropertySymbol <local>/foo
-  anchor -> [FirValueParameterSymbol <local>/par from FirPropertySymbol <local>/foo]
+  context -> FirValueParameterSymbol <local>/par from FirRegularPropertySymbol <local>/foo
+  anchor -> [FirValueParameterSymbol <local>/par from FirRegularPropertySymbol <local>/foo]
 
 @R|Anno|(s = String(baz))  kotlin/String
   context -> FirValueParameterSymbol <local>/par from FirNamedFunctionSymbol <local>/baz

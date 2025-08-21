@@ -5,6 +5,7 @@
 // FIR_IDENTICAL
 // WITH_COROUTINES
 // WITH_STDLIB
+// LANGUAGE: +JvmNullOutSpilledCoroutineLocals
 
 import helpers.*
 import kotlin.coroutines.*

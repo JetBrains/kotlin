@@ -29,6 +29,7 @@ object CommonConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.co
     val LOOKUP_TRACKER by key<LookupTracker>("lookup tracker", throwOnNull = false)
     val EXPECT_ACTUAL_TRACKER by key<ExpectActualTracker>("expect actual tracker", throwOnNull = false)
     val INLINE_CONST_TRACKER by key<InlineConstTracker>("inline constant tracker", throwOnNull = false)
+    val FILE_MAPPING_TRACKER by key<ICFileMappingTracker>("file mapping tracker", throwOnNull = false)
     val ENUM_WHEN_TRACKER by key<EnumWhenTracker>("enum when tracker", throwOnNull = false)
     val IMPORT_TRACKER by key<ImportTracker>("import tracker", throwOnNull = false)
     val METADATA_VERSION by key<BinaryVersion>("metadata version")
@@ -64,5 +65,10 @@ object CommonConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.co
     val DONT_SORT_SOURCE_FILES by key<Boolean>(
         description = "don't sort source files in FS order",
         comment = "Should be used only in tests, impossible to set via compiler arguments",
+    )
+
+    val SCRIPTING_HOST_CONFIGURATION by key<Any>(
+        description = "scripting host configuration",
+        comment = "Internal for passing configuration in the scripting pipeline, impossible to set via compiler arguments"
     )
 }

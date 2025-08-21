@@ -12,7 +12,7 @@ data object Asserter {
     when {
       other !is Asserter -> return false
     }
-    val tmp_0: Asserter = other as Asserter
+    val tmp_0: Asserter = other /*as Asserter */
     return true
   }
 

@@ -1,4 +1,4 @@
-// IGNORE_INLINER: IR
+
 // FILE: test.kt
 class Foo {
     var bar = ""

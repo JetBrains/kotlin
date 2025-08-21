@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.resolveIfJavaType
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
+import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.jvm.buildJavaTypeRef
@@ -87,8 +88,7 @@ class CodeFragmentScopeProvider(private val session: FirSession) : FirSessionCom
                 deprecationsProvider = EmptyDeprecationsProvider
                 name = variableName
                 isVar = false
-                symbol = FirPropertySymbol(variableName)
-                isLocal = true
+                symbol = FirLocalPropertySymbol()
             }
 
             variable.foreignValueMarker = true

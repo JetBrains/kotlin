@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.backend.wasm.toCatchThrowableOrJsException
 import org.jetbrains.kotlin.backend.wasm.utils.isCanonical
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -17,7 +18,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
 import org.jetbrains.kotlin.ir.expressions.IrTry
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 /**
  * Transforms try/catch statements into a simple canonical form which is easily mapped into Wasm instruction set.
@@ -83,10 +82,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
  */
 internal class TryCatchCanonicalization(private val ctx: WasmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        if (ctx.isWasmJsTarget) {
-            irFile.transformChildrenVoid(JsExceptionHandlerForThrowableOnly(ctx))
-        }
-
         irFile.transformChildrenVoid(CatchMerger(ctx))
 
         irFile.transformChildrenVoid(FinallyBlocksLowering(ctx, ctx.irBuiltIns.throwableType))
@@ -103,53 +98,7 @@ internal class TryCatchCanonicalization(private val ctx: WasmBackendContext) : F
     }
 }
 
-val SYNTHETIC_JS_EXCEPTION_HANDLER_TO_SUPPORT_CATCH_THROWABLE by IrStatementOriginImpl
-
-internal class JsExceptionHandlerForThrowableOnly(private val ctx: WasmBackendContext) : IrElementTransformerVoidWithContext() {
-    override fun visitTry(aTry: IrTry): IrExpression {
-        aTry.transformChildrenVoid(this)
-
-        val throwableHandlerIndex = aTry.catches.indexOfFirst { it.catchParameter.type == ctx.irBuiltIns.throwableType }
-        val activeCatches = when (throwableHandlerIndex) {
-            -1 -> aTry.catches
-            else -> aTry.catches.subList(0, throwableHandlerIndex + 1)
-        }
-        // Nothing to do
-        if (activeCatches.isEmpty() ||
-            activeCatches.any { it.catchParameter.type == ctx.wasmSymbols.jsRelatedSymbols.jsException.defaultType } ||
-            throwableHandlerIndex == -1
-        ) return super.visitTry(aTry)
-
-
-        val jsExceptionCatch = ctx.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol).run {
-            val jsExceptionCatchParameter = buildVariable(
-                currentScope!!.scope.getLocalDeclarationParent(),
-                startOffset,
-                endOffset,
-                IrDeclarationOrigin.CATCH_PARAMETER,
-                Name.identifier("e"),
-                ctx.wasmSymbols.jsRelatedSymbols.jsException.defaultType,
-            )
-            irCatch(
-                jsExceptionCatchParameter,
-                irBlock(aTry) { },
-                SYNTHETIC_JS_EXCEPTION_HANDLER_TO_SUPPORT_CATCH_THROWABLE
-            )
-        }
-
-        aTry.catches.add(throwableHandlerIndex, jsExceptionCatch)
-
-        return super.visitTry(aTry)
-    }
-}
-
 internal class CatchMerger(private val ctx: WasmBackendContext) : IrElementTransformerVoidWithContext() {
-    private val allowedCatchParameterTypes = buildSet {
-        add(ctx.irBuiltIns.throwableType)
-        if (ctx.isWasmJsTarget) {
-            add(ctx.wasmSymbols.jsRelatedSymbols.jsException.defaultType)
-        }
-    }
 
     override fun visitTry(aTry: IrTry): IrExpression {
         // First, handle all nested constructs
@@ -163,8 +112,16 @@ internal class CatchMerger(private val ctx: WasmBackendContext) : IrElementTrans
         }
 
         // Nothing to do
-        if (activeCatches.isEmpty() || activeCatches.all { it.catchParameter.type in allowedCatchParameterTypes })
+        if (activeCatches.isEmpty())
             return super.visitTry(aTry)
+
+        activeCatches.singleOrNull()?.let { irCatch ->
+            // Nothing to do
+            if (irCatch == ctx.irBuiltIns.throwableType) {
+                irCatch.toCatchThrowableOrJsException = true
+                return super.visitTry(aTry)
+            }
+        }
 
         ctx.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol).run {
             val newCatchParameter = buildVariable(
@@ -176,38 +133,37 @@ internal class CatchMerger(private val ctx: WasmBackendContext) : IrElementTrans
                 ctx.irBuiltIns.throwableType
             )
 
-            val jsExceptionCatchIndex = runIf(ctx.isWasmJsTarget) {
-                activeCatches.indexOfFirst {
-                    it.catchParameter.type == ctx.wasmSymbols.jsRelatedSymbols.jsException.defaultType
-                }
-            } ?: -1
-
             val newCatchBody = irBlock(aTry, startOffset = UNDEFINED_OFFSET, endOffset = UNDEFINED_OFFSET) {
                 +irWhen(
                     aTry.type,
-                    activeCatches.mapIndexedNotNull { i, it ->
-                        runIf(i != jsExceptionCatchIndex) {
-                            irBranch(
-                                irIs(irGet(newCatchParameter), it.catchParameter.type),
-                                irBlock(it.result, startOffset = UNDEFINED_OFFSET, endOffset = UNDEFINED_OFFSET) {
+                    activeCatches.map {
+                        irBranch(
+                            irIs(irGet(newCatchParameter), it.catchParameter.type),
+                            irBlock(it.result, startOffset = UNDEFINED_OFFSET, endOffset = UNDEFINED_OFFSET) {
 
-                                    it.catchParameter.initializer = irImplicitCast(irGet(newCatchParameter), it.catchParameter.type)
-                                    it.catchParameter.origin = IrDeclarationOrigin.DEFINED
-                                    +it.catchParameter
-                                    +it.result
-                                }
-                            )
-                        }
+                                it.catchParameter.initializer = irImplicitCast(irGet(newCatchParameter), it.catchParameter.type)
+                                it.catchParameter.origin = IrDeclarationOrigin.DEFINED
+                                +it.catchParameter
+                                +it.result
+                            }
+                        )
                     } + irElseBranch(irThrow(irGet(newCatchParameter)))
                 )
             }
 
-            val newCatch = irCatch(newCatchParameter, newCatchBody)
+            val newCatch = irCatch(newCatchParameter, newCatchBody).apply {
+                val hasThrowableOrJsException =
+                    throwableHandlerIndex >= 0 ||
+                            (ctx.isWasmJsTarget &&
+                                    activeCatches.any { it.catchParameter.type == ctx.wasmSymbols.jsRelatedSymbols.jsException.defaultType })
+
+                toCatchThrowableOrJsException = hasThrowableOrJsException
+            }
 
             return irTry(
                 aTry.type,
                 aTry.tryResult,
-                listOfNotNull(activeCatches.getOrNull(jsExceptionCatchIndex), newCatch),
+                listOf(newCatch),
                 aTry.finallyExpression
             )
         }

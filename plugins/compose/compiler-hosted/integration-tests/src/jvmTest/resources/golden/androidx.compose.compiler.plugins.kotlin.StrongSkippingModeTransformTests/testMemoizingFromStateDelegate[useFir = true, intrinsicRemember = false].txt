@@ -22,7 +22,6 @@ fun StrongSkippingState() {
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = -996747821, startOffset = 404, endOffset = 565)
 fun StrongSkippingState(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   if (%composer.shouldExecute(%changed != 0, %changed and 0b0001)) {

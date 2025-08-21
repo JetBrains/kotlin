@@ -192,7 +192,7 @@ fun StubBasedPsiElementBase<out KotlinClassOrObjectStub<out KtClassOrObject>>.ge
 
     val stub = greenStub
     if (stub != null) {
-        return stub.getSuperNames()
+        return stub.superNames
     }
 
     val specifiers = this.superTypeListEntries
@@ -274,6 +274,18 @@ inline fun <reified T : KtElement, R> flatMapDescendantsOfTypeVisitor(
 }
 
 // ----------- Contracts -------------------------------------------------------------------------------------------------------------------
+/**
+ * Whether the declaration may have a legacy contract (a contract that defined inside the body).
+ *
+ * In other words, **false** guarantees that the declaration cannot have a contract,
+ * but **true** does not guarantee that the declaration has a contract.
+ */
+@KtImplementationDetail
+fun KtDeclarationWithBody.isLegacyContractPresentPsiCheck(): Boolean {
+    val statement = bodyBlockExpression?.firstStatement ?: return false
+    val unwrappedExpression = statement.unwrapParenthesesLabelsAndAnnotations() as? KtExpression ?: return false
+    return unwrappedExpression.isContractDescriptionCallPsiCheck()
+}
 
 fun KtNamedFunction.isContractPresentPsiCheck(isAllowedOnMembers: Boolean): Boolean {
     val contractAllowedHere =

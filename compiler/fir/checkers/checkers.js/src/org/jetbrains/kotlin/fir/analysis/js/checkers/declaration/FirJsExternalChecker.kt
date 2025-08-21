@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.analysis.js.checkers.isNativeObject
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirWebCommonExternalChecker
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.CallableId
@@ -83,7 +84,7 @@ object FirJsExternalChecker : FirWebCommonExternalChecker(allowCompanionInInterf
         }
 
         val valueClassInExternalDiagnostic = when {
-            context.languageVersionSettings.supportsFeature(LanguageFeature.JsAllowValueClassesInExternals) -> {
+            LanguageFeature.JsAllowValueClassesInExternals.isEnabled() -> {
                 FirJsErrors.INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING
             }
 
@@ -94,7 +95,7 @@ object FirJsExternalChecker : FirWebCommonExternalChecker(allowCompanionInInterf
 
         reportOnParametersAndReturnTypesIf(valueClassInExternalDiagnostic) { it.isValueClass(context.session) }
 
-        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.JsEnableExtensionFunctionInExternals)) {
+        if (!LanguageFeature.JsEnableExtensionFunctionInExternals.isEnabled()) {
             reportOnParametersAndReturnTypesIf(
                 FirJsErrors.EXTENSION_FUNCTION_IN_EXTERNAL_DECLARATION, ConeKotlinType::isExtensionFunctionType
             )
@@ -103,7 +104,7 @@ object FirJsExternalChecker : FirWebCommonExternalChecker(allowCompanionInInterf
         declaration.checkEnumEntry()
     }
 
-    override fun isDefinedExternallyCallableId(callableId: CallableId): Boolean {
+    override fun isDefinedExternallyCallableId(callableId: CallableId?): Boolean {
         return callableId == JsStandardClassIds.Callables.JsDefinedExternally
     }
 

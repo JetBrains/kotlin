@@ -18,7 +18,7 @@ class KonanIrModuleSerializer(
         irBuiltIns: IrBuiltIns,
 ) : IrModuleSerializer<KonanIrFileSerializer>(settings, diagnosticReporter) {
 
-    override val globalDeclarationTable = KonanGlobalDeclarationTable(irBuiltIns, settings)
+    override val globalDeclarationTable = KonanGlobalDeclarationTable(irBuiltIns)
 
     // We skip files with IR for C structs and enums because they should be
     // generated anew.

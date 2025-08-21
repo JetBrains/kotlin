@@ -521,7 +521,7 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
     }
 
 
-    inner class ValueArgumentsList : ArrayList<IrExpression?>() {
+    inner class ValueArgumentsList : ArrayList<IrExpression?>(0) {
         operator fun get(parameter: IrValueParameter): IrExpression? {
             checkIndexingByParameter(parameter)
             return this[parameter.indexInParameters]

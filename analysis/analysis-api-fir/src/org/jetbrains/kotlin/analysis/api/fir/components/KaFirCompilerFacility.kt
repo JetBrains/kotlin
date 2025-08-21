@@ -14,9 +14,12 @@ import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.analysis.api.compile.CodeFragmentCapturedValue
-import org.jetbrains.kotlin.analysis.api.components.*
+import org.jetbrains.kotlin.analysis.api.components.KaCodeCompilationException
+import org.jetbrains.kotlin.analysis.api.components.KaCompilationResult
+import org.jetbrains.kotlin.analysis.api.components.KaCompilerFacility
 import org.jetbrains.kotlin.analysis.api.components.KaCompilerFacility.Companion.CODE_FRAGMENT_CLASS_NAME
 import org.jetbrains.kotlin.analysis.api.components.KaCompilerFacility.Companion.CODE_FRAGMENT_METHOD_NAME
+import org.jetbrains.kotlin.analysis.api.components.KaCompilerTarget
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
@@ -33,10 +36,7 @@ import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleO
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.*
-import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.CodeFragmentCapturedId
-import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.CodeFragmentCapturedValueAnalyzer
-import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.CompilationPeerCollector
-import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.CompilationPeerData
+import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
@@ -48,17 +48,15 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.state.CompiledCodeProvider
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.impl.PendingDiagnosticsCollectorWithSuppress
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.diagnostics.impl.SimpleDiagnosticsCollector
+import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostics
-import org.jetbrains.kotlin.fir.backend.Fir2IrCommonMemberStorage
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmVisibilityConverter
@@ -66,24 +64,27 @@ import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
 import org.jetbrains.kotlin.fir.backend.utils.CodeFragmentConversionData
 import org.jetbrains.kotlin.fir.backend.utils.ConversionTypeOrigin
 import org.jetbrains.kotlin.fir.backend.utils.InjectedValue
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirCodeFragment
+import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.hasBody
 import org.jetbrains.kotlin.fir.diagnostics.ConeSyntaxDiagnostic
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
-import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirLoop
+import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.lazy.AbstractFir2IrLazyDeclaration
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
-import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.references.toResolvedSymbol
 import org.jetbrains.kotlin.fir.resolve.referencedMemberSymbol
-import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseRecursively
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.ir.PsiIrFileEntry
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.ir.declarations.*
@@ -91,7 +92,7 @@ import org.jetbrains.kotlin.ir.descriptors.IrBasedDeclarationDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrBasedReceiverParameterDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrBasedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrBasedVariableDescriptor
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
@@ -107,7 +108,6 @@ import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.source.PsiSourceFile
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -166,11 +166,46 @@ internal class KaFirCompilerFacility(
         target: KaCompilerTarget,
         allowedErrorFilter: (KaDiagnostic) -> Boolean
     ): KaCompilationResult = withPsiValidityAssertion(file) {
-        try {
-            return compileUnsafe(file, configuration, target as KaCompilerTarget.Jvm, allowedErrorFilter)
-        } catch (e: Throwable) {
-            rethrowIntellijPlatformExceptionIfNeeded(e)
-            throw KaCodeCompilationException(e)
+        compileWithRetry(file, configuration, target, allowedErrorFilter)
+    }
+
+    private fun compileWithRetry(
+        file: KtFile,
+        configuration: CompilerConfiguration,
+        target: KaCompilerTarget,
+        allowedErrorFilter: (KaDiagnostic) -> Boolean,
+    ): KaCompilationResult {
+        val disabledIrExtensions = mutableListOf<Class<out IrGenerationExtension>>()
+        val mutedExceptions = mutableListOf<Throwable>()
+        while (true) {
+            try {
+                val result = compileUnsafe(file, configuration, target as KaCompilerTarget.Jvm, allowedErrorFilter, disabledIrExtensions)
+                if (mutedExceptions.isNotEmpty()) {
+                    return when (result) {
+                        is KaCompilationResult.Failure -> KaCompilationResult.Failure(
+                            errors = result.errors,
+                            mutedExceptions = mutedExceptions,
+                        )
+                        is KaCompilationResult.Success -> KaCompilationResult.Success(
+                            output = result.output,
+                            capturedValues = result.capturedValues,
+                            canBeCached = result.canBeCached,
+                            mutedExceptions = mutedExceptions,
+                        )
+                    }
+                }
+                return result
+            } catch (e: IrGenerationExtensionException) {
+                val extensionClass = e.extensionClass
+                if (disabledIrExtensions.contains(extensionClass)) {
+                    throw KaCodeCompilationException(e) // very strange
+                }
+                mutedExceptions.add(e)
+                disabledIrExtensions.add(extensionClass)
+            } catch (e: Throwable) {
+                rethrowIntellijPlatformExceptionIfNeeded(e)
+                throw KaCodeCompilationException(e)
+            }
         }
     }
 
@@ -178,7 +213,8 @@ internal class KaFirCompilerFacility(
         mainFile: KtFile,
         configuration: CompilerConfiguration,
         target: KaCompilerTarget.Jvm,
-        allowedErrorFilter: (KaDiagnostic) -> Boolean
+        allowedErrorFilter: (KaDiagnostic) -> Boolean,
+        disabledIrExtensions: List<Class<out IrGenerationExtension>>,
     ): KaCompilationResult {
         val syntaxErrors = SyntaxErrorReportingVisitor(analysisSession.firSession) { it.asKaDiagnostic() }
             .also(mainFile::accept).diagnostics
@@ -189,12 +225,26 @@ internal class KaFirCompilerFacility(
 
         val mainFirFile = getFullyResolvedFirFile(mainFile)
 
+        val inlineStackData = retrieveInlineStackData(mainFirFile, resolutionFacade, target.debuggerExtension)
+
         val codeFragmentMappings = runIf(mainFile is KtCodeFragment) {
-            computeCodeFragmentMappings(mainFirFile, resolutionFacade, configuration, target.debuggerExtension)
+            computeCodeFragmentMappings(
+                mainFirFile,
+                resolutionFacade,
+                configuration,
+                inlineStackData.capturedReifiedTypeParameterMapping,
+                inlineStackData.inlineLambdaParameterMapping
+            )
         }
 
         val actualizer = LLKindBasedPlatformActualizer(ImplementationPlatformKind.JVM)
-        val compilationPeerData = CompilationPeerCollector.process(mainFirFile, actualizer)
+        val compilationPeerData = CompilationPeerCollector.process(
+            buildList {
+                add(mainFirFile)
+                codeFragmentMappings?.capturedFiles?.forEach { add(getFullyResolvedFirFile(it)) }
+            },
+            actualizer
+        )
 
         val chunkRegistrar = CompilationChunkRegistrar(mainFile, mainFirFile, target, actualizer)
         val chunks = collectCompilationChunks(chunkRegistrar, compilationPeerData, codeFragmentMappings)
@@ -203,11 +253,22 @@ internal class KaFirCompilerFacility(
 
         val registeredCodeProviders = ArrayList<CompiledCodeProvider>()
 
-        val contextDeclarationCache = runIf(codeFragmentMappings != null) {
+        val contextDeclarationCache = if (codeFragmentMappings != null) {
             // A code fragment may be moved to a different dangling file module, so here we cannot use the 'mainFile'
             val effectiveCodeFragment = chunks.values.last().mainFile as KtCodeFragment
             val contextDeclaration = effectiveCodeFragment.context?.getNonLocalContainingOrThisDeclaration()
-            if (contextDeclaration != null) CodeFragmentContextDeclarationCache(contextDeclaration) else null
+            if (contextDeclaration != null) {
+                CodeFragmentContextDeclarationCache(
+                    contextDeclaration,
+                    inlineStackData.firstNonInlineNonLocalFunInStack,
+                    codeFragmentMappings.selfSymbols
+                )
+            } else null
+        } else null
+
+        val nonLocalReturnErrors = detectNonLocalReturnsInEvaluatingLambdas(inlineStackData)
+        if (nonLocalReturnErrors.isNotEmpty()) {
+            return KaCompilationResult.Failure(nonLocalReturnErrors)
         }
 
         for ((module, chunk) in chunks) {
@@ -219,7 +280,7 @@ internal class KaFirCompilerFacility(
                 // This is important for the code evaluation scenario, as people may modify code while debugging.
                 // The downside is that we can get unexpected exceptions from the backend (that we wrap into KaCompilationResult.Failure).
                 val diagnostics = mainFile.collectDiagnosticsForFile(resolutionFacade, DiagnosticCheckerFilter.ONLY_DEFAULT_CHECKERS)
-                val errors = computeErrors(diagnostics, allowedErrorFilter)
+                val errors = computeErrors(diagnostics.filterIsInstance<KtDiagnostic>(), allowedErrorFilter)
                 if (errors.isNotEmpty()) {
                     return KaCompilationResult.Failure(errors)
                 }
@@ -255,6 +316,7 @@ internal class KaFirCompilerFacility(
                 generateClassFilter,
                 KaFirDelegatingCompiledCodeProvider(registeredCodeProviders),
                 contextDeclarationCache,
+                disabledIrExtensions,
             )
 
             when (result) {
@@ -282,6 +344,48 @@ internal class KaFirCompilerFacility(
         errorWithAttachment("Unexpectedly skipped the main file") {
             withPsiEntry("file", mainFile)
         }
+    }
+
+    private fun detectNonLocalReturnsInEvaluatingLambdas(inlineStackData: InlineStackData): List<KaDiagnostic> {
+        val reporter = SimpleDiagnosticsCollector(BaseDiagnosticsCollector.RawReporter.DO_NOTHING)
+        inlineStackData.inlineLambdaParameterMapping.values.forEach {
+
+            val lambda = it.expr as? FirAnonymousFunctionExpression ?: return@forEach
+
+            val context = object : DiagnosticContext {
+                override val containingFilePath: String?
+                    get() = lambda.psi?.containingFile?.virtualFile?.path
+
+                override fun isDiagnosticSuppressed(diagnostic: KtDiagnostic) = false
+
+                override val languageVersionSettings: LanguageVersionSettings
+                    get() = analysisSession.firSession.languageVersionSettings
+            }
+
+            lambda.accept(object : FirDefaultVisitorVoid() {
+
+                val allowedReturnTargets = mutableListOf<FirTargetElement>()
+
+                override fun visitElement(element: FirElement) {
+                    if (element is FirLoop || element is FirFunction) {
+                        allowedReturnTargets.add(element)
+                    }
+                    element.acceptChildren(this)
+                    if (element is FirLoop || element is FirFunction) {
+                        allowedReturnTargets.removeLast()
+                    }
+                }
+
+                override fun visitReturnExpression(returnExpression: FirReturnExpression) {
+                    val targetElement = returnExpression.target.labeledElement
+                    if (targetElement !in allowedReturnTargets) {
+                        reporter.reportOn(returnExpression.source, FirErrors.RETURN_NOT_ALLOWED, context)
+                    }
+                    returnExpression.acceptChildren(this)
+                }
+            }, null)
+        }
+        return computeErrors(reporter.diagnostics) { false }
     }
 
     private fun getInternalClassName(classFilePath: String): String? {
@@ -870,6 +974,7 @@ internal class KaFirCompilerFacility(
         generateClassFilter: GenerationState.GenerateClassFilter,
         compiledCodeProvider: CompiledCodeProvider,
         contextDeclarationCache: CodeFragmentContextDeclarationCache?,
+        disabledIrExtensions: List<Class<out IrGenerationExtension>>,
     ): KaCompilationResult {
         val session = resolutionFacade.sessionProvider.getResolvableSession(module)
         val configuration = baseConfiguration.copy().apply {
@@ -882,7 +987,11 @@ internal class KaFirCompilerFacility(
         val fir2IrExtensions = when {
             codeFragmentMappings != null && chunk.mainFile != null -> {
                 val injectedValueProvider = InjectedSymbolProvider(codeFragmentMappings, chunk.mainFile)
-                CodeFragmentFir2IrExtensions(baseFir2IrExtensions, injectedValueProvider)
+                CodeFragmentFir2IrExtensions(
+                    baseFir2IrExtensions,
+                    injectedValueProvider,
+                    codeFragmentMappings.inlineLambdaParametersMapping
+                )
             }
             chunk.kind == ChunkKind.CONTEXT -> {
                 CodeFragmentContextFir2IrExtensions(baseFir2IrExtensions, contextDeclarationCache)
@@ -894,13 +1003,15 @@ internal class KaFirCompilerFacility(
 
         val commonMemberStorage = contextDeclarationCache?.customCommonMemberStorage ?: Fir2IrCommonMemberStorage()
 
+        val irGeneratorExtensions = getIrGenerationExtensions(module).filter { !disabledIrExtensions.contains(it.javaClass) }
+
         val fir2IrResult = runFir2Ir(
             session = session,
             firFiles = chunk.files.map { it.firFile },
             fir2IrExtensions = fir2IrExtensions,
             diagnosticReporter = diagnosticReporter,
             effectiveConfiguration = configuration,
-            irGeneratorExtensions = getIrGenerationExtensions(module),
+            irGeneratorExtensions = irGeneratorExtensions,
             commonMemberStorage = commonMemberStorage
         )
 
@@ -964,7 +1075,7 @@ internal class KaFirCompilerFacility(
         }
 
         if (chunk.kind == ChunkKind.CONTEXT) {
-            contextDeclarationCache?.initialize(fir2IrResult, commonMemberStorage, evaluatorData)
+            contextDeclarationCache?.initialize(commonMemberStorage, evaluatorData)
         }
 
         return result
@@ -1019,17 +1130,30 @@ internal class KaFirCompilerFacility(
             if (receiverClassId != null && parent is IrFunction) {
                 when (owner.kind) {
                     IrParameterKind.DispatchReceiver -> {
-                        return CodeFragmentCapturedValue.ContainingClass(receiverClassId, isCrossingInlineBounds = true)
+                        return CodeFragmentCapturedValue.ContainingClass(
+                            receiverClassId,
+                            isCrossingInlineBounds = true,
+                            depthRelativeToCurrentFrame = 0
+                        )
                     }
                     IrParameterKind.Context -> {
                         val contextParameterIndex = parent.parameters
                             .subList(0, owner.indexInParameters)
                             .count { it.kind == IrParameterKind.Context }
                         val labelName = receiverClassId.shortClassName
-                        return CodeFragmentCapturedValue.ContextReceiver(contextParameterIndex, labelName, isCrossingInlineBounds = true)
+                        return CodeFragmentCapturedValue.ContextReceiver(
+                            contextParameterIndex,
+                            labelName,
+                            isCrossingInlineBounds = true,
+                            depthRelativeToCurrentFrame = 0
+                        )
                     }
                     IrParameterKind.ExtensionReceiver -> {
-                        return CodeFragmentCapturedValue.ExtensionReceiver(parent.name.asString(), isCrossingInlineBounds = true)
+                        return CodeFragmentCapturedValue.ExtensionReceiver(
+                            parent.name.asString(),
+                            isCrossingInlineBounds = true,
+                            depthRelativeToCurrentFrame = 0
+                        )
                     }
                     IrParameterKind.Regular -> {}
                 }
@@ -1041,15 +1165,20 @@ internal class KaFirCompilerFacility(
             val isMutated = false // TODO capture the usage somehow
 
             if (owner.origin == IrDeclarationOrigin.PROPERTY_DELEGATE) {
-                return CodeFragmentCapturedValue.LocalDelegate(name, isMutated, isCrossingInlineBounds = true)
+                return CodeFragmentCapturedValue.LocalDelegate(
+                    name,
+                    isMutated,
+                    isCrossingInlineBounds = true,
+                    depthRelativeToCurrentFrame = 0
+                )
             }
 
-            return CodeFragmentCapturedValue.Local(name, isMutated, isCrossingInlineBounds = true)
+            return CodeFragmentCapturedValue.Local(name, isMutated, isCrossingInlineBounds = true, depthRelativeToCurrentFrame = 0)
         }
 
         if (descriptor is IrBasedValueParameterDescriptor && owner is IrValueParameter) {
             val name = owner.name
-            return CodeFragmentCapturedValue.Local(name, isMutated = false, isCrossingInlineBounds = true)
+            return CodeFragmentCapturedValue.Local(name, isMutated = false, isCrossingInlineBounds = true, depthRelativeToCurrentFrame = 0)
         }
 
         return null
@@ -1062,12 +1191,11 @@ internal class KaFirCompilerFacility(
     }
 
     private fun computeErrors(
-        diagnostics: Collection<DiagnosticMarker>,
+        diagnostics: Collection<KtDiagnostic>,
         allowedErrorFilter: (KaDiagnostic) -> Boolean,
     ): List<KaDiagnostic> {
         return buildList {
             for (diagnostic in diagnostics) {
-                require(diagnostic is KtDiagnostic)
                 if (diagnostic.severity == Severity.ERROR) {
                     val ktDiagnostic = when (diagnostic) {
                         is KtPsiDiagnostic -> diagnostic.asKaDiagnostic()
@@ -1084,12 +1212,35 @@ internal class KaFirCompilerFacility(
         }
     }
 
+
+    /**
+     * @property capturedValues The list captured values.
+     * Contains additional data required by the debugger in order to evaluate input parameters of evaluator-generated method.
+     *
+     * @property capturedFiles The list of files captured by the given code fragment or lambdas from [inlineLambdaParametersMapping]
+     *
+     * @property injectedValues The list captured values.
+     * Contains all data required by FIR2IR conversion of captured values access.
+     *
+     * @property conversionData The data required for FIR2IR conversion of evaluator-generated class declaration.
+     *
+     * @property reifiedTypeParametersMapping The mapping of captured reified type parameters to theirs arguments.
+     * Extracted from the execution stack via debugger extension point.
+     *
+     * @property inlineLambdaParametersMapping The mapping of inline lambda parameters to theirs arguments.
+     * Extracted from the execution stack via debugger extension point.
+     *
+     * @property selfSymbols The set of symbols which declarations are located inside the given code fragment or inside lambdas presented in
+     * [inlineLambdaParametersMapping]
+     */
     private class CodeFragmentMappings(
         val capturedValues: List<CodeFragmentCapturedValue>,
         val capturedFiles: List<KtFile>,
         val injectedValues: List<InjectedValue>,
         val conversionData: CodeFragmentConversionData,
         val reifiedTypeParametersMapping: Map<FirTypeParameterSymbol, ConeKotlinType>,
+        val inlineLambdaParametersMapping: Map<FirValueParameterSymbol, FirExpression>,
+        val selfSymbols: Set<FirBasedSymbol<*>>,
     )
 
     @OptIn(LLFirInternals::class)
@@ -1097,11 +1248,12 @@ internal class KaFirCompilerFacility(
         mainFirFile: FirFile,
         resolutionFacade: LLResolutionFacade,
         configuration: CompilerConfiguration,
-        debuggerExtension: DebuggerExtension?,
+        reifiedTypeParametersMapping: Map<FirTypeParameterSymbol, ConeKotlinType>,
+        inlineLambdaParametersMapping: Map<FirValueParameterSymbol, InlineLambdaArgument>,
     ): CodeFragmentMappings {
         val codeFragment = mainFirFile.codeFragment
 
-        val capturedData = CodeFragmentCapturedValueAnalyzer.analyze(resolutionFacade, codeFragment)
+        val capturedData = CodeFragmentCapturedValueAnalyzer.analyze(resolutionFacade, codeFragment, inlineLambdaParametersMapping)
 
         val capturedSymbols = capturedData.symbols
         val capturedValues = capturedSymbols.map { it.value }
@@ -1113,118 +1265,15 @@ internal class KaFirCompilerFacility(
             injectedValues
         )
 
-        val capturedReifiedTypeParametersMap =
-            collectReifiedTypeParametersMapping(capturedData.reifiedTypeParameters, debuggerExtension).toMutableMap()
-
-        val typeSubstitutor = substitutorByMap(capturedReifiedTypeParametersMap, resolutionFacade.useSiteFirSession)
-
-        // The parameters are ordered in the map according to the order of declaring function in execution stack, e.g.:
-        //
-        // fun <reified T3> foo3() {
-        //     ...suspension point...
-        // }
-        // fun <reified T2> foo2() {
-        //     foo3<T2>()
-        // }
-        // fun <reified T1> foo1() {
-        //     foo2<T1>()
-        // }
-        // ... entry point...
-        // fun main() {
-        //     foo1<Int>()
-        // }
-        //
-        // Parameters will be ordered as T3, T2, T1, i.e. argument follows the parameter.
-        // Thus, processing them in reversive order gives the transitive closure of substitution.
-        for (typeParameter in capturedReifiedTypeParametersMap.keys.reversed().iterator()) {
-            capturedReifiedTypeParametersMap[typeParameter] =
-                typeSubstitutor.substituteOrSelf(capturedReifiedTypeParametersMap[typeParameter]!!)
-        }
-
         return CodeFragmentMappings(
             capturedValues,
             capturedData.files,
             injectedValues,
             conversionData,
-            // It's vital to leave only parameters immediately captured by code fragment, as JVM ReifiedTypeInliner does not distinguish
-            // different type parameters with the same name
-            // See IntelliJ test:
-            // community/plugins/kotlin/jvm-debugger/test/testData/evaluation/singleBreakpoint/reifiedTypeParameters/crossfileInlining.kt
-            capturedReifiedTypeParametersMap.filterKeys { it in capturedData.reifiedTypeParameters })
-    }
-
-    private fun collectReifiedTypeParametersMapping(
-        capturedReifiedTypeParameters: Set<FirTypeParameterSymbol>,
-        debuggerExtension: DebuggerExtension?,
-    ): Map<FirTypeParameterSymbol, ConeKotlinType> {
-        fun ConeKotlinType.collectTypeParameters(destination: MutableSet<FirTypeParameterSymbol>) {
-            if (this is ConeTypeParameterType) {
-                destination.add(lookupTag.typeParameterSymbol)
-                return
-            }
-            typeArguments.forEach { typeArgument ->
-                typeArgument.type?.collectTypeParameters(destination)
-            }
-        }
-
-        fun FirTypeRef.collectTypeParameters(destination: MutableSet<FirTypeParameterSymbol>) =
-            (this as? FirResolvedTypeRef)?.coneType?.collectTypeParameters(destination)
-
-        // We need to save the order to make a substitution in the correct order later
-        val mapping = linkedMapOf<FirTypeParameterSymbol, FirTypeRef>()
-        if (debuggerExtension == null) return linkedMapOf()
-        val unmappedTypeParameters = capturedReifiedTypeParameters.toMutableSet()
-
-        // We roll back along the execution stack, until either all required type parameters are mapped on arguments, or
-        // we are unable to proceed further.
-        // E.g., we might reach the execution stack beginning or fail to extract relevant info from the call.
-        // There are cases when a code fragment captures a reified type parameter, but we are still able to compile it
-        // without reification, that is why we avoid fast-failing here when not all the type parameters are mapped.
-        val stackIterator = debuggerExtension.stack.iterator()
-        while (unmappedTypeParameters.isNotEmpty() && stackIterator.hasNext()) {
-            val previousExprPsi = stackIterator.next() ?: continue
-            // Rolling back by parents, trying to find type arguments.
-            // The property setter call is a special case as it's represented as `FirVariableAssignment`
-            // and the type arguments should be extracted from its `lvalue`.
-            val typeArgumentHolder: FirQualifiedAccessExpression =
-                previousExprPsi.parentsWithSelf.firstNotNullOfOrNull { psiElement ->
-                    if (psiElement is KtElement) {
-                        val fir = psiElement.getOrBuildFir(resolutionFacade)
-                        when (fir) {
-                            is FirQualifiedAccessExpression -> fir
-                            is FirVariableAssignment -> if (fir.lValue is FirQualifiedAccessExpression) {
-                                fir.lValue as FirQualifiedAccessExpression
-                            } else {
-                                null
-                            }
-                            else -> null
-                        }
-                    } else {
-                        null
-                    }
-                } ?: continue
-            val extractedFromPreviousExpression = extractReifiedTypeArguments(typeArgumentHolder)
-            for ((extractedParam, extractedArg) in extractedFromPreviousExpression) {
-                if (extractedParam in unmappedTypeParameters) {
-                    mapping[extractedParam] = extractedArg
-                    unmappedTypeParameters.remove(extractedParam)
-                    extractedArg.collectTypeParameters(unmappedTypeParameters)
-                }
-            }
-        }
-
-        return mapping.mapValues { (_, firTypeRef) -> firTypeRef.coneType }
-    }
-
-    private fun extractReifiedTypeArguments(typeArgumentsHolder: FirQualifiedAccessExpression): Map<FirTypeParameterSymbol, FirTypeRef> {
-        val callableSymbol = typeArgumentsHolder.calleeReference.toResolvedCallableSymbol() ?: return emptyMap()
-        return buildMap {
-            for ((typeParameterSymbol, typeArgument) in callableSymbol.typeParameterSymbols.zip(typeArgumentsHolder.typeArguments)) {
-                if (typeParameterSymbol.isReified && typeArgument is FirTypeProjectionWithVariance) {
-                    put(typeParameterSymbol, typeArgument.typeRef)
-                }
-            }
-        }
+            reifiedTypeParametersMapping,
+            inlineLambdaParametersMapping.mapValues { it.value.expr },
+            capturedData.selfSymbols
+        )
     }
 
     private class InjectedSymbolProvider(
@@ -1310,6 +1359,7 @@ internal class KaFirCompilerFacility(
     private class CodeFragmentFir2IrExtensions(
         delegate: Fir2IrExtensions,
         private val injectedValueProvider: InjectedSymbolProvider?,
+        private val inlineLambdaParametersMapping: Map<FirValueParameterSymbol, FirExpression>,
     ) : Fir2IrExtensions by delegate {
         override fun findInjectedValue(calleeReference: FirReference, conversionScope: Fir2IrConversionScope): InjectedValue? {
             return injectedValueProvider?.invoke(calleeReference, conversionScope)
@@ -1318,6 +1368,11 @@ internal class KaFirCompilerFacility(
         override fun codeFragmentConversionData(fragment: FirCodeFragment): CodeFragmentConversionData {
             return injectedValueProvider?.conversionData ?: errorWithFirSpecificEntries("Conversion data is not provided", fir = fragment)
         }
+
+        override fun findInjectedInlineLambdaArgument(parameter: FirValueParameterSymbol): FirExpression? {
+            return inlineLambdaParametersMapping[parameter]
+        }
+
     }
 
     private class SelectedFilesGenerateClassFilter(

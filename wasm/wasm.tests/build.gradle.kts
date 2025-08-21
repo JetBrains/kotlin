@@ -11,6 +11,7 @@ plugins {
     id("d8-configuration")
     id("binaryen-configuration")
     id("nodejs-configuration")
+    id("java-test-fixtures")
 }
 
 node {
@@ -102,12 +103,12 @@ val wasmEdge by configurations.creating {
 }
 
 dependencies {
-    testApi(projectTests(":compiler:tests-common"))
-    testApi(projectTests(":compiler:tests-common-new"))
-    testImplementation(projectTests(":js:js.tests"))
-    testApi(intellijCore())
-    testApi(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupiter.api)
+    testFixturesApi(testFixtures(project(":compiler:tests-common")))
+    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesApi(testFixtures(project(":js:js.tests")))
+    testFixturesApi(intellijCore())
+    testFixturesApi(platform(libs.junit.bom))
+    testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 
     jsShell("org.mozilla:jsshell:$jsShellVersion:$jsShellSuffix@zip")
@@ -132,6 +133,7 @@ sourceSets {
         projectDefault()
         generatedTestDir()
     }
+    "testFixtures" { projectDefault() }
 }
 
 fun Test.setupWasmStdlib(target: String) {
@@ -182,11 +184,11 @@ val installTsDependencies by task<NpmTask> {
     val packageLockFile = testDataDir.resolve("package-lock.json")
     val nodeModules = testDataDir.resolve("node_modules")
     inputs.file(testDataDir.resolve("package.json"))
-    outputs.file(packageLockFile)
+    inputs.file(packageLockFile)
     outputs.upToDateWhen { nodeModules.exists() }
 
     workingDir.set(testDataDir)
-    args.set(listOf("install"))
+    npmCommand.set(listOf("ci"))
 }
 
 val generateTypeScriptTests by parallel(

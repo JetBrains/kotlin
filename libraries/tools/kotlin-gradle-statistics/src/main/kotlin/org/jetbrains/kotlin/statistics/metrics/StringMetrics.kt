@@ -16,6 +16,7 @@ enum class StringMetrics(val type: StringOverridePolicy, val anonymization: Stri
     PROJECT_PATH(OVERRIDE, RegexControlled("([0-9A-Fa-f]{40,64})|undefined", true)),
 
     OS_TYPE(OVERRIDE, RegexControlled("(Windows|Windows |Windows Server |Mac|Linux|FreeBSD|Solaris|Other|Mac OS X)\\d*", false)),
+    OS_VERSION(OVERRIDE, ComponentVersionAnonymizer()),
 
     IDES_INSTALLED(CONCAT, AllowedListAnonymizer(listOf("AS", "OC", "CL", "IU", "IC", "WC"))),
 
@@ -69,6 +70,8 @@ enum class StringMetrics(val type: StringOverridePolicy, val anonymization: Stri
 
     ANDROID_GRADLE_PLUGIN_VERSION(OVERRIDE, ComponentVersionAnonymizer()),
 
+    KSP_GRADLE_PLUGIN_VERSION(OVERRIDE, ComponentVersionAnonymizer()),
+
     // Features
     KOTLIN_LANGUAGE_VERSION(OVERRIDE, ComponentVersionAnonymizer()),
     KOTLIN_API_VERSION(OVERRIDE, ComponentVersionAnonymizer()),
@@ -83,7 +86,8 @@ enum class StringMetrics(val type: StringOverridePolicy, val anonymization: Stri
 
     JS_PROPERTY_LAZY_INITIALIZATION(CONCAT, AllowedListAnonymizer(listOf("true", "false")));
 
+
     companion object {
-        const val VERSION = 4
+        const val VERSION = 6
     }
 }

@@ -16,14 +16,14 @@ interface A {
 
 @An
 interface B : A {
-    override val p1: <!PROPERTY_TYPE_MISMATCH_ON_OVERRIDE("p1; 'val p1: @An() String' defined in '/A'")!>Int<!>
+    override val p1: <!PROPERTY_TYPE_MISMATCH_ON_OVERRIDE("p1; 'val p1: String' defined in 'A'")!>Int<!>
     @An
-    override <!VAR_OVERRIDDEN_BY_VAL("'var p2: @An() String' defined in '/A'; val p2: @An() String")!>val<!> p2: @An String
-    override fun test(arg: String): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE("test; 'fun test(arg: @An() String): @An() String' defined in '/A'")!>Int<!>
+    override <!VAR_OVERRIDDEN_BY_VAL("'var p2: String' defined in 'A'; val p2: String")!>val<!> p2: @An String
+    override fun test(arg: String): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE("test; 'fun test(arg: String): String' defined in 'A'")!>Int<!>
 }
 
 interface C : A {
-    override var p2: <!VAR_TYPE_MISMATCH_ON_OVERRIDE("p2; 'var p2: @An() String' defined in '/A'")!>Int<!>
+    override var p2: <!VAR_TYPE_MISMATCH_ON_OVERRIDE("p2; 'var p2: String' defined in 'A'")!>Int<!>
 }
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, interfaceDeclaration, override, propertyDeclaration */

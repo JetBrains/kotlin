@@ -424,8 +424,7 @@ class FirCallCompletionResultsWriterTransformer(
      *
      * See K1 counterpart at [org.jetbrains.kotlin.resolve.calls.tower.NewAbstractResolvedCall.getSubstitutorWithoutFlexibleTypes].
      *
-     * TODO: Get rid of this function once KT-59138 is fixed and the relevant feature for disabling it will be removed
-     * Also we should get rid of it once [LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible] is removed
+     * TODO: Get rid of this function once [LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible] is removed
      *
      * @return `null` for all other cases where [finalSubstitutor] should be used
      */
@@ -904,8 +903,7 @@ class FirCallCompletionResultsWriterTransformer(
 
     /**
      * @see ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute
-     * TODO: Get rid of this function once KT-59138 is fixed and the relevant feature for disabling it will be removed
-     * Also we should get rid of it once [LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible] is removed
+     * TODO: Get rid of this function once [LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible] is removed
      */
     private fun ConeKotlinType.storeNonFlexibleCounterpartInAttributeIfNecessary(
         argument: FirTypeProjection?,
@@ -918,7 +916,6 @@ class FirCallCompletionResultsWriterTransformer(
             attributes.add(
                 ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(
                     argument.typeRef.coneType.fullyExpandedType(),
-                    LanguageFeature.JavaTypeParameterDefaultRepresentationWithDNN
                 )
             )
         )

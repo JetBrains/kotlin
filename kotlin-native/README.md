@@ -4,8 +4,8 @@ _Kotlin/Native_ is an LLVM backend for the Kotlin compiler, runtime
 implementation, and native code generation facility using the LLVM toolchain.
 
  _Kotlin/Native_ is primarily designed to allow compilation for platforms where
-virtual machines are not desirable or possible (such as iOS or embedded targets),
-or where a developer is willing to produce a reasonably-sized self-contained program
+virtual machines are not desirable or possible (such as iOS),
+or where a developer is willing to produce a reasonably sized self-contained program
 without the need to ship an additional execution runtime.
 
 ## Using published Kotlin/Native versions
@@ -13,11 +13,11 @@ without the need to ship an additional execution runtime.
 The most complete experience with Kotlin/Native can be achieved by using
 [Gradle](https://kotlinlang.org/docs/native-gradle.html),
 [IntelliJ IDEA](https://kotlinlang.org/docs/native-get-started.html) or
-[Android Studio with KMM plugin](https://kotlinlang.org/docs/mobile/create-first-app.html)
+[Android Studio with KMP plugin](https://kotlinlang.org/docs/mobile/create-first-app.html)
 if you target iOS.
 
 If you are interested in using Kotlin/Native for iOS, then
-[Kotlin Multiplatform Mobile portal](https://kotlinlang.org/lp/mobile/)
+[Kotlin Multiplatform portal](https://www.jetbrains.com/kotlin-multiplatform/)
 might be useful for you.
 
 Command line compiler is also
@@ -72,7 +72,6 @@ To run the full build:
     ./gradlew :kotlin-native:bundle
 
 This will produce compiler and libraries for all supported targets.
-The full build can take about an hour on a Macbook Pro, but the duration can vary based on your system configuration.
 
 After any of the commands above, `./dist` will contain Kotlin/Native distribution.
 You can use it like a distribution of
@@ -83,11 +82,11 @@ Or configure Gradle to use it -- just add the following line to
 
     kotlin.native.home=/path/to/kotlin/kotlin-native/dist
 
-To compile your programs with command-line compiler, use:
+To compile your programs with a command-line compiler, use:
 
 	./dist/bin/kotlinc-native hello.kt -o hello
 
-For an optimized compilation, use `-opt`:
+To compile a faster, optimized binary, use `-opt`:
 
 	./dist/bin/kotlinc-native hello.kt -o hello -opt
 
@@ -110,4 +109,6 @@ For more details see [Testing](HACKING.md#Testing).
 ## More tips and tricks
 
 More tips and tricks that might be useful when developing or debugging Kotlin/Native
-can be found in [HACKING.md](HACKING.md)
+can be found in [HACKING.md](HACKING.md).
+
+Some Kotlin/Native compiler internals are described in the [corresponding docs directory](../docs/native)  

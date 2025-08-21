@@ -156,7 +156,7 @@ internal abstract class CInteropMetadataDependencyTransformationTask @Inject con
         with bad 'visibleSourceSetNamesExcludingDependsOn'. This is okay, since cinterop transformations do not look
         into this field
          */
-        val transformation = GranularMetadataTransformation(parameters, ParentSourceSetVisibilityProvider.Empty, PreparedKotlinToolingDiagnosticsCollector.create(this))
+        val transformation = GranularMetadataTransformation(parameters, ParentSourceSetVisibilityProvider.Empty)
         val chooseVisibleSourceSets = transformation.metadataDependencyResolutions.resolutionsToTransform()
         val transformedLibraries = chooseVisibleSourceSets.flatMap { resolution ->
             materializeMetadata(resolution).map { (sourceSetName, cinteropFile) ->

@@ -1,5 +1,6 @@
 // LANGUAGE: +MultiPlatformProjects
 // TARGET_BACKEND: JVM_IR
+// IGNORE_HMPP: JVM_IR
 // WITH_REFLECT
 // WITH_STDLIB
 

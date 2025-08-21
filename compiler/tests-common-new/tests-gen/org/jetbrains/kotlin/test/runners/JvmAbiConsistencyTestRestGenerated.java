@@ -133,6 +133,12 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       }
 
       @Test
+      @TestMetadata("capturedLocalFunReflection.kt")
+      public void testCapturedLocalFunReflection() {
+        runTest("compiler/testData/codegen/boxInline/anonymousObject/capturedLocalFunReflection.kt");
+      }
+
+      @Test
       @TestMetadata("capturedLocalFunTwice.kt")
       public void testCapturedLocalFunTwice() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/capturedLocalFunTwice.kt");
@@ -3225,9 +3231,15 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       }
 
       @Test
-      @TestMetadata("localDelegatedPropertyWithInlinedFunInKlib.kt")
-      public void testLocalDelegatedPropertyWithInlinedFunInKlib() {
-        runTest("compiler/testData/codegen/boxInline/localFunInLambda/localDelegatedPropertyWithInlinedFunInKlib.kt");
+      @TestMetadata("localDelegatedPropertyUsedInsideAnonymousObject.kt")
+      public void testLocalDelegatedPropertyUsedInsideAnonymousObject() {
+        runTest("compiler/testData/codegen/boxInline/localFunInLambda/localDelegatedPropertyUsedInsideAnonymousObject.kt");
+      }
+
+      @Test
+      @TestMetadata("localDelegatedPropertyUsedInsideAnonymousObjectWithInlinedFunInKlib.kt")
+      public void testLocalDelegatedPropertyUsedInsideAnonymousObjectWithInlinedFunInKlib() {
+        runTest("compiler/testData/codegen/boxInline/localFunInLambda/localDelegatedPropertyUsedInsideAnonymousObjectWithInlinedFunInKlib.kt");
       }
 
       @Test
@@ -7162,6 +7174,24 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
         }
 
         @Test
+        @TestMetadata("whenByTypeSwitchFunction.kt")
+        public void testWhenByTypeSwitchFunction() {
+          runTest("compiler/testData/codegen/boxModernJdk/testsWithJava21/typeSwitch/whenByTypeSwitchFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("whenByTypeSwitchGuards.kt")
+        public void testWhenByTypeSwitchGuards() {
+          runTest("compiler/testData/codegen/boxModernJdk/testsWithJava21/typeSwitch/whenByTypeSwitchGuards.kt");
+        }
+
+        @Test
+        @TestMetadata("whenByTypeSwitchJKJK.kt")
+        public void testWhenByTypeSwitchJKJK() {
+          runTest("compiler/testData/codegen/boxModernJdk/testsWithJava21/typeSwitch/whenByTypeSwitchJKJK.kt");
+        }
+
+        @Test
         @TestMetadata("whenByTypeSwitchNeg1.kt")
         public void testWhenByTypeSwitchNeg1() {
           runTest("compiler/testData/codegen/boxModernJdk/testsWithJava21/typeSwitch/whenByTypeSwitchNeg1.kt");
@@ -7189,6 +7219,24 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
         @TestMetadata("whenByTypeSwitchNeg5.kt")
         public void testWhenByTypeSwitchNeg5() {
           runTest("compiler/testData/codegen/boxModernJdk/testsWithJava21/typeSwitch/whenByTypeSwitchNeg5.kt");
+        }
+
+        @Test
+        @TestMetadata("whenByTypeSwitchNegGuards.kt")
+        public void testWhenByTypeSwitchNegGuards() {
+          runTest("compiler/testData/codegen/boxModernJdk/testsWithJava21/typeSwitch/whenByTypeSwitchNegGuards.kt");
+        }
+
+        @Test
+        @TestMetadata("whenByTypeSwitchNullCheck.kt")
+        public void testWhenByTypeSwitchNullCheck() {
+          runTest("compiler/testData/codegen/boxModernJdk/testsWithJava21/typeSwitch/whenByTypeSwitchNullCheck.kt");
+        }
+
+        @Test
+        @TestMetadata("whenByTypeSwitchUseInJava.kt")
+        public void testWhenByTypeSwitchUseInJava() {
+          runTest("compiler/testData/codegen/boxModernJdk/testsWithJava21/typeSwitch/whenByTypeSwitchUseInJava.kt");
         }
       }
     }
@@ -7333,6 +7381,12 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
     @TestMetadata("iincGeneration.kt")
     public void testIincGeneration() {
       runTest("compiler/testData/codegen/bytecodeText/iincGeneration.kt");
+    }
+
+    @Test
+    @TestMetadata("inaccessibleTypeInArray.kt")
+    public void testInaccessibleTypeInArray() {
+      runTest("compiler/testData/codegen/bytecodeText/inaccessibleTypeInArray.kt");
     }
 
     @Test
@@ -8408,6 +8462,12 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       @TestMetadata("inlineFunctionObjectCompanionPropertyAccess.kt")
       public void testInlineFunctionObjectCompanionPropertyAccess() {
         runTest("compiler/testData/codegen/bytecodeText/companion/inlineFunctionObjectCompanionPropertyAccess.kt");
+      }
+
+      @Test
+      @TestMetadata("kt12211_accessorForDelegatedPropertySetter.kt")
+      public void testKt12211_accessorForDelegatedPropertySetter() {
+        runTest("compiler/testData/codegen/bytecodeText/companion/kt12211_accessorForDelegatedPropertySetter.kt");
       }
 
       @Test
@@ -12168,6 +12228,12 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       @TestMetadata("noNullCheckAfterCast.kt")
       public void testNoNullCheckAfterCast() {
         runTest("compiler/testData/codegen/bytecodeText/nullCheckOptimization/noNullCheckAfterCast.kt");
+      }
+
+      @Test
+      @TestMetadata("noNullCheckOnPrivateFunctionParameter.kt")
+      public void testNoNullCheckOnPrivateFunctionParameter() {
+        runTest("compiler/testData/codegen/bytecodeText/nullCheckOptimization/noNullCheckOnPrivateFunctionParameter.kt");
       }
 
       @Test

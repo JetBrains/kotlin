@@ -29,7 +29,7 @@ fun testLambda() {
     }
 }
 
-fun testMultiple(x: java.lang.Integer) {
+fun testMultiple(x: <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.lang.Integer<!>) {
     <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>x<!> === <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>x<!> && <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>x<!> === <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>x<!>
 }
 

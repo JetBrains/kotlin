@@ -51,12 +51,21 @@ fun outgoingConfiguration(name: String, configure: Action<Configuration> = Actio
     }
 
 fun KotlinCommonCompilerOptions.mainCompilationOptions() {
-    languageVersion = KotlinVersion.KOTLIN_2_2
-    apiVersion = KotlinVersion.KOTLIN_2_2
+    languageVersion = KotlinVersion.KOTLIN_2_3
+    apiVersion = KotlinVersion.KOTLIN_2_3
     freeCompilerArgs.add("-Xstdlib-compilation")
     freeCompilerArgs.add("-Xdont-warn-on-error-suppression")
     freeCompilerArgs.add("-Xcontext-parameters")
     if (!kotlinBuildProperties.disableWerror) allWarningsAsErrors = true
+}
+
+fun KotlinCommonCompilerOptions.addReturnValueCheckerInfo() {
+    freeCompilerArgs.add("-Xreturn-value-checker=full")
+}
+
+fun KotlinCommonCompilerOptions.allowReturnValueCheckerButNotReport() {
+    freeCompilerArgs.add("-Xreturn-value-checker=check")
+    freeCompilerArgs.add("-Xwarning-level=RETURN_VALUE_NOT_USED:disabled")
 }
 
 val jvmBuiltinsRelativeDir = "libraries/stdlib/jvm/builtins"
@@ -98,6 +107,7 @@ kotlin {
                             )
                         )
                         mainCompilationOptions()
+                        addReturnValueCheckerInfo()
                     }
                 }
             }
@@ -143,6 +153,7 @@ kotlin {
                             )
                         )
                         mainCompilationOptions()
+                        addReturnValueCheckerInfo()
                     }
                 }
                 defaultSourceSet {
@@ -260,6 +271,7 @@ kotlin {
                             diagnosticNamesArg,
                         )
                     )
+                    compilerOptions.allowReturnValueCheckerButNotReport()
                 }
             }
         }
@@ -272,6 +284,8 @@ kotlin {
                 listOfNotNull(
                     "-Xallow-kotlin-package",
                     "-Xexpect-actual-classes",
+                    "-source-map=false",
+                    "-source-map-embed-sources=",
                     diagnosticNamesArg
                 )
             )
@@ -280,6 +294,7 @@ kotlin {
             val main by getting {
                 compileTaskProvider.configure {
                     compilerOptions.mainCompilationOptions()
+                    compilerOptions.allowReturnValueCheckerButNotReport()
                     compilerOptions.freeCompilerArgs.add("-Xir-module-name=$KOTLIN_WASM_STDLIB_NAME")
                 }
             }
@@ -398,7 +413,15 @@ kotlin {
             kotlin.srcDir("common-non-jvm/src")
         }
 
+        val webMain by creating {
+            dependsOn(commonMain.get())
+            kotlin {
+                srcDir("common-js-wasmjs/src")
+            }
+        }
+
         val jsMain by getting {
+            dependsOn(webMain)
             dependsOn(commonNonJvmMain)
             val prepareJsIrMainSources by tasks.registering(Sync::class)
             kotlin {
@@ -498,6 +521,7 @@ kotlin {
         }
 
         val wasmJsMain by getting {
+            dependsOn(webMain)
             dependsOn(wasmCommonMain)
             kotlin {
                 srcDir("wasm/js/builtins")

@@ -108,14 +108,18 @@ object ConeKotlinTypeComparator : Comparator<ConeKotlinType> {
                 require(b is ConeCapturedType) {
                     "priority is inconsistent: ${a.renderForDebugging()} v.s. ${b.renderForDebugging()}"
                 }
-                val aHasLowerType = if (a.lowerType != null) 1 else 0
-                val bHasLowerType = if (b.lowerType != null) 1 else 0
+                val aConstructor = a.constructor
+                val aHasLowerType = if (aConstructor.lowerType != null) 1 else 0
+                val bConstructor = b.constructor
+                val bHasLowerType = if (bConstructor.lowerType != null) 1 else 0
                 val hasLowerTypeDiff = aHasLowerType - bHasLowerType
                 if (hasLowerTypeDiff != 0) {
                     return hasLowerTypeDiff
                 }
-                if (a.lowerType != null && b.lowerType != null) {
-                    val lowerTypeDiff = compare(a.lowerType!!, b.lowerType!!)
+                if (aConstructor.lowerType != null) {
+                    // See the diff above
+                    check(bConstructor.lowerType != null)
+                    val lowerTypeDiff = compare(aConstructor.lowerType!!, bConstructor.lowerType!!)
                     if (lowerTypeDiff != 0) {
                         return lowerTypeDiff
                     }
@@ -124,7 +128,7 @@ object ConeKotlinTypeComparator : Comparator<ConeKotlinType> {
                 if (nullabilityDiff != 0) {
                     return nullabilityDiff
                 }
-                return a.constructor.hashCode() - b.constructor.hashCode()
+                return aConstructor.hashCode() - bConstructor.hashCode()
             }
             is ConeDefinitelyNotNullType -> {
                 require(b is ConeDefinitelyNotNullType) {

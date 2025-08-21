@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.backend.common.LoweringContext
-import org.jetbrains.kotlin.backend.common.ir.Symbols.Companion.isTypeOfIntrinsic
-import org.jetbrains.kotlin.backend.common.ir.isReifiable
+import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToLocalSuspendFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
@@ -15,7 +14,6 @@ import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLamb
 import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -27,17 +25,18 @@ import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.calls.CallsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.cleanup.CleanupLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.*
-import org.jetbrains.kotlin.ir.backend.js.lower.inline.*
+import org.jetbrains.kotlin.ir.backend.js.lower.inline.CopyInlineFunctionBodyLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.inline.JsInlineFunctionResolver
+import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineDeclarationsWithReifiedTypeParametersLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.backend.js.utils.compileSuspendAsJsGenerator
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.inline.*
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 
 private val validateIrBeforeLowering = makeIrModulePhase(
-    ::IrValidationBeforeLoweringPhase,
+    ::KlibIrValidationBeforeLoweringPhase,
     name = "ValidateIrBeforeLowering",
 )
 
@@ -54,24 +53,16 @@ private val validateIrAfterInliningOnlyPrivateFunctions = makeIrModulePhase(
     name = "IrValidationAfterInliningOnlyPrivateFunctionsPhase",
 )
 
-private val dumpSyntheticAccessorsPhase = makeIrModulePhase<JsIrBackendContext>(
-    ::DumpSyntheticAccessors,
-    name = "DumpSyntheticAccessorsPhase",
-)
-
 private val validateIrAfterInliningAllFunctions = makeIrModulePhase(
     { context: LoweringContext ->
-        IrValidationAfterInliningAllFunctionsPhase(
+        IrValidationAfterInliningAllFunctionsOnTheSecondStagePhase(
             context,
-            checkInlineFunctionCallSites = { inlineFunctionUseSite ->
+            checkInlineFunctionCallSites = check@{ inlineFunctionUseSite ->
                 // No inline function call sites should remain at this stage.
                 val inlineFunction = inlineFunctionUseSite.symbol.owner
-                when {
-                    // TODO: remove this condition after the fix of KT-70361:
-                    isTypeOfIntrinsic(inlineFunction.symbol) -> true // temporarily permitted
-
-                    else -> false // forbidden
-                }
+                // it's fine to have typeOf<T>, it would be ignored by inliner and handled on the second stage of compilation
+                if (Symbols.isTypeOfIntrinsic(inlineFunction.symbol)) return@check true
+                return@check inlineFunction.body == null
             }
         )
     },
@@ -405,9 +396,9 @@ private val localDeclarationsLoweringPhase = makeIrModulePhase(
     prerequisite = setOf(sharedVariablesLoweringPhase, localDelegatedPropertiesLoweringPhase)
 )
 
-private val localClassExtractionPhase = makeIrModulePhase(
-    { context -> LocalClassPopupLowering(context) },
-    name = "LocalClassExtractionPhase",
+private val localDeclarationExtractionPhase = makeIrModulePhase(
+    { context -> LocalDeclarationPopupLowering(context) },
+    name = "LocalDeclarationExtractionPhase",
     prerequisite = setOf(localDeclarationsLoweringPhase)
 )
 
@@ -532,7 +523,7 @@ private val initializersLoweringPhase = makeIrModulePhase(
     ::InitializersLowering,
     name = "InitializersLowering",
     prerequisite = setOf(
-        enumClassConstructorLoweringPhase, primaryConstructorLoweringPhase, annotationConstructorLowering, localClassExtractionPhase
+        enumClassConstructorLoweringPhase, primaryConstructorLoweringPhase, annotationConstructorLowering, localDeclarationExtractionPhase
     )
 )
 
@@ -729,11 +720,7 @@ val mainFunctionCallWrapperLowering = makeIrModulePhase<JsIrBackendContext>(
 fun jsLoweringsOfTheFirstPhase(
     languageVersionSettings: LanguageVersionSettings,
 ): List<NamedCompilerPhase<JsPreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> = buildList {
-    // TODO: after the fix of KT-76260 this condition should be simplified to just the check of `IrRichCallableReferencesInKlibs` feature
-    val enableRichReferences = languageVersionSettings.supportsFeature(LanguageFeature.IrRichCallableReferencesInKlibs) ||
-            languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization)
-
-    if (enableRichReferences) {
+    if (languageVersionSettings.supportsFeature(LanguageFeature.IrRichCallableReferencesInKlibs)) {
         this += upgradeCallableReferences
     }
     if (languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization)) {
@@ -760,7 +747,6 @@ fun getJsLowerings(
     // just because it goes so in Native.
     validateIrAfterInliningOnlyPrivateFunctions,
     inlineAllFunctionsPhase,
-    dumpSyntheticAccessorsPhase.takeIf { configuration[KlibConfigurationKeys.SYNTHETIC_ACCESSORS_DUMP_DIR] != null },
     validateIrAfterInliningAllFunctions,
     // END: Common Native/JS/Wasm prefix.
 
@@ -786,7 +772,7 @@ fun getJsLowerings(
     enumClassConstructorBodyLoweringPhase,
     localDelegatedPropertiesLoweringPhase,
     localDeclarationsLoweringPhase,
-    localClassExtractionPhase,
+    localDeclarationExtractionPhase,
     innerClassesLoweringPhase,
     innerClassesMemberBodyLoweringPhase,
     innerClassConstructorCallsLoweringPhase,

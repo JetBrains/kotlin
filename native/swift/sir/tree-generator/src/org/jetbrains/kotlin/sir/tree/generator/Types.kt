@@ -20,6 +20,8 @@ val importType = type(BASE_PACKAGE, "SirImport", TypeKind.Class)
 val modalityKind = type(BASE_PACKAGE, "SirModality", TypeKind.Class)
 val attributeType = type(BASE_PACKAGE, "SirAttribute", TypeKind.Class)
 val typeConstraintType = type(BASE_PACKAGE, "SirTypeConstraint", TypeKind.Class)
+val fixityType = type(BASE_PACKAGE, "SirFixity", TypeKind.Class)
+val bridgeType = type(BASE_PACKAGE, "SirBridge", TypeKind.Class)
 
 val swiftIrImplementationDetailAnnotation = type(BASE_PACKAGE, "SirImplementationDetail", TypeKind.Class)
 val swiftIrBuilderDslAnnotation = type(BASE_PACKAGE, "SirBuilderDsl", TypeKind.Class)

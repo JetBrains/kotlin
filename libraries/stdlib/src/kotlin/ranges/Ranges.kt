@@ -254,6 +254,22 @@ public operator fun Float.rangeUntil(that: Float): OpenEndRange<Float> = OpenEnd
  *
  * Always returns `false` if the [element] is `null`.
  */
+@SinceKotlin("2.3")
+@kotlin.internal.InlineOnly
+public inline operator fun <T, R> R.contains(element: T?): Boolean where T : Comparable<T>, R : ClosedRange<T>, R : Iterable<T> =
+    element != null && contains(element)
+
+/**
+ * Returns `true` if this iterable range contains the specified [element].
+ *
+ * Always returns `false` if the [element] is `null`.
+ */
+@Deprecated("The signature violates type safety guarantees")
+@DeprecatedSinceKotlin(hiddenSince = "2.3")
+@Suppress(
+    "UPPER_BOUND_VIOLATED_IN_TYPE_OPERATOR_OR_PARAMETER_BOUNDS_WARNING",
+    "UPPER_BOUND_VIOLATED_IN_TYPE_OPERATOR_OR_PARAMETER_BOUNDS_ERROR",
+)
 @SinceKotlin("1.3")
 @kotlin.internal.InlineOnly
 public inline operator fun <T, R> R.contains(element: T?): Boolean where T : Any, R : ClosedRange<T>, R : Iterable<T> =
@@ -264,8 +280,24 @@ public inline operator fun <T, R> R.contains(element: T?): Boolean where T : Any
  *
  * Always returns `false` if the [element] is `null`.
  */
-@SinceKotlin("1.9")
+@SinceKotlin("2.3")
 @WasExperimental(ExperimentalStdlibApi::class)
+@kotlin.internal.InlineOnly
+public inline operator fun <T, R> R.contains(element: T?): Boolean where T : Comparable<T>, R : OpenEndRange<T>, R : Iterable<T> =
+    element != null && contains(element)
+
+/**
+ * Returns `true` if this iterable range contains the specified [element].
+ *
+ * Always returns `false` if the [element] is `null`.
+ */
+@Deprecated("The signature violates type safety guarantees")
+@DeprecatedSinceKotlin(hiddenSince = "2.3")
+@Suppress(
+    "UPPER_BOUND_VIOLATED_IN_TYPE_OPERATOR_OR_PARAMETER_BOUNDS_WARNING",
+    "UPPER_BOUND_VIOLATED_IN_TYPE_OPERATOR_OR_PARAMETER_BOUNDS_ERROR",
+)
+@SinceKotlin("1.9")
 @kotlin.internal.InlineOnly
 public inline operator fun <T, R> R.contains(element: T?): Boolean where T : Any, R : OpenEndRange<T>, R : Iterable<T> =
     element != null && contains(element)

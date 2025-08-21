@@ -35,13 +35,15 @@ object FirPropertyFieldTypeChecker : FirPropertyChecker(MppCheckerKind.Common) {
             reporter.reportOn(declaration.initializer?.source, FirErrors.PROPERTY_INITIALIZER_WITH_EXPLICIT_FIELD_DECLARATION)
         }
 
+        if (declaration.isVar) {
+            reporter.reportOn(declaration.source, FirErrors.VAR_PROPERTY_WITH_EXPLICIT_BACKING_FIELD)
+        }
+
         if (backingField.isLateInit && declaration.isVal) {
             reporter.reportOn(backingField.source, FirErrors.LATEINIT_FIELD_IN_VAL_PROPERTY)
         }
 
-        if (backingField.initializer == null && !backingField.isLateInit) {
-            reporter.reportOn(backingField.source, FirErrors.PROPERTY_FIELD_DECLARATION_MISSING_INITIALIZER)
-        } else if (backingField.initializer != null && backingField.isLateInit) {
+        if (backingField.initializer != null && backingField.isLateInit) {
             reporter.reportOn(backingField.source, FirErrors.LATEINIT_PROPERTY_FIELD_DECLARATION_WITH_INITIALIZER)
         }
 
@@ -59,32 +61,17 @@ object FirPropertyFieldTypeChecker : FirPropertyChecker(MppCheckerKind.Common) {
         }
 
         if (!backingField.isSubtypeOf(declaration, typeCheckerContext)) {
-            checkAsFieldNotSubtype(declaration)
+            reporter.reportOn(declaration.source, FirErrors.INCONSISTENT_BACKING_FIELD_TYPE)
         }
 
-        if (!declaration.isSubtypeOf(backingField, typeCheckerContext)) {
-            checkAsPropertyNotSubtype(declaration)
-        }
-    }
-
-    private val FirPropertyAccessor?.isNotExplicit
-        get() = this == null || this is FirDefaultPropertyAccessor
-
-    context(context: CheckerContext, reporter: DiagnosticReporter)
-    private fun checkAsPropertyNotSubtype(
-        property: FirProperty,
-    ) {
-        if (property.isVar && property.setter.isNotExplicit) {
-            reporter.reportOn(property.source, FirErrors.PROPERTY_MUST_HAVE_SETTER)
+        // There's already `BACKING_FIELD_FOR_DELEGATED_PROPERTY`
+        if (declaration.delegate == null) {
+            if (declaration.getter.isExplicit) {
+                reporter.reportOn(declaration.getter?.source, FirErrors.PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS)
+            }
         }
     }
 
-    context(context: CheckerContext, reporter: DiagnosticReporter)
-    private fun checkAsFieldNotSubtype(
-        property: FirProperty,
-    ) {
-        if (property.getter.isNotExplicit) {
-            reporter.reportOn(property.source, FirErrors.PROPERTY_MUST_HAVE_GETTER)
-        }
-    }
+    private val FirPropertyAccessor?.isExplicit
+        get() = this != null && this !is FirDefaultPropertyAccessor
 }

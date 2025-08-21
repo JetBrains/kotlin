@@ -70,7 +70,7 @@ public actual inline fun tan(x: Double): Double = nativeMath.tan(x)
  * the returned value is an angle in the range from `-PI/2` to `PI/2` radians.
  *
  * Special cases:
- *    - `asin(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
+ *   - `asin(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -81,7 +81,7 @@ public actual inline fun asin(x: Double): Double = nativeMath.asin(x)
  * the returned value is an angle in the range from `0.0` to `PI` radians.
  *
  * Special cases:
- *    - `acos(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
+ *   - `acos(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -310,9 +310,11 @@ public actual inline fun expm1(x: Double): Double = nativeMath.expm1(x)
  *   - `log(x, b)` is `NaN` when `x < 0` or `b <= 0` or `b == 1.0`
  *   - `log(+Inf, +Inf)` is `NaN`
  *   - `log(+Inf, b)` is `+Inf` for `b > 1` and `-Inf` for `b < 1`
- *   - `log(0.0, b)` is `-Inf` for `b > 1` and `+Inf` for `b > 1`
+ *   - `log(0.0, b)` is `-Inf` for `b > 1` and `+Inf` for `b < 1`
  *
  * See also logarithm functions for common fixed bases: [ln], [log10] and [log2].
+ *
+ * @sample samples.math.MathSamples.Doubles.logarithm
  */
 @SinceKotlin("1.2")
 public actual fun log(x: Double, base: Double): Double {
@@ -328,6 +330,8 @@ public actual fun log(x: Double, base: Double): Double {
  *   - `ln(x)` is `NaN` when `x < 0.0`
  *   - `ln(+Inf)` is `+Inf`
  *   - `ln(0.0)` is `-Inf`
+ *
+ * @sample samples.math.MathSamples.Doubles.naturalLogarithm
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -337,6 +341,8 @@ public actual inline fun ln(x: Double): Double = nativeMath.log(x)
  * Computes the common logarithm (base 10) of the value [x].
  *
  * @see [ln] function for special cases.
+ *
+ * @sample samples.math.MathSamples.Doubles.logBase10
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -346,6 +352,8 @@ public actual inline fun log10(x: Double): Double = nativeMath.log10(x)
  * Computes the binary logarithm (base 2) of the value [x].
  *
  * @see [ln] function for special cases.
+ *
+ * @sample samples.math.MathSamples.Doubles.logBase2
  */
 @SinceKotlin("1.2")
 public actual fun log2(x: Double): Double = nativeMath.log(x) / LN2
@@ -363,6 +371,8 @@ public actual fun log2(x: Double): Double = nativeMath.log(x) / LN2
  *
  * @see [ln] function
  * @see [expm1] function
+ *
+ * @sample samples.math.MathSamples.Doubles.naturalLogarithmPlusOne
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -688,7 +698,7 @@ public actual inline fun tan(x: Float): Float = nativeMath.tan(x.toDouble()).toF
  * the returned value is an angle in the range from `-PI/2` to `PI/2` radians.
  *
  * Special cases:
- *    - `asin(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
+ *   - `asin(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -699,7 +709,7 @@ public actual inline fun asin(x: Float): Float = nativeMath.asin(x.toDouble()).t
  * the returned value is an angle in the range from `0.0` to `PI` radians.
  *
  * Special cases:
- *    - `acos(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
+ *   - `acos(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -871,9 +881,11 @@ public actual inline fun expm1(x: Float): Float = nativeMath.expm1(x.toDouble())
  *   - `log(x, b)` is `NaN` when `x < 0` or `b <= 0` or `b == 1.0`
  *   - `log(+Inf, +Inf)` is `NaN`
  *   - `log(+Inf, b)` is `+Inf` for `b > 1` and `-Inf` for `b < 1`
- *   - `log(0.0, b)` is `-Inf` for `b > 1` and `+Inf` for `b > 1`
+ *   - `log(0.0, b)` is `-Inf` for `b > 1` and `+Inf` for `b < 1`
  *
  * See also logarithm functions for common fixed bases: [ln], [log10] and [log2].
+ *
+ * @sample samples.math.MathSamples.Floats.logarithm
  */
 @SinceKotlin("1.2")
 public actual fun log(x: Float, base: Float): Float {
@@ -889,6 +901,8 @@ public actual fun log(x: Float, base: Float): Float {
  *   - `ln(x)` is `NaN` when `x < 0.0`
  *   - `ln(+Inf)` is `+Inf`
  *   - `ln(0.0)` is `-Inf`
+ *
+ * @sample samples.math.MathSamples.Floats.naturalLogarithm
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -898,6 +912,8 @@ public actual inline fun ln(x: Float): Float = nativeMath.log(x.toDouble()).toFl
  * Computes the common logarithm (base 10) of the value [x].
  *
  * @see [ln] function for special cases.
+ *
+ * @sample samples.math.MathSamples.Floats.logBase10
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -907,6 +923,8 @@ public actual inline fun log10(x: Float): Float = nativeMath.log10(x.toDouble())
  * Computes the binary logarithm (base 2) of the value [x].
  *
  * @see [ln] function for special cases.
+ *
+ * @sample samples.math.MathSamples.Floats.logBase2
  */
 @SinceKotlin("1.2")
 public actual fun log2(x: Float): Float = (nativeMath.log(x.toDouble()) / LN2).toFloat()
@@ -924,6 +942,8 @@ public actual fun log2(x: Float): Float = (nativeMath.log(x.toDouble()) / LN2).t
  *
  * @see [ln] function
  * @see [expm1] function
+ *
+ * @sample samples.math.MathSamples.Floats.naturalLogarithmPlusOne
  */
 @SinceKotlin("1.2")
 @InlineOnly

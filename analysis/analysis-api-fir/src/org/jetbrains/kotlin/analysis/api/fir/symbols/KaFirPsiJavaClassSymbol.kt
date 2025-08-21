@@ -11,14 +11,13 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
-import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolModality
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.toKtClassKind
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.firClassByPsiClassProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.utils.classId
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -48,7 +47,7 @@ internal class KaFirPsiJavaClassSymbol(
         JavaElementSourceFactory.getInstance(analysisSession.project).createPsiSource(backingPsi)
     )
 
-    override val psi: PsiElement? get() = withValidityAssertion { backingPsi }
+    override val psi: PsiElement get() = withValidityAssertion { backingPsi }
 
     override val name: Name get() = withValidityAssertion { javaClass.name }
 
@@ -121,9 +120,7 @@ internal class KaFirPsiJavaClassSymbol(
     // Slow Operations (requiring access to the underlying FIR class symbol)
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     override val lazyFirSymbol: Lazy<FirRegularClassSymbol> = lazyPub {
-        val module = analysisSession.getModule(backingPsi)
-        val provider = analysisSession.resolutionFacade.getSessionFor(module).firClassByPsiClassProvider
-        provider.getFirClass(backingPsi)
+        backingPsi.resolveToFirSymbol(analysisSession.resolutionFacade)
     }
 
     override val annotations: KaAnnotationList

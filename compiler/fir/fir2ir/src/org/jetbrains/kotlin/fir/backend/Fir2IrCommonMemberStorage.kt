@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.fir.backend.Fir2IrDeclarationStorage.PropertyCacheStorage.SyntheticPropertyKey
+import org.jetbrains.kotlin.fir.backend.utils.filterOutSymbolsFromCache
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.ir.IrLock
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -69,11 +71,34 @@ class Fir2IrCommonMemberStorage {
     val delegatedClassesInfo: MutableMap<IrClassSymbol, MutableMap<IrClassSymbol, IrFieldSymbol>> = mutableMapOf()
     val firClassesWithInheritanceByDelegation: MutableSet<FirClass> = mutableSetOf()
 
-    /**
-     * Contains information about synthetic methods generated for data and value classes
-     * It will be used to generate bodies of those methods after fir2ir conversion is over
-     */
-    val generatedDataValueClassSyntheticFunctions: MutableMap<IrClass, DataValueClassGeneratedMembersInfo> = mutableMapOf()
+    // Should be updated respectively when adding new properties
+    fun cloneFilteringSymbols(filterOutSymbols: Set<FirBasedSymbol<*>>): Fir2IrCommonMemberStorage {
+        val original = this
+        return Fir2IrCommonMemberStorage().apply {
+            classCache.putAll(filterOutSymbolsFromCache(original.classCache, filterOutSymbols))
+            notFoundClassCache.putAll(original.notFoundClassCache)
+            typeParameterCache.putAll(filterOutSymbolsFromCache(original.typeParameterCache, filterOutSymbols))
+            enumEntryCache.putAll(filterOutSymbolsFromCache(original.enumEntryCache, filterOutSymbols))
+            localClassCache.putAll(filterOutSymbolsFromCache(original.localClassCache, filterOutSymbols))
+            localCallableCache.addAll(original.localCallableCache.map { it.cloneFilteringSymbols(filterOutSymbols) })
+            functionCache.putAll(filterOutSymbolsFromCache(original.functionCache, filterOutSymbols))
+            dataClassGeneratedFunctionsCache.putAll(filterOutSymbolsFromCache(original.dataClassGeneratedFunctionsCache, filterOutSymbols))
+            constructorCache.putAll(filterOutSymbolsFromCache(original.constructorCache, filterOutSymbols))
+            propertyCache.putAll(filterOutSymbolsFromCache(original.propertyCache, filterOutSymbols))
+            syntheticPropertyCache.putAll(original.syntheticPropertyCache.filterKeys { !filterOutSymbols.contains(it.originalFunction.symbol) })
+            getterForPropertyCache.putAll(original.getterForPropertyCache)
+            setterForPropertyCache.putAll(original.setterForPropertyCache)
+            backingFieldForPropertyCache.putAll(original.backingFieldForPropertyCache)
+            delegateVariableForPropertyCache.putAll(original.delegateVariableForPropertyCache)
+            irForFirSessionDependantDeclarationMap.putAll(original.irForFirSessionDependantDeclarationMap.filterKeys {
+                !filterOutSymbols.contains(it.originalSymbol)
+            })
+            delegatedClassesInfo.putAll(original.delegatedClassesInfo)
+            firClassesWithInheritanceByDelegation.addAll(original.firClassesWithInheritanceByDelegation.filter {
+                !filterOutSymbols.contains(it.symbol)
+            })
+        }
+    }
 
     data class DataValueClassGeneratedMembersInfo(
         val components: Fir2IrComponents,

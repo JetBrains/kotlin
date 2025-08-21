@@ -106,7 +106,7 @@ object PositioningStrategies {
         private fun getElementToMark(declaration: KtDeclaration): PsiElement {
             val (returnTypeRef, nameIdentifierOrPlaceholder) = when (declaration) {
                 is KtCallableDeclaration -> Pair(declaration.typeReference, declaration.nameIdentifier)
-                is KtPropertyAccessor -> Pair(declaration.returnTypeReference, declaration.namePlaceholder)
+                is KtPropertyAccessor -> Pair(declaration.typeReference, declaration.namePlaceholder)
                 else -> Pair(null, null)
             }
 
@@ -116,7 +116,6 @@ object PositioningStrategies {
         }
     }
 
-    val propertyKindTokens = TokenSet.create(KtTokens.VAL_KEYWORD, KtTokens.VAR_KEYWORD)
     val classKindTokens = TokenSet.create(KtTokens.CLASS_KEYWORD, KtTokens.OBJECT_KEYWORD, KtTokens.INTERFACE_KEYWORD)
 
     @JvmField
@@ -254,7 +253,7 @@ object PositioningStrategies {
                 }
                 is KtPropertyAccessor -> {
                     val endOfSignatureElement =
-                        element.returnTypeReference
+                        element.typeReference
                             ?: element.parameterList
                             ?: element.namePlaceholder
 
@@ -296,7 +295,7 @@ object PositioningStrategies {
                 }
                 is KtPropertyAccessor -> {
                     val endOfSignatureElement =
-                        element.returnTypeReference
+                        element.typeReference
                             ?: element.parameterList
                             ?: element.namePlaceholder
 
@@ -440,7 +439,7 @@ object PositioningStrategies {
     @JvmField
     val FIELD_KEYWORD: PositioningStrategy<KtBackingField> = object : PositioningStrategy<KtBackingField>() {
         override fun mark(element: KtBackingField): List<TextRange> {
-            return markElement(element.fieldKeyword)
+            return markElement(element.fieldKeyword!!)
         }
     }
 
@@ -922,6 +921,13 @@ object PositioningStrategies {
     }
 
     @JvmField
+    val USELESS_ELVIS_LEFT: PositioningStrategy<KtBinaryExpression> = object : PositioningStrategy<KtBinaryExpression>() {
+        override fun mark(element: KtBinaryExpression): List<TextRange> {
+            return listOf(TextRange(element.startOffset, element.operationReference.endOffset))
+        }
+    }
+
+    @JvmField
     val IMPORT_ALIAS: PositioningStrategy<KtImportDirective> = object : PositioningStrategy<KtImportDirective>() {
         override fun mark(element: KtImportDirective): List<TextRange> {
             element.alias?.nameIdentifier?.let { return markElement(it) }
@@ -1067,6 +1073,7 @@ object PositioningStrategies {
                     is KtProperty -> element.initializer ?: element
                     // Type reference is used as a target for loop variable type mismatches
                     is KtParameter -> element.defaultValue ?: element.typeReference ?: element
+                    is KtDestructuringDeclarationEntry -> element.initializer ?: element.typeReference ?: element
                     else -> element
                 }
             )
@@ -1221,6 +1228,7 @@ object PositioningStrategies {
                 is KtTypeReference -> (element.typeElement as? KtNullableType)?.innerType ?: element
                 is KtImportDirective -> element.importedReference ?: element
                 is KtImportAlias -> element.nameIdentifier ?: element
+                is KtDestructuringDeclarationEntry -> element.nameIdentifier ?: element
                 else -> element
             }
             while (locateReferencedName && result is KtParenthesizedExpression) {

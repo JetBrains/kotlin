@@ -16,7 +16,6 @@ import androidx.compose.runtime.ReadOnlyComposable
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = 1292064820, startOffset = 165, endOffset = 191)
 fun Example(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Example)<D>:Test.kt")

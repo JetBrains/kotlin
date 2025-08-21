@@ -59,6 +59,7 @@ public val SirDeclarationParent.mangledNameOrNull: String?
         is SirExtension -> mangledNameOrNull
         is SirVariable -> TODO()
         is SirProtocol -> mangledNameOrNull
+        is SirSubscript -> error("subscripts are unnamed")
     }
 
 /**

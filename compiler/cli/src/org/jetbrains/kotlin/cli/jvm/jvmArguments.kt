@@ -303,12 +303,12 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
 
     put(JVMConfigurationKeys.VALIDATE_BYTECODE, arguments.validateBytecode)
 
+    @Suppress("DEPRECATION")
     put(JVMConfigurationKeys.LINK_VIA_SIGNATURES, arguments.linkViaSignatures)
 
     put(JVMConfigurationKeys.ENABLE_DEBUG_MODE, arguments.enableDebugMode)
     put(JVMConfigurationKeys.ENHANCED_COROUTINES_DEBUGGING, arguments.enhancedCoroutinesDebugging)
     put(JVMConfigurationKeys.NO_NEW_JAVA_ANNOTATION_TARGETS, arguments.noNewJavaAnnotationTargets)
-    put(JVMConfigurationKeys.ENABLE_IR_INLINER, arguments.enableIrInliner)
     put(JVMConfigurationKeys.USE_INLINE_SCOPES_NUMBERS, arguments.useInlineScopesNumbers)
 
     val assertionsMode =

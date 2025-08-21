@@ -6,14 +6,12 @@
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.jetbrains.kotlin.gradle.targets.js.AbstractEnv
-import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import java.io.File
 
 data class YarnEnv(
     override val download: Boolean,
     override val downloadBaseUrl: String?,
     override val allowInsecureProtocol: Boolean,
-    override val cleanableStore: CleanableStore,
     override val dir: File,
     override val executable: String,
     override val ivyDependency: String,
@@ -21,7 +19,7 @@ data class YarnEnv(
     val yarnLockMismatchReport: YarnLockMismatchReport,
     val reportNewYarnLock: Boolean,
     val yarnLockAutoReplace: Boolean,
-    val yarnResolutions: List<YarnResolution>
+    val yarnResolutions: List<YarnResolution>,
 ) : AbstractEnv {
     val standalone: Boolean
         get() = !download

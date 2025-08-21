@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN -DontMakeExplicitJavaTypeArgumentsFlexible
+// LANGUAGE: -DontMakeExplicitJavaTypeArgumentsFlexible
 
 // FILE: J.java
 public interface J<T> {

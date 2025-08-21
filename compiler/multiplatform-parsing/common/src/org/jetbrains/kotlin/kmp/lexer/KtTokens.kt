@@ -406,4 +406,6 @@ object KtTokens : SyntaxElementTypesWithIds() {
      */
     val COMMENTS: SyntaxElementTypeSet = syntaxElementTypeSetOf(EOL_COMMENT, BLOCK_COMMENT, DOC_COMMENT, SHEBANG_COMMENT)
     val WHITE_SPACE_OR_COMMENT_BIT_SET: SyntaxElementTypeSet = COMMENTS + WHITESPACES
+
+    val VAL_VAR: SyntaxElementTypeSet = syntaxElementTypeSetOf(VAL_KEYWORD, VAR_KEYWORD)
 }

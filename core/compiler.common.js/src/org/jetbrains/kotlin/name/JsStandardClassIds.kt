@@ -12,12 +12,17 @@ object JsStandardClassIds {
     val BASE_JS_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("js"))
     val BASE_JS_INTERNAL_PACKAGE = BASE_JS_PACKAGE.child(Name.identifier("internal"))
     val BASE_REFLECT_JS_INTERNAL_PACKAGE = BASE_REFLECT_PACKAGE.child(Name.identifier("js")).child(Name.identifier("internal"))
+    val BOXED_LONG_PACKAGE = BASE_JS_INTERNAL_PACKAGE.child(Name.identifier("boxedLong"))
+    val LONG_AS_BIGINT_PACKAGE = BASE_JS_INTERNAL_PACKAGE.child(Name.identifier("longAsBigInt"))
 
     @JvmField
     val Promise = "Promise".jsId()
 
     @JvmField
     val JsObject = "JsObject".jsId()
+
+    @JvmField
+    val Date = "Date".jsId()
 
     object Annotations {
         @JvmField
@@ -69,7 +74,7 @@ object JsStandardClassIds {
         val JsExportIgnore = JsExport.createNestedClassId(Name.identifier("Ignore"))
 
         @JvmField
-        val JsFun = "JsFun".jsId()
+        val JsFun = "JsFun".id()
 
         @JvmField
         val JsOutlinedFunction = "JsOutlinedFunction".jsId()
@@ -100,5 +105,6 @@ object JsStandardClassIds {
 }
 
 private fun String.jsId() = ClassId(JsStandardClassIds.BASE_JS_PACKAGE, Name.identifier(this))
+private fun String.id() = ClassId(BASE_KOTLIN_PACKAGE, Name.identifier(this))
 
 private fun String.callableId(packageName: FqName) = CallableId(packageName, Name.identifier(this))

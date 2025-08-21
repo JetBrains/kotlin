@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.resolution
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.psi.KtExpression
  * A [receiver](https://kotlin.github.io/analysis-api/receivers.html) value of a call, which represents either an
  * [explicit][KaExplicitReceiverValue], [implicit][KaImplicitReceiverValue], or [smart-casted][KaSmartCastedReceiverValue] receiver.
  */
+@OptIn(KaImplementationDetail::class)
 public sealed interface KaReceiverValue : KaLifetimeOwner {
     /**
      * The inferred [KaType] of the receiver. This is a smart-casted type in the case of a smart cast on the receiver.
@@ -30,6 +32,7 @@ public sealed interface KaReceiverValue : KaLifetimeOwner {
  * "".length    // explicit receiver `""`
  * ```
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaExplicitReceiverValue : KaReceiverValue {
     /**
      * The [KtExpression] of the explicit receiver.
@@ -69,6 +72,7 @@ public interface KaExplicitReceiverValue : KaReceiverValue {
  * }
  * ```
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaImplicitReceiverValue : KaReceiverValue {
     /**
      * The symbol which represents the implicit receiver.
@@ -92,6 +96,7 @@ public interface KaImplicitReceiverValue : KaReceiverValue {
  * `length` has a smart-casted receiver value of type `String`. Its [original] is an implicit receiver which is bound to the
  * [KaReceiverParameterSymbol][org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol] for the extension receiver of `test`.
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaSmartCastedReceiverValue : KaReceiverValue {
     /**
      * The original [KaReceiverValue] to which the smart cast was applied.

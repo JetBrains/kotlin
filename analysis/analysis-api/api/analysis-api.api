@@ -4,6 +4,9 @@ public final class org/jetbrains/kotlin/analysis/api/AnalyzeKt {
 	public static final fun analyzeCopy (Lorg/jetbrains/kotlin/psi/KtElement;Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaDanglingFileResolutionMode;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 }
 
+public abstract interface annotation class org/jetbrains/kotlin/analysis/api/KaContextParameterApi : java/lang/annotation/Annotation {
+}
+
 public abstract interface annotation class org/jetbrains/kotlin/analysis/api/KaExperimentalApi : java/lang/annotation/Annotation {
 }
 
@@ -11,6 +14,9 @@ public abstract interface annotation class org/jetbrains/kotlin/analysis/api/KaI
 }
 
 public abstract interface annotation class org/jetbrains/kotlin/analysis/api/KaImplementationDetail : java/lang/annotation/Annotation {
+}
+
+public abstract interface annotation class org/jetbrains/kotlin/analysis/api/KaK1Unsupported : java/lang/annotation/Annotation {
 }
 
 public abstract interface annotation class org/jetbrains/kotlin/analysis/api/KaNonPublicApi : java/lang/annotation/Annotation {
@@ -235,7 +241,8 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaE
 	public abstract fun getExpectedType (Lcom/intellij/psi/PsiElement;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public abstract fun getExpressionType (Lorg/jetbrains/kotlin/psi/KtExpression;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public abstract fun getFunctionType (Lorg/jetbrains/kotlin/psi/KtFunction;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
-	public abstract fun getReturnType (Lorg/jetbrains/kotlin/psi/KtDeclaration;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
+	public fun getReturnType (Lorg/jetbrains/kotlin/psi/KtDeclaration;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
+	public abstract fun getReturnType (Lorg/jetbrains/kotlin/psi/KtDeclarationWithReturnType;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public abstract fun isDefinitelyNotNull (Lorg/jetbrains/kotlin/psi/KtExpression;)Z
 	public abstract fun isDefinitelyNull (Lorg/jetbrains/kotlin/psi/KtExpression;)Z
 }
@@ -1324,12 +1331,14 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/types/KaTypeAr
 public final class org/jetbrains/kotlin/analysis/api/types/KaTypeMappingMode : java/lang/Enum {
 	public static final field DEFAULT Lorg/jetbrains/kotlin/analysis/api/types/KaTypeMappingMode;
 	public static final field DEFAULT_UAST Lorg/jetbrains/kotlin/analysis/api/types/KaTypeMappingMode;
+	public static final field FUNCTION_RETURN_TYPE Lorg/jetbrains/kotlin/analysis/api/types/KaTypeMappingMode;
 	public static final field GENERIC_ARGUMENT Lorg/jetbrains/kotlin/analysis/api/types/KaTypeMappingMode;
 	public static final field RETURN_TYPE Lorg/jetbrains/kotlin/analysis/api/types/KaTypeMappingMode;
 	public static final field RETURN_TYPE_BOXED Lorg/jetbrains/kotlin/analysis/api/types/KaTypeMappingMode;
 	public static final field SUPER_TYPE Lorg/jetbrains/kotlin/analysis/api/types/KaTypeMappingMode;
 	public static final field SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS Lorg/jetbrains/kotlin/analysis/api/types/KaTypeMappingMode;
 	public static final field VALUE_PARAMETER Lorg/jetbrains/kotlin/analysis/api/types/KaTypeMappingMode;
+	public static final field VALUE_PARAMETER_BOXED Lorg/jetbrains/kotlin/analysis/api/types/KaTypeMappingMode;
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/analysis/api/types/KaTypeMappingMode;
 	public static fun values ()[Lorg/jetbrains/kotlin/analysis/api/types/KaTypeMappingMode;

@@ -54,9 +54,10 @@ class Scope(val scopeOwnerSymbol: IrSymbol) {
         isMutable: Boolean = false,
         origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
         startOffset: Int,
-        endOffset: Int
+        endOffset: Int,
+        inventUniqueName: Boolean = true,
     ): IrVariable {
-        val name = Name.identifier(getNameForTemporary(nameHint))
+        val name = if (inventUniqueName) Name.identifier(getNameForTemporary(nameHint)) else Name.identifier(nameHint ?: "tmp")
         return IrVariableImpl(
             startOffset, endOffset, origin, IrVariableSymbolImpl(), name,
             irType, isMutable, isConst = false, isLateinit = false
@@ -72,12 +73,13 @@ class Scope(val scopeOwnerSymbol: IrSymbol) {
         origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
         irType: IrType? = null,
         startOffset: Int = irExpression.startOffset,
-        endOffset: Int = irExpression.endOffset
+        endOffset: Int = irExpression.endOffset,
+        inventUniqueName: Boolean = true,
     ): IrVariable {
         return createTemporaryVariableDeclaration(
             irType ?: irExpression.type,
             nameHint, isMutable,
-            origin, startOffset, endOffset
+            origin, startOffset, endOffset, inventUniqueName
         ).apply {
             initializer = irExpression
         }

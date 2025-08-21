@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.*
 import org.jetbrains.kotlin.resolve.checkers.EmptyIntersectionTypeInfo
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.TypeApproximatorCachesPerConfiguration
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.SmartList
@@ -399,6 +400,10 @@ class NewConstraintSystemImpl(
             notProperTypesCache.clear()
         }
 
+        for ((k, v) in otherSystem.approximatorCaches) {
+            storage.approximatorCaches.getOrPut(k) { AbstractTypeApproximator.Cache() } += v
+        }
+
         for ((variable, constraints) in otherSystem.notFixedTypeVariables) {
             if (!mergeMode) {
                 notFixedTypeVariables[variable] = MutableVariableWithConstraints(this, constraints)
@@ -553,6 +558,9 @@ class NewConstraintSystemImpl(
 
     override val outerSystemVariablesPrefixSize: Int
         get() = storage.outerSystemVariablesPrefixSize
+
+    override val approximatorCaches: TypeApproximatorCachesPerConfiguration
+        get() = storage.approximatorCaches
 
     override val constraintsFromAllForkPoints: MutableList<Pair<IncorporationConstraintPosition, ForkPointData>>
         get() {

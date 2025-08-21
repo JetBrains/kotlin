@@ -1,11 +1,16 @@
 // WITH_STDLIB
 // WITH_COROUTINES
+// NO_CHECK_LAMBDA_INLINING
 
+// FILE: lib.kt
 import kotlin.coroutines.*
 
 public inline fun <reified T> myEmptyArray(): Array<T> = arrayOfNulls<T>(0) as Array<T>
 
 inline fun <reified T> Array<out T>?.myOrEmpty(): Array<out T> = this ?: myEmptyArray<T>()
+
+// FILE: main.kt
+import kotlin.coroutines.*
 
 fun <T> runBlocking(c: suspend () -> T): T {
     var res: T? = null

@@ -3,13 +3,35 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+int8_t kotlin_ByteArray_get__TypesOfArguments__Swift_Int32__(void * self, int32_t index);
+
+void * kotlin_ByteArray_iterator(void * self);
+
+void kotlin_ByteArray_set__TypesOfArguments__Swift_Int32_Swift_Int8__(void * self, int32_t index, int8_t value);
+
 int32_t kotlin_ByteArray_size_get(void * self);
 
+uint16_t kotlin_CharArray_get__TypesOfArguments__Swift_Int32__(void * self, int32_t index);
+
+void * kotlin_CharArray_iterator(void * self);
+
+void kotlin_CharArray_set__TypesOfArguments__Swift_Int32_Swift_Unicode_UTF16_CodeUnit__(void * self, int32_t index, uint16_t value);
+
 int32_t kotlin_CharArray_size_get(void * self);
+
+uint16_t kotlin_CharSequence_get__TypesOfArguments__Swift_Int32__(void * self, int32_t index);
 
 int32_t kotlin_CharSequence_length_get(void * self);
 
 void * kotlin_CharSequence_subSequence__TypesOfArguments__Swift_Int32_Swift_Int32__(void * self, int32_t startIndex, int32_t endIndex);
+
+int8_t kotlin_collections_ByteIterator_next(void * self);
+
+int8_t kotlin_collections_ByteIterator_nextByte(void * self);
+
+uint16_t kotlin_collections_CharIterator_next(void * self);
+
+uint16_t kotlin_collections_CharIterator_nextChar(void * self);
 
 void * kotlin_text_Appendable_append__TypesOfArguments__Swift_Unicode_UTF16_CodeUnit__(void * self, uint16_t value);
 
@@ -23,7 +45,7 @@ void * kotlin_text_StringBuilder_append__TypesOfArguments__Swift_Optional_anyU20
 
 void * kotlin_text_StringBuilder_append__TypesOfArguments__Swift_Optional_anyU20ExportedKotlinPackages_kotlin_CharSequence__Swift_Int32_Swift_Int32__(void * self, void * _Nullable value, int32_t startIndex, int32_t endIndex);
 
-void * kotlin_text_StringBuilder_append__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(void * self, void * _Nullable value);
+void * kotlin_text_StringBuilder_append__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable value);
 
 void * kotlin_text_StringBuilder_append__TypesOfArguments__Swift_Bool__(void * self, _Bool value);
 
@@ -54,6 +76,8 @@ void * kotlin_text_StringBuilder_deleteAt__TypesOfArguments__Swift_Int32__(void 
 void * kotlin_text_StringBuilder_deleteRange__TypesOfArguments__Swift_Int32_Swift_Int32__(void * self, int32_t startIndex, int32_t endIndex);
 
 void kotlin_text_StringBuilder_ensureCapacity__TypesOfArguments__Swift_Int32__(void * self, int32_t minimumCapacity);
+
+uint16_t kotlin_text_StringBuilder_get__TypesOfArguments__Swift_Int32__(void * self, int32_t index);
 
 int32_t kotlin_text_StringBuilder_indexOf__TypesOfArguments__Swift_String__(void * self, NSString * string);
 
@@ -89,7 +113,7 @@ void * kotlin_text_StringBuilder_insert__TypesOfArguments__Swift_Int32_ExportedK
 
 void * kotlin_text_StringBuilder_insert__TypesOfArguments__Swift_Int32_Swift_Optional_anyU20ExportedKotlinPackages_kotlin_CharSequence___(void * self, int32_t index, void * _Nullable value);
 
-void * kotlin_text_StringBuilder_insert__TypesOfArguments__Swift_Int32_Swift_Optional_KotlinRuntime_KotlinBase___(void * self, int32_t index, void * _Nullable value);
+void * kotlin_text_StringBuilder_insert__TypesOfArguments__Swift_Int32_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, int32_t index, void * _Nullable value);
 
 void * kotlin_text_StringBuilder_insert__TypesOfArguments__Swift_Int32_Swift_Optional_Swift_String___(void * self, int32_t index, NSString * _Nullable value);
 
@@ -104,6 +128,8 @@ int32_t kotlin_text_StringBuilder_lastIndexOf__TypesOfArguments__Swift_String_Sw
 int32_t kotlin_text_StringBuilder_length_get(void * self);
 
 void * kotlin_text_StringBuilder_reverse(void * self);
+
+void kotlin_text_StringBuilder_set__TypesOfArguments__Swift_Int32_Swift_Unicode_UTF16_CodeUnit__(void * self, int32_t index, uint16_t value);
 
 void kotlin_text_StringBuilder_setLength__TypesOfArguments__Swift_Int32__(void * self, int32_t newLength);
 

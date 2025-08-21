@@ -1,9 +1,9 @@
-PsiJetFileStubImpl[package=]
+FILE[kind=Facade[packageFqName=<root>, facadeFqName=PropertyWithGetterKt]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   PROPERTY[fqName=p, hasBackingField=null, hasDelegate=true, hasDelegateExpression=true, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=p]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Int]
-    PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+    PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
       VALUE_PARAMETER_LIST

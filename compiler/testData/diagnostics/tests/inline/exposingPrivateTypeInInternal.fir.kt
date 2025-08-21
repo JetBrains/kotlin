@@ -72,6 +72,8 @@ class C2 {
     }
 }
 
+typealias C3TA = C3
+
 class C3 {
     private companion object {
         fun foo() {}
@@ -79,6 +81,9 @@ class C3 {
 
     internal inline fun internal() {
         <!LESS_VISIBLE_CONTAINING_CLASS_IN_INLINE_WARNING, PRIVATE_CLASS_MEMBER_FROM_INLINE!>foo<!>() // already an error, should be an error
+        <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>Companion<!>
+        <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>C3<!>
+        <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>C3TA<!>
     }
 }
 
@@ -94,6 +99,14 @@ internal inline fun withAnonymousObject() {
 
 private fun foo() = object { fun bar() {} }
 internal inline fun test() = <!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_WARNING!>foo<!>().bar()
+
+private object O {
+    class C
+}
+
+internal inline fun internal5() {
+    O.<!LESS_VISIBLE_CONTAINING_CLASS_IN_INLINE_WARNING, LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_WARNING!>C<!>()
+}
 
 /* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, checkNotNullCall, classDeclaration, classReference,
 companionObject, functionDeclaration, functionalType, inline, inner, integerLiteral, interfaceDeclaration, isExpression,

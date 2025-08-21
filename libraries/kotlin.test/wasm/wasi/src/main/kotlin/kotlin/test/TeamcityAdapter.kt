@@ -6,12 +6,14 @@
 package kotlin.test
 
 import kotlin.wasm.WasmImport
+import kotlin.wasm.ExperimentalWasmInterop
 import kotlin.wasm.unsafe.*
 
 /**
  * Read command-line argument data. The size of the array should match that returned by
  * `args_sizes_get`. Each argument is expected to be `\0` terminated.
  */
+@ExperimentalWasmInterop
 @WasmImport("wasi_snapshot_preview1", "args_get")
 private external fun wasiRawArgsGet(
     argvPtr: Int,
@@ -20,13 +22,14 @@ private external fun wasiRawArgsGet(
 
 
 /** Return command-line argument data sizes. */
+@ExperimentalWasmInterop
 @WasmImport("wasi_snapshot_preview1", "args_sizes_get")
 private external fun wasiRawArgsSizesGet(
     argumentNumberPtr: Int,
     argumentStringSizePtr: Int,
 ): Int
 
-@OptIn(UnsafeWasmMemoryApi::class)
+@OptIn(UnsafeWasmMemoryApi::class, ExperimentalWasmInterop::class)
 internal actual fun getArguments(): List<String> = withScopedMemoryAllocator { allocator ->
     val numberOfArgumentsPtr = allocator.allocate(4)
     val sizeOfArgumentStringPtr = allocator.allocate(4)
@@ -56,7 +59,7 @@ internal actual fun getArguments(): List<String> = withScopedMemoryAllocator { a
     decodeStrings(argumentStringSize, startAddress, endAddress)
 }
 
-@OptIn(UnsafeWasmMemoryApi::class)
+@OptIn(UnsafeWasmMemoryApi::class, ExperimentalWasmInterop::class)
 private fun decodeStrings(arraySize: Int, startAddress: UInt, endAddress: UInt): List<String> {
     val buffer = ByteArray(arraySize)
     val result = mutableListOf<String>()

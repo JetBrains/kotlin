@@ -56,19 +56,20 @@ class MatchResultTest {
         for (i in groupPatterns.indices) {
             val regex = Regex(groupPatterns[i])
             val result = regex.matchEntire(positiveTestString)!!
-            try {
-                // groupPattern <index + 1> equals to number of groups
-                // of the specified pattern
-                // //
-                result.groups[i + 2]
-                fail("IndexOutBoundsException expected")
-                result.groups[i + 100]
-                fail("IndexOutBoundsException expected")
-                result.groups[-1]
-                fail("IndexOutBoundsException expected")
-                result.groups[-100]
-                fail("IndexOutBoundsException expected")
-            } catch (e: IndexOutOfBoundsException) {
+            // groupPattern <index + 1> equals to number of groups
+            // of the specified pattern
+
+            assertFailsWith<IndexOutOfBoundsException> { result.groups[i + 2] }.let {
+                assertContains(it.message ?: "", "Group index out of bounds")
+            }
+            assertFailsWith<IndexOutOfBoundsException> { result.groups[i + 100] }.let {
+                assertContains(it.message ?: "", "Group index out of bounds")
+            }
+            assertFailsWith<IndexOutOfBoundsException> { result.groups[-1] }.let {
+                assertContains(it.message ?: "", "Group index out of bounds")
+            }
+            assertFailsWith<IndexOutOfBoundsException> { result.groups[-100] }.let {
+                assertContains(it.message ?: "", "Group index out of bounds")
             }
         }
 

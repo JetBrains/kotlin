@@ -32,8 +32,20 @@ internal class WasmUsefulDeclarationProcessor(
     override val bodyVisitor: BodyVisitorBase = object : BodyVisitorBase() {
         override fun visitConst(expression: IrConst, data: IrDeclaration) = when (expression.kind) {
             is IrConstKind.Null -> expression.type.enqueueType(data, "expression type")
-            is IrConstKind.String -> context.wasmSymbols.stringGetLiteral.owner
-                .enqueue(data, "String literal intrinsic getter stringGetLiteral")
+            is IrConstKind.String -> {
+                context.wasmSymbols.createString.owner.enqueue(
+                    data, "String literal construction"
+                )
+                if ((expression.value as String).fitsLatin1) {
+                    // TODO: remove after bootstrap
+                    context.wasmSymbols.wasmGetQualifierImpl.owner
+                        .enqueue(data, "String literal intrinsic getter wasmGetQualifierImpl")
+                } else {
+                    // TODO: remove after bootstrap
+                    context.wasmSymbols.wasmGetSimpleNameImpl.owner
+                        .enqueue(data, "String literal intrinsic getter wasmGetSimpleNameImpl")
+                }
+            }
             else -> Unit
         }
 
@@ -110,6 +122,11 @@ internal class WasmUsefulDeclarationProcessor(
             if (tryToProcessIntrinsicCall(data, expression)) return
             if (function.hasWasmNoOpCastAnnotation()) return
             if (function.getWasmOpAnnotation() != null) return
+
+            if (function == context.wasmSymbols.tryGetAssociatedObject.owner) {
+                context.wasmSymbols.registerModuleDescriptor.owner
+                    .enqueue(function, "Module descriptor is a part of AO runtime")
+            }
 
             val isSuperCall = expression.superQualifierSymbol != null
             if (function is IrSimpleFunction && function.isOverridable && !isSuperCall) {

@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalDeclaration
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.getImplementationStatus
 import org.jetbrains.kotlin.fir.containingClassForLocalAttr
 import org.jetbrains.kotlin.fir.declarations.*
@@ -143,7 +143,7 @@ internal class KaFirSymbolRelationProvider(
         }
 
     private fun getContainingDeclarationsForLocalClass(firSymbol: FirBasedSymbol<*>, symbolFirSession: FirSession): KaDeclarationSymbol? {
-        val fir = firSymbol.fir as? FirRegularClass ?: return null
+        val fir = firSymbol.fir as? FirClassLikeDeclaration ?: return null
         val containerSymbol = fir.containingClassForLocalAttr?.toSymbol(symbolFirSession) ?: return null
         return firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(containerSymbol)
     }
@@ -428,9 +428,10 @@ internal class KaFirSymbolRelationProvider(
 
     override fun KaDeclarationSymbol.getExpectsForActual(): List<KaDeclarationSymbol> = withValidityAssertion {
         if (this is KaReceiverParameterSymbol) {
-            this.firSymbol.expectForActual?.get(ExpectActualMatchingCompatibility.MatchedSuccessfully).orEmpty()
+            val owningExpectSymbols =
+                this.owningCallableSymbol.firSymbol.expectForActual?.get(ExpectActualMatchingCompatibility.MatchedSuccessfully).orEmpty()
+            return owningExpectSymbols
                 .filterIsInstance<FirCallableSymbol<*>>()
-                // TODO: KT-73050. This code in fact does nothing
                 .mapNotNull { callableSymbol ->
                     callableSymbol.receiverParameterSymbol?.let {
                         analysisSession.firSymbolBuilder.callableBuilder.buildExtensionReceiverSymbol(it)

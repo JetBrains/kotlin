@@ -1,7 +1,9 @@
 Classifier names:
   C1
+  C1Kt
   FakeI
   I
+  IKt
   InternalC1
   InternalFakeI
   InternalI

@@ -6,11 +6,14 @@
 // INFER_MAIN_MODULE
 // MODULE: JS_TESTS
 // MODULE_KIND: COMMON_JS
+// WITH_STDLIB
 // FILE: commonjs.kt
 
 @file:JsExport
 
 package foo
+
+import kotlin.js.Promise
 
 
 val prop = 10
@@ -22,3 +25,11 @@ class C(val x: Int) {
 
 
 fun box(): String = "OK"
+
+
+fun asyncList(): Promise<List<Int>> =
+    Promise.resolve(listOf(1, 2))
+
+
+fun arrayOfLists(): Array<List<Int>> =
+    arrayOf(listOf(1, 2))

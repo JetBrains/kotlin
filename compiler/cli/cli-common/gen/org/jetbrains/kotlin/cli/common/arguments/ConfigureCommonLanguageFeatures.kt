@@ -46,6 +46,14 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonL
         put(LanguageFeature.BreakContinueInInlineLambdas, LanguageFeature.State.ENABLED)
     }
 
+    if (arguments.dataFlowBasedExhaustiveness) {
+        put(LanguageFeature.DataFlowBasedExhaustiveness, LanguageFeature.State.ENABLED)
+    }
+
+    if (arguments.explicitBackingFields) {
+        put(LanguageFeature.ExplicitBackingFields, LanguageFeature.State.ENABLED)
+    }
+
     if (arguments.directJavaActualization) {
         put(LanguageFeature.DirectJavaActualization, LanguageFeature.State.ENABLED)
     }
@@ -66,11 +74,50 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonL
         put(LanguageFeature.NestedTypeAliases, LanguageFeature.State.ENABLED)
     }
 
+    if (arguments.annotationDefaultTarget == "first-only-warn") {
+        put(LanguageFeature.AnnotationDefaultTargetMigrationWarning, LanguageFeature.State.ENABLED)
+        put(LanguageFeature.PropertyParamAnnotationDefaultTargetMode, LanguageFeature.State.DISABLED)
+    }
+    if (arguments.annotationDefaultTarget == "param-property") {
+        put(LanguageFeature.PropertyParamAnnotationDefaultTargetMode, LanguageFeature.State.ENABLED)
+    }
+    if (arguments.annotationDefaultTarget == "first-only") {
+        put(LanguageFeature.AnnotationDefaultTargetMigrationWarning, LanguageFeature.State.DISABLED)
+        put(LanguageFeature.PropertyParamAnnotationDefaultTargetMode, LanguageFeature.State.DISABLED)
+    }
+
     if (arguments.annotationTargetAll) {
         put(LanguageFeature.AnnotationAllUseSiteTarget, LanguageFeature.State.ENABLED)
     }
 
     if (arguments.allowReifiedTypeInCatch) {
         put(LanguageFeature.AllowReifiedTypeInCatchClause, LanguageFeature.State.ENABLED)
+    }
+
+    if (arguments.allowContractsOnMoreFunctions) {
+        put(LanguageFeature.AllowCheckForErasedTypesInContracts, LanguageFeature.State.ENABLED)
+        put(LanguageFeature.AllowContractsOnSomeOperators, LanguageFeature.State.ENABLED)
+        put(LanguageFeature.AllowContractsOnPropertyAccessors, LanguageFeature.State.ENABLED)
+    }
+
+    if (arguments.allowConditionImpliesReturnsContracts) {
+        put(LanguageFeature.ConditionImpliesReturnsContracts, LanguageFeature.State.ENABLED)
+    }
+
+    if (arguments.allowHoldsinContract) {
+        put(LanguageFeature.HoldsInContracts, LanguageFeature.State.ENABLED)
+    }
+
+    if (arguments.nameBasedDestructuring == "only-syntax") {
+        put(LanguageFeature.NameBasedDestructuring, LanguageFeature.State.ENABLED)
+    }
+    if (arguments.nameBasedDestructuring == "name-mismatch") {
+        put(LanguageFeature.NameBasedDestructuring, LanguageFeature.State.ENABLED)
+        put(LanguageFeature.DeprecateNameMismatchInShortDestructuringWithParentheses, LanguageFeature.State.ENABLED)
+    }
+    if (arguments.nameBasedDestructuring == "complete") {
+        put(LanguageFeature.NameBasedDestructuring, LanguageFeature.State.ENABLED)
+        put(LanguageFeature.DeprecateNameMismatchInShortDestructuringWithParentheses, LanguageFeature.State.ENABLED)
+        put(LanguageFeature.EnableNameBasedDestructuringShortForm, LanguageFeature.State.ENABLED)
     }
 }

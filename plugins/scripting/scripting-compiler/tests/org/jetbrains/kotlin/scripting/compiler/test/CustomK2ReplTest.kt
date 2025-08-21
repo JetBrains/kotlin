@@ -39,7 +39,7 @@ class ReplReceiver1 {
 @Suppress("unused") // Used in snippets
 class TestReplReceiver1() { fun checkReceiver(block: ReplReceiver1.() -> Any) = block(ReplReceiver1()) }
 
-private val dependenciesResolver = CompoundDependenciesResolver(FileSystemDependenciesResolver(), MavenDependenciesResolver())
+val dependenciesResolver = CompoundDependenciesResolver(FileSystemDependenciesResolver(), MavenDependenciesResolver())
 
 class CustomK2ReplTest {
 
@@ -281,6 +281,63 @@ class CustomK2ReplTest {
                     baseClassLoader(null)
                 }
             }
+        )
+    }
+
+    @Test
+    fun testKotlinCoroutines() {
+        if (!isK2) return
+        val coroutinesCoreClasspath = System.getProperty("kotlin.script.test.kotlinx.coroutines.core.classpath")!!
+            .split(File.pathSeparator).map { File(it) }
+        evalAndCheckSnippetsResultVals(
+            sequenceOf(
+                """
+            import kotlin.coroutines.*
+            import kotlinx.coroutines.*
+
+            runBlocking { async {}.join() }
+            "After runBlocking"
+        """,
+            ),
+            sequenceOf(
+                "After runBlocking",
+            ),
+            baseCompilationConfiguration.with {
+                updateClasspath(
+                    coroutinesCoreClasspath
+                )
+            },
+            baseEvaluationConfiguration.with {
+                jvm {
+                    baseClassLoader(null)
+                }
+            }
+        )
+    }
+
+    @Test
+    fun testPropertyTypesCanBeRedeclared() {
+        evalAndCheckSnippetsWithReplReceiver1(
+            sequenceOf(
+                "val x = 42",
+                "x",
+                "val x = true",
+                "x"
+            ),
+            sequenceOf(null, 42, null, true),
+        )
+    }
+
+    @Test
+    fun testFunctionWithTheSameSignatureCanBeRedeclared() {
+        evalAndCheckSnippetsWithReplReceiver1(
+            sequenceOf(
+                "fun x() = 42",
+                "x()",
+                "fun x() = true",
+                "x()"
+            ),
+            sequenceOf(null, 42, null, true),
         )
     }
 }

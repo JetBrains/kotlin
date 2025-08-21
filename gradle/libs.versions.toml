@@ -1,7 +1,7 @@
 [versions]
 dexMemberList = "4.1.1"
 dokka = "2.0.0"
-gradle-custom-user-data = "2.0.2"
+gradle-custom-user-data = "2.3"
 develocity = "3.19.2"
 gradle-plugin-publish = "1.2.1"
 # Version for foojay should be also synced with version in repo/gradle-settings-conventions/settings.gradle.kts
@@ -39,7 +39,7 @@ lincheck = "2.28.1"
 xerces = "2.12.2"
 caffeine = "2.9.3" # We cannot use the latest version of Caffeine (`3.x`) because it doesn't support Java 8.
 compose-stable = "1.7.0-alpha08" # Used for Compose compiler plugin tests
-androidx-collections = "1.5.0-alpha02" # Used for Compose compiler plugin tests
+androidx-collections = "1.5.0" # Used for Compose compiler plugin tests
 ant = "1.10.14"
 # It is recommended to skip at least one major release, e.g., use 2.0.21 when the default bootstrap version is 2.2.
 # This ensures additional verification that Gradle-related code does not get dependencies of higher LV
@@ -57,14 +57,15 @@ protobuf = "4.28.2"
 woodstox-core = "7.1.0"
 http-client = "4.5.14"
 json = "20231013"
-dataframe = "0.14.1"
+dataframe = "1.0.0-Beta2"
 commons-beanutils = "1.11.0"
 commons-compress = "1.27.1"
 commons-io = "2.18.0"
-dataframe-dev = "1.0.0-dev-7243"
-org-jetbrains-syntax-api = "0.3.336"
+dataframe-dev = "1.0.0-dev-7570"
+org-jetbrains-syntax-api = "0.3.340"
 org-jetbrains-annotations = "26.0.2"
 schema-kenerator = "2.1.2"
+kotlinpoet = "2.2.0"
 
 [libraries]
 dexMemberList = { module = "com.jakewharton.dex:dex-member-list", version.ref = "dexMemberList" }
@@ -87,6 +88,9 @@ proguard-gradlePlugin = { module = "com.guardsquare:proguard-gradle", version.re
 node-gradlePlugin = { module = "com.github.node-gradle:gradle-node-plugin", version.ref = "gradle-node-plugin" }
 woodstox-core = { module = "com.fasterxml.woodstox:woodstox-core", version.ref = "woodstox-core" }
 dataframe = { module = "org.jetbrains.kotlinx:dataframe", version.ref = "dataframe" }
+dataframeCore = { module = "org.jetbrains.kotlinx:dataframe-core", version.ref = "dataframe" }
+dataframeCsv = { module = "org.jetbrains.kotlinx:dataframe-csv", version.ref = "dataframe" }
+dataframeJson = { module = "org.jetbrains.kotlinx:dataframe-json", version.ref = "dataframe" }
 dataframe-compiler-plugin-core = { module = "org.jetbrains.kotlinx.dataframe:dataframe-compiler-plugin-core", version.ref = "dataframe-dev" }
 dataframe-core-dev = { module = "org.jetbrains.kotlinx:dataframe-core", version.ref = "dataframe-dev" }
 dataframe-csv-dev = { module = "org.jetbrains.kotlinx:dataframe-csv", version.ref = "dataframe-dev" }
@@ -160,6 +164,8 @@ org-jetbrains-annotations = { module = "org.jetbrains:annotations", version.ref 
 schema-kenerator-core = { module = "io.github.smiley4:schema-kenerator-core", version.ref="schema-kenerator" }
 schema-kenerator-serialization = { module = "io.github.smiley4:schema-kenerator-serialization", version.ref="schema-kenerator" }
 schema-kenerator-jsonschema = { module = "io.github.smiley4:schema-kenerator-jsonschema", version.ref="schema-kenerator" }
+
+kotlinpoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinpoet" }
 
 [plugins]
 jetbrains-ideaExt = { id = "org.jetbrains.gradle.plugin.idea-ext", version.ref = "jetbrains-ideaExt" }

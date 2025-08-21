@@ -1718,6 +1718,12 @@ class ComposableCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
         fun typeMismatch(expression: String) =
             if (!useFir) "<!TYPE_MISMATCH!>$expression<!>" else expression
 
+        // Since `ResolveTopLevelLambdasAsSyntheticCallArgument`, the initializer's type is
+        // now transformed to a proper `ComposableFunction0`, but the property type is not
+        // because it's not an explicit `FirFunctionTypeRef`, which is itself an error.
+        fun initializerTypeMismatch(expression: String) =
+            if (useFir) "<!INITIALIZER_TYPE_MISMATCH!>$expression<!>" else expression
+
         check(
             """
                 import androidx.compose.runtime.Composable
@@ -1735,7 +1741,7 @@ class ComposableCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
 
                 fun Test() {
                     val a: <!COMPOSABLE_INAPPLICABLE_TYPE!>@Composable<!> A = ${typeMismatch("A()")}
-                    val b: <!COMPOSABLE_INAPPLICABLE_TYPE!>@Composable<!> B = {}
+                    val b: <!COMPOSABLE_INAPPLICABLE_TYPE!>@Composable<!> B = ${initializerTypeMismatch("{}")}
                     val c: @Composable () -> Unit = {}
                     val s: <!COMPOSABLE_INAPPLICABLE_TYPE!>@Composable<!> String = ${typeMismatch("\"\"")}
                     

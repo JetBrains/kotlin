@@ -20,8 +20,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 class LLFirSessionInvalidationService(private val project: Project) {
     internal class LLKotlinModificationEventListener(val project: Project) : KotlinModificationEventListener {
         override fun onModification(event: KotlinModificationEvent) {
-            val invalidator = getInstance(project).invalidator
-            invalidator.invalidate(event)
+            getInstance(project).invalidate(event)
         }
     }
 
@@ -36,10 +35,17 @@ class LLFirSessionInvalidationService(private val project: Project) {
     }
 
     /**
+     * @see LLFirSessionCacheStorageInvalidator.invalidate
+     */
+    fun invalidate(event: KotlinModificationEvent) {
+        invalidator.invalidate(event)
+    }
+
+    /**
      * @see LLFirSessionCacheStorageInvalidator.invalidateAll
      */
-    fun invalidateAll(includeLibraryModules: Boolean) {
-        invalidator.invalidateAll(includeLibraryModules)
+    fun invalidateAll(includeLibraryModules: Boolean, diagnosticInformation: String? = null) {
+        invalidator.invalidateAll(includeLibraryModules, diagnosticInformation)
     }
 
     companion object {

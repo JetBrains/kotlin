@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.symbols
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -125,6 +126,7 @@ public sealed class KaPropertyAccessorSymbol : KaFunctionSymbol() {
  *
  * @see KaPropertyAccessorSymbol
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaPropertyGetterSymbol : KaPropertyAccessorSymbol() {
     final override val valueParameters: List<KaValueParameterSymbol>
         get() = withValidityAssertion { emptyList() }
@@ -140,6 +142,7 @@ public abstract class KaPropertyGetterSymbol : KaPropertyAccessorSymbol() {
  *
  * @see KaPropertyAccessorSymbol
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaPropertySetterSymbol : KaPropertyAccessorSymbol() {
     /**
      * The single parameter of the setter representing the incoming value.

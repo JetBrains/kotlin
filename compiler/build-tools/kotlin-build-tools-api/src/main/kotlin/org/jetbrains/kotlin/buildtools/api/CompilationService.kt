@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.api
 
+import org.jetbrains.kotlin.buildtools.api.CompilationService.Companion.loadImplementation
 import org.jetbrains.kotlin.buildtools.api.internal.KotlinCompilerVersion
 import org.jetbrains.kotlin.buildtools.api.internal.wrappers.PreKotlin220Wrapper
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
@@ -39,7 +40,7 @@ public interface CompilationService {
     public fun calculateClasspathSnapshot(
         classpathEntry: File,
         granularity: ClassSnapshotGranularity,
-        parseInlinedLocalClasses: Boolean
+        parseInlinedLocalClasses: Boolean,
     ): ClasspathEntrySnapshot
 
     /**
@@ -54,7 +55,7 @@ public interface CompilationService {
      */
     public fun calculateClasspathSnapshot(
         classpathEntry: File,
-        granularity: ClassSnapshotGranularity
+        granularity: ClassSnapshotGranularity,
     ): ClasspathEntrySnapshot
 
     /**
@@ -72,11 +73,14 @@ public interface CompilationService {
     /**
      * Compiles Kotlin code targeting JVM platform and using specified options.
      *
+     * Note that [sources] should include .java files too so that Kotlin compiler could properly resolve references to Java code and track changes in them.
+     * However, Kotlin compiler would not compile the .java files.
+     *
      * The [finishProjectCompilation] must be called with the same [projectId] after the entire project is compiled.
      * @param projectId The unique identifier of the project to be compiled. It may be the same for different modules of the project.
      * @param strategyConfig an instance of [CompilerExecutionStrategyConfiguration] initially obtained from [makeCompilerExecutionStrategyConfiguration]
      * @param compilationConfig an instance of [JvmCompilationConfiguration] initially obtained from [makeJvmCompilationConfiguration]
-     * @param sources a list of all sources of the compilation unit
+     * @param sources all sources list of the compilation unit. This includes Java source files.
      * @param arguments a list of Kotlin JVM compiler arguments
      */
     public fun compileJvm(

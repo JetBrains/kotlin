@@ -47,10 +47,40 @@ import kotlin.contracts.contract
 // ----------- Walking children/siblings/parents -------------------------------------------------------------------------------------------
 
 /**
+ * Returns all descendants of the given [this] in flatten form if it's a concatenation expression
+ * with string literal arguments.
+ * Otherwise, returns `null`.
+ *
+ * For instance, for the expression `"a0" /* comment before plus */ + /* comment after plus */ "a1"`
+ * It returns `"a0"`, ws, /* comment before plus */, ws, `+`, ws, `/* comment after plus */`, ws, `"a1"`.
+ *
+ * @see [tryFlattenStringConcatenation] for more detail.
+ */
+@KtImplementationDetail
+fun KtBinaryExpression.tryFlattenStringConcatenationDescendants(): List<PsiElement>? {
+    return tryFlattenStringConcatenation(fullFidelity = true)
+}
+
+/**
+ * Returns arguments of the given [this] if it's a concatenation expression with string literal arguments.
+ * Otherwise, returns `null`.
+ *
+ * For instance, for the expression `"a0" /* comment before plus */ + /* comment after plus */ "a1"`
+ * It returns `"a0"`, `"a1"`.
+ *
+ * @see [tryFlattenStringConcatenation] for more detail.
+ */
+@KtImplementationDetail
+fun KtBinaryExpression.tryFlattenStringConcatenationArguments(): List<KtStringTemplateExpression>? {
+    @Suppress("UNCHECKED_CAST")
+    return tryFlattenStringConcatenation(fullFidelity = false) as? List<KtStringTemplateExpression>
+}
+
+/**
  * Emulates recursion using a stack to prevent StackOverflow exception on big string concatenation expressions like
  * `val x = "a0" + "a1" + ... + "a9999"` (it's relatively common in machine-generated code)
 
- * This method traverses the provided @param[KtBinaryExpression], tries to extract all string template nodes and returns
+ * This method traverses the provided [this], tries to extract all string template nodes and returns
  * the list of nested expressions in direct order if the input `KtBinaryExpression` matches the string literals concatenation pattern.
  * Otherwise, it returns `null`.
  * The method handles nested expressions by pushing nodes onto an input stack and processing them iteratively.
@@ -64,42 +94,48 @@ import kotlin.contracts.contract
  * ```
  *
  *
- * The method returns `'a', 'b', 'c'` if @param[collectAllDescendants] is `false` (default)
- * But returns `'a', 'b', '+'(1), 'c', '+'(0)` otherwise. This is used when full-fidelity tree structure is needed (see usages).
+ * The method returns `'a', 'b', 'c'` if [fullFidelity] is `false` (default)
+ * But returns `'a', 'b', '+'(1), 'c', '+'(0)` and hidden tokens in between (whitespaces or comments) otherwise.
+ * This is used when a full-fidelity tree structure is needed (see usages).
  */
-fun KtBinaryExpression.tryVisitFoldingStringConcatenation(collectAllDescendants: Boolean = false): List<KtExpression>? {
+@KtImplementationDetail
+private fun KtBinaryExpression.tryFlattenStringConcatenation(fullFidelity: Boolean): List<PsiElement>? {
     // Optimization: don't allocate anything if the root expression doesn't match the string concatenation folding pattern
     if (operationToken != PLUS) return null
 
-    val input = mutableListOf<KtExpression?>().also { it.add(this) }
-    val output = ArrayDeque<KtExpression>()
+    val input = mutableListOf<PsiElement>().also { it.add(this) }
+    val output = ArrayDeque<PsiElement>()
 
-    while (input.isNotEmpty()) {
-        var node = input.removeLast()
-        when (node) {
+    while (true) {
+        when (val node = input.removeLastOrNull() ?: break) {
             is KtBinaryExpression -> {
-                if (node.operationToken != PLUS) {
+                var child = node.firstChild
+                while (child != null) {
+                    input.add(child)
+                    child = child.nextSibling
+                }
+            }
+            is KtStringTemplateExpression -> {
+                output.addFirst(node)
+            }
+            is PsiWhiteSpace,
+            is PsiComment
+                -> {
+                if (fullFidelity) {
+                    output.addFirst(node)
+                }
+            }
+            is KtOperationReferenceExpression -> {
+                if (node.operationSignTokenType != PLUS) {
                     return null
                 }
 
-                if (collectAllDescendants) {
+                if (fullFidelity) {
                     output.addFirst(node)
                 }
-                input.add(node.left)
-                input.add(node.right)
-            }
-            is KtParenthesizedExpression -> {
-                if (collectAllDescendants) {
-                    output.addFirst(node)
-                }
-                input.add(node.expression)
             }
             else -> {
-                if (node !is KtStringTemplateExpression) {
-                    return null
-                }
-
-                output.addFirst(node)
+                return null
             }
         }
     }

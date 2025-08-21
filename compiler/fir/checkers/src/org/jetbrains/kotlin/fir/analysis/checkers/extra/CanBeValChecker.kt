@@ -71,7 +71,7 @@ object CanBeValChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind
             val symbol = node.fir.calleeReference?.toResolvedPropertySymbol() ?: return
             if (symbol.isVar && symbol.source?.kind !is KtFakeSourceElementKind && symbol in data.properties) {
                 val isReassigned = !symbol.requiresInitialization(isForInitialization) ||
-                        data.getValue(node).values.any { it[symbol]?.canBeRevisited() == true } ||
+                        data.getValue(node).values.any { it[symbol]?.range?.canBeRevisited() == true } ||
                         declaredIn[symbol] != node.owner.nearestNonInPlaceGraph()
                 if (isReassigned) reassigned.add(symbol)
             }

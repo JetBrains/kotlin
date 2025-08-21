@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization
 
-import com.intellij.openapi.util.IntellijInternalApi
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
@@ -38,6 +37,7 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.psi.stubs.KotlinModifierListStub
+import org.jetbrains.kotlin.resolve.ReturnValueStatus
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
@@ -341,7 +341,7 @@ internal class StubBasedFirMemberDeserializer(
     ): FirProperty {
         val callableName = property.nameAsSafeName
         val callableId = CallableId(c.packageFqName, c.relativeClassName, callableName)
-        val symbol = existingSymbol ?: FirPropertySymbol(callableId)
+        val symbol = existingSymbol ?: FirRegularPropertySymbol(callableId)
         val local = c.childContext(property, containingDeclarationSymbol = symbol)
 
         val returnTypeRef = property.typeReference?.toTypeRef(local)
@@ -362,7 +362,6 @@ internal class StubBasedFirMemberDeserializer(
             this.isVar = isVar
             this.symbol = symbol
             dispatchReceiverType = c.dispatchReceiver
-            isLocal = false
             val visibility = property.visibility
             val resolvedStatus = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
                 visibility,
@@ -448,7 +447,7 @@ internal class StubBasedFirMemberDeserializer(
                 isDeserializedPropertyFromAnnotation = true
             }
 
-            stub?.hasDelegate()?.let { hasDelegate ->
+            stub?.hasDelegate?.let { hasDelegate ->
                 if (hasDelegate) {
                     @OptIn(FirImplementationDetail::class)
                     isDelegatedPropertyAttr = true
@@ -469,7 +468,7 @@ internal class StubBasedFirMemberDeserializer(
             this.moduleData = c.moduleData
             this.origin = initialOrigin
             this.name = SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
-            this.symbol = FirValueParameterSymbol(name)
+            this.symbol = FirValueParameterSymbol()
             this.returnTypeRef = contextReceiver.typeReference()?.toTypeRef(c) ?: errorWithAttachment("KtParameter doesn't have type") {
                 withPsiEntry("contextReceiver", contextReceiver)
                 withFirSymbolEntry("functionSymbol", containingDeclarationSymbol)
@@ -486,7 +485,7 @@ internal class StubBasedFirMemberDeserializer(
             this.moduleData = c.moduleData
             this.origin = initialOrigin
             this.name = if (parameter.name == "_") SpecialNames.UNDERSCORE_FOR_UNUSED_VAR else parameter.nameAsSafeName
-            this.symbol = FirValueParameterSymbol(name)
+            this.symbol = FirValueParameterSymbol()
             this.returnTypeRef = parameter.typeReference?.toTypeRef(c) ?: errorWithAttachment("KtParameter doesn't have type") {
                 withPsiEntry("ktParameter", parameter)
                 withFirSymbolEntry("functionSymbol", containingDeclarationSymbol)
@@ -507,7 +506,7 @@ internal class StubBasedFirMemberDeserializer(
                 this.moduleData = c.moduleData
                 this.origin = initialOrigin
                 this.name = SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
-                this.symbol = FirValueParameterSymbol(name)
+                this.symbol = FirValueParameterSymbol()
                 this.returnTypeRef = it.toTypeRef(c)
                 this.containingDeclarationSymbol = containingDeclarationSymbol
                 this.valueParameterKind = FirValueParameterKind.ContextParameter
@@ -590,12 +589,12 @@ internal class StubBasedFirMemberDeserializer(
         }.apply {
             setLazyPublishedVisibility(c.session)
         }
-        if (function.mayHaveContract()) {
-            val resolvedDescription = StubBasedFirContractDeserializer(simpleFunction, local.typeDeserializer).loadContract(function)
-            if (resolvedDescription != null) {
-                simpleFunction.replaceContractDescription(resolvedDescription)
-            }
+
+        val resolvedDescription = StubBasedFirContractDeserializer(simpleFunction, local.typeDeserializer).loadContract(function)
+        if (resolvedDescription != null) {
+            simpleFunction.replaceContractDescription(resolvedDescription)
         }
+
         return simpleFunction
     }
 
@@ -671,12 +670,14 @@ internal class StubBasedFirMemberDeserializer(
         }
     }
 
-    @OptIn(IntellijInternalApi::class)
+    @OptIn(KtImplementationDetail::class)
     private fun FirDeclarationStatusImpl.setSpecialFlags(modifierList: KtModifierList?) {
         if (modifierList == null) return
         val modifierListStub = modifierList.greenStub ?: loadStubByElement(modifierList) ?: return
+        val hasMustUse = modifierListStub.hasSpecialFlag(KotlinModifierListStub.SpecialFlag.MustUseReturnValue)
+        val hasIgnorable = modifierListStub.hasSpecialFlag(KotlinModifierListStub.SpecialFlag.IgnorableReturnValue)
 
-        hasMustUseReturnValue = modifierListStub.hasSpecialFlag(KotlinModifierListStub.SpecialFlag.MustUseReturnValue)
+        returnValueStatus = ReturnValueStatus.fromBitFlags(hasMustUse, hasIgnorable)
     }
 
     private fun valueParameters(
@@ -702,7 +703,7 @@ internal class StubBasedFirMemberDeserializer(
                     returnTypeRef = returnTypeRef.withReplacedReturnType(returnTypeRef.coneType.createOutArrayType())
                 }
                 this.name = name
-                symbol = FirValueParameterSymbol(name)
+                symbol = FirValueParameterSymbol()
                 resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
 
                 defaultValue = if (ktParameter.hasDefaultValue() || addDefaultValue) {

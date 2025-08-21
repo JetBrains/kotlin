@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.ProblemsReporter
 import org.jetbrains.kotlin.gradle.plugin.internal.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.initSwiftExportClasspathConfigurations
+import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFinishBuildService
 import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFusService
 import org.jetbrains.kotlin.gradle.report.BuildMetricsService
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
@@ -52,7 +53,9 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropKlibLibraryEl
 import org.jetbrains.kotlin.gradle.targets.native.internal.CommonizerTargetAttribute
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeBundleBuildService
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool
-import org.jetbrains.kotlin.gradle.tasks.addPgpSignatureHelpers
+import org.jetbrains.kotlin.gradle.tasks.publishing.addPgpSignatureHelpers
+import org.jetbrains.kotlin.gradle.tasks.publishing.addPomValidationHelpers
+import org.jetbrains.kotlin.gradle.tasks.publishing.addSigningValidationHelpers
 import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestsRegistry
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
@@ -74,7 +77,7 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         project.runAgpCompatibilityCheckIfAgpIsApplied()
         BuildFinishedListenerService.registerIfAbsent(project)
 
-        val buildUidService = BuildUidService.registerIfAbsent(project)
+        val buildUidService = BuildUidService.registerIfAbsent(project.gradle)
         BuildFusService.registerIfAbsent(project, pluginVersion, buildUidService)
         PropertiesBuildService.registerIfAbsent(project)
 
@@ -96,6 +99,7 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
 
         BuildMetricsService.registerIfAbsent(project)
         KotlinNativeBundleBuildService.registerIfAbsent(project)
+        BuildFinishBuildService.registerIfAbsent(project, buildUidService, pluginVersion)
     }
 
     private fun addKotlinCompilerConfiguration(project: Project) {
@@ -219,6 +223,8 @@ abstract class KotlinBasePluginWrapper : DefaultKotlinBasePlugin() {
         project.maybeCreateCommonizerClasspathConfiguration()
         project.initSwiftExportClasspathConfigurations()
         project.addPgpSignatureHelpers()
+        project.addPomValidationHelpers()
+        project.addSigningValidationHelpers()
 
         project.createKotlinExtension(projectExtensionClass).apply {
             coreLibrariesVersion = pluginVersion
@@ -246,21 +252,17 @@ abstract class KotlinBasePluginWrapper : DefaultKotlinBasePlugin() {
     ): Plugin<Project>
 }
 
-abstract class AbstractKotlinPluginWrapper(
-    protected val registry: ToolingModelBuilderRegistry,
-) : KotlinBasePluginWrapper() {
+abstract class AbstractKotlinPluginWrapper : KotlinBasePluginWrapper() {
     override fun getPlugin(project: Project): Plugin<Project> =
-        KotlinJvmPlugin(registry)
+        KotlinJvmPlugin()
 
     override val projectExtensionClass: KClass<out KotlinJvmProjectExtension>
         get() = KotlinJvmProjectExtension::class
 }
 
-abstract class AbstractKotlinAndroidPluginWrapper(
-    protected val registry: ToolingModelBuilderRegistry,
-) : KotlinBasePluginWrapper() {
+abstract class AbstractKotlinAndroidPluginWrapper : KotlinBasePluginWrapper() {
     override fun getPlugin(project: Project): Plugin<Project> =
-        KotlinAndroidPlugin(registry)
+        KotlinAndroidPlugin()
 
     override val projectExtensionClass: KClass<out KotlinAndroidProjectExtension>
         get() = KotlinAndroidProjectExtension::class

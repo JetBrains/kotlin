@@ -57,6 +57,7 @@ fun CompilerConfiguration.setupCommonArguments(
         }
     }
 
+    @Suppress("DEPRECATION")
     if (arguments.useFirExperimentalCheckers) {
         put(CommonConfigurationKeys.USE_FIR_EXPERIMENTAL_CHECKERS, true)
         messageCollector.report(

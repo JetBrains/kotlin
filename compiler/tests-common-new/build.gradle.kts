@@ -4,48 +4,49 @@ plugins {
     id("compiler-tests-convention")
     id("test-inputs-check")
     id("share-foreign-java-nullability-annotations")
+    id("java-test-fixtures")
 }
 
 dependencies {
-    testApi(project(":compiler:fir:entrypoint"))
-    testApi(project(":compiler:fir:fir-serialization"))
-    testApi(project(":compiler:fir:fir2ir:jvm-backend"))
-    testApi(project(":compiler:cli"))
-    testImplementation(project(":compiler:ir.tree"))
-    testImplementation(project(":compiler:ir.serialization.native"))
-    testImplementation(project(":compiler:backend.jvm.entrypoint"))
-    testImplementation(project(":compiler:backend.jvm.lower"))
-    testImplementation(project(":kotlin-util-klib-abi"))
-    testImplementation(intellijCore())
-    testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+    testFixturesApi(project(":compiler:fir:entrypoint"))
+    testFixturesApi(project(":compiler:fir:fir-serialization"))
+    testFixturesApi(project(":compiler:fir:fir2ir:jvm-backend"))
+    testFixturesApi(project(":compiler:cli"))
+    testFixturesImplementation(project(":compiler:ir.tree"))
+    testFixturesImplementation(project(":compiler:ir.serialization.native"))
+    testFixturesImplementation(project(":compiler:backend.jvm.entrypoint"))
+    testFixturesImplementation(project(":compiler:backend.jvm.lower"))
+    testFixturesImplementation(project(":kotlin-util-klib-abi"))
+    testFixturesImplementation(intellijCore())
+    testFixturesImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
     testRuntimeOnly(project(":core:descriptors.runtime"))
 
-    testImplementation(projectTests(":generators:test-generator"))
+    testFixturesImplementation(testFixtures(project(":generators:test-generator")))
 
-    testApi(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupiter.api)
+    testFixturesApi(platform(libs.junit.bom))
+    testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testApi(libs.junit.platform.launcher)
-    testApi(projectTests(":compiler:test-infrastructure"))
-    testApi(projectTests(":compiler:test-infrastructure-utils"))
-    testApi(projectTests(":compiler:tests-compiler-utils"))
-    testApi(project(":libraries:tools:abi-comparator"))
-    testApi(project(":compiler:tests-mutes:mutes-junit5"))
+    testFixturesApi(libs.junit.platform.launcher)
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
+    testFixturesApi(testFixtures(project(":compiler:tests-compiler-utils")))
+    testFixturesApi(project(":libraries:tools:abi-comparator"))
+    testFixturesApi(project(":compiler:tests-mutes:mutes-junit5"))
 
     /*
      * Actually those dependencies are needed only at runtime, but they
      *   declared as Api dependencies to propagate them to all modules
      *   which depend on current one
      */
-    testApi(libs.intellij.fastutil)
-    testApi(commonDependency("one.util:streamex"))
-    testApi(commonDependency("org.jetbrains.intellij.deps.jna:jna"))
-    testApi(jpsModel()) { isTransitive = false }
-    testApi(jpsModelImpl()) { isTransitive = false }
-    testApi(libs.junit4)
+    testFixturesApi(libs.intellij.fastutil)
+    testFixturesApi(commonDependency("one.util:streamex"))
+    testFixturesApi(commonDependency("org.jetbrains.intellij.deps.jna:jna"))
+    testFixturesApi(jpsModel()) { isTransitive = false }
+    testFixturesApi(jpsModelImpl()) { isTransitive = false }
+    testFixturesApi(libs.junit4)
 
-    testApi(toolsJarApi())
+    testFixturesApi(toolsJarApi())
     testRuntimeOnly(toolsJar())
 
     jakartaAnnotationsClasspath(commonDependency("jakarta.annotation", "jakarta.annotation-api"))
@@ -55,7 +56,7 @@ optInToExperimentalCompilerApi()
 optInToUnsafeDuringIrConstructionAPI()
 optInToK1Deprecation()
 
-tasks.processTestResources.configure {
+tasks.processTestFixturesResources.configure {
     from(project(":compiler").layout.projectDirectory.dir("testData")) {
         include("/diagnostics/helpers/**")
         include("/codegen/helpers/**")
@@ -99,6 +100,7 @@ sourceSets {
         projectDefault()
         generatedTestDir()
     }
+    "testFixtures" { projectDefault() }
 }
 
 compilerTests {
@@ -136,4 +138,4 @@ projectTest(
     useJUnitPlatform()
 }
 
-testsJar()
+testsJarToBeUsedAlongWithFixtures()

@@ -59,6 +59,12 @@ public class Fe10IdeNormalAnalysisSourceModuleCompileTimeConstantEvaluatorTestGe
   }
 
   @Test
+  @TestMetadata("backingFieldAccessInPropertySetter.kt")
+  public void testBackingFieldAccessInPropertySetter() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/backingFieldAccessInPropertySetter.kt");
+  }
+
+  @Test
   @TestMetadata("binaryExpressionWithString.kt")
   public void testBinaryExpressionWithString() {
     runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/binaryExpressionWithString.kt");
@@ -86,6 +92,18 @@ public class Fe10IdeNormalAnalysisSourceModuleCompileTimeConstantEvaluatorTestGe
   @TestMetadata("complexLogicExpression.kt")
   public void testComplexLogicExpression() {
     runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/complexLogicExpression.kt");
+  }
+
+  @Test
+  @TestMetadata("constLiteralPropertyInAnnotation.kt")
+  public void testConstLiteralPropertyInAnnotation() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/constLiteralPropertyInAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("constPropertyInAnnotation.kt")
+  public void testConstPropertyInAnnotation() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/constPropertyInAnnotation.kt");
   }
 
   @Test
@@ -173,6 +191,12 @@ public class Fe10IdeNormalAnalysisSourceModuleCompileTimeConstantEvaluatorTestGe
   }
 
   @Test
+  @TestMetadata("javaStaticFinalLiteralField.kt")
+  public void testJavaStaticFinalLiteralField() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/javaStaticFinalLiteralField.kt");
+  }
+
+  @Test
   @TestMetadata("logicExpressionWithVariableAndParentheses.kt")
   public void testLogicExpressionWithVariableAndParentheses() {
     runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/logicExpressionWithVariableAndParentheses.kt");
@@ -206,6 +230,18 @@ public class Fe10IdeNormalAnalysisSourceModuleCompileTimeConstantEvaluatorTestGe
   @TestMetadata("nestedAnnotationValue.kt")
   public void testNestedAnnotationValue() {
     runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/nestedAnnotationValue.kt");
+  }
+
+  @Test
+  @TestMetadata("nonConstLiteralPropertyAccess.kt")
+  public void testNonConstLiteralPropertyAccess() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/nonConstLiteralPropertyAccess.kt");
+  }
+
+  @Test
+  @TestMetadata("nonConstPropertyAccess.kt")
+  public void testNonConstPropertyAccess() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/nonConstPropertyAccess.kt");
   }
 
   @Test
@@ -398,6 +434,12 @@ public class Fe10IdeNormalAnalysisSourceModuleCompileTimeConstantEvaluatorTestGe
     }
 
     @Test
+    @TestMetadata("annotationWithNoArgument.kt")
+    public void testAnnotationWithNoArgument() {
+      runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/withErrors/annotationWithNoArgument.kt");
+    }
+
+    @Test
     @TestMetadata("constFieldWithCustomGetter.kt")
     public void testConstFieldWithCustomGetter() {
       runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/withErrors/constFieldWithCustomGetter.kt");
@@ -455,6 +497,12 @@ public class Fe10IdeNormalAnalysisSourceModuleCompileTimeConstantEvaluatorTestGe
     @TestMetadata("nullableConstVal.kt")
     public void testNullableConstVal() {
       runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/withErrors/nullableConstVal.kt");
+    }
+
+    @Test
+    @TestMetadata("nullableConstValAccess.kt")
+    public void testNullableConstValAccess() {
+      runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/withErrors/nullableConstValAccess.kt");
     }
 
     @Test

@@ -102,7 +102,7 @@ fun equals(compile: DataFrameSchema, runtime: DataFrameSchema, mismatches: Mutab
                 }
             }
             is ColumnSchema.Frame -> {
-                if (compileColumnSchema !is ColumnSchema.Group) {
+                if (compileColumnSchema !is ColumnSchema.Frame) {
                     mismatches += ErrorMismatch("$name of ${compileColumnSchema.kind} but Frame was expected")
                 } else {
                     equals(compileColumnSchema.schema, runtimeColumnSchema.schema, mismatches, path + name)
@@ -110,5 +110,9 @@ fun equals(compile: DataFrameSchema, runtime: DataFrameSchema, mismatches: Mutab
             }
         }
     }
+}
+
+fun DataFrameSchema.column(name: String): ColumnSchema {
+    return columns[name] ?: error("Column ${name} not found in schema:\n${this}")
 }
 

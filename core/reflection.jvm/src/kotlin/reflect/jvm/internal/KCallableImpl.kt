@@ -101,7 +101,7 @@ internal abstract class KCallableImpl<out R> : KCallable<R>, KTypeParameterOwner
             ValueParameterDescriptorImpl(
                 this, null, index,
                 parameter.annotations,
-                Name.identifier(nameResolver.getString(contextParameters[index].name)),
+                Name.guessByFirstCharacter(nameResolver.getString(contextParameters[index].name)),
                 parameter.type,
                 declaresDefaultValue = false,
                 isCrossinline = false,

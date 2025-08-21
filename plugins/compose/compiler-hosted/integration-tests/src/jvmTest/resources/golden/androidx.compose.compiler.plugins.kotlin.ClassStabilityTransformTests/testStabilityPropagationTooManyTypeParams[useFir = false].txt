@@ -52,7 +52,6 @@ import androidx.compose.runtime.Composable
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = 789203497, startOffset = 104, endOffset = 1240)
 fun A(y: Any?, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(A)<A(>:Test.kt")

@@ -22,7 +22,9 @@ import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -41,7 +43,7 @@ abstract class FirWebCommonExternalChecker(
     context(context: CheckerContext, reporter: DiagnosticReporter)
     abstract fun additionalCheck(declaration: FirDeclaration)
 
-    abstract fun isDefinedExternallyCallableId(callableId: CallableId): Boolean
+    abstract fun isDefinedExternallyCallableId(callableId: CallableId?): Boolean
 
     abstract fun hasExternalLikeAnnotations(declaration: FirDeclaration, session: FirSession): Boolean
 
@@ -126,7 +128,7 @@ abstract class FirWebCommonExternalChecker(
         declaration.checkDelegation()
         declaration.checkAnonymousInitializer()
 
-        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.JsExternalPropertyParameters)) {
+        if (!LanguageFeature.JsExternalPropertyParameters.isEnabled()) {
             declaration.checkConstructorPropertyParam()
         }
 

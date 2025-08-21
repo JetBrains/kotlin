@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // JAVAC_EXPECTED_FILE
-// LANGUAGE: -ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType
+// LANGUAGE: -ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType, -ForbidExposingPackagePrivateInInternal
 
 // FILE: test/Internal.java
 
@@ -24,7 +24,7 @@ class His {
     // Ok: private vs package-private
     private fun private() = My.foo()
     // Ok: internal vs package-private in same package
-    internal fun internal() = My.foo()
+    internal fun <!EXPOSED_PACKAGE_PRIVATE_TYPE_FROM_INTERNAL_WARNING!>internal<!>() = My.foo()
     // Error: protected vs package-private
     protected fun <!EXPOSED_FUNCTION_RETURN_TYPE!>protected<!>() = My.foo()
     // Error: public vs package-private
@@ -38,7 +38,7 @@ package other
 import test.My
 
 class Your {
-    internal fun bar() = <!INFERRED_INVISIBLE_RETURN_TYPE_WARNING!>My.foo()<!>
+    internal fun <!EXPOSED_PACKAGE_PRIVATE_TYPE_FROM_INTERNAL_WARNING!>bar<!>() = <!INFERRED_INVISIBLE_RETURN_TYPE_WARNING!>My.foo()<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaFunction */

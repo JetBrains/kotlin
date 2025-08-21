@@ -8,11 +8,15 @@ package org.jetbrains.kotlin.util
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.isJs
+import org.jetbrains.kotlin.stats.MarkdownReportRenderer
+import org.jetbrains.kotlin.stats.SingleReportsData
+import org.jetbrains.kotlin.stats.StatsCalculator
 import java.io.File
 import java.lang.management.CompilationMXBean
 import java.lang.management.GarbageCollectorMXBean
 import java.lang.management.ManagementFactory
 import java.lang.management.ThreadMXBean
+import java.text.SimpleDateFormat
 import java.util.*
 
 /**
@@ -41,6 +45,10 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
     private var jitTimeMillis: Long? = null
     private val extendedStats: MutableList<String> = mutableListOf()
 
+    private var currentDynamicPhaseTime: Time? = null
+    private var currentDynamicPhase: String? = null
+    private val dynamicPhaseMeasurements = LinkedHashMap<Pair<PhaseType, String>, Time>()
+
     var isExtendedStatsEnabled: Boolean = false
         private set
     var compilerType: CompilerType = CompilerType.K2
@@ -48,6 +56,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         private set
 
     var targetDescription: String? = null
+    var outputKind: String? = null
     var files: Int = 0
         private set
     var lines: Int = 0
@@ -56,9 +65,10 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         private set
     val isPhaseMeasuring: Boolean
         get() = phaseStartTime != null
+    var detailedPerf: Boolean = false
 
     fun getTargetInfo(): String =
-        "$targetDescription, $files files ($lines lines)"
+        listOfNotNull(targetDescription, outputKind).joinToString("-") + " $files files ($lines lines)"
 
     fun initializeCurrentThread() {
         thread = Thread.currentThread()
@@ -104,6 +114,8 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
 
         UnitStats(
             targetDescription,
+            outputKind,
+            System.currentTimeMillis(),
             targetPlatform.getPlatformEnumValue(),
             compilerType,
             hasErrors,
@@ -117,6 +129,10 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
             klibWritingTime,
             irLoweringTime,
             backendTime,
+            dynamicPhaseMeasurements.map { (key, time) ->
+                val (phaseType, name) = key
+                DynamicStats(phaseType, name, time)
+            },
             findJavaClassStats,
             findKotlinClassStats,
             gcMeasurements.values.toList(),
@@ -140,6 +156,10 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
             if (time != null) {
                 phaseMeasurements[phaseType] = (phaseMeasurements[phaseType] ?: Time.ZERO) + time
             }
+        }
+
+        otherUnitStats.dynamicStats?.forEach { (phaseType, name, time) ->
+            dynamicPhaseMeasurements[phaseType to name] = (dynamicPhaseMeasurements[phaseType to name] ?: Time.ZERO) + time
         }
 
         otherUnitStats.forEachPhaseSideMeasurement { phaseSideType, sideStats ->
@@ -197,13 +217,27 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         this.lines += lines
     }
 
+    fun notifyDynamicPhaseStarted(name: String) {
+        currentDynamicPhaseTime = currentTime()
+        currentDynamicPhase = name
+    }
+
+    fun notifyDynamicPhaseFinished(name: String, parentPhaseType: PhaseType) {
+        assert(currentDynamicPhaseTime != null)
+        assert(currentDynamicPhase == name)
+
+        dynamicPhaseMeasurements[parentPhaseType to name] =
+            (dynamicPhaseMeasurements[parentPhaseType to name] ?: Time.ZERO) + (currentTime() - currentDynamicPhaseTime!!)
+        currentDynamicPhaseTime = null
+    }
+
     fun notifyPhaseStarted(newPhaseType: PhaseType) {
         assert(phaseStartTime == null) { "The measurement for phase $currentPhaseType must have been finished before starting $newPhaseType" }
 
-        // Ideally, all phases always should be executed sequentially.
-        // However, some pipelines are written in a way where `BackendGeneration` executed before `Analysis` or `IrLowering` (Web).
-        // TODO: KT-75227 Consider using multiple `PerformanceManager` for measuring times per each unit
-        // or fixing a time measurement bug where `BackendGeneration` is executed before `Analysis` or `IrLowering`
+        // All phases should always be executed sequentially.
+        // TODO KT-75227 However, some Web pipelines are written in a way where `BackendGeneration` executed before `Analysis` or `IrLowering`.
+        //   Consider using multiple `PerformanceManager` for measuring times per each unit
+        //   or fix a time measurement bug where `BackendGeneration` is measured before `Analysis` or `IrLowering`
         if (!targetPlatform.isJs()) {
             assert(newPhaseType >= currentPhaseType) { "The measurement for phase $newPhaseType must be performed before $currentPhaseType" }
         }
@@ -287,17 +321,61 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         }
     }
 
-    fun dumpPerformanceReport(destination: File) {
-        destination.writeBytes(createPerformanceReport(destination.extension == "json").toByteArray())
+    fun dumpPerformanceReport(destFileNameOrPlaceholder: String) {
+        val refinedFileName: String = if (File(destFileNameOrPlaceholder).isDirectory) {
+            // We can't use `Paths.get` because of its absence in earlier Android SDKs
+            val separator = if (destFileNameOrPlaceholder.lastOrNull().let { it == null || it == File.separatorChar }) {
+                ""
+            } else {
+                File.separatorChar
+            }
+            destFileNameOrPlaceholder + separator + generateFileName() + ".json"
+        } else {
+            val lastSlashIndex = destFileNameOrPlaceholder.indexOfLast { it == File.separatorChar }
+            val extensionDotIndex =
+                destFileNameOrPlaceholder.indexOf('.', lastSlashIndex).let { if (it == -1) destFileNameOrPlaceholder.length else it }
+            // It's ok if `lastSlashIndex` == -1
+            val fileNameOrPlaceholder = destFileNameOrPlaceholder.substring(lastSlashIndex + 1, extensionDotIndex)
+            if (fileNameOrPlaceholder == "*") {
+                val pathString = if (lastSlashIndex != -1) destFileNameOrPlaceholder.take(lastSlashIndex + 1) else ""
+                val fileName = generateFileName()
+                val extension = destFileNameOrPlaceholder.substring(extensionDotIndex)
+                pathString + fileName + extension
+            } else {
+                destFileNameOrPlaceholder
+            }
+        }
+
+        val destinationFile = File(refinedFileName)
+        val dumpFormat = DumpFormat.entries.firstOrNull { it.extension == destinationFile.extension } ?: DumpFormat.PlainText
+        destinationFile.writeBytes(createPerformanceReport(dumpFormat).toByteArray())
     }
 
-    fun createPerformanceReport(isJson: Boolean): String = if (isJson) {
-        UnitStatsJsonDumper.dump(unitStats)
-    } else {
-        buildString {
+    /**
+     * Generate a unique name to avoid files overwriting.
+     * Use the current date-time stamp with millis precision as a part of the unique name.
+     */
+    private fun generateFileName(): String {
+        return "${unitStats.name}_${dateFormatterForFileName.format(unitStats.timeStampMs)}"
+    }
+
+    private val dateFormatterForFileName by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        SimpleDateFormat("yyyy-MM-dd-HH-mm-ss")
+    }
+
+    enum class DumpFormat(val extension: String) {
+        PlainText("log"),
+        Json("json"),
+        Markdown("md"),
+    }
+
+    fun createPerformanceReport(dumpFormat: DumpFormat): String = when (dumpFormat) {
+        DumpFormat.PlainText -> buildString {
             append("$presentableName performance report\n")
-            unitStats.forEachStringMeasurement { appendLine(it) }
+            forEachStringMeasurement { appendLine(it) }
         }
+        DumpFormat.Json -> UnitStatsJsonDumper.dump(unitStats)
+        DumpFormat.Markdown -> MarkdownReportRenderer(StatsCalculator(SingleReportsData(unitStats))).render()
     }
 
     private fun ensureNotFinalizedAndSameThread() {
@@ -337,6 +415,17 @@ inline fun <T> PerformanceManager?.tryMeasurePhaseTime(phaseType: PhaseType, blo
         return block()
     } finally {
         notifyPhaseFinished(phaseType)
+    }
+}
+
+inline fun <T> PerformanceManager?.tryMeasureDynamicPhaseTime(name: String, parentPhaseType: PhaseType, block: () -> T): T {
+    if (this == null) return block()
+
+    try {
+        notifyDynamicPhaseStarted(name)
+        return block()
+    } finally {
+        notifyDynamicPhaseFinished(name, parentPhaseType)
     }
 }
 

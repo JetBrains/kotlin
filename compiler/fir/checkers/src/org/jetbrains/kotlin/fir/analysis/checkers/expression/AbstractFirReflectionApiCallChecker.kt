@@ -76,6 +76,9 @@ abstract class AbstractFirReflectionApiCallChecker : FirBasicExpressionChecker(M
         private val K_CLASS_IS_INSTANCE = Name.identifier("isInstance")
         private val K_CLASS_QUALIFIED_NAME = Name.identifier("qualifiedName")
 
+        @JvmStatic
+        protected val K_CLASS_IS_INTERFACE_NAME: Name = Name.identifier("isInterface")
+
         private val K_PROPERTY_CLASSES: Set<ClassId> =
             listOf(
                 StandardNames.FqNames.kProperty0,

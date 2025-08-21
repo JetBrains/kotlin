@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.assignment.plugin.AbstractFirLightTreeBlackBoxCodege
 import org.jetbrains.kotlin.assignment.plugin.AbstractFirPsiAssignmentPluginDiagnosticTest
 import org.jetbrains.kotlin.assignment.plugin.AbstractIrBlackBoxCodegenTestAssignmentPlugin
 import org.jetbrains.kotlin.compiler.plugins.AbstractPluginInteractionFirBlackBoxCodegenTest
+import org.jetbrains.kotlin.fir.dataframe.AbstractCompilerFacilityTestForDataFrame
 import org.jetbrains.kotlin.fir.dataframe.AbstractDataFrameBlackBoxCodegenTest
 import org.jetbrains.kotlin.fir.dataframe.AbstractDataFrameDiagnosticTest
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
@@ -42,8 +43,6 @@ import org.jetbrains.kotlin.samWithReceiver.*
 import org.jetbrains.kotlin.scripting.test.*
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
-import org.jetbrains.kotlinx.atomicfu.incremental.AbstractIncrementalK2JVMWithAtomicfuRunnerTest
-import org.jetbrains.kotlinx.atomicfu.runners.*
 
 private class ExcludePattern {
     companion object {
@@ -181,12 +180,6 @@ fun main(args: Array<String>) {
                 model("pureKotlin", extension = null, recursive = false, targetBackend = TargetBackend.JVM_IR)
             }
         }
-
-        testGroup("plugins/atomicfu/atomicfu-compiler/tests-gen", "plugins/atomicfu/atomicfu-compiler/testData/") {
-            testClass<AbstractIncrementalK2JVMWithAtomicfuRunnerTest> {
-                model("projects/", extension = null, recursive = false, targetBackend = TargetBackend.JVM_IR)
-            }
-        }
     }
 
     generateTestGroupSuiteWithJUnit5 {
@@ -223,7 +216,19 @@ fun main(args: Array<String>) {
                 model("diagnostics", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
             }
 
-            testClass<AbstractFirLightTreePluginBlackBoxCodegenTest> {
+            testClass<AbstractFirJvmLightTreePluginBlackBoxCodegenTest> {
+                model("box", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+            }
+
+            testClass<AbstractFirJvmLightTreePluginBlackBoxCodegenWithSeparateKmpCompilationTest> {
+                model("box", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+            }
+
+            testClass<AbstractFirJsLightTreePluginBlackBoxCodegenTest> {
+                model("box", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+            }
+
+            testClass<AbstractFirJsLightTreePluginBlackBoxCodegenWithSeparateKmpCompilationTest> {
                 model("box", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
             }
 
@@ -237,42 +242,6 @@ fun main(args: Array<String>) {
 
             testClass<AbstractFirMetadataPluginSandboxTest> {
                 model("metadata")
-            }
-        }
-
-        testGroup(
-            "plugins/atomicfu/atomicfu-compiler/tests-gen",
-            "plugins/atomicfu/atomicfu-compiler/testData",
-            testRunnerMethodName = "runTest0"
-        ) {
-            testClass<AbstractAtomicfuJsIrTest> {
-                model(relativeRootPath = "box/", excludeDirs = listOf("context_parameters"))
-            }
-
-            testClass<AbstractAtomicfuJsFirTest> {
-                model("box/")
-            }
-
-            testClass<AbstractAtomicfuJsFirWithInlinedFunInKlibTest> {
-                model("box/")
-            }
-        }
-
-        testGroup(
-            "plugins/atomicfu/atomicfu-compiler/tests-gen",
-            "plugins/atomicfu/atomicfu-compiler/testData",
-            testRunnerMethodName = "runTest0"
-        ) {
-            testClass<AbstractAtomicfuFirCheckerTest> {
-                model("diagnostics/")
-            }
-
-            testClass<AbstractAtomicfuJvmIrTest> {
-                model(relativeRootPath = "box/", excludeDirs = listOf("context_parameters"))
-            }
-
-            testClass<AbstractAtomicfuJvmFirLightTreeTest> {
-                model("box/")
             }
         }
 
@@ -359,10 +328,10 @@ fun main(args: Array<String>) {
                 model("argumentParsing", extension = "txt")
             }
             testClass<AbstractKaptToolIntegrationTest> {
-                model("integration", recursive = false, extension = null)
+                model("integration-k1", recursive = false, extension = null)
             }
             testClass<AbstractFirKaptToolIntegrationTest> {
-                model("integration-kapt4", recursive = false, extension = null)
+                model("integration", recursive = false, extension = null)
             }
         }
 
@@ -442,6 +411,10 @@ fun main(args: Array<String>) {
 
             testClass<AbstractDataFrameBlackBoxCodegenTest> {
                 model("box")
+            }
+
+            testClass<AbstractCompilerFacilityTestForDataFrame> {
+                model("compilerFacility")
             }
         }
     }

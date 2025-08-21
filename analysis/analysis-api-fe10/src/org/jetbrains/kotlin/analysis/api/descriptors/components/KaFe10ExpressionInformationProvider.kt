@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsResultOfLambda
 
 internal class KaFe10ExpressionInformationProvider(
     override val analysisSessionProvider: () -> KaFe10Session
@@ -39,5 +40,10 @@ internal class KaFe10ExpressionInformationProvider(
         get() = withPsiValidityAssertion {
             val bindingContext = analysisContext.analyze(this)
             return isUsedAsExpression(bindingContext)
+        }
+    override val KtExpression.isUsedAsResultOfLambda: Boolean
+        get() = withPsiValidityAssertion {
+            val bindingContext = analysisContext.analyze(this)
+            return isUsedAsResultOfLambda(bindingContext)
         }
 }

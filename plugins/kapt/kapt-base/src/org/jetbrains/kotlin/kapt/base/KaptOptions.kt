@@ -128,7 +128,6 @@ enum class KaptFlag(val description: String, val defaultValue: Boolean = false) 
     INCLUDE_COMPILE_CLASSPATH("Detect annotation processors in compile classpath", defaultValue = true),
     INCREMENTAL_APT("Incremental annotation processing (apt mode)"),
     STRIP_METADATA("Strip @Metadata annotations from stubs"),
-    KEEP_KDOC_COMMENTS_IN_STUBS("Keep KDoc comments in stubs", defaultValue = true),
     ;
 }
 
@@ -197,18 +196,17 @@ fun KaptOptions.logString(additionalInfo: String = "") = buildString {
 
     appendLine("Annotation processing mode: ${mode.stringValue}")
     appendLine("Memory leak detection mode: ${detectMemoryLeaks.stringValue}")
-    KaptFlag.values().forEach { appendLine(it.description + ": " + this@logString[it]) }
+    for (flag in KaptFlag.entries) {
+        appendLine(flag.description + ": " + get(flag))
+    }
 
     appendLine("Project base dir: $projectBaseDir")
-    appendLine("Compile classpath: " + compileClasspath.joinToString())
-    appendLine("Java source roots: " + javaSourceRoots.joinToString())
 
     appendLine("Sources output directory: $sourcesOutputDir")
     appendLine("Class files output directory: $classesOutputDir")
     appendLine("Stubs output directory: $stubsOutputDir")
     appendLine("Incremental data output directory: $incrementalDataOutputDir")
 
-    appendLine("Annotation processing classpath: " + processingClasspath.joinToString())
     appendLine("Annotation processors: " + processors.joinToString())
 
     appendLine("AP options: $processingOptions")

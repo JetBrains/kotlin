@@ -34,8 +34,13 @@ abstract class KotlinMetadataDecompiler<out V : BinaryVersion>(
     private val invalidBinaryVersion: () -> V,
     stubVersion: Int
 ) : ClassFileDecompilers.Full() {
-    protected open val metadataStubBuilder: KotlinMetadataStubBuilder =
-        KotlinMetadataStubBuilder(stubVersion, fileType, serializerProtocol, ::readFileSafely)
+    protected open val metadataStubBuilder: KotlinMetadataStubBuilder = KotlinMetadataStubBuilder(
+        version = stubVersion,
+        fileType = fileType,
+        serializerProtocol = serializerProtocol,
+        readFile = ::readFileSafely,
+        expectedBinaryVersion = expectedBinaryVersion,
+    )
 
     private val renderer: DescriptorRenderer by lazy {
         DescriptorRenderer.withOptions { defaultDecompilerRendererOptions() }
@@ -81,7 +86,7 @@ abstract class KotlinMetadataDecompiler<out V : BinaryVersion>(
     fun buildDecompiledText(file: KotlinMetadataStubBuilder.FileWithMetadata): DecompiledText {
         return when (file) {
             is KotlinMetadataStubBuilder.FileWithMetadata.Incompatible -> {
-                createIncompatibleMetadataVersionDecompiledText(expectedBinaryVersion(), file.version)
+                DecompiledText(createIncompatibleMetadataVersionDecompiledText(expectedBinaryVersion(), file.version))
             }
             is KotlinMetadataStubBuilder.FileWithMetadata.Compatible -> {
                 val packageFqName = file.packageFqName

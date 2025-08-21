@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public class SymbolLightClassesParentingByPsiForLibraryTestGenerated extends AbstractSymbolLightClassesParentingByPsiForLibraryTest {
   @Test
   public void testAllFilesPresentInLightClassByPsi() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true, "scripts");
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "compilationErrors");
   }
 
   @Test
@@ -462,7 +462,7 @@ public class SymbolLightClassesParentingByPsiForLibraryTestGenerated extends Abs
   public class Facades {
     @Test
     public void testAllFilesPresentInFacades() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/facades"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/facades"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
     }
 
     @Test
@@ -574,7 +574,7 @@ public class SymbolLightClassesParentingByPsiForLibraryTestGenerated extends Abs
   public class JvmExposeBoxed {
     @Test
     public void testAllFilesPresentInJvmExposeBoxed() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
     }
 
     @Test
@@ -728,6 +728,24 @@ public class SymbolLightClassesParentingByPsiForLibraryTestGenerated extends Abs
     }
 
     @Test
+    @TestMetadata("noArg3.kt")
+    public void testNoArg3() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/noArg3.kt");
+    }
+
+    @Test
+    @TestMetadata("noArg4.kt")
+    public void testNoArg4() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/noArg4.kt");
+    }
+
+    @Test
+    @TestMetadata("noArgNoValueClass.kt")
+    public void testNoArgNoValueClass() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/noArgNoValueClass.kt");
+    }
+
+    @Test
     @TestMetadata("simple.kt")
     public void testSimple() {
       runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/simple.kt");
@@ -737,6 +755,12 @@ public class SymbolLightClassesParentingByPsiForLibraryTestGenerated extends Abs
     @TestMetadata("suspend.kt")
     public void testSuspend() {
       runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/suspend.kt");
+    }
+
+    @Test
+    @TestMetadata("suspendError.kt")
+    public void testSuspendError() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/suspendError.kt");
     }
 
     @Test
@@ -763,7 +787,7 @@ public class SymbolLightClassesParentingByPsiForLibraryTestGenerated extends Abs
     public class Directive {
       @Test
       public void testAllFilesPresentInDirective() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -794,6 +818,12 @@ public class SymbolLightClassesParentingByPsiForLibraryTestGenerated extends Abs
       @TestMetadata("contextVariable.kt")
       public void testContextVariable() {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/contextVariable.kt");
+      }
+
+      @Test
+      @TestMetadata("dataClassWithValueClass.kt")
+      public void testDataClassWithValueClass() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/dataClassWithValueClass.kt");
       }
 
       @Test
@@ -869,6 +899,12 @@ public class SymbolLightClassesParentingByPsiForLibraryTestGenerated extends Abs
       }
 
       @Test
+      @TestMetadata("methodReturnBoxedPrimitive.kt")
+      public void testMethodReturnBoxedPrimitive() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/methodReturnBoxedPrimitive.kt");
+      }
+
+      @Test
       @TestMetadata("methodReturnWithJvmName.kt")
       public void testMethodReturnWithJvmName() {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/methodReturnWithJvmName.kt");
@@ -887,9 +923,27 @@ public class SymbolLightClassesParentingByPsiForLibraryTestGenerated extends Abs
       }
 
       @Test
+      @TestMetadata("noArg3.kt")
+      public void testNoArg3() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/noArg3.kt");
+      }
+
+      @Test
+      @TestMetadata("noArg4.kt")
+      public void testNoArg4() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/noArg4.kt");
+      }
+
+      @Test
       @TestMetadata("simple.kt")
       public void testSimple() {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/simple.kt");
+      }
+
+      @Test
+      @TestMetadata("suspend.kt")
+      public void testSuspend() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/suspend.kt");
       }
 
       @Test
@@ -915,6 +969,66 @@ public class SymbolLightClassesParentingByPsiForLibraryTestGenerated extends Abs
       public void testUintReceiver() {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/uintReceiver.kt");
       }
+
+      @Test
+      @TestMetadata("valueClassInsideDefaultImpl.kt")
+      public void testValueClassInsideDefaultImpl() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/valueClassInsideDefaultImpl.kt");
+      }
+
+      @Test
+      @TestMetadata("valueClassMembers.kt")
+      public void testValueClassMembers() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/valueClassMembers.kt");
+      }
+
+      @Test
+      @TestMetadata("valueClassWithConstructorOverride.kt")
+      public void testValueClassWithConstructorOverride() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/valueClassWithConstructorOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("valueClassWithDelegatedSuperInterface.kt")
+      public void testValueClassWithDelegatedSuperInterface() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/valueClassWithDelegatedSuperInterface.kt");
+      }
+
+      @Test
+      @TestMetadata("valueClassWithInternalParam.kt")
+      public void testValueClassWithInternalParam() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/valueClassWithInternalParam.kt");
+      }
+
+      @Test
+      @TestMetadata("valueClassWithPrivateParam.kt")
+      public void testValueClassWithPrivateParam() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/valueClassWithPrivateParam.kt");
+      }
+
+      @Test
+      @TestMetadata("valueClassWithSuperInterface.kt")
+      public void testValueClassWithSuperInterface() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/valueClassWithSuperInterface.kt");
+      }
+
+      @Test
+      @TestMetadata("varargAndValueClass.kt")
+      public void testVarargAndValueClass() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/varargAndValueClass.kt");
+      }
+
+      @Test
+      @TestMetadata("variable.kt")
+      public void testVariable() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/variable.kt");
+      }
+
+      @Test
+      @TestMetadata("variableBoxedPrimitive.kt")
+      public void testVariableBoxedPrimitive() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/variableBoxedPrimitive.kt");
+      }
     }
 
     @Nested
@@ -923,7 +1037,7 @@ public class SymbolLightClassesParentingByPsiForLibraryTestGenerated extends Abs
     public class FeatureInteraction {
       @Test
       public void testAllFilesPresentInFeatureInteraction() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/featureInteraction"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/featureInteraction"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1035,6 +1149,30 @@ public class SymbolLightClassesParentingByPsiForLibraryTestGenerated extends Abs
       }
 
       @Test
+      @TestMetadata("jvmOverloadsReturnTypeDirective.kt")
+      public void testJvmOverloadsReturnTypeDirective() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/featureInteraction/jvmOverloadsReturnTypeDirective.kt");
+      }
+
+      @Test
+      @TestMetadata("jvmOverloadsReturnTypeJvmName.kt")
+      public void testJvmOverloadsReturnTypeJvmName() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/featureInteraction/jvmOverloadsReturnTypeJvmName.kt");
+      }
+
+      @Test
+      @TestMetadata("jvmOverloadsReturnTypeJvmNameDefaultName.kt")
+      public void testJvmOverloadsReturnTypeJvmNameDefaultName() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/featureInteraction/jvmOverloadsReturnTypeJvmNameDefaultName.kt");
+      }
+
+      @Test
+      @TestMetadata("jvmOverloadsReturnTypeJvmNameDirective.kt")
+      public void testJvmOverloadsReturnTypeJvmNameDirective() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/featureInteraction/jvmOverloadsReturnTypeJvmNameDirective.kt");
+      }
+
+      @Test
       @TestMetadata("jvmOverloadsValueParameter.kt")
       public void testJvmOverloadsValueParameter() {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/featureInteraction/jvmOverloadsValueParameter.kt");
@@ -1131,7 +1269,7 @@ public class SymbolLightClassesParentingByPsiForLibraryTestGenerated extends Abs
     public class Inherit {
       @Test
       public void testAllFilesPresentInInherit() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/inherit"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/inherit"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Nested
@@ -1146,7 +1284,7 @@ public class SymbolLightClassesParentingByPsiForLibraryTestGenerated extends Abs
 
         @Test
         public void testAllFilesPresentInChild() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/inherit/child"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/inherit/child"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -1161,6 +1299,16 @@ public class SymbolLightClassesParentingByPsiForLibraryTestGenerated extends Abs
           runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/inherit/child/openFun.kt");
         }
       }
+    }
+  }
+
+  @Nested
+  @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByPsi/scripts")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Scripts {
+    @Test
+    public void testAllFilesPresentInScripts() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/scripts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
     }
   }
 }

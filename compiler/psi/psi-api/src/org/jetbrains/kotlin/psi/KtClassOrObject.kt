@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -84,10 +84,10 @@ abstract class KtClassOrObject :
         return getOrCreateBody().addBefore(declaration, anchorAfter) as T
     }
 
-    fun isTopLevel(): Boolean = greenStub?.isTopLevel() ?: isKtFile(parent)
+    fun isTopLevel(): Boolean = greenStub?.isTopLevel ?: isKtFile(parent)
 
     override fun getClassId(): ClassId? {
-        greenStub?.let { return it.getClassId() }
+        greenStub?.let { return it.classId }
 
         if (isLocal()) return null
 
@@ -98,7 +98,7 @@ abstract class KtClassOrObject :
     private var isLocal: Boolean? = null
 
     override fun isLocal(): Boolean {
-        greenStub?.isLocal()?.let { return it }
+        greenStub?.isLocal?.let { return it }
 
         isLocal?.let { return it }
 

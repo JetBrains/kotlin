@@ -6,10 +6,13 @@
 package org.jetbrains.kotlin.fir.resolve.inference
 
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
+import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.resolve.calls.ConeLambdaWithTypeVariableAsExpectedTypeAtom
+import org.jetbrains.kotlin.fir.resolve.calls.ConePostponedAtomWithRevisableExpectedType
 import org.jetbrains.kotlin.fir.resolve.calls.ConePostponedResolvedAtom
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeFixVariableConstraintPosition
+import org.jetbrains.kotlin.fir.resolve.inference.model.ConeRegularLambdaArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -78,10 +81,12 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
     }
 
     override fun createArgumentConstraintPosition(argument: PostponedAtomWithRevisableExpectedType): ArgumentConstraintPosition<*> {
-        require(argument is ConePostponedResolvedAtom) {
+        require(argument is ConePostponedAtomWithRevisableExpectedType) {
             "${argument::class}"
         }
-        return ConeArgumentConstraintPosition(argument.expression)
+        return argument.anonymousFunctionIfReturnExpression?.let {
+            ConeRegularLambdaArgumentConstraintPosition(it, argument.expression)
+        } ?: ConeArgumentConstraintPosition(argument.expression)
     }
 
     override fun <T> createFixVariableConstraintPosition(variable: TypeVariableMarker, atom: T): FixVariableConstraintPosition<T> {
@@ -140,6 +145,11 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
     override fun PostponedAtomWithRevisableExpectedType.isLambda(): Boolean {
         require(this is ConePostponedResolvedAtom)
         return this is ConeLambdaWithTypeVariableAsExpectedTypeAtom && this.anonymousFunction.isLambda
+    }
+
+    override fun PostponedAtomWithRevisableExpectedType.isSuspend(): Boolean {
+        require(this is ConePostponedResolvedAtom)
+        return this is ConeLambdaWithTypeVariableAsExpectedTypeAtom && this.anonymousFunction.isSuspend
     }
 
     override fun createTypeVariableForLambdaReturnType(): TypeVariableMarker {

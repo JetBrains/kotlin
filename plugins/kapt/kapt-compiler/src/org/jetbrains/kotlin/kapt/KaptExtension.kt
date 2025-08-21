@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.fileMappingTracker
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -302,6 +303,10 @@ abstract class AbstractKaptExtension(
                 if (classFilePathWithoutExtension == "error/NonExistentClass") return
                 val sourceFiles = (outputFiles?.get(classFilePathWithoutExtension)
                     ?: error("The `outputFiles` map is not properly initialized (key = $classFilePathWithoutExtension)")).sourceFiles
+                kaptContext.generationState.configuration.fileMappingTracker?.recordSourceFilesToOutputFileMapping(
+                    sourceFiles,
+                    generatedFile
+                )
                 messageCollector.report(OUTPUT, OutputMessageUtil.formatOutputMessage(sourceFiles, generatedFile))
             }
 
@@ -320,12 +325,15 @@ abstract class AbstractKaptExtension(
         val incrementalDataOutputDir = options.incrementalDataOutputDir ?: return
 
         val reportOutputFiles = kaptContext.generationState.configuration.getBoolean(CommonConfigurationKeys.REPORT_OUTPUT_FILES)
-        kaptContext.generationState.factory.writeAll(
-            incrementalDataOutputDir,
-            if (!reportOutputFiles) null else fun(sources: List<File>, output: File) {
+        kaptContext.generationState.factory.writeAll(incrementalDataOutputDir) { sources, output ->
+            kaptContext.generationState.configuration.fileMappingTracker?.recordSourceFilesToOutputFileMapping(
+                sources,
+                output
+            )
+            if (reportOutputFiles) {
                 messageCollector.report(OUTPUT, OutputMessageUtil.formatOutputMessage(sources, output))
             }
-        )
+        }
     }
 
     protected abstract fun loadProcessors(): LoadedProcessors

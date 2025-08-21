@@ -3,8 +3,8 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
-public extension ExportedKotlinPackages.weird {
-    open class A: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+extension ExportedKotlinPackages.weird {
+    open class A: KotlinRuntime.KotlinBase {
         open var bar: Swift.Int32 {
             get {
                 return weird_A_bar_get(self.__externalRCRef())
@@ -16,7 +16,7 @@ public extension ExportedKotlinPackages.weird {
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
             var __error: UnsafeMutableRawPointer? = nil
             weird_A_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt, &__error)
-            guard __error == .none else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: __error)) }
+            guard __error == nil else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: __error)) }
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,

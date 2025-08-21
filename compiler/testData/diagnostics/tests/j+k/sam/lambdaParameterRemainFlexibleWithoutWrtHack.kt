@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN +DontMakeExplicitJavaTypeArgumentsFlexible
+// LANGUAGE: +DontMakeExplicitJavaTypeArgumentsFlexible
 // ISSUE: KT-67999
 
 // FILE: J.java

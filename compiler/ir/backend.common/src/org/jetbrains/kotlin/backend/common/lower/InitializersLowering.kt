@@ -46,7 +46,7 @@ open class InitializersLowering(context: CommonBackendContext) : InitializersLow
                 element.acceptChildren(this, null)
 
             override fun visitClass(declaration: IrClass) =
-                throw AssertionError("class in initializer should have been moved out by LocalClassPopupLowering: ${declaration.render()}")
+                throw AssertionError("class in initializer should have been moved out by LocalDeclarationPopupLowering: ${declaration.render()}")
         }, null)
 
         container.body?.transformChildrenVoid(object : IrElementTransformerVoid() {

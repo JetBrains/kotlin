@@ -1,6 +1,9 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.backend.konan.util.toObsoleteKind
+import org.jetbrains.kotlin.config.nativeBinaryOptions.AndroidProgramType
+import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.konan.KonanExternalToolFailure
 import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.exec.Command
@@ -25,8 +28,9 @@ internal fun determineLinkerOutput(context: PhaseContext): LinkerOutputKind =
                 if (context.config.target.family == Family.ANDROID) {
                     val configuration = context.config.configuration
                     val androidProgramType = configuration.get(BinaryOptions.androidProgramType) ?: AndroidProgramType.Default
-                    if (androidProgramType.linkerOutputKindOverride != null) {
-                        return@run androidProgramType.linkerOutputKindOverride
+                    when (androidProgramType) {
+                        AndroidProgramType.Standalone -> LinkerOutputKind.EXECUTABLE
+                        AndroidProgramType.NativeActivity -> LinkerOutputKind.DYNAMIC_LIBRARY
                     }
                 }
                 LinkerOutputKind.EXECUTABLE
@@ -146,7 +150,7 @@ internal class Linker(
                     debug = debug,
                     kind = linkerOutput,
                     outputDsymBundle = outputFiles.symbolicInfoFile,
-                    sanitizer = config.sanitizer,
+                    sanitizer = config.sanitizer?.toObsoleteKind(),
             ).finalLinkCommands()
         }
     }

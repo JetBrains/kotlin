@@ -20,6 +20,7 @@ internal class SirVariableImpl(
     override val isOverride: Boolean,
     override val isInstance: Boolean,
     override val modality: SirModality,
+    override val bridges: MutableList<SirBridge>,
     override val name: String,
     override val type: SirType,
     override val getter: SirGetter,

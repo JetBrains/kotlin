@@ -37,7 +37,6 @@ fun Foo(x: Int) {
 
 @NonRestartableComposable
 @Composable
-@FunctionKeyMeta(key = -1778481022, startOffset = 300, endOffset = 312)
 fun Wat(%composer: Composer?, %changed: Int) {
   sourceInformationMarkerStart(%composer, <>, "C(Wat):Test.kt#2487m")
   if (isTraceInProgress()) {
@@ -50,7 +49,6 @@ fun Wat(%composer: Composer?, %changed: Int) {
 }
 @NonRestartableComposable
 @Composable
-@FunctionKeyMeta(key = 1715031247, startOffset = 352, endOffset = 569)
 fun Foo(x: Int, %composer: Composer?, %changed: Int) {
   sourceInformationMarkerStart(%composer, <>, "C(Foo)N(x)<Wat()>,<goo()>,<baz()>:Test.kt#2487m")
   if (isTraceInProgress()) {
@@ -59,7 +57,6 @@ fun Foo(x: Int, %composer: Composer?, %changed: Int) {
   Wat(%composer, 0)
   @NonRestartableComposable
   @Composable
-  @FunctionKeyMeta(key = -1574501024, startOffset = 426, endOffset = 445)
   fun goo(%composer: Composer?, %changed: Int) {
     sourceInformationMarkerStart(%composer, <>, "C(goo)<Wat()>:Test.kt#2487m")
     if (isTraceInProgress()) {
@@ -74,7 +71,6 @@ fun Foo(x: Int, %composer: Composer?, %changed: Int) {
   class Bar {
     @NonRestartableComposable
     @Composable
-    @FunctionKeyMeta(key = -1209197795, startOffset = 516, endOffset = 535)
     fun baz(%composer: Composer?, %changed: Int) {
       sourceInformationMarkerStart(%composer, <>, "C(baz)<Wat()>:Test.kt#2487m")
       if (isTraceInProgress()) {

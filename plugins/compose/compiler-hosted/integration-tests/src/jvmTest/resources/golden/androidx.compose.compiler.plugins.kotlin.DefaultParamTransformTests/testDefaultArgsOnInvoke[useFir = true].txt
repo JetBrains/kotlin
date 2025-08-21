@@ -19,7 +19,6 @@ fun Bar() {
 
 @NonRestartableComposable
 @Composable
-@FunctionKeyMeta(key = -1333506531, startOffset = 74, endOffset = 153)
 fun Bar(%composer: Composer?, %changed: Int) {
   sourceInformationMarkerStart(%composer, <>, "C(Bar)<HasDef...>,<NoDefa...>,<Multip...>:Test.kt")
   if (isTraceInProgress()) {

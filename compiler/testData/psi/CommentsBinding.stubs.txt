@@ -1,4 +1,4 @@
-PsiJetFileStubImpl[package=foo.bar]
+FILE[kind=Facade[packageFqName=foo.bar, facadeFqName=foo.bar.CommentsBindingKt]]
   PACKAGE_DIRECTIVE
     DOT_QUALIFIED_EXPRESSION
       REFERENCE_EXPRESSION[referencedName=foo]
@@ -27,7 +27,7 @@ PsiJetFileStubImpl[package=foo.bar]
     CLASS_BODY
       PROPERTY[fqName=foo.bar.D.v1, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=v1]
       PROPERTY[fqName=foo.bar.D.v2, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=v2]
-      FUN[fqName=foo.bar.D.foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+      FUN[fqName=foo.bar.D.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p1]
             TYPE_REFERENCE
@@ -41,15 +41,15 @@ PsiJetFileStubImpl[package=foo.bar]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=String]
-        FUN[fqName=null, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=localFun]
+        FUN[fqName=null, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=localFun]
           VALUE_PARAMETER_LIST
         CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=true, isTopLevel=false, name=Local, superNames=[]]
           CLASS_BODY
-      OBJECT_DECLARATION[classId=foo/bar/D.Companion, fqName=foo.bar.D.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=foo/bar/D.Companion, fqName=foo.bar.D.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[companion]
         CLASS_BODY
   PROPERTY[fqName=foo.bar.v, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=v]
-  FUN[fqName=foo.bar.foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+  FUN[fqName=foo.bar.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
   CLASS[classId=foo/bar/E, fqName=foo.bar.E, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=E, superNames=[]]
@@ -60,30 +60,30 @@ PsiJetFileStubImpl[package=foo.bar]
       ENUM_ENTRY[classId=null, fqName=foo.bar.E.C, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=C, superNames=[]]
       ENUM_ENTRY[classId=null, fqName=foo.bar.E.X, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=X, superNames=[]]
         CLASS_BODY
-          FUN[fqName=foo.bar.E.X.toString, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
+          FUN[fqName=foo.bar.E.X.toString, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
             MODIFIER_LIST[override]
             VALUE_PARAMETER_LIST
   PROPERTY[fqName=foo.bar.prop, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=true, name=prop]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Int]
-    PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+    PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
       VALUE_PARAMETER_LIST
-    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false]
+    PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
   PROPERTY[fqName=foo.bar.prop2, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=prop2]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Int]
-    PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+    PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
       VALUE_PARAMETER_LIST
   PROPERTY[fqName=foo.bar.prop3, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=true, name=prop3]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Int]
-    PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+    PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
       VALUE_PARAMETER_LIST
-    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false]
+    PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]

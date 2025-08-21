@@ -29,7 +29,6 @@ fun Test(a: String = "A", b: Int = 2) {
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = 1899165968, startOffset = 57, endOffset = 188)
 fun Parent(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Parent)*<Test()>,<Test(a>,<Test(b>,<Test(a>:Test.kt")
@@ -54,7 +53,6 @@ fun Parent(%composer: Composer?, %changed: Int) {
   }
 }
 @Composable
-@FunctionKeyMeta(key = 1953376798, startOffset = 215, endOffset = 360)
 context(%context_receiver_0: Foo)
 fun Test(a: String?, b: Int, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)

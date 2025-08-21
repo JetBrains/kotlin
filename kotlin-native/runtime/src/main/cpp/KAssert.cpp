@@ -15,6 +15,7 @@
 #include "Format.h"
 #include "Porting.h"
 #include "StackTrace.hpp"
+#include "CrashHandler.hpp"
 
 using namespace kotlin;
 
@@ -74,5 +75,6 @@ RUNTIME_NORETURN void internal::RuntimeAssertFailedPanic(bool allowStacktrace, c
     va_start(args, format);
     PrintAssert(allowStacktrace, location, format, args);
     va_end(args);
+    kotlin::writeMinidump();
     std::abort();
 }

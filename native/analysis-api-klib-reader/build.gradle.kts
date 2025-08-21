@@ -61,7 +61,7 @@ dependencies {
     compileOnly(protobufLite())
 
     testImplementation(kotlinTest("junit5"))
-    testImplementation(project(":compiler:tests-common", "tests-jar"))
+    testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(project(":analysis:analysis-api-standalone"))
 }
 

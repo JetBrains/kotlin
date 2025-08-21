@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
+import org.jetbrains.kotlin.fir.declarations.utils.isSealed
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
@@ -15,7 +17,10 @@ import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectOrStaticData
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.fir.types.functionTypeKind
+import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.fir.types.isNullableAny
 import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -200,6 +205,26 @@ fun FirClassSymbol<*>.collectEnumEntries(session: FirSession): List<FirEnumEntry
     return fir.collectEnumEntries(session).map { it.symbol }
 }
 
+context(holder: SessionHolder)
+fun FirEnumEntrySymbol.getComplementarySymbols(): List<FirEnumEntrySymbol>? = resolvedReturnType
+    .toRegularClassSymbol(holder.session)
+    ?.collectEnumEntries(holder.session)
+    ?.filter { it != this }
+
+context(holder: SessionHolder)
+fun FirRegularClassSymbol.getComplementarySymbols(): List<FirRegularClassSymbol>? {
+    val superTypes = getSuperTypes(holder.session)
+        .mapNotNullTo(mutableSetOf()) { it.toRegularClassSymbol(holder.session) }
+
+    return superTypes.flatMap { superType ->
+        if (!superType.isSealed) return@flatMap emptyList()
+
+        superType.fir.getSealedClassInheritors(holder.session)
+            .mapNotNull { it.toSymbol(holder.session) as? FirRegularClassSymbol }
+            .filter { it != this@getComplementarySymbols && it !in superTypes }
+    }
+}
+
 /**
  * Returns the FirClassLikeDeclaration that the
  * sequence of FirTypeAlias'es points to starting
@@ -381,4 +406,10 @@ fun Collection<MemberWithBaseScope<FirCallableSymbol<*>>>.nonSubsumed(): List<Me
         }
     }
     return filter { (member, _) -> member.unwrapSubstitutionOverrides<FirCallableSymbol<*>>() !in baseMembers }
+}
+
+fun FirValueParameter.isInlinable(session: FirSession): Boolean {
+    if (isNoinline) return false
+    val fullyExpandedType = returnTypeRef.coneType.fullyExpandedType(session)
+    return !fullyExpandedType.isMarkedNullable && fullyExpandedType.functionTypeKind(session)?.isInlineable == true
 }

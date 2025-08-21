@@ -1,30 +1,71 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 package org.jetbrains.kotlin.psi.stubs.elements
 
 import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.stubs.StubInputStream
+import com.intellij.psi.stubs.StubOutputStream
 import com.intellij.util.io.StringRef
+import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtSecondaryConstructor
+import org.jetbrains.kotlin.psi.psiUtil.isLegacyContractPresentPsiCheck
 import org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinConstructorStubImpl
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinSecondaryConstructorStubImpl
+import java.io.IOException
 
-class KtSecondaryConstructorElementType(debugName: String) :
-    KtConstructorElementType<KtSecondaryConstructor>(debugName, KtSecondaryConstructor::class.java, KotlinConstructorStub::class.java) {
-    override fun newStub(
+class KtSecondaryConstructorElementType(@NonNls debugName: String) :
+    KtStubElementType<KotlinSecondaryConstructorStubImpl, KtSecondaryConstructor>(
+        /* debugName = */ debugName,
+        /* psiClass = */ KtSecondaryConstructor::class.java,
+        /* stubClass = */ KotlinConstructorStub::class.java,
+    ) {
+
+    override fun createStub(
+        psi: KtSecondaryConstructor,
         parentStub: StubElement<*>,
-        nameRef: StringRef?,
-        hasBody: Boolean,
-        isDelegatedCallToThis: Boolean,
-        isExplicitDelegationCall: Boolean,
-    ): KotlinConstructorStub<KtSecondaryConstructor> {
-        return KotlinConstructorStubImpl(
-            parentStub, KtStubElementTypes.SECONDARY_CONSTRUCTOR, nameRef, hasBody, isDelegatedCallToThis, isExplicitDelegationCall
+    ): KotlinSecondaryConstructorStubImpl {
+        val hasBody = psi.hasBody()
+        val isDelegatedCallToThis = psi.getDelegationCallOrNull()?.isCallToThis ?: true
+        val isExplicitDelegationCall = psi.getDelegationCallOrNull()?.isImplicit == false
+
+        @OptIn(KtImplementationDetail::class)
+        val mayHaveContract = psi.isLegacyContractPresentPsiCheck()
+        return KotlinSecondaryConstructorStubImpl(
+            parent = parentStub,
+            containingClassName = StringRef.fromString(psi.name),
+            hasBody = hasBody,
+            isDelegatedCallToThis = isDelegatedCallToThis,
+            isExplicitDelegationCall = isExplicitDelegationCall,
+            mayHaveContract = mayHaveContract,
         )
     }
 
-    override fun isDelegatedCallToThis(constructor: KtSecondaryConstructor) = constructor.getDelegationCallOrNull()?.isCallToThis ?: true
+    @Throws(IOException::class)
+    override fun serialize(stub: KotlinSecondaryConstructorStubImpl, dataStream: StubOutputStream) {
+        dataStream.writeName(stub.name)
+        dataStream.writeBoolean(stub.hasBody)
+        dataStream.writeBoolean(stub.isDelegatedCallToThis)
+        dataStream.writeBoolean(stub.isExplicitDelegationCall)
+        dataStream.writeBoolean(stub.mayHaveContract)
+    }
 
-    override fun isExplicitDelegationCall(constructor: KtSecondaryConstructor) = constructor.getDelegationCallOrNull()?.isImplicit == false
+    @Throws(IOException::class)
+    override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>): KotlinSecondaryConstructorStubImpl{
+        val name = dataStream.readName()
+        val hasBody = dataStream.readBoolean()
+        val isDelegatedCallToThis = dataStream.readBoolean()
+        val isExplicitDelegationCall = dataStream.readBoolean()
+        val mayHaveContract = dataStream.readBoolean()
+        return KotlinSecondaryConstructorStubImpl(
+            parent = parentStub,
+            containingClassName = name,
+            hasBody = hasBody,
+            isDelegatedCallToThis = isDelegatedCallToThis,
+            isExplicitDelegationCall = isExplicitDelegationCall,
+            mayHaveContract = mayHaveContract,
+        )
+    }
 }

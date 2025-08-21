@@ -55,12 +55,10 @@ WHITE_SPACE_CHAR    =[\ \t\f\n]
 NOT_WHITE_SPACE_CHAR=[^\ \t\f\n]
 
 DIGIT=[0-9]
-ALPHA=[:jletter:]
-TAG_NAME={ALPHA}({ALPHA}|{DIGIT})*
-IDENTIFIER={ALPHA}({ALPHA}|{DIGIT}|".")*
-QUALIFIED_NAME_START={ALPHA}
-QUALIFIED_NAME_CHAR={ALPHA}|{DIGIT}|[\.]
-QUALIFIED_NAME={QUALIFIED_NAME_START}{QUALIFIED_NAME_CHAR}*
+LETTER = [:jletter:]
+PLAIN_IDENTIFIER = {LETTER} ({LETTER} | {DIGIT})*
+IDENTIFIER = {PLAIN_IDENTIFIER} | `[^`\n]+`
+QUALIFIED_NAME = {IDENTIFIER} ([\.] {IDENTIFIER}?)* // Handle incorrect/incomplete qualifiers for correct resolving
 CODE_LINK=\[{QUALIFIED_NAME}\]
 CODE_FENCE_START=("```" | "~~~").*
 CODE_FENCE_END=("```" | "~~~")
@@ -76,7 +74,7 @@ CODE_FENCE_END=("```" | "~~~")
 <LINE_BEGINNING> "*"+                     { yybegin(CONTENTS_BEGINNING);
                                             return KDocTokens.LEADING_ASTERISK; }
 
-<CONTENTS_BEGINNING> "@"{TAG_NAME} {
+<CONTENTS_BEGINNING> "@"{PLAIN_IDENTIFIER} {
     KDocKnownTag tag = KDocKnownTag.Companion.findByTagName(zzBuffer.subSequence(zzStartRead, zzMarkedPos));
     yybegin(tag != null && tag.isReferenceRequired() ? TAG_BEGINNING : TAG_TEXT_BEGINNING);
     return KDocTokens.TAG_NAME;

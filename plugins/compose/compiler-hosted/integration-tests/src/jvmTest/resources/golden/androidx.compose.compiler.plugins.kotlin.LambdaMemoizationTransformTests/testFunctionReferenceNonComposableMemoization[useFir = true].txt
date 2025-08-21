@@ -13,7 +13,6 @@ import androidx.compose.runtime.Composable
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = -1008580451, startOffset = 80, endOffset = 214)
 fun Example(x: Int, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Example)N(x)<{>:Test.kt")

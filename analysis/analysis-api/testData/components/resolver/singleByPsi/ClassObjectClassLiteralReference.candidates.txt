@@ -9,8 +9,8 @@ KtNameReferenceExpression(73,74): 'A'
         extensionReceiver = null
         signature = KaFunctionSignature:
           receiverType = null
-          returnType = t.A.Named
-          symbol = <constructor>(): t.A.Named
+          returnType = t.A
+          symbol = <constructor>(): t.A
           valueParameters = []
           contextParameters = []
           callableId = null

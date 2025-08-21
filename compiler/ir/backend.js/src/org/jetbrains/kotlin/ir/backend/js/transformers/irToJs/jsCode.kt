@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.util.fileOrNull
+import org.jetbrains.kotlin.ir.util.getSourceFile
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -28,7 +29,7 @@ import org.jetbrains.kotlin.js.parser.parseExpressionOrStatement
 fun translateJsCodeIntoStatementList(code: IrExpression, container: IrDeclaration) =
     translateJsCodeIntoStatementList(
         code,
-        code.getStartSourceLocation(container) ?: container.fileOrNull?.fileEntry?.let { JsLocation(it.name, 0, 0) }
+        code.getStartSourceLocation(container) ?: container.getSourceFile()?.let { JsLocation(it.name, 0, 0) }
     )
 
 /**

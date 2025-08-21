@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.kmp
 
 import com.intellij.util.containers.addIfNotNull
+import org.jetbrains.kotlin.codeMetaInfo.clearTextFromDiagnosticMarkup
 import org.jetbrains.kotlin.kmp.infra.TestSyntaxElement
 import org.jetbrains.kotlin.kmp.infra.checkSyntaxElements
 import org.jetbrains.kotlin.toSourceLinesMapping
@@ -22,16 +23,6 @@ import kotlin.test.fail
 abstract class AbstractRecognizerTests<OldT, NewT, OldSyntaxElement : TestSyntaxElement<OldT>, NewSyntaxElement : TestSyntaxElement<NewT>> {
     companion object {
         val testDataDirs: List<File> = System.getProperty("test.data.dirs").split(File.pathSeparator).map { File(it) }
-
-        // TODO: for some reason, it's not possible to depend on `:compiler:test-infrastructure-utils` here
-        // See org.jetbrains.kotlin.codeMetaInfo.CodeMetaInfoParser
-        private val openingDiagnosticRegex = """(<!([^"]*?((".*?")(, ".*?")*?)?[^"]*?)!>)""".toRegex()
-        private val closingDiagnosticRegex = """(<!>)""".toRegex()
-
-        private val xmlLikeTagsRegex = """(</?(?:selection|expr|caret)>)""".toRegex()
-
-        private val allMetadataRegex =
-            """(${closingDiagnosticRegex.pattern}|${openingDiagnosticRegex.pattern}|${xmlLikeTagsRegex.pattern})""".toRegex()
     }
 
     abstract fun recognizeOldSyntaxElement(fileName: String, text: String): OldSyntaxElement
@@ -117,8 +108,7 @@ fun test(p: String) {
             testDataDir.walkTopDown()
                 .filter { it.isFile && it.extension.let { ext -> (ext == "kt" || ext == "kts") && !it.path.endsWith(".fir.kt") } }
                 .forEach { file ->
-                    val refinedText = file.readText()
-                        .replace(allMetadataRegex, "")
+                    val refinedText = clearTextFromDiagnosticMarkup(file.readText())
                         .replace("\r\n", "\n") // Test infrastructure normalizes line endings
 
                     val (comparisonFailure, oldNanos, newNanos, oldSyntaxElement, _, linesCount) = getComparisonResult(

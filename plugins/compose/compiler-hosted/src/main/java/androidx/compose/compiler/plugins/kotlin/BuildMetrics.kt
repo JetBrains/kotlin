@@ -22,28 +22,32 @@ import androidx.compose.compiler.plugins.kotlin.analysis.knownUnstable
 import androidx.compose.compiler.plugins.kotlin.lower.ComposableFunctionBodyTransformer
 import androidx.compose.compiler.plugins.kotlin.lower.IrSourcePrinterVisitor
 import androidx.compose.compiler.plugins.kotlin.lower.isUnitOrNullableUnit
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
-import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtParameter
 import java.io.File
 
 @JvmDefaultWithCompatibility
 interface FunctionMetrics {
     val isEmpty: Boolean get() = false
-    val packageName: FqName
+    val fqName: FqName
     val name: String
     val composable: Boolean
     val skippable: Boolean
     val restartable: Boolean
     val readonly: Boolean
     val inline: Boolean
+    val open: Boolean
+    val abstract: Boolean
     val isLambda: Boolean
     val hasDefaults: Boolean
     val defaultsGroup: Boolean
@@ -144,7 +148,7 @@ object EmptyModuleMetrics : ModuleMetrics {
 object EmptyFunctionMetrics : FunctionMetrics {
     private fun emptyMetricsAccessed(): Nothing = error("Empty metrics accessed")
     override val isEmpty: Boolean get() = true
-    override val packageName: FqName
+    override val fqName: FqName
         get() = emptyMetricsAccessed()
     override val name: String
         get() = emptyMetricsAccessed()
@@ -169,6 +173,10 @@ object EmptyFunctionMetrics : FunctionMetrics {
     override val calls: Int
         get() = emptyMetricsAccessed()
     override val scheme: String
+        get() = emptyMetricsAccessed()
+    override val abstract: Boolean
+        get() = emptyMetricsAccessed()
+    override val open: Boolean
         get() = emptyMetricsAccessed()
 
     override fun recordGroup() {}
@@ -252,7 +260,7 @@ class ModuleMetricsImpl(
         fun print(out: Appendable, src: IrSourcePrinterVisitor) = with(out) {
             append(stability.simpleHumanReadable())
             append(" class ")
-            append(declaration.name.asString())
+            append((declaration.fqNameWhenAvailable ?: declaration.name).toString())
             appendLine(" {")
             for (decl in declaration.declarations) {
                 val isVar = when (decl) {
@@ -406,7 +414,7 @@ class ModuleMetricsImpl(
         }
         for (fn in composables) {
             row {
-                col(fn.packageName.asString())
+                col(fn.fqName.asString())
                 col(fn.name)
                 col(fn.composable)
                 col(fn.skippable)
@@ -479,13 +487,15 @@ class ModuleMetricsImpl(
 class FunctionMetricsImpl(
     val function: IrFunction,
 ) : FunctionMetrics {
-    override var packageName: FqName = function.fqNameForIrSerialization
+    override var fqName: FqName = function.fqNameForIrSerialization
     override var name: String = function.name.asString()
     override var composable: Boolean = false
     override var skippable: Boolean = false
     override var restartable: Boolean = false
     override var readonly: Boolean = false
     override var inline: Boolean = false
+    override var abstract: Boolean = function is IrSimpleFunction && function.modality == Modality.ABSTRACT
+    override val open: Boolean = function is IrSimpleFunction && function.modality == Modality.OPEN
     override var isLambda: Boolean = false
     override var hasDefaults: Boolean = false
     override var defaultsGroup: Boolean = false
@@ -501,7 +511,6 @@ class FunctionMetricsImpl(
         val defaultStatic: Boolean,
         val used: Boolean,
     ) {
-        @OptIn(ObsoleteDescriptorBasedAPI::class)
         fun print(out: Appendable, src: IrSourcePrinterVisitor) = with(out) {
             if (!used) append("unused ")
             when {
@@ -515,12 +524,11 @@ class FunctionMetricsImpl(
                 append(" = ")
                 if (defaultStatic) append("@static ")
                 else append("@dynamic ")
-                val psi = declaration.symbol.descriptor.findPsi() as? KtParameter
-                val str = psi?.defaultValue?.text
-                if (str != null) {
-                    append(str)
+
+                if (default is IrConst || default is IrGetValue) {
+                    default.acceptVoid(src)
                 } else {
-                    default.accept(src, null)
+                    append("<expression>")
                 }
             }
         }
@@ -586,9 +594,13 @@ class FunctionMetricsImpl(
         if (skippable) append("skippable ")
         if (readonly) append("readonly ")
         if (inline) append("inline ")
+        if (abstract) append("abstract ")
+        if (open) append("open ")
+
         scheme?.let { append("scheme(\"$it\") ") }
+
         append("fun ")
-        append(name)
+        append(fqName.asString())
         if (parameters.isEmpty()) {
             appendLine("()")
         } else {

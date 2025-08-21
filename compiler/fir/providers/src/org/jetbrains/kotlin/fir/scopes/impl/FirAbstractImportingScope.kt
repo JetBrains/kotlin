@@ -165,7 +165,7 @@ internal fun FirVariable.buildImportedVersion(importedClassId: ClassId): FirVari
         is FirProperty -> {
             buildPropertyCopy(this) {
                 origin = FirDeclarationOrigin.ImportedFromObjectOrStatic
-                this.symbol = FirPropertySymbol(CallableId(importedClassId, name))
+                this.symbol = FirRegularPropertySymbol(CallableId(importedClassId, name))
                 this.delegateFieldSymbol = null
             }.apply {
                 importedFromObjectOrStaticData = ImportedFromObjectOrStaticData(importedClassId, this@buildImportedVersion)

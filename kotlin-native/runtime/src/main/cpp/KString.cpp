@@ -22,6 +22,7 @@
 #include <optional>
 
 #include "CompilerConstants.hpp"
+#include "CallsChecker.hpp"
 #include "KAssert.h"
 #include "Exceptions.h"
 #include "Memory.h"
@@ -608,6 +609,7 @@ static std::string to_string_impl(const uint8_t* it, const uint8_t* end) noexcep
 
 template <KStringConversionMode mode>
 std::string kotlin::to_string(KConstRef kstring, size_t start, size_t size) noexcept(mode != KStringConversionMode::CHECKED) {
+    CallsCheckerIgnoreGuard ignoreCallChecks;
     RuntimeAssert(kstring->type_info() == theStringTypeInfo, "A Kotlin String expected");
     return encodingAware(kstring, [=](auto kstring) {
         auto length = kstring.sizeInChars();

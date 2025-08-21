@@ -1,3 +1,4 @@
 expression: DOT_QUALIFIED_EXPRESSION
 text: it.length
 isUsedAsExpression: true
+isUsedAsResultOfLambda: true

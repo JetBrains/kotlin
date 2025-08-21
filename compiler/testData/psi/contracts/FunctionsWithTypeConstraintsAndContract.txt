@@ -3,16 +3,49 @@ KtFile: FunctionsWithTypeConstraintsAndContract.kt
     <empty list>
   IMPORT_LIST
     <empty list>
-  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
-  PsiWhiteSpace('\n')
   PsiComment(EOL_COMMENT)('// the following functions have type constraints and contracts written in different order')
   PsiWhiteSpace('\n')
   PsiComment(EOL_COMMENT)('// any order is correct')
   PsiWhiteSpace('\n\n')
+  CLASS
+    PsiComment(EOL_COMMENT)('// FILE: MyClass.kt')
+    PsiWhiteSpace('\n')
+    MODIFIER_LIST
+      PsiElement(open)('open')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('MyClass')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiComment(EOL_COMMENT)('// FILE: MyOtherClass.kt')
+    PsiWhiteSpace('\n')
+    MODIFIER_LIST
+      PsiElement(open)('open')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('MyOtherClass')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiComment(EOL_COMMENT)('// FILE: SuperType.kt')
+    PsiWhiteSpace('\n')
+    PsiElement(interface)('interface')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('SuperType')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiComment(EOL_COMMENT)('// FILE: SomeType.kt')
+    PsiWhiteSpace('\n')
+    PsiElement(interface)('interface')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('SomeType')
+  PsiWhiteSpace('\n\n')
   FUN
+    PsiComment(EOL_COMMENT)('// FILE: main.kt')
+    PsiWhiteSpace('\n')
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('someFunctionWithTypeConstraints')
     TYPE_PARAMETER_LIST
       PsiElement(LT)('<')
       TYPE_PARAMETER
@@ -22,6 +55,8 @@ KtFile: FunctionsWithTypeConstraintsAndContract.kt
       TYPE_PARAMETER
         PsiElement(IDENTIFIER)('E')
       PsiElement(GT)('>')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('someFunctionWithTypeConstraints')
     VALUE_PARAMETER_LIST
       PsiElement(LPAR)('(')
       VALUE_PARAMETER
@@ -158,7 +193,7 @@ KtFile: FunctionsWithTypeConstraintsAndContract.kt
           PsiWhiteSpace(' ')
           CALL_EXPRESSION
             REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('NullArgumentException')
+              PsiElement(IDENTIFIER)('IllegalArgumentException')
             VALUE_ARGUMENT_LIST
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')
@@ -177,7 +212,6 @@ KtFile: FunctionsWithTypeConstraintsAndContract.kt
   FUN
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('anotherFunctionWithTypeConstraints')
     TYPE_PARAMETER_LIST
       PsiElement(LT)('<')
       TYPE_PARAMETER
@@ -187,6 +221,8 @@ KtFile: FunctionsWithTypeConstraintsAndContract.kt
       TYPE_PARAMETER
         PsiElement(IDENTIFIER)('T')
       PsiElement(GT)('>')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('anotherFunctionWithTypeConstraints')
     VALUE_PARAMETER_LIST
       PsiElement(LPAR)('(')
       VALUE_PARAMETER

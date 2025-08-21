@@ -72,24 +72,6 @@ class CustomK2Tests : KGPBaseTest() {
     }
 
     @GradleTest
-    @DisplayName("HMPP compilation with JS target and old stdlib. KT-59151")
-    fun testHmppCompilationWithJsAndOldStdlib(gradleVersion: GradleVersion) {
-        with(
-            project(
-                "k2-mpp-js-old-stdlib",
-                gradleVersion,
-                // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-                buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
-            )
-        ) {
-            val taskToExecute = ":compileKotlinJs"
-            build(taskToExecute) {
-                assertTasksExecuted(taskToExecute)
-            }
-        }
-    }
-
-    @GradleTest
     @DisplayName("Native metadata of intermediate with reference to internal in common. KT-58219")
     fun nativeMetadataOfIntermediateWithReferenceToInternalInCommon(gradleVersion: GradleVersion) {
         with(project("k2-native-intermediate-metadata", gradleVersion)) {

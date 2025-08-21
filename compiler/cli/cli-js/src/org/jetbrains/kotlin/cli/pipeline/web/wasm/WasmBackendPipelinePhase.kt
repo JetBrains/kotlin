@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.backend.js.dce.dumpDeclarationIrSizesIfNeed
 import org.jetbrains.kotlin.ir.backend.js.loadIr
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
@@ -152,7 +153,6 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
             module.mainModule,
             configuration,
             performanceManager,
-            exportedDeclarations = setOf(FqName("main")),
             generateTypeScriptFragment = generateDts,
             propertyLazyInitialization = propertyLazyInitialization,
         )

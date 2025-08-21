@@ -3,8 +3,8 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
-public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
-    public final class Inner: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+public final class Foo: KotlinRuntime.KotlinBase {
+    public final class Inner: KotlinRuntime.KotlinBase {
         public init(
             outer__: main.Foo
         ) {
@@ -20,7 +20,7 @@ public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBr
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
         }
     }
-    public final class Nested: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public final class Nested: KotlinRuntime.KotlinBase {
         public init() {
             if Self.self != main.Foo.Nested.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Foo.Nested ") }
             let __kt = Foo_Nested_init_allocate()
@@ -32,6 +32,17 @@ public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBr
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        }
+        public static func +(
+            this: main.Foo.Nested,
+            other: Swift.Int32
+        ) -> main.Foo.Nested {
+            this._plus(other: other)
+        }
+        public func _plus(
+            other: Swift.Int32
+        ) -> main.Foo.Nested {
+            return main.Foo.Nested.__createClassWrapper(externalRCRef: Foo_Nested_plus__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other))
         }
     }
     public init() {
@@ -47,8 +58,8 @@ public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBr
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
 }
-public extension ExportedKotlinPackages.a.b.c {
-    public final class E: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged, Swift.CaseIterable {
+extension ExportedKotlinPackages.a.b.c {
+    public final class E: KotlinRuntime.KotlinBase, Swift.CaseIterable {
         public static var A: ExportedKotlinPackages.a.b.c.E {
             get {
                 return ExportedKotlinPackages.a.b.c.E.__createClassWrapper(externalRCRef: a_b_c_E_A_get())
@@ -86,5 +97,3 @@ public extension ExportedKotlinPackages.a.b.c {
 // Can't export foo: inline functions are not supported yet.
 // Can't export a.b.c.E.values: static functions are not supported yet.
 // Can't export a.b.c.E.values: static functions are not supported yet.
-// Can't export Foo.Nested.plus: operators are not supported yet.
-// Can't export Foo.Nested.plus: operators are not supported yet.

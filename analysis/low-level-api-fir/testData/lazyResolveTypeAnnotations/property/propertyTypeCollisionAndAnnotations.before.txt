@@ -1,37 +1,37 @@
 @R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>>
-  context -> FirPropertySymbol one/two/MyDataClass.prop
+  context -> FirRegularPropertySymbol one/two/MyDataClass.prop
   anchor -> [FirConstructorSymbol one/two/MyDataClass.MyDataClass]
 
 @R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirPropertySymbol one/two/MyDataClass.prop
+  context -> FirRegularPropertySymbol one/two/MyDataClass.prop
   anchor -> [FirConstructorSymbol one/two/MyDataClass.MyDataClass]
 
 @R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirPropertySymbol one/two/MyDataClass.prop
+  context -> FirRegularPropertySymbol one/two/MyDataClass.prop
   anchor -> [FirConstructorSymbol one/two/MyDataClass.MyDataClass]
 
 @R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>>
-  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol one/two/MyDataClass.prop
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol one/two/MyDataClass.prop
   anchor -> [FirConstructorSymbol one/two/MyDataClass.MyDataClass]
 
 @R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol one/two/MyDataClass.prop
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol one/two/MyDataClass.prop
   anchor -> [FirConstructorSymbol one/two/MyDataClass.MyDataClass]
 
 @R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol one/two/MyDataClass.prop
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol one/two/MyDataClass.prop
   anchor -> [FirConstructorSymbol one/two/MyDataClass.MyDataClass]
 
 @R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>>
-  context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol one/two/MyDataClass.prop
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol one/two/MyDataClass.prop
   anchor -> [FirConstructorSymbol one/two/MyDataClass.MyDataClass]
 
 @R|one/two/Anno|(LAZY_EXPRESSION)  one/two/MyDataClass.MyClass<@R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol one/two/MyDataClass.prop
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol one/two/MyDataClass.prop
   anchor -> [FirConstructorSymbol one/two/MyDataClass.MyDataClass]
 
 @R|one/two/Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol one/two/MyDataClass.prop
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol one/two/MyDataClass.prop
   anchor -> [FirConstructorSymbol one/two/MyDataClass.MyDataClass]
 
 FILE: [ResolvedTo(IMPORTS)] propertyTypeCollisionAndAnnotations.kt

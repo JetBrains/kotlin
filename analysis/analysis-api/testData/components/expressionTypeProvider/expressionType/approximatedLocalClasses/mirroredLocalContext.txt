@@ -1,0 +1,2 @@
+expression: B()
+type: T2

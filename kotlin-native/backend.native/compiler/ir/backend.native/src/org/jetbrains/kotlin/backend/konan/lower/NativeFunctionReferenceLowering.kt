@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageCase
 import org.jetbrains.kotlin.backend.common.linkage.partial.reflectionTargetLinkageError
 import org.jetbrains.kotlin.backend.common.lower.AbstractFunctionReferenceLowering
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.customNameInReflection
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
@@ -184,8 +185,8 @@ internal class NativeFunctionReferenceLowering(val generationState: NativeGenera
         }
 
         fun getName(): String {
-            return (((functionReferenceReflectionTarget as? IrSimpleFunction)?.attributeOwnerId as? IrSimpleFunction)?.name
-                    ?: functionReferenceReflectionTarget.name).asString()
+            return (functionReferenceReflectionTarget as? IrSimpleFunction?)?.customNameInReflection?.asString()
+                    ?: functionReferenceReflectionTarget.name.asString()
         }
 
         fun getArity(): Int {

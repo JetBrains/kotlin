@@ -452,6 +452,18 @@ public class FirIdeNormalAnalysisLibrarySourceModuleCompilerFacilityTestGenerate
     }
 
     @Test
+    @TestMetadata("localFakeOverrideForwarding.kt")
+    public void testLocalFakeOverrideForwarding() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/localFakeOverrideForwarding.kt");
+    }
+
+    @Test
+    @TestMetadata("localFakeOverrideForwarding2.kt")
+    public void testLocalFakeOverrideForwarding2() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/localFakeOverrideForwarding2.kt");
+    }
+
+    @Test
     @TestMetadata("localObject.kt")
     public void testLocalObject() {
       runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/localObject.kt");
@@ -800,6 +812,46 @@ public class FirIdeNormalAnalysisLibrarySourceModuleCompilerFacilityTestGenerate
       @TestMetadata("valueParameter.kt")
       public void testValueParameter() {
         runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/valueParameter.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/inlineLambdas")
+    @TestDataPath("$PROJECT_ROOT")
+    public class InlineLambdas {
+      @Test
+      public void testAllFilesPresentInInlineLambdas() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/inlineLambdas"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("capturing.kt")
+      public void testCapturing() {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/inlineLambdas/capturing.kt");
+      }
+
+      @Test
+      @TestMetadata("lambdaContent.kt")
+      public void testLambdaContent() {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/inlineLambdas/lambdaContent.kt");
+      }
+
+      @Test
+      @TestMetadata("localInsideAndOutsideLambda.kt")
+      public void testLocalInsideAndOutsideLambda() {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/inlineLambdas/localInsideAndOutsideLambda.kt");
+      }
+
+      @Test
+      @TestMetadata("nonLocalUpByStack.kt")
+      public void testNonLocalUpByStack() {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/inlineLambdas/nonLocalUpByStack.kt");
+      }
+
+      @Test
+      @TestMetadata("variousLocalReturns.kt")
+      public void testVariousLocalReturns() {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/inlineLambdas/variousLocalReturns.kt");
       }
     }
   }

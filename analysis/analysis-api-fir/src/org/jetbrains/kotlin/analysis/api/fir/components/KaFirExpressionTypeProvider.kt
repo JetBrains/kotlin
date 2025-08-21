@@ -157,10 +157,20 @@ internal class KaFirExpressionTypeProvider(
     ): KaType? {
         // When we're in a call like `a[x] = y`, we want to get the `set` call's last argument's type.
         if (fir.calleeReference !is FirResolvedNamedReference || fir.calleeReference.name != OperatorNameConventions.SET) return null
-        if (expression !is KtArrayAccessExpression) return null
-        val assignment = expression.parent as? KtBinaryExpression ?: return null
-        if (assignment.operationToken !in KtTokens.ALL_ASSIGNMENTS) return null
-        if (assignment.left != expression) return null
+
+        when (expression) {
+            is KtArrayAccessExpression -> {
+                val assignment = expression.parent as? KtBinaryExpression ?: return null
+                if (assignment.operationToken !in KtTokens.ALL_ASSIGNMENTS) return null
+                if (assignment.left != expression) return null
+            }
+            is KtUnaryExpression -> {
+                if (expression.baseExpression !is KtArrayAccessExpression) return null
+                if (expression.operationToken !in KtTokens.INCREMENT_AND_DECREMENT) return null
+            }
+            else -> return null
+        }
+
         val setTargetParameterType = fir.argumentsToSubstitutedValueParameters()?.values?.lastOrNull()?.substitutedType ?: return null
         return setTargetParameterType.asKaType()
     }
@@ -179,7 +189,7 @@ internal class KaFirExpressionTypeProvider(
         }
     }
 
-    override val KtDeclaration.returnType: KaType
+    override val KtDeclarationWithReturnType.returnType: KaType
         get() = withPsiValidityAssertion {
             inferReturnTypeByPsi()?.let { return it }
 
@@ -200,17 +210,17 @@ internal class KaFirExpressionTypeProvider(
      * Optimization: try to determine the return type of the declaration (function, property, or property getter)
      * by inspecting its body expression if it has an implicit return type.
      */
-    private fun KtDeclaration.inferReturnTypeByPsi(): KaType? {
-        fun KtDeclaration.isPropertyGetter() = this is KtPropertyAccessor && isGetter
+    private fun KtDeclarationWithReturnType.inferReturnTypeByPsi(): KaType? {
+        fun KtDeclarationWithReturnType.isPropertyGetter() = this is KtPropertyAccessor && isGetter
 
-        fun KtDeclaration.hasDeclaredReturnType() = when (this) {
+        fun KtDeclarationWithReturnType.hasDeclaredReturnType() = when (this) {
             is KtNamedFunction -> typeReference != null
-            is KtProperty -> typeReference != null || getter?.returnTypeReference != null
-            is KtPropertyAccessor -> returnTypeReference != null
+            is KtProperty -> typeReference != null || getter?.typeReference != null
+            is KtPropertyAccessor -> typeReference != null
             else -> false
         }
 
-        fun KtDeclaration.isEmptyFunction() =
+        fun KtDeclarationWithReturnType.isEmptyFunction() =
             this is KtNamedFunction && hasBlockBody() && bodyBlockExpression?.statements?.isEmpty() == true
 
         if (this !is KtNamedFunction && this !is KtProperty && !isPropertyGetter()) return null

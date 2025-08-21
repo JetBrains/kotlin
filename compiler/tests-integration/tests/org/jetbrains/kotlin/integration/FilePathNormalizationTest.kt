@@ -7,11 +7,20 @@ package org.jetbrains.kotlin.integration
 
 import com.intellij.openapi.util.SystemInfo
 import org.jetbrains.kotlin.cli.AbstractCliTest
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
+import org.jetbrains.kotlin.cli.common.isWindows
+import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.cli.jvm.compiler.configureSourceRoots
+import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmCliPipeline
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.modules.JavaRootPath
+import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.fileUtils.descendantRelativeTo
@@ -187,6 +196,19 @@ class FilePathNormalizationTest : KotlinIntegrationTestBase() {
                 run(outDir, linkToLibJar)
             }
 
+            // The symlink is the last path segment and without extension:
+            run {
+                val linkToLibJar = createSymlink(libJar, File(tmpdir, "liblink"))
+                val outDir = tmpdir.resolve("out")
+                compileWithClasspath(
+                    source = "fun main() { println(foo()) }",
+                    fileName = "main.kt",
+                    outputFile = outDir,
+                    classpath = linkToLibJar
+                )
+                run(outDir, linkToLibJar)
+            }
+
             // The symlink is not the last path segment:
             run {
                 val linkToBaseDir = createSymlink(baseDir, File(tmpdir, "baselink"))
@@ -302,6 +324,18 @@ class FilePathNormalizationTest : KotlinIntegrationTestBase() {
                 )
             }
 
+            // The symlink is the last path segment and without extension:
+            run {
+                val linkToLibKlib = createSymlink(libKlib, File(tmpdir, "liblink"))
+                val outDir = tmpdir.resolve("out")
+                compileKlib(
+                    source = "fun main() { println(foo()) }",
+                    fileName = "main.kt",
+                    outputFile = outDir,
+                    dependency = linkToLibKlib
+                )
+            }
+
             // The symlink is not the last path segment:
             run {
                 val linkToBaseDir = createSymlink(baseDir, File(tmpdir, "baselink"))
@@ -323,5 +357,26 @@ class FilePathNormalizationTest : KotlinIntegrationTestBase() {
         to
     } catch (_: Throwable) {
         from
+    }
+
+    // Some compiler plugins use CONTENT_ROOTS. In case of symlinks, there should also be symlinks
+    fun testSymlinksInContentRoots() {
+        // Symlinks do not work on Windows
+        if (isWindows) return
+
+        val baseDir = tmpdir.resolve("base").apply { mkdirs() }
+        val libDir = baseDir.resolve("lib")
+        val linkToLibDir = createSymlink(libDir, File(tmpdir, "liblink"))
+
+        val configuration = CompilerConfiguration()
+        val module = ModuleBuilder("", "", "").apply {
+            addClasspathEntry(linkToLibDir.path)
+        }
+        configuration.configureSourceRoots(listOf(module))
+
+        val classpathRoot = configuration.get(CLIConfigurationKeys.CONTENT_ROOTS)?.singleOrNull() as? JvmClasspathRoot
+            ?: error("Not a JvmClasspathRoot")
+
+        assertTrue(classpathRoot.file.path.endsWith("liblink"))
     }
 }

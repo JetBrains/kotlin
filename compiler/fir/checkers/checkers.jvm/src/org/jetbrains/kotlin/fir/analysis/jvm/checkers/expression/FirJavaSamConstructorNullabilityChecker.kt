@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.references.toResolvedFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
@@ -27,11 +27,8 @@ object FirJavaSamConstructorNullabilityChecker : FirFunctionCallChecker(MppCheck
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirFunctionCall) {
-        val languageVersionSettings = context.session.languageVersionSettings
-        if (languageVersionSettings.supportsFeature(LanguageFeature.JavaTypeParameterDefaultRepresentationWithDNN)) return
-        val reportError = languageVersionSettings.supportsFeature(
-            LanguageFeature.ProhibitReturningIncorrectNullabilityValuesFromSamConstructorLambdaOfJdkInterfaces
-        )
+        val reportError =
+            LanguageFeature.ProhibitReturningIncorrectNullabilityValuesFromSamConstructorLambdaOfJdkInterfaces.isEnabled()
 
         val calleeReference = expression.calleeReference
         if (calleeReference.isError()) return

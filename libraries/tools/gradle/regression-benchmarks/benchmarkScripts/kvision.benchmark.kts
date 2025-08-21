@@ -10,7 +10,7 @@
     name = "kvision",
     gitUrl = "https://github.com/rjaros/kvision.git",
     gitCommitSha = "8f2b3c96dcc9ad594995367ad138a37328244bb9",
-    stableKotlinVersion = "2.1.20",
+    stableKotlinVersion = "2.2.0",
 )
 
 import java.io.File
@@ -24,11 +24,14 @@ val repoPatch = {
     )
 }
 
+val defaultIterations = 20
+
 runBenchmarks(
     repoPatch,
     suite {
         scenario {
             title = "Build Js clean build"
+            iterations = defaultIterations
 
             runTasks("jsJar")
             runCleanupTasks("clean")
@@ -36,6 +39,7 @@ runBenchmarks(
 
         scenario {
             title = "Build Js IR with ABI change in ObservableList"
+            iterations = defaultIterations
 
             runTasks("jsJar")
             applyAbiChangeTo("kvision-modules/kvision-state/src/jsMain/kotlin/io/kvision/state/ObservableList.kt")
@@ -43,6 +47,7 @@ runBenchmarks(
 
         scenario {
             title = "Build Js IR with non-ABI change in ObservableList"
+            iterations = defaultIterations
 
             runTasks("jsJar")
             applyNonAbiChangeTo("kvision-modules/kvision-state/src/jsMain/kotlin/io/kvision/state/ObservableList.kt")
@@ -51,18 +56,21 @@ runBenchmarks(
         scenario {
             title = "Dry run configuration time"
             useGradleArgs("-m")
+            iterations = defaultIterations
 
             runTasks("jsJar")
         }
 
         scenario {
             title = "No-op configuration time"
+            iterations = defaultIterations
 
             runTasks("help")
         }
 
         scenario {
             title = "UP-TO-DATE configuration time"
+            iterations = defaultIterations
 
             runTasks("jsJar")
         }

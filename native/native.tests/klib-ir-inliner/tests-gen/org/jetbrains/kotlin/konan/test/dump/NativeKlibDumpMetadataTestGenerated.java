@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.konan.test.dump;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.jetbrains.kotlin.konan.test.blackbox.support.group.ClassicPipeline;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -19,7 +18,6 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("native/native.tests/testData/klib/dump-metadata")
 @TestDataPath("$PROJECT_ROOT")
-@ClassicPipeline()
 public class NativeKlibDumpMetadataTestGenerated extends AbstractNativeKlibDumpMetadataTest {
   @Test
   @TestMetadata("Accessors.kt")
@@ -143,7 +141,6 @@ public class NativeKlibDumpMetadataTestGenerated extends AbstractNativeKlibDumpM
   @Nested
   @TestMetadata("native/native.tests/testData/klib/dump-metadata/builtinsSerializer")
   @TestDataPath("$PROJECT_ROOT")
-  @ClassicPipeline()
   public class BuiltinsSerializer {
     @Test
     public void testAllFilesPresentInBuiltinsSerializer() {
@@ -213,7 +210,6 @@ public class NativeKlibDumpMetadataTestGenerated extends AbstractNativeKlibDumpM
     @Nested
     @TestMetadata("native/native.tests/testData/klib/dump-metadata/builtinsSerializer/annotationArguments")
     @TestDataPath("$PROJECT_ROOT")
-    @ClassicPipeline()
     public class AnnotationArguments {
       @Test
       public void testAllFilesPresentInAnnotationArguments() {
@@ -261,7 +257,6 @@ public class NativeKlibDumpMetadataTestGenerated extends AbstractNativeKlibDumpM
   @Nested
   @TestMetadata("native/native.tests/testData/klib/dump-metadata/klib")
   @TestDataPath("$PROJECT_ROOT")
-  @ClassicPipeline()
   public class Klib {
     @Test
     public void testAllFilesPresentInKlib() {

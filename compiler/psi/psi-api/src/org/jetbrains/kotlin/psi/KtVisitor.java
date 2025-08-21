@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.psi;
 
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import static org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt.tryVisitFoldingStringConcatenation;
+import static org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt.tryFlattenStringConcatenationDescendants;
 
 public class KtVisitor<R, D> extends PsiElementVisitor {
     public R visitKtElement(@NotNull KtElement element, D data) {
@@ -35,12 +36,16 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
         return visitNamedDeclaration(classOrObject, data);
     }
 
-    public R visitSecondaryConstructor(@NotNull KtSecondaryConstructor constructor, D data) {
+    public R visitConstructor(@NotNull KtConstructor<?> constructor, D data) {
         return visitNamedDeclaration(constructor, data);
     }
 
+    public R visitSecondaryConstructor(@NotNull KtSecondaryConstructor constructor, D data) {
+        return visitConstructor(constructor, data);
+    }
+
     public R visitPrimaryConstructor(@NotNull KtPrimaryConstructor constructor, D data) {
-        return visitNamedDeclaration(constructor, data);
+        return visitConstructor(constructor, data);
     }
 
     public R visitNamedFunction(@NotNull KtNamedFunction function, D data) {
@@ -166,6 +171,10 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
         return visitKtElement(contextReceiverList, data);
     }
 
+    public R visitContextReceiver(@NotNull KtContextReceiver contextReceiver, D data) {
+        return visitKtElement(contextReceiver, data);
+    }
+
     public R visitConstructorDelegationCall(@NotNull KtConstructorDelegationCall call, D data) {
         return visitKtElement(call, data);
     }
@@ -226,14 +235,18 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
      * Visits the input expression using a stack if it's a string literals concatenation expression (to prevent potential stack overflow exception),
      * otherwise visits the expression using regular recursive calls.
 
-     * If you need to handle nested binary and parenthesized expressions inside string literals concatenation,
+     * If you need to handle nested binary expressions inside string literals concatenation,
      * you have to override this method and write the necessary logic there.
      */
     public R visitBinaryExpression(@NotNull KtBinaryExpression expression, D data) {
-        @Nullable List<KtExpression> foldingStringConcatenationStack = tryVisitFoldingStringConcatenation(expression, false);
-        if (foldingStringConcatenationStack != null) {
-            for (KtExpression childExpression : foldingStringConcatenationStack) {
-                childExpression.accept(this, data);
+        @Nullable List<PsiElement> flattenedStringConcatenationChildren = tryFlattenStringConcatenationDescendants(expression);
+        if (flattenedStringConcatenationChildren != null) {
+            for (PsiElement childElement : flattenedStringConcatenationChildren) {
+                if (childElement instanceof KtElement) {
+                    ((KtElement) childElement).accept(this, data);
+                } else {
+                    childElement.accept(this);
+                }
             }
 
             return null;

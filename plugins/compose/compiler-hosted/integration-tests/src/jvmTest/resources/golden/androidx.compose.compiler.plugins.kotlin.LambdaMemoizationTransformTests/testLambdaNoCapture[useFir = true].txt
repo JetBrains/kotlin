@@ -21,7 +21,6 @@ fun Test() {
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = -586260151, startOffset = 93, endOffset = 168)
 fun TestLambda(content: Function0<Unit>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(TestLambda)N(content):Test.kt")
@@ -45,7 +44,6 @@ fun TestLambda(content: Function0<Unit>, %composer: Composer?, %changed: Int) {
   }
 }
 @Composable
-@FunctionKeyMeta(key = -1794342280, startOffset = 206, endOffset = 318)
 fun Test(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)<{>,<TestLa...>:Test.kt")

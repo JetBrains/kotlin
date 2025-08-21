@@ -498,7 +498,7 @@ internal class DeclarationContainer(val text: String, val parent: DeclarationCon
         var previousDeclaration: DeclarationContainer? = null
         children.values.sortedWith(DeclarationsComparator).forEach { currentDeclaration ->
             if (previousDeclaration != null) {
-                val pd = previousDeclaration!!
+                val pd = previousDeclaration
                 // Precede a group of declarations sharing the same kind (properties, classes, functions),
                 // and declarations that'll have a "// Targets" header with a newline to improve readability.
                 if (pd.type != currentDeclaration.type || currentDeclaration.targets != this.targets

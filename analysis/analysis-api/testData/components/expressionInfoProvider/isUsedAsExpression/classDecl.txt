@@ -21,3 +21,4 @@ text: class C<T>(val x: Int): I<T> {
     }
 }
 isUsedAsExpression: false
+isUsedAsResultOfLambda: false

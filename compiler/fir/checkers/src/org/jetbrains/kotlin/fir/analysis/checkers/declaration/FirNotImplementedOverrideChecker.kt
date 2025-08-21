@@ -29,7 +29,9 @@ import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.delegatedWrapperData
+import org.jetbrains.kotlin.fir.isVisibleInClass
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.MemberWithBaseScope
@@ -75,7 +77,7 @@ object FirNotImplementedOverrideChecker : FirClassChecker(MppCheckerKind.Platfor
 
         fun DelegatedWrapperData<FirCallableDeclaration>.isIncorrectlyDelegated(): Boolean {
             if (classKind != ClassKind.OBJECT) return false
-            val delegateFieldType = delegateField.initializer?.resolvedType?.fullyExpandedType()
+            val delegateFieldType = delegateFieldSymbol.resolvedInitializer?.resolvedType?.fullyExpandedType()
             return (delegateFieldType as? ConeClassLikeType)?.lookupTag?.toSymbol(session) == classSymbol
         }
 

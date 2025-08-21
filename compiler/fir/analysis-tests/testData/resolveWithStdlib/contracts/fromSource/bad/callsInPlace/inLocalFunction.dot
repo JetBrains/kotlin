@@ -92,5 +92,6 @@ digraph inLocalFunction_kt {
     26 -> {27};
     27 -> {28};
     28 -> {29};
+    29 -> {17} [color=green style=dashed];
 
 }

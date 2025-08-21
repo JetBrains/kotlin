@@ -14,9 +14,14 @@ import java.util.*
 
 private const val STATISTICS_FOLDER_NAME = "kotlin-profile"
 private const val BUILD_SESSION_SEPARATOR = "BUILD FINISHED"
+private const val FILE_NAME_BUILD_ID_PREFIX_SEPARATOR = "."
 private const val PROFILE_FILE_NAME_SUFFIX = ".plugin-profile"
 
-internal fun <T : InternalGradleBuildFusStatisticsService.Parameter> InternalGradleBuildFusStatisticsService<T>.writeDownFusMetrics(buildId: String, log: Logger, configurationTimeMetrics: List<Metric>? = null) {
+internal fun <T : InternalGradleBuildFusStatisticsService.Parameter> InternalGradleBuildFusStatisticsService<T>.writeDownFusMetrics(
+    buildId: String,
+    log: Logger,
+    configurationTimeMetrics: List<Metric>? = null,
+) {
     val reportDir = File(parameters.fusStatisticsRootDirPath.get(), STATISTICS_FOLDER_NAME)
     try {
         Files.createDirectories(reportDir.toPath())
@@ -24,8 +29,7 @@ internal fun <T : InternalGradleBuildFusStatisticsService.Parameter> InternalGra
         log.warn("Failed to create directory '$reportDir' for FUS report. FUS report won't be created", e)
         return
     }
-    val reportFile = reportDir.resolve(UUID.randomUUID().toString() + PROFILE_FILE_NAME_SUFFIX)
-    reportFile.createNewFile()
+    val reportFile = reportDir.createReportFile(buildId, log) ?: return
 
     reportFile.outputStream().bufferedWriter().use {
         it.appendLine("Build: $buildId")
@@ -37,4 +41,17 @@ internal fun <T : InternalGradleBuildFusStatisticsService.Parameter> InternalGra
         }
         it.appendLine(BUILD_SESSION_SEPARATOR)
     }
+}
+
+internal fun File.createReportFile(buildId: String, log: Logger): File? {
+    val reportFile = resolve(
+        buildId + FILE_NAME_BUILD_ID_PREFIX_SEPARATOR
+                + Calendar.getInstance().timeInMillis + FILE_NAME_BUILD_ID_PREFIX_SEPARATOR
+                + UUID.randomUUID() + PROFILE_FILE_NAME_SUFFIX
+    )
+    if (!reportFile.createNewFile()) {
+        log.info("Failed to create report file ${reportFile.absolutePath}. FUS report for plugin won't be created.")
+        return null
+    }
+    return reportFile
 }

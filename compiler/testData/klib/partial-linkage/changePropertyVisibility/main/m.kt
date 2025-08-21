@@ -9,8 +9,8 @@ fun box() = abiTest {
     success("publicToInternalTopLevelProperty2.v2") { publicToInternalTopLevelProperty2 } // Signature remains the same.
     success("publicToInternalPATopLevelProperty1.v2") { publicToInternalPATopLevelProperty1 } // Signature remains the same.
     success("publicToInternalPATopLevelProperty2.v2") { publicToInternalPATopLevelProperty2 } // Signature remains the same.
-    unlinkedTopLevelPrivateSymbol("/publicToPrivateTopLevelProperty1.<get-publicToPrivateTopLevelProperty1>") { publicToPrivateTopLevelProperty1 } // Signature changed.
-    unlinkedTopLevelPrivateSymbol("/publicToPrivateTopLevelProperty2.<get-publicToPrivateTopLevelProperty2>") { publicToPrivateTopLevelProperty2 } // Signature changed.
+    unlinkedSymbol("/publicToPrivateTopLevelProperty1.<get-publicToPrivateTopLevelProperty1>") { publicToPrivateTopLevelProperty1 } // Signature changed.
+    unlinkedSymbol("/publicToPrivateTopLevelProperty2.<get-publicToPrivateTopLevelProperty2>") { publicToPrivateTopLevelProperty2 } // Signature changed.
 
     success("Container.publicToProtectedProperty1.v2") { c.publicToProtectedProperty1 } // Signature remains the same.
     success("Container.publicToProtectedProperty1.v2") { ci.publicToProtectedProperty1 } // Signature remains the same.
@@ -120,14 +120,6 @@ private fun TestBuilder.success(expectedOutcome: String, block: () -> String) =
 private fun TestBuilder.unlinkedSymbol(signature: String, block: () -> Unit) {
     val accessorName = signature.removePrefix("/").split('.').takeLast(2).joinToString(".")
     expectFailure(linkage("Property accessor '$accessorName' can not be called: No property accessor found for symbol '$signature'"), block)
-}
-
-private fun TestBuilder.unlinkedTopLevelPrivateSymbol(signature: String, block: () -> Unit) {
-    if (testMode.lazyIr.usedEverywhere) {
-        val accessorName = signature.removePrefix("/").split('.').takeLast(2).joinToString(".")
-        expectFailure(linkage("Property accessor '$accessorName' can not be called: Private property accessor declared in module <lib1> can not be accessed in module <main>"), block)
-    } else
-        unlinkedSymbol(signature, block)
 }
 
 private fun TestBuilder.inaccessible(accessorName: String, block: () -> Unit) = expectFailure(

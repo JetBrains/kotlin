@@ -15,7 +15,6 @@ import androidx.compose.runtime.*
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = -610686766, startOffset = 72, endOffset = 208)
 fun Icon(param: Int, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Icon)<param:...>,<rememb...>:Test.kt")

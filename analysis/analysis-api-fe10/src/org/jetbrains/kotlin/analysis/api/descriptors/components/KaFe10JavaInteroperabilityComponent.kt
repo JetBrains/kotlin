@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Descriptor
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.org.objectweb.asm.Type
 
 internal class KaFe10JavaInteroperabilityComponent(
@@ -67,6 +68,10 @@ internal class KaFe10JavaInteroperabilityComponent(
 
         if (!analysisSession.useSiteModule.targetPlatform.has<JvmPlatform>()) return null
 
+        if (mode == KaTypeMappingMode.FUNCTION_RETURN_TYPE && !isAnnotationMethod && kotlinType.isUnit()) {
+            return PsiTypes.voidType()
+        }
+
         val typeElement = asPsiTypeElement(
             simplifyType(kotlinType),
             useSitePosition,
@@ -92,10 +97,17 @@ internal class KaFe10JavaInteroperabilityComponent(
             KaTypeMappingMode.SUPER_TYPE -> TypeMappingMode.SUPER_TYPE_AS_IS
             KaTypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS -> TypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS
             KaTypeMappingMode.RETURN_TYPE_BOXED -> TypeMappingMode.RETURN_TYPE_BOXED
-            KaTypeMappingMode.RETURN_TYPE ->
+            KaTypeMappingMode.RETURN_TYPE, KaTypeMappingMode.FUNCTION_RETURN_TYPE ->
                 typeMapper.typeContext.getOptimalModeForReturnType(type.fe10Type, isAnnotationMethod)
-            KaTypeMappingMode.VALUE_PARAMETER ->
-                typeMapper.typeContext.getOptimalModeForValueParameter(type.fe10Type)
+
+            KaTypeMappingMode.VALUE_PARAMETER, KaTypeMappingMode.VALUE_PARAMETER_BOXED -> {
+                val mappingMode = typeMapper.typeContext.getOptimalModeForValueParameter(type.fe10Type)
+                if (this == KaTypeMappingMode.VALUE_PARAMETER_BOXED) {
+                    mappingMode.wrapInlineClassesMode()
+                } else {
+                    mappingMode
+                }
+            }
         }.let { typeMappingMode ->
             // Otherwise, i.e., if we won't skip type with no type arguments, flag overriding might bother a case like:
             // @JvmSuppressWildcards(false) Long -> java.lang.Long, not long, even though it should be no-op!

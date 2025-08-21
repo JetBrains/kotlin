@@ -18,12 +18,13 @@ import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirDataClassNonPublicConstructorChecker : FirRegularClassChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirRegularClass) {
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.DataClassCopyRespectsConstructorVisibility)) {
+        if (LanguageFeature.DataClassCopyRespectsConstructorVisibility.isEnabled()) {
             return
         }
         if (declaration.classKind != ClassKind.CLASS || !declaration.isData) {

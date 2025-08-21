@@ -5,6 +5,8 @@
 
 package kotlin
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
+
 @PublishedApi
 internal fun throwUninitializedPropertyAccessException(name: String): Nothing =
     throw UninitializedPropertyAccessException("lateinit property $name has not been initialized")
@@ -17,22 +19,28 @@ internal fun throwUnsupportedOperationException(message: String): Nothing =
 internal fun throwKotlinNothingValueException(): Nothing =
     throw KotlinNothingValueException()
 
+@UsedFromCompilerGeneratedCode
 internal fun noWhenBranchMatchedException(): Nothing = throw NoWhenBranchMatchedException()
 
+@UsedFromCompilerGeneratedCode
 internal fun THROW_ISE(): Nothing {
     throw IllegalStateException()
 }
 
+@UsedFromCompilerGeneratedCode
 internal fun THROW_CCE(): Nothing {
     throw ClassCastException()
 }
 
+@UsedFromCompilerGeneratedCode
 internal fun THROW_NPE(): Nothing {
     throw NullPointerException()
 }
 
+@UsedFromCompilerGeneratedCode
 internal fun THROW_IAE(msg: String): Nothing {
     throw IllegalArgumentException(msg)
 }
 
+@UsedFromCompilerGeneratedCode
 internal fun <T:Any> ensureNotNull(v: T?): T = if (v == null) THROW_NPE() else v

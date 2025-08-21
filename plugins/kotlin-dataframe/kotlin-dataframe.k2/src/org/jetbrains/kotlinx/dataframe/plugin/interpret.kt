@@ -109,9 +109,16 @@ fun <T> KotlinTypeFacade.interpret(
             }
 
             is Interpreter.ReturnType -> {
-                (it.expression.resolvedType as? ConeClassLikeType)?.returnType(session)?.let { returnType ->
-                    Interpreter.Success(Marker(returnType))
-                }
+                val type = it.expression.resolvedType as? ConeClassLikeType
+                type
+                    ?.let {
+                        if (type.isSomeFunctionType(session)) {
+                            type.returnType(session)
+                        } else {
+                            type
+                        }
+                    }
+                    ?.let { returnType -> Interpreter.Success(Marker(returnType)) }
             }
 
             is Interpreter.Dsl -> {
@@ -493,7 +500,7 @@ internal fun FirExpression.getSchema(session: FirSession): ObjectWithSchema? {
         } else {
             resolvedType to it
         }
-        symbol.resolvedAnnotationsWithClassIds.firstNotNullOfOrNull {
+        symbol.resolvedAnnotationsWithArguments.firstNotNullOfOrNull {
             runIf(it.fqName(session)?.asString() == HasSchema::class.qualifiedName!!) {
                 val argumentName = Name.identifier(HasSchema::schemaArg.name)
                 val schemaArg = (it.findArgumentByName(argumentName) as FirLiteralExpression).value

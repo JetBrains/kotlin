@@ -34,7 +34,7 @@ internal expect class BitSet constructor(size: Int = BIT_SET_ELEMENT_SIZE) {
     /**
      * Returns an index of a next bit which value is `true` after [startIndex] (inclusive).
      * Returns -1 if there is no such bits after [startIndex].
-     * @throws IndexOutOfBoundException if [startIndex] < 0.
+     * @throws IndexOutOfBoundsException if [startIndex] < 0.
      */
     fun nextSetBit(startIndex: Int = 0): Int
 
@@ -42,7 +42,7 @@ internal expect class BitSet constructor(size: Int = BIT_SET_ELEMENT_SIZE) {
      * Returns an index of a next bit which value is `false` after [startIndex] (inclusive).
      * Returns [size] if there is no such bits between [startIndex] and [size] - 1 assuming that the set has an infinite
      * sequence of `false` bits after (size - 1)-th.
-     * @throws IndexOutOfBoundException if [startIndex] < 0.
+     * @throws IndexOutOfBoundsException if [startIndex] < 0.
      */
     fun nextClearBit(startIndex: Int = 0): Int
 

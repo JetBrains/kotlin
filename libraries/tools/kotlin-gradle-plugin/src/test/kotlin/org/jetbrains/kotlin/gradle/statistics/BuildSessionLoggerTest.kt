@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.statistics
 
 import org.jetbrains.kotlin.statistics.BuildSessionLogger
+import org.jetbrains.kotlin.statistics.BuildSessionLogger.Companion.FUS_KOTLIN_FILE_NAME_SUFFIX
 import org.jetbrains.kotlin.statistics.fileloggers.MetricsContainer
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
@@ -20,26 +21,24 @@ import kotlin.test.*
 
 class BuildSessionLoggerTest {
 
-    private lateinit var rootFolder: File
+    private lateinit var statsFolder: File
 
-    private fun statFilesCount() = rootFolder.listFiles()?.single()?.listFiles()?.size ?: 0
+    private fun statFilesCount() = statsFolder.listFiles()?.size ?: 0
 
     @Before
     fun prepareFolder() {
-        rootFolder = Files.createTempFile("kotlin-stats", "").toFile()
-        rootFolder.delete()
-        rootFolder.mkdirs()
+        statsFolder = Files.createTempDirectory("kotlin-stats").toFile()
     }
 
     @After
     fun cleanFolder() {
-        rootFolder.deleteRecursively()
+        statsFolder.deleteRecursively()
     }
 
     @Test
     fun createSeveralTrackingFiles() {
-        val logger1 = BuildSessionLogger(rootFolder)
-        val logger2 = BuildSessionLogger(rootFolder)
+        val logger1 = BuildSessionLogger(statsFolder)
+        val logger2 = BuildSessionLogger(statsFolder)
 
         //check that starting session creates a new log file
         assertEquals(false, logger1.isBuildSessionStarted())
@@ -57,7 +56,7 @@ class BuildSessionLoggerTest {
         logger2.finishBuildSession()
         assertEquals(2, statFilesCount())
 
-        rootFolder.listFiles()?.first()?.listFiles()?.forEach { file ->
+        statsFolder.listFiles()?.forEach { file ->
             assertTrue(
                 file.name.matches(BuildSessionLogger.STATISTICS_FILE_NAME_PATTERN),
                 "Check that file name \'${file.name}\' matches pattern \'${BuildSessionLogger.STATISTICS_FILE_NAME_PATTERN}\'"
@@ -69,17 +68,15 @@ class BuildSessionLoggerTest {
     fun testDeleteExtraFiles() {
         val maxFiles = 100
         val buildId = UUID.randomUUID().toString()
-        val logger = BuildSessionLogger(rootFolder, maxFiles)
+        val logger = BuildSessionLogger(statsFolder, maxFiles)
         logger.startBuildSession(buildId)
         logger.finishBuildSession()
-        assertEquals(1, statFilesCount())
 
-        val statsFolder = rootFolder.listFiles()?.single() ?: fail("${rootFolder.absolutePath} was not created")
-        assertEquals(1, statsFolder.listFiles()?.size, "stat file was not created")
+        assertEquals(1, statFilesCount(), "stat file was not created")
 
         for (i in 1..200) {
             File(statsFolder, "$i").createNewFile()
-            File(statsFolder, "${UUID.randomUUID()}.profile").createNewFile()
+            File(statsFolder, "${UUID.randomUUID()}$FUS_KOTLIN_FILE_NAME_SUFFIX").createNewFile()
         }
 
         logger.startBuildSession(buildId)
@@ -109,12 +106,11 @@ class BuildSessionLoggerTest {
     @Test
     fun testReadWriteMetrics() {
         val buildId = "test"
-        val logger = BuildSessionLogger(rootFolder)
+        val logger = BuildSessionLogger(statsFolder)
         logger.report(StringMetrics.KOTLIN_COMPILER_VERSION, "1.2.3.4-snapshot")
 
         logger.startBuildSession(buildId)
-        val reportFile = rootFolder.resolve(BuildSessionLogger.Companion.STATISTICS_FOLDER_NAME)
-            .resolve(UUID.randomUUID().toString() + BuildSessionLogger.Companion.PROFILE_FILE_NAME_SUFFIX)
+        val reportFile = statsFolder.resolve(UUID.randomUUID().toString() + FUS_KOTLIN_FILE_NAME_SUFFIX)
 
         reportFile.createNewFile()
         //FUS metrics file should contain "BUILD FINISHED", otherwise it will be skipped as invalid
@@ -126,12 +122,11 @@ class BuildSessionLoggerTest {
             """.trimIndent()
         )
 
-        val invalidReportFile = rootFolder.resolve(BuildSessionLogger.Companion.STATISTICS_FOLDER_NAME)
-            .resolve(UUID.randomUUID().toString() + BuildSessionLogger.Companion.PROFILE_FILE_NAME_SUFFIX)
+        val invalidReportFile = statsFolder.resolve(UUID.randomUUID().toString() + FUS_KOTLIN_FILE_NAME_SUFFIX)
 
         invalidReportFile.appendText(
             """
-            ${StringMetrics.USE_OLD_BACKEND.name}=true
+            5tetetr=true
             
             """.trimIndent()
         )
@@ -139,14 +134,14 @@ class BuildSessionLoggerTest {
         logger.finishBuildSession()
         assertEquals(3, statFilesCount(), "Three files should be created: one from logger build finish, reportFile and invalidReportFile")
 
-        val statFiles = rootFolder.listFiles()?.single()?.listFiles() ?: fail("Could not find stat file")
+        val statFiles = statsFolder.listFiles() ?: fail("Could not find stat file")
         statFiles.forEach { it.appendBytes("break format of the file".toByteArray()) } //this line should be filtered by MetricsContainer.readFromFile
 
         logger.startBuildSession(buildId)
         logger.finishBuildSession()
 
         val metrics = ArrayList<MetricsContainer>()
-        rootFolder.listFiles()?.single()?.listFiles()?.forEach { file ->
+        statsFolder.listFiles()?.forEach { file ->
             MetricsContainer.readFromFile(file) {
                 metrics.add(it)
             }
@@ -174,7 +169,7 @@ class BuildSessionLoggerTest {
 
     @Test
     fun testSaveAndReadAllMetrics() {
-        val logger = BuildSessionLogger(rootFolder)
+        val logger = BuildSessionLogger(statsFolder)
         logger.startBuildSession("test")
         for (metric in StringMetrics.values()) {
             logger.report(metric, "value")
@@ -188,7 +183,7 @@ class BuildSessionLoggerTest {
         }
         logger.finishBuildSession()
 
-        MetricsContainer.readFromFile(rootFolder.listFiles()?.single()?.listFiles()?.single() ?: fail("Could not find stat file")) {
+        MetricsContainer.readFromFile(statsFolder.listFiles()?.single() ?: fail("Could not find stat file")) {
             for (metric in StringMetrics.values()) {
                 assertNotNull(it.getMetric(metric), "Could not find metric ${metric.name}")
             }
@@ -203,14 +198,14 @@ class BuildSessionLoggerTest {
 
     @Test
     fun testWeight() {
-        val logger = BuildSessionLogger(rootFolder)
+        val logger = BuildSessionLogger(statsFolder)
         logger.startBuildSession("build_1")
 
         logger.report(NumericalMetrics.ANALYSIS_LINES_PER_SECOND, 10, null, 9)
         logger.report(NumericalMetrics.ANALYSIS_LINES_PER_SECOND, 100, null, 1)
 
         logger.finishBuildSession()
-        MetricsContainer.readFromFile(rootFolder.listFiles()?.single()?.listFiles()?.single() ?: fail("Could not find stat file")) {
+        MetricsContainer.readFromFile(statsFolder.listFiles()?.single() ?: fail("Could not find stat file")) {
             assertEquals(19L, it.getMetric(NumericalMetrics.ANALYSIS_LINES_PER_SECOND)?.getValue())
         }
     }

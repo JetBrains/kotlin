@@ -20,7 +20,8 @@ import kotlin.internal.InlineOnly
  * When targeting the Native backend, [AtomicInt] stores a volatile [Int] variable and atomically updates it.
  * For additional details about atomicity guarantees for reads and writes see [kotlin.concurrent.Volatile].
  *
- * When targeting the JVM, instances of [AtomicInt] are represented by [java.util.concurrent.atomic.AtomicInteger].
+ * When targeting the JVM, instances of [AtomicInt] are represented by
+ * [java.util.concurrent.atomic.AtomicInteger](https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/atomic/AtomicInteger.html).
  * For details about guarantees of volatile accesses and updates of atomics refer to The Java Language Specification (17.4 Memory Model).
  *
  * For JS and Wasm [AtomicInt] is implemented trivially and is not thread-safe since these platforms do not support multi-threading.
@@ -103,7 +104,7 @@ public expect class AtomicInt public constructor(value: Int) {
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
-public operator fun AtomicInt.plusAssign(delta: Int): Unit { this.addAndFetch(delta) }
+public operator fun AtomicInt.plusAssign(delta: Int): Unit { val _ = this.addAndFetch(delta) }
 
 /**
  * Atomically subtracts the [given value][delta] from the current value of this [AtomicInt].
@@ -112,7 +113,7 @@ public operator fun AtomicInt.plusAssign(delta: Int): Unit { this.addAndFetch(de
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
-public operator fun AtomicInt.minusAssign(delta: Int): Unit { this.addAndFetch(-delta) }
+public operator fun AtomicInt.minusAssign(delta: Int): Unit { val _ = this.addAndFetch(-delta) }
 
 /**
  * Atomically increments the current value of this [AtomicInt] by one and returns the old value.
@@ -238,7 +239,8 @@ public expect inline fun AtomicInt.updateAndFetch(transform: (Int) -> Int): Int 
  * When targeting the Native backend, [AtomicLong] stores a volatile [Long] variable and atomically updates it.
  * For additional details about atomicity guarantees for reads and writes see [kotlin.concurrent.Volatile].
  *
- * When targeting the JVM, instances of [AtomicLong] are represented by [java.util.concurrent.atomic.AtomicLong].
+ * When targeting the JVM, instances of [AtomicLong] are represented by
+ * [java.util.concurrent.atomic.AtomicLong](https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/atomic/AtomicLong.html).
  * For details about guarantees of volatile accesses and updates of atomics refer to The Java Language Specification (17.4 Memory Model).
  *
  * For JS and Wasm [AtomicLong] is implemented trivially and is not thread-safe since these platforms do not support multi-threading.
@@ -321,7 +323,7 @@ public expect class AtomicLong public constructor(value: Long) {
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
-public operator fun AtomicLong.plusAssign(delta: Long): Unit { this.addAndFetch(delta) }
+public operator fun AtomicLong.plusAssign(delta: Long): Unit { val _ = this.addAndFetch(delta) }
 
 /**
  * Atomically subtracts the [given value][delta] from the current value of this [AtomicLong].
@@ -330,7 +332,7 @@ public operator fun AtomicLong.plusAssign(delta: Long): Unit { this.addAndFetch(
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
-public operator fun AtomicLong.minusAssign(delta: Long): Unit { this.addAndFetch(-delta) }
+public operator fun AtomicLong.minusAssign(delta: Long): Unit { val _ = this.addAndFetch(-delta) }
 
 /**
  * Atomically increments the current value of this [AtomicLong] by one and returns the old value.
@@ -455,7 +457,8 @@ public expect inline fun AtomicLong.updateAndFetch(transform: (Long) -> Long): L
  * When targeting the Native backend, [AtomicBoolean] stores a volatile [Boolean] variable and atomically updates it.
  * For additional details about atomicity guarantees for reads and writes see [kotlin.concurrent.Volatile].
  *
- * When targeting the JVM, instances of [AtomicBoolean] are represented by [java.util.concurrent.atomic.AtomicInteger].
+ * When targeting the JVM, instances of [AtomicBoolean] are represented by
+ * [java.util.concurrent.atomic.AtomicBoolean](https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/atomic/AtomicBoolean.html).
  * For details about guarantees of volatile accesses and updates of atomics refer to The Java Language Specification (17.4 Memory Model).
  *
  * For JS and Wasm [AtomicBoolean] is implemented trivially and is not thread-safe since these platforms do not support multi-threading.
@@ -524,7 +527,8 @@ public expect class AtomicBoolean public constructor(value: Boolean) {
  * When targeting the Native backend, [AtomicReference] stores a volatile variable of type [T] and atomically updates it.
  * For additional details about atomicity guarantees for reads and writes see [kotlin.concurrent.Volatile].
  *
- * When targeting the JVM, instances of [AtomicReference] are represented by [java.util.concurrent.atomic.AtomicReference].
+ * When targeting the JVM, instances of [AtomicReference] are represented by
+ * [java.util.concurrent.atomic.AtomicReference](https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/atomic/AtomicReference.html).
  * For details about guarantees of volatile accesses and updates of atomics refer to The Java Language Specification (17.4 Memory Model).
  *
  * For JS and Wasm [AtomicReference] is implemented trivially and is not thread-safe since these platforms do not support multi-threading.

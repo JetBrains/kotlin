@@ -5,7 +5,6 @@
 
 package kotlin
 
-import kotlin.wasm.internal.ExternalInterfaceType
 import kotlin.wasm.internal.jsToKotlinStringAdapter
 import kotlin.wasm.internal.wasmGetObjectRtti
 import kotlin.wasm.internal.getSimpleName
@@ -16,12 +15,20 @@ import kotlin.wasm.internal.getSimpleName
  * @param message the detail message string.
  * @param cause the cause of this throwable.
  */
+@OptIn(ExperimentalWasmJsInterop::class)
 public actual open class Throwable internal constructor(
     public actual open val message: String?,
     public actual open val cause: kotlin.Throwable?,
-    internal open val jsStack: ExternalInterfaceType
+    internal val jsError: JsError?
 ) {
-    public actual constructor(message: String?, cause: kotlin.Throwable?) : this(message, cause, captureStackTrace())
+    init {
+        if (jsError != null) {
+            jsError.name = getSimpleName(wasmGetObjectRtti(this))
+            jsError.kotlinException = toJsReference()
+        }
+    }
+
+    public actual constructor(message: String?, cause: Throwable?) : this(message, cause, createJsError(message, cause?.jsError))
 
     public actual constructor(message: String?) : this(message, null)
 
@@ -29,12 +36,14 @@ public actual open class Throwable internal constructor(
 
     public actual constructor() : this(null, null)
 
+    internal open val jsStack get() = jsError!!.stack
+
     private var _stack: String? = null
     internal val stack: String
         get() {
             var value = _stack
             if (value == null) {
-                value = jsToKotlinStringAdapter(jsStack).removePrefix("Error\n")
+                value = jsToKotlinStringAdapter(jsStack)
                 _stack = value
             }
 
@@ -59,5 +68,6 @@ internal actual var Throwable.suppressedExceptionsList: MutableList<Throwable>?
 
 internal actual val Throwable.stack: String get() = this.stack
 
-internal fun captureStackTrace(): ExternalInterfaceType =
-    js("new Error().stack")
+@OptIn(ExperimentalWasmJsInterop::class)
+internal fun createJsError(message: String?, cause: JsError?): JsError =
+    js("new Error(message, { cause })")

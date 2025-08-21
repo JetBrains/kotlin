@@ -1,4 +1,7 @@
-Diagnostics from file:
+Diagnostics from Dep.kt:
+  <NO DIAGNOSTICS>
+
+Diagnostics from main.kt:
   for PSI element of type KtCallExpression at (38,5-15)
     RETURN_VALUE_NOT_USED      text ranges: [(96,106)]
       PSI: KtCallExpression at (38,5-15)

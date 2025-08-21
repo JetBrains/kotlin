@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.resolve.ReturnValueStatus
 import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.types.Variance
 
@@ -46,6 +47,7 @@ val nameType = type<Name>()
 val visibilityType = type<Visibility>()
 val effectiveVisibilityType = type("descriptors", "EffectiveVisibility")
 val modalityType = type<Modality>()
+val returnValueStatusType = type<ReturnValueStatus>()
 val smartcastStabilityType = type<SmartcastStability>()
 val fqNameType = type<FqName>()
 val classIdType = type<ClassId>()

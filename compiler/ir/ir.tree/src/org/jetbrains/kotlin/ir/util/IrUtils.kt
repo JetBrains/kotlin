@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.builders.irImplicitCast
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.UNDERSCORE_PARAMETER
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.overrides.FakeOverrideBuilderStrategy
@@ -30,11 +31,13 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import java.io.StringWriter
+import kotlin.collections.get
 
 /**
  * Binds all arguments represented in the IR to the parameters of the accessed function.
@@ -87,11 +90,15 @@ fun IrExpression.coerceToUnitIfNeeded(valueType: IrType, irBuiltIns: IrBuiltIns)
         )
 }
 
-fun IrExpression.implicitCastIfNeededTo(type: IrType) =
+private fun IrExpression.castIfNeededTo(type: IrType, operator: IrTypeOperator): IrExpression =
     if (type == this.type || this.type.isNothing())
         this
     else
-        IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.IMPLICIT_CAST, type, this)
+        IrTypeOperatorCallImpl(startOffset, endOffset, type, operator, type, this)
+
+fun IrExpression.implicitCastIfNeededTo(type: IrType): IrExpression = castIfNeededTo(type, IrTypeOperator.IMPLICIT_CAST)
+
+fun IrExpression.reinterpretCastIfNeededTo(type: IrType): IrExpression = castIfNeededTo(type, IrTypeOperator.REINTERPRET_CAST)
 
 fun IrFunctionAccessExpression.usesDefaultArguments(): Boolean =
     symbol.owner.parameters.any { this.arguments[it.indexInParameters] == null && (!it.isVararg || it.defaultValue != null) }
@@ -321,18 +328,17 @@ tailrec fun IrDeclaration.getPackageFragment(): IrPackageFragment {
         ?: (parent as IrDeclaration).getPackageFragment()
 }
 
-fun IrConstructorCall.isAnnotation(name: FqName) = symbol.owner.parentAsClass.fqNameWhenAvailable == name
+// Just delegate to IrConstructorCall.isAnnotationWithEqualFqName(FqName) which is capable to correctly handle unbound symbols.
+fun IrConstructorCall.isAnnotation(name: FqName): Boolean = isAnnotationWithEqualFqName(name)
 
 fun IrAnnotationContainer.getAnnotation(name: FqName): IrConstructorCall? =
-    annotations.find { it.isAnnotation(name) }
+    annotations.find { it.isAnnotationWithEqualFqName(name) }
 
-fun IrAnnotationContainer.hasAnnotation(name: FqName) =
-    annotations.any {
-        it.symbol.owner.parentAsClass.hasEqualFqName(name)
-    }
+// Just delegate to List<IrConstructorCall>.hasAnnotation(FqName) which is capable to correctly handle unbound symbols.
+fun IrAnnotationContainer.hasAnnotation(name: FqName): Boolean = annotations.hasAnnotation(name)
 
-fun IrAnnotationContainer.hasAnnotation(classId: ClassId) =
-    annotations.any { it.symbol.owner.parentAsClass.classId == classId }
+// Just delegate to List<IrConstructorCall>.hasAnnotation(ClassId) which is capable to correctly handle unbound symbols.
+fun IrAnnotationContainer.hasAnnotation(classId: ClassId): Boolean = annotations.hasAnnotation(classId)
 
 fun IrAnnotationContainer.hasAnnotation(symbol: IrClassSymbol) =
     annotations.any {
@@ -519,7 +525,7 @@ val IrDeclaration.fileOrNull: IrFile?
     get() = getPackageFragment() as? IrFile
 
 val IrDeclaration.file: IrFile
-    get() = fileOrNull ?: TODO("Unknown file")
+    get() = fileOrNull!!
 
 val IrDeclaration.parentClassOrNull: IrClass?
     get() = parent.let {
@@ -544,7 +550,7 @@ fun IrMemberAccessExpression<*>.getTypeSubstitutionMap(irFunction: IrFunction): 
     val hasDispatchReceiver = (this as? IrCall)?.symbol?.owner?.dispatchReceiverParameter != null
 
     val receiverType = when {
-        superQualifierSymbol != null -> superQualifierSymbol.defaultType as? IrSimpleType
+        superQualifierSymbol != null -> superQualifierSymbol.defaultType
         hasDispatchReceiver -> arguments[0]?.type as? IrSimpleType
         else -> null
     }
@@ -791,19 +797,35 @@ fun IrValueParameter.copyTo(
         irFunction.classIfConstructor,
         remapTypeMap
     ),
-    varargElementType: IrType? = this.varargElementType, // TODO: remapTypeParameters here as well
+    varargElementType: IrType? = this.varargElementType?.remapTypeParameters(
+        (parent as IrTypeParametersContainer).classIfConstructor,
+        irFunction.classIfConstructor,
+        remapTypeMap
+    ),
     defaultValue: IrExpressionBody? = this.defaultValue,
     isCrossinline: Boolean = this.isCrossinline,
     isNoinline: Boolean = this.isNoinline,
     isAssignable: Boolean = this.isAssignable,
     kind: IrParameterKind = this.kind,
+    remapDefaultValueSymbolMap: Map<IrValueParameterSymbol, IrValueParameterSymbol> = mapOf(),
 ): IrValueParameter {
     val symbol = IrValueParameterSymbolImpl()
     val defaultValueCopy = defaultValue?.let { originalDefault ->
         factory.createExpressionBody(
             startOffset = originalDefault.startOffset,
             endOffset = originalDefault.endOffset,
-            expression = originalDefault.expression.deepCopyWithSymbols(irFunction),
+            expression = originalDefault.expression.run {
+                val symbolRemapper = object : DeepCopySymbolRemapper() {
+                    val remapTypeSymbolMap = remapTypeMap.map { (key, value) -> key.symbol to value.symbol }.toMap()
+                    override fun getReferencedTypeParameter(symbol: IrTypeParameterSymbol): IrClassifierSymbol =
+                        remapTypeSymbolMap[symbol] ?: super.getReferencedTypeParameter(symbol)
+
+                    override fun getReferencedValueParameter(symbol: IrValueParameterSymbol): IrValueSymbol =
+                        remapDefaultValueSymbolMap[symbol] ?: super.getReferencedValueParameter(symbol)
+                }
+                acceptVoid(symbolRemapper)
+                transform(DeepCopyIrTreeWithSymbols(symbolRemapper), null).patchDeclarationParents(irFunction)
+            },
         )
     }
     return factory.createValueParameter(
@@ -927,6 +949,8 @@ fun IrFunction.copyValueParametersToStatic(
     val target = this
     assert(target.parameters.isEmpty())
 
+    val parameterMapping = mutableMapOf<IrValueParameterSymbol, IrValueParameterSymbol>()
+    val typeParameterMapping = source.typeParameters.zip(target.typeParameters).toMap()
     target.parameters += source.parameters.map { param ->
         val name = when (param.kind) {
             IrParameterKind.DispatchReceiver -> Name.identifier("\$this")
@@ -941,19 +965,24 @@ fun IrFunction.copyValueParametersToStatic(
             assert(dispatchReceiverType!!.isSubtypeOfClass(param.type.classOrNull!!)) {
                 "Dispatch receiver type ${dispatchReceiverType.render()} is not a subtype of ${param.type.render()}"
             }
-            dispatchReceiverType.remapTypeParameters(
-                (param.parent as IrTypeParametersContainer).classIfConstructor,
-                target.classIfConstructor
-            )
+            dispatchReceiverType
         } else param.type
 
+        val remappedType = type.remapTypeParameters(
+            (param.parent as IrTypeParametersContainer).classIfConstructor,
+            target.classIfConstructor
+        )
         param.copyTo(
             target,
             origin = origin,
-            type = type,
+            type = remappedType,
             name = name,
             kind = IrParameterKind.Regular,
-        )
+            remapTypeMap = typeParameterMapping,
+            remapDefaultValueSymbolMap = parameterMapping,
+        ).also {
+            parameterMapping[param.symbol] = it.symbol
+        }
     }
 }
 
@@ -1157,11 +1186,18 @@ private object LoweringsFakeOverrideBuilderStrategy : FakeOverrideBuilderStrateg
 
 fun IrClass.addFakeOverrides(
     typeSystem: IrTypeSystemContext,
-    implementedMembers: List<IrOverridableMember> = emptyList(),
-    ignoredParentSymbols: List<IrSymbol> = emptyList()
+) = addFakeOverrides(typeSystem, emptyMap())
+
+fun IrClass.addFakeOverrides(
+    typeSystem: IrTypeSystemContext,
+    overrideParentDeclarationsList: Map<IrClass, List<IrDeclaration>>,
 ) {
     val fakeOverrides = IrFakeOverrideBuilder(typeSystem, LoweringsFakeOverrideBuilderStrategy, emptyList())
-        .buildFakeOverridesForClassUsingOverriddenSymbols(this, implementedMembers, compatibilityMode = false, ignoredParentSymbols)
+        .buildFakeOverridesForClassUsingOverriddenSymbols(
+            clazz = this,
+            overrideParentDeclarationsList = overrideParentDeclarationsList,
+            compatibilityMode = false,
+        )
     for (fakeOverride in fakeOverrides) {
         addChild(fakeOverride)
     }
@@ -1592,3 +1628,18 @@ val IrSimpleFunction.isTrivialGetter: Boolean
 
         return (receiver as? IrGetValue)?.symbol?.owner === this.dispatchReceiverParameter
     }
+
+
+private fun String.replaceInvalidChars(invalidChars: Set<Char>) =
+    invalidChars.fold(this) { acc, ch -> if (ch in acc) acc.replace(ch, '_') else acc }
+
+fun IrFunction.anonymousContextParameterName(parameter: IrValueParameter, invalidChars: Set<Char>): String? {
+    if (parameter.kind != IrParameterKind.Context || parameter.origin != UNDERSCORE_PARAMETER) return null
+    val contextParameterNames = parameters
+        .filter { it.kind == IrParameterKind.Context && it.origin == UNDERSCORE_PARAMETER }
+        .associateWith { it.type.erasedUpperBound.name.asString().replaceInvalidChars(invalidChars) }
+    val nameGroups = contextParameterNames.entries.groupBy({ it.value }, { it.key })
+    val baseName = contextParameterNames[parameter]
+    val currentNameGroup = nameGroups[baseName]!!
+    return if (currentNameGroup.size == 1) "\$context-$baseName" else "\$context-$baseName#${currentNameGroup.indexOf(parameter) + 1}"
+}

@@ -349,6 +349,10 @@ public abstract class JsVisitorWithContext {
         return true;
     }
 
+    public boolean visit(@NotNull JsBigIntLiteral x, @NotNull JsContext ctx) {
+        return true;
+    }
+
     public boolean visit(@NotNull JsObjectLiteral x, @NotNull JsContext ctx) {
         return true;
     }

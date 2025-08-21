@@ -19,16 +19,13 @@ import org.jetbrains.kotlin.ir.util.isFunctionMarker
 // try {
 //   ...exprs
 // }
-// [catch (e: JsException) { // OPTIONAL
-//   ...exprs
-// }]
 // catch (e: Throwable) {
 //   ...exprs
 // }
 // no-finally
 internal fun IrTry.isCanonical(context: WasmBackendContext) =
-    catches.size <= 2 &&
-            catches.all { it.catchParameter.type == context.irBuiltIns.throwableType || it.catchParameter.type == context.wasmSymbols.jsRelatedSymbols.jsException.defaultType } &&
+    catches.size <= 1 &&
+            catches.all { it.catchParameter.type == context.irBuiltIns.throwableType } &&
             finallyExpression == null
 
 internal val IrClass.isAbstractOrSealed
@@ -38,3 +35,6 @@ internal fun getFunctionalInterfaceSlot(iFace: IrClass): Int {
     check(iFace.symbol.isFunction())
     return if (iFace.defaultType.isFunctionMarker()) return 0 else iFace.typeParameters.size
 }
+
+internal val String.fitsLatin1
+    get() = this.all { it.code in 0..255 }

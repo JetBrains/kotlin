@@ -1,3 +1,4 @@
+// KNM_FE10_IGNORE
 package test
 
 import test.E.E1

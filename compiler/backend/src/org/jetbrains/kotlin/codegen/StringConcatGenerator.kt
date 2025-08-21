@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.codegen
 
 import com.google.common.collect.Sets
-import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
 import org.jetbrains.kotlin.config.JvmStringConcat
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_STRING_TYPE
@@ -15,8 +15,11 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-class StringConcatGenerator(val mode: JvmStringConcat, val mv: InstructionAdapter) {
-
+class StringConcatGenerator(
+    private val mode: JvmStringConcat,
+    private val mv: InstructionAdapter,
+    private val typeMapper: KotlinTypeMapperBase,
+) {
     enum class ItemType {
         PARAMETER,
         CONSTANT,
@@ -56,7 +59,7 @@ class StringConcatGenerator(val mode: JvmStringConcat, val mv: InstructionAdapte
                 }
             }
         } else {
-            StackValue.Constant(value, type).put(type, null, mv)
+            StackValue.Constant(value, type).put(type, null, mv, typeMapper)
             invokeAppend(type)
         }
     }
@@ -205,8 +208,5 @@ class StringConcatGenerator(val mode: JvmStringConcat, val mv: InstructionAdapte
                 else -> type
             }
         }
-
-        fun create(state: GenerationState, mv: InstructionAdapter) =
-            StringConcatGenerator(state.config.runtimeStringConcat, mv)
     }
 }

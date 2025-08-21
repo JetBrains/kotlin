@@ -1,4 +1,7 @@
+// IGNORE_BACKEND_K1: ANY
 // WITH_REFLECT
+// ISSUE: KT-75265, KT-75683
+
 fun box(): String = runAll(
     "test1" to { test1() },
     "test2" to { test2() },

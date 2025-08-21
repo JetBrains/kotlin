@@ -83,16 +83,14 @@ internal class SymbolLightClassForScript private constructor(
     override fun copy(): SymbolLightClassForScript =
         SymbolLightClassForScript(script, symbolPointer, ktModule)
 
-    private val _modifierList: PsiModifierList by lazyPub {
+    override fun getModifierList(): PsiModifierList = cachedValue {
         SymbolLightClassModifierList(
             containingDeclaration = this@SymbolLightClassForScript,
             modifiersBox = InitializedModifiersBox(PsiModifier.PUBLIC, PsiModifier.FINAL)
         )
     }
 
-    override fun getModifierList(): PsiModifierList = _modifierList
-
-    override fun hasModifierProperty(name: String): Boolean = _modifierList.hasModifierProperty(name)
+    override fun hasModifierProperty(name: String): Boolean = modifierList.hasModifierProperty(name)
 
     private val _containingFile by lazyPub {
         FakeFileForLightClass(

@@ -9,8 +9,9 @@ import kotlin.reflect.KClass
 
 annotation class AllOpen
 annotation class AllOpen2
+annotation class AddSupertype(val value: KClass<*>)
 
-annotation class DummyFunction
+annotation class DummyFunction(val fileName: String = "")
 
 @Target(AnnotationTarget.FUNCTION)
 annotation class TestTopLevelPrivateSuspendFun
@@ -80,3 +81,9 @@ annotation class EmitMetadata(val value: Int)
 
 @Retention(AnnotationRetention.SOURCE)
 annotation class GenerateBodyUsingEmittedMetadata
+
+/**
+ * Signals [IrTransformerForICTesting] to insert a call of the specified function
+ * in the annotated function
+ */
+annotation class CallSpecifiedFunction(val functionName: String)

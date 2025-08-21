@@ -3,11 +3,29 @@
 // Reason: break/continue in inline lambdas unsupported
 // WITH_STDLIB
 
-import kotlin.test.assertEquals
-
+// FILE: lib.kt
 inline fun <T> Iterable<T>.myForEach(action: (T) -> Unit): Unit {
     for (element in this) action(element)
 }
+
+inline fun <T> Iterable<T>.myForEachWithBreak(dealBreaker: T, action: (T) -> Unit): Unit {
+    for (element in this) {
+        if (element == dealBreaker)
+            break
+        action(element)
+    }
+}
+
+inline fun <T> Iterable<T>.myForEachWithContinue(skipper: T, action: (T) -> Unit): Unit {
+    for (element in this) {
+        if (element == skipper)
+            continue
+        action(element)
+    }
+}
+
+// FILE: main.kt
+import kotlin.test.assertEquals
 
 private fun testMyForEach() {
     val visited = mutableListOf<Pair<Int, Int>>()
@@ -24,14 +42,6 @@ private fun testMyForEach() {
     assertEquals(listOf(1 to 1, 1 to 2), visited)
 }
 
-inline fun <T> Iterable<T>.myForEachWithBreak(dealBreaker: T, action: (T) -> Unit): Unit {
-    for (element in this) {
-        if (element == dealBreaker)
-            break
-        action(element)
-    }
-}
-
 private fun testMyForEachWithBreak() {
     val visited = mutableListOf<Pair<Int, Int>>()
 
@@ -45,14 +55,6 @@ private fun testMyForEachWithBreak() {
     }
 
     assertEquals(listOf(1 to 1, 1 to 2, 2 to 1, 2 to 2), visited)
-}
-
-inline fun <T> Iterable<T>.myForEachWithContinue(skipper: T, action: (T) -> Unit): Unit {
-    for (element in this) {
-        if (element == skipper)
-            continue
-        action(element)
-    }
 }
 
 private fun testMyForEachWithContinue() {

@@ -21,7 +21,6 @@ private inline fun <T> Bug(items: List<T>, content: @Composable (item: T) -> Uni
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = -1794342280, startOffset = 92, endOffset = 215)
 private fun Test(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   if (%composer.shouldExecute(%changed != 0, %changed and 0b0001)) {
@@ -37,7 +36,6 @@ private fun Test(%composer: Composer?, %changed: Int) {
 }
 @Composable
 @ComposableInferredTarget(scheme = "[0[0]]")
-@FunctionKeyMeta(key = 1884885184, startOffset = 268, endOffset = 401)
 private fun <T> Bug(items: List<T>, content: Function3<@[ParameterName(name = 'item')] T, Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   %composer.startReplaceGroup(<>)
   val <iterator> = items.iterator()

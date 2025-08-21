@@ -43,6 +43,7 @@ val copyCommonSources by task<Sync> {
             "kotlin/util/Standard.kt",
             "kotlin/annotations/Multiplatform.kt",
             "kotlin/annotations/WasExperimental.kt",
+            "kotlin/annotations/ReturnValue.kt",
             "kotlin/internal/Annotations.kt",
             "kotlin/internal/AnnotationsBuiltin.kt",
             "kotlin/concurrent/atomics/AtomicArrays.common.kt",
@@ -90,8 +91,8 @@ kotlin {
                 compileTaskProvider.configure {
                     compilerOptions {
                         moduleName = "kotlin-stdlib"
-                        languageVersion = KotlinVersion.KOTLIN_2_2
-                        apiVersion = KotlinVersion.KOTLIN_2_2
+                        languageVersion = KotlinVersion.KOTLIN_2_3
+                        apiVersion = KotlinVersion.KOTLIN_2_3
                         // providing exhaustive list of args here
                         freeCompilerArgs.set(
                             listOfNotNull(
@@ -105,7 +106,8 @@ kotlin {
                                 "-opt-in=kotlin.contracts.ExperimentalContracts",
                                 "-opt-in=kotlin.ExperimentalMultiplatform",
                                 "-Xcontext-parameters",
-                                "-Xcompile-builtins-as-part-of-stdlib"
+                                "-Xcompile-builtins-as-part-of-stdlib",
+                                "-Xreturn-value-checker=full"
                             )
                         )
                     }

@@ -20,6 +20,7 @@ class SirSetterBuilder {
     var visibility: SirVisibility = SirVisibility.PUBLIC
     var documentation: String? = null
     val attributes: MutableList<SirAttribute> = mutableListOf()
+    val bridges: MutableList<SirBridge> = mutableListOf()
     var body: SirFunctionBody? = null
     var errorType: SirType = SirType.never
     var parameterName: String = "newValue"
@@ -30,6 +31,7 @@ class SirSetterBuilder {
             visibility,
             documentation,
             attributes,
+            bridges,
             body,
             errorType,
             parameterName,
@@ -56,6 +58,7 @@ inline fun buildSetterCopy(original: SirSetter, init: SirSetterBuilder.() -> Uni
     copyBuilder.visibility = original.visibility
     copyBuilder.documentation = original.documentation
     copyBuilder.attributes.addAll(original.attributes)
+    copyBuilder.bridges.addAll(original.bridges)
     copyBuilder.body = original.body
     copyBuilder.errorType = original.errorType
     copyBuilder.parameterName = original.parameterName

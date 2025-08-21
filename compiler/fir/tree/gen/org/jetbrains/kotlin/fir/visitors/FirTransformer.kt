@@ -1011,6 +1011,14 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformResolvedNamedReference(resolvedNamedReference, data)
     }
 
+    open fun transformPropertyWithExplicitBackingFieldResolvedNamedReference(propertyWithExplicitBackingFieldResolvedNamedReference: FirPropertyWithExplicitBackingFieldResolvedNamedReference, data: D): FirReference {
+        return transformElement(propertyWithExplicitBackingFieldResolvedNamedReference, data)
+    }
+
+    final override fun visitPropertyWithExplicitBackingFieldResolvedNamedReference(propertyWithExplicitBackingFieldResolvedNamedReference: FirPropertyWithExplicitBackingFieldResolvedNamedReference, data: D): FirReference {
+        return transformPropertyWithExplicitBackingFieldResolvedNamedReference(propertyWithExplicitBackingFieldResolvedNamedReference, data)
+    }
+
     open fun transformResolvedCallableReference(resolvedCallableReference: FirResolvedCallableReference, data: D): FirReference {
         return transformElement(resolvedCallableReference, data)
     }
@@ -1265,6 +1273,14 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
 
     final override fun visitLegacyRawContractDescription(legacyRawContractDescription: FirLegacyRawContractDescription, data: D): FirContractDescription {
         return transformLegacyRawContractDescription(legacyRawContractDescription, data)
+    }
+
+    open fun transformLazyContractDescription(lazyContractDescription: FirLazyContractDescription, data: D): FirContractDescription {
+        return transformElement(lazyContractDescription, data)
+    }
+
+    final override fun visitLazyContractDescription(lazyContractDescription: FirLazyContractDescription, data: D): FirContractDescription {
+        return transformLazyContractDescription(lazyContractDescription, data)
     }
 
     open fun transformErrorContractDescription(errorContractDescription: FirErrorContractDescription, data: D): FirContractDescription {

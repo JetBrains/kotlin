@@ -499,6 +499,12 @@ public class FirLightTreeBlackBoxCodegenTestForPowerAssertGenerated extends Abst
     public void testFunctionReturnsBoolean() {
       runTest("plugins/power-assert/testData/codegen/function/functionReturnsBoolean.kt");
     }
+
+    @Test
+    @TestMetadata("InlineFunction.kt")
+    public void testInlineFunction() {
+      runTest("plugins/power-assert/testData/codegen/function/InlineFunction.kt");
+    }
   }
 
   @Nested

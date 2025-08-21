@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.native
 
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.include
@@ -50,7 +51,7 @@ class SwiftExportIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("embedSwiftExport executes normally when Swift Export is enabled")
+    @DisplayName("embedSwiftExport executes normally")
     @GradleTest
     fun testSwiftExportExecutionWithSwiftExportEnabled(
         gradleVersion: GradleVersion,
@@ -108,6 +109,8 @@ class SwiftExportIT : KGPBaseTest() {
                 )
 
                 assertFileExists(libShared.toPath())
+
+                assertHasDiagnostic(KotlinToolingDiagnostics.ExperimentalFeatureWarning, "Swift Export")
             }
         }
     }

@@ -116,9 +116,6 @@ context(c: TypeSystemContext)
 fun CapturedTypeMarker.captureStatus(): CaptureStatus = with(c) { captureStatus() }
 
 context(c: TypeSystemContext)
-fun CapturedTypeMarker.isProjectionNotNull(): Boolean = with(c) { isProjectionNotNull() }
-
-context(c: TypeSystemContext)
 fun CapturedTypeConstructorMarker.projection(): TypeArgumentMarker = with(c) { projection() }
 
 context(c: TypeSystemContext)
@@ -273,7 +270,7 @@ context(c: TypeSystemContext)
 fun KotlinTypeMarker.typeConstructor(): TypeConstructorMarker = with(c) { typeConstructor() }
 
 context(c: TypeSystemContext)
-fun KotlinTypeMarker.isNullableType(): Boolean = with(c) { isNullableType() }
+fun KotlinTypeMarker.isNullableType(considerTypeVariableBounds: Boolean = true): Boolean = with(c) { isNullableType(considerTypeVariableBounds) }
 
 context(c: TypeSystemContext)
 fun KotlinTypeMarker.isNullableAny() = with(c) { isNullableAny() }

@@ -158,6 +158,12 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
   }
 
   @Test
+  @TestMetadata("inaccessibleTypeInArray.kt")
+  public void testInaccessibleTypeInArray() {
+    runTest("compiler/testData/codegen/bytecodeText/inaccessibleTypeInArray.kt");
+  }
+
+  @Test
   @TestMetadata("inheritedPropertyAnnotations.kt")
   public void testInheritedPropertyAnnotations() {
     runTest("compiler/testData/codegen/bytecodeText/inheritedPropertyAnnotations.kt");
@@ -1230,6 +1236,12 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
     @TestMetadata("inlineFunctionObjectCompanionPropertyAccess.kt")
     public void testInlineFunctionObjectCompanionPropertyAccess() {
       runTest("compiler/testData/codegen/bytecodeText/companion/inlineFunctionObjectCompanionPropertyAccess.kt");
+    }
+
+    @Test
+    @TestMetadata("kt12211_accessorForDelegatedPropertySetter.kt")
+    public void testKt12211_accessorForDelegatedPropertySetter() {
+      runTest("compiler/testData/codegen/bytecodeText/companion/kt12211_accessorForDelegatedPropertySetter.kt");
     }
 
     @Test
@@ -4990,6 +5002,12 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
     @TestMetadata("noNullCheckAfterCast.kt")
     public void testNoNullCheckAfterCast() {
       runTest("compiler/testData/codegen/bytecodeText/nullCheckOptimization/noNullCheckAfterCast.kt");
+    }
+
+    @Test
+    @TestMetadata("noNullCheckOnPrivateFunctionParameter.kt")
+    public void testNoNullCheckOnPrivateFunctionParameter() {
+      runTest("compiler/testData/codegen/bytecodeText/nullCheckOptimization/noNullCheckOnPrivateFunctionParameter.kt");
     }
 
     @Test

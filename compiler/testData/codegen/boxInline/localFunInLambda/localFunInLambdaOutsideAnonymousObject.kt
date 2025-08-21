@@ -1,7 +1,5 @@
 // ISSUE: KT-76024
 // NO_CHECK_LAMBDA_INLINING
-// IGNORE_INLINER: IR
-// ^^^ KT-76148: No mapping for symbol: VAR name:x type:kotlin.jvm.internal.Ref.ObjectRef<kotlin.String>
 
 // FILE: 1.kt
 package test

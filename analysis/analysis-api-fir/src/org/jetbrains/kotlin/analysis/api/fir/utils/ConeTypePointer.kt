@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,7 +11,10 @@ import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.ProjectionKind.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -55,14 +58,31 @@ private class ConeClassLikeTypePointer(coneType: ConeClassLikeType, builder: KaS
     private val typeArgumentPointers = coneType.typeArguments.map { ConeTypeProjectionPointer(it, builder) }
     private val isNullable = coneType.isMarkedNullable
     private val abbreviatedTypePointer = coneType.abbreviatedType?.createPointer(builder)
+    private val isTypeAlias = lookupTag.toSymbol(builder.rootSession) is FirTypeAliasSymbol
+
+    // function types-specific attributes
+    private val hasReceiverType = coneType.receiverType(builder.rootSession) != null
+    private val contextParameterNumber = coneType.contextParameterNumberForFunctionType
 
     override fun restore(session: KaFirSession): ConeClassLikeTypeImpl? {
+        val classLikeSymbol = lookupTag.toSymbol(session.firSession) ?: return null
+        when (classLikeSymbol) {
+            is FirTypeAliasSymbol -> if (!isTypeAlias) return null
+            is FirClassSymbol -> if (isTypeAlias) return null
+        }
+
         val typeArguments = typeArgumentPointers.map { it.restore(session) ?: return null }
         val abbreviatedType = abbreviatedTypePointer?.let { it.restore(session) ?: return null }
 
         val attributes = buildList {
             if (abbreviatedType != null) {
                 add(AbbreviatedTypeAttribute(abbreviatedType))
+            }
+            if (hasReceiverType) {
+                add(CompilerConeAttributes.ExtensionFunctionType)
+            }
+            if (contextParameterNumber != 0) {
+                add(CompilerConeAttributes.ContextFunctionTypeParams(contextParameterNumber))
             }
         }
 
@@ -118,12 +138,11 @@ private class ConeCapturedTypePointer(
     coneType: ConeCapturedType,
     builder: KaSymbolByFirBuilder,
 ) : ConeTypePointer<ConeCapturedType> {
-    private val captureStatus = coneType.captureStatus
-    private val lowerTypePointer = coneType.lowerType?.createPointer(builder)
+    private val captureStatus = coneType.constructor.captureStatus
+    private val lowerTypePointer = coneType.constructor.lowerType?.createPointer(builder)
     private val isMarkedNullable = coneType.isMarkedNullable
     private val coneProjectionPointer = ConeTypeProjectionPointer(coneType.constructor.projection, builder)
     private val constructorSupertypePointers = coneType.constructor.supertypes?.map { it.createPointer(builder) }
-    private val isProjectionNotNull = coneType.isProjectionNotNull
 
     private val typeParameterSymbolPointer: KaSymbolPointer<KaTypeParameterSymbol>? = run {
         val typeParameterLookupTag = coneType.constructor.typeParameterMarker as? ConeTypeParameterLookupTag
@@ -149,16 +168,14 @@ private class ConeCapturedTypePointer(
 
         val typeConstructor = ConeCapturedTypeConstructor(
             constructorProjection,
+            lowerType, captureStatus,
             constructorSupertypes,
             constructorTypeParameterMarker
         )
 
         return ConeCapturedType(
-            captureStatus,
-            lowerType,
             isMarkedNullable,
             typeConstructor,
-            isProjectionNotNull = isProjectionNotNull
         )
     }
 }
@@ -246,15 +263,13 @@ private class ConeIntegerConstantOperatorTypePointer(
     private val isUnsigned = coneType.isUnsigned
     private val isMarkedNullable = coneType.isMarkedNullable
 
-    override fun restore(session: KaFirSession): ConeIntegerConstantOperatorType? {
+    override fun restore(session: KaFirSession): ConeIntegerConstantOperatorType {
         return ConeIntegerConstantOperatorTypeImpl(isUnsigned, isMarkedNullable)
     }
 }
 
 private class ConeErrorTypePointer(coneType: ConeErrorType, builder: KaSymbolByFirBuilder) : ConeTypePointer<ConeErrorType> {
-    @Suppress("SpellCheckingInspection")
     private val isUninferredParameter = coneType.isUninferredParameter
-
     private val coneDiagnosticPointer = ConeDiagnosticPointer.create(coneType.diagnostic, builder)
     private val delegatedTypePointer = coneType.delegatedType?.createPointer(builder)
     private val typeArgumentPointers = coneType.typeArguments.map { ConeTypeProjectionPointer(it, builder) }
@@ -276,7 +291,7 @@ private class ConeErrorTypePointer(coneType: ConeErrorType, builder: KaSymbolByF
 }
 
 private object ConeDynamicTypePointer : ConeTypePointer<ConeDynamicType> {
-    override fun restore(session: KaFirSession): ConeDynamicType? {
+    override fun restore(session: KaFirSession): ConeDynamicType {
         return ConeDynamicType.create(session.firSession)
     }
 }

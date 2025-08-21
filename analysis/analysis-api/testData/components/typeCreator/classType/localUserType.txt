@@ -1,0 +1,4 @@
+CLASS_TYPE_BY_CLASS_ID
+   ClassId is null
+CLASS_TYPE_BY_SYMBOL
+   KaType: A

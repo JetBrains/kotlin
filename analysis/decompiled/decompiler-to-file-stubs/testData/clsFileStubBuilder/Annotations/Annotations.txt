@@ -1,4 +1,4 @@
-PsiJetFileStubImpl[package=]
+FILE[kind=File[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   CLASS[classId=/Annotations, fqName=Annotations, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Annotations, superNames=[]]
@@ -8,7 +8,7 @@ PsiJetFileStubImpl[package=]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=a]
-    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Annotations]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Annotations]
       MODIFIER_LIST[private]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
           CONSTRUCTOR_CALLEE
@@ -41,7 +41,7 @@ PsiJetFileStubImpl[package=]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
     CLASS_BODY
-      OBJECT_DECLARATION[classId=/Annotations.Companion, fqName=Annotations.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=/Annotations.Companion, fqName=Annotations.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[private companion]
         CLASS_BODY
           PROPERTY[fqName=Annotations.Companion.field, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=field]
@@ -101,7 +101,7 @@ PsiJetFileStubImpl[package=]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
+        PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
           MODIFIER_LIST[public final]
           VALUE_PARAMETER_LIST
       PROPERTY[fqName=Annotations.getterField, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=getterField]
@@ -112,7 +112,7 @@ PsiJetFileStubImpl[package=]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
-        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
+        PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
           MODIFIER_LIST[public final]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
               CONSTRUCTOR_CALLEE
@@ -154,7 +154,7 @@ PsiJetFileStubImpl[package=]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
-        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false]
+        PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
           MODIFIER_LIST[public final]
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
@@ -178,7 +178,7 @@ PsiJetFileStubImpl[package=]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
-        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false]
+        PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
           MODIFIER_LIST[public final]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
               CONSTRUCTOR_CALLEE
@@ -200,7 +200,7 @@ PsiJetFileStubImpl[package=]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
+        PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
           MODIFIER_LIST[public final]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
               CONSTRUCTOR_CALLEE
@@ -208,7 +208,7 @@ PsiJetFileStubImpl[package=]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=a]
           VALUE_PARAMETER_LIST
-        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false]
+        PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
           MODIFIER_LIST[private final]
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
@@ -237,10 +237,10 @@ PsiJetFileStubImpl[package=]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
-        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
+        PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
           MODIFIER_LIST[public final]
           VALUE_PARAMETER_LIST
-      FUN[fqName=Annotations.annotationWithVararg, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=annotationWithVararg]
+      FUN[fqName=Annotations.annotationWithVararg, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=annotationWithVararg]
         MODIFIER_LIST[private final]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=i]
@@ -260,7 +260,7 @@ PsiJetFileStubImpl[package=]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
-      FUN[fqName=Annotations.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+      FUN[fqName=Annotations.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
         MODIFIER_LIST[protected final]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
             CONSTRUCTOR_CALLEE
@@ -273,7 +273,7 @@ PsiJetFileStubImpl[package=]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
-      FUN[fqName=Annotations.g, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=g]
+      FUN[fqName=Annotations.g, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=g]
         MODIFIER_LIST[public final]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
             CONSTRUCTOR_CALLEE
@@ -296,17 +296,17 @@ PsiJetFileStubImpl[package=]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
-      FUN[fqName=Annotations.inlineFun, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=inlineFun]
+      FUN[fqName=Annotations.inlineFun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=inlineFun]
         MODIFIER_LIST[public final inline]
         TYPE_PARAMETER_LIST
-          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+          TYPE_PARAMETER[fqName=null, name=T]
             MODIFIER_LIST[reified]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=a]
-          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=F]
+          TYPE_PARAMETER[fqName=null, name=F]
             MODIFIER_LIST[]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
                 CONSTRUCTOR_CALLEE
@@ -319,7 +319,7 @@ PsiJetFileStubImpl[package=]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
-      FUN[fqName=Annotations.types, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=types]
+      FUN[fqName=Annotations.types, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=types]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=param]
@@ -347,7 +347,7 @@ PsiJetFileStubImpl[package=]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
-      FUN[fqName=Annotations.foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=foo]
+      FUN[fqName=Annotations.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=foo]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
           MODIFIER_LIST[]
@@ -369,7 +369,7 @@ PsiJetFileStubImpl[package=]
             REFERENCE_EXPRESSION[referencedName=Unit]
       CLASS[classId=/Annotations.ClassWithConstructor, fqName=Annotations.ClassWithConstructor, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=ClassWithConstructor, superNames=[]]
         MODIFIER_LIST[public final]
-        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=ClassWithConstructor]
+        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ClassWithConstructor]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=b]
@@ -393,8 +393,8 @@ PsiJetFileStubImpl[package=]
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
       CLASS[classId=/Annotations.En, fqName=Annotations.En, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=En, superNames=[Enum]]
-        MODIFIER_LIST[enum public final]
-        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=En]
+        MODIFIER_LIST[public final enum]
+        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=En]
           MODIFIER_LIST[private]
           VALUE_PARAMETER_LIST
         SUPER_TYPE_LIST
@@ -434,7 +434,7 @@ PsiJetFileStubImpl[package=]
                       REFERENCE_EXPRESSION[referencedName=c]
       CLASS[classId=/Annotations.Nested, fqName=Annotations.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested, superNames=[]]
         MODIFIER_LIST[public final]
-        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Nested]
+        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Nested]
           MODIFIER_LIST[private]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
               CONSTRUCTOR_CALLEE

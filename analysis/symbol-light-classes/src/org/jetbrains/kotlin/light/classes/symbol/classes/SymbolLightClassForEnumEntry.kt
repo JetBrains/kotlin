@@ -56,14 +56,12 @@ internal class SymbolLightClassForEnumEntry(
         return super.isEquivalentTo(another) || isOriginEquivalentTo(another)
     }
 
-    private val _modifierList: PsiModifierList by lazyPub {
+    override fun getModifierList(): PsiModifierList = cachedValue {
         SymbolLightClassModifierList(
             containingDeclaration = this,
             modifiersBox = InitializedModifiersBox(PsiModifier.STATIC, PsiModifier.FINAL),
         )
     }
-
-    override fun getModifierList(): PsiModifierList = _modifierList
 
     override fun hasModifierProperty(name: String): Boolean = name == PsiModifier.STATIC || name == PsiModifier.FINAL
 

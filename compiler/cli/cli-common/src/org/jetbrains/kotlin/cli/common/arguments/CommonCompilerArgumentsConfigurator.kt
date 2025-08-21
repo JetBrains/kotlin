@@ -58,22 +58,6 @@ open class CommonCompilerArgumentsConfigurator {
         HashMap<LanguageFeature, LanguageFeature.State>().apply {
             configureCommonLanguageFeatures(arguments)
 
-            // Non-automatic logic as it's more complex
-            when (AnnotationDefaultTargetMode.fromStringOrNull(annotationDefaultTarget)) {
-                null -> {}
-                AnnotationDefaultTargetMode.FIRST_ONLY -> {
-                    put(LanguageFeature.AnnotationDefaultTargetMigrationWarning, LanguageFeature.State.DISABLED)
-                    put(LanguageFeature.PropertyParamAnnotationDefaultTargetMode, LanguageFeature.State.DISABLED)
-                }
-                AnnotationDefaultTargetMode.FIRST_ONLY_WARN -> {
-                    put(LanguageFeature.AnnotationDefaultTargetMigrationWarning, LanguageFeature.State.ENABLED)
-                    put(LanguageFeature.PropertyParamAnnotationDefaultTargetMode, LanguageFeature.State.DISABLED)
-                }
-                AnnotationDefaultTargetMode.PARAM_PROPERTY -> {
-                    put(LanguageFeature.PropertyParamAnnotationDefaultTargetMode, LanguageFeature.State.ENABLED)
-                }
-            }
-
             if (progressiveMode) {
                 LanguageFeature.entries.filter { it.actuallyEnabledInProgressiveMode }.forEach {
                     // Don't overwrite other settings: users may want to turn off some particular

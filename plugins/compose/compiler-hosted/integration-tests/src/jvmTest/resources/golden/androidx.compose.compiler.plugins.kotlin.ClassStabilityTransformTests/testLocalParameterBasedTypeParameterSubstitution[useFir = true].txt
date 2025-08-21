@@ -23,7 +23,6 @@ import androidx.compose.runtime.Composable
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = -1541238530, startOffset = 104, endOffset = 173)
 fun <V> B(value: V, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(B)N(value)<A(Wrap...>:Test.kt")
@@ -53,7 +52,6 @@ fun <V> B(value: V, %composer: Composer?, %changed: Int) {
 }
 @Composable
 @ComposableInferredTarget(scheme = "[0[0]]")
-@FunctionKeyMeta(key = 888702020, startOffset = 198, endOffset = 331)
 fun <T> X(items: List<T>, itemContent: Function3<T, Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(X)N(items,itemContent)*<itemCo...>:Test.kt")
@@ -84,7 +82,6 @@ fun <T> X(items: List<T>, itemContent: Function3<T, Composer, Int, Unit>, %compo
   }
 }
 @Composable
-@FunctionKeyMeta(key = 691220591, startOffset = 356, endOffset = 516)
 fun C(items: List<String>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(C)N(items)<X(item...>:Test.kt")

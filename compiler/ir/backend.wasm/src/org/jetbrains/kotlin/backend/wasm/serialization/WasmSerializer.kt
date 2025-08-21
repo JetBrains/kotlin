@@ -223,7 +223,7 @@ class WasmSerializer(outputStream: OutputStream) {
     private fun serializeWasmStructFieldDeclaration(structFieldDecl: WasmStructFieldDeclaration) {
         serializeString(structFieldDecl.name)
         serializeWasmType(structFieldDecl.type)
-        b.writeByte(structFieldDecl.isMutable.toByte())
+        serializeBoolean(structFieldDecl.isMutable)
     }
 
     private fun serializeWasmType(type: WasmType) =
@@ -267,7 +267,7 @@ class WasmSerializer(outputStream: OutputStream) {
         b.writeUInt32(local.id.toUInt())
         serializeString(local.name)
         serializeWasmType(local.type)
-        b.writeByte(local.isParameter.toByte())
+        serializeBoolean(local.isParameter)
     }
 
     private fun serializeWasmInstr(instr: WasmInstr) {
@@ -414,8 +414,7 @@ class WasmSerializer(outputStream: OutputStream) {
             SourceLocation.NoLocation -> setTag(LocationTags.NO_LOCATION)
             SourceLocation.IgnoredLocation -> setTag(LocationTags.IGNORED_LOCATION)
             SourceLocation.NextLocation -> setTag(LocationTags.NEXT_LOCATION)
-            is SourceLocation.DefinedLocation -> withTag(LocationTags.LOCATION) {
-                serializeString(sl.module)
+            is SourceLocation.DefinedLocation -> withTag(LocationTags.DEFINED_LOCATION) {
                 serializeString(sl.file)
                 b.writeUInt32(sl.line.toUInt())
                 b.writeUInt32(sl.column.toUInt())
@@ -516,6 +515,7 @@ class WasmSerializer(outputStream: OutputStream) {
 
     private fun serializeConstantDataCharArray(constantDataCharArray: ConstantDataCharArray) {
         serializeList(constantDataCharArray.value) { serializeWasmSymbolReadOnly(it) { b.writeUInt32(it.code.toUInt()) } }
+        serializeBoolean(constantDataCharArray.fitsLatin1)
     }
 
     private fun serializeConstantDataCharField(constantDataCharField: ConstantDataCharField) {
@@ -578,6 +578,10 @@ class WasmSerializer(outputStream: OutputStream) {
         b.writeUInt32(int.toUInt())
     }
 
+    private fun serializeBoolean(bool: Boolean) {
+        b.writeUByte(bool.toByte().toUByte())
+    }
+
     private fun serializeLong(long: Long) {
         b.writeUInt64(long.toULong())
     }
@@ -621,11 +625,9 @@ class WasmSerializer(outputStream: OutputStream) {
             serializeReferencableElements(constantArrayDataSegmentId, { serializePair(it, { serializeList(it, ::serializeLong) }, ::serializeWasmType)}, ::serializeInt)
             serializeMap(jsFuns, ::serializeIdSignature, ::serializeJsCodeSnippet)
             serializeMap(jsModuleImports, ::serializeIdSignature, ::serializeString)
+            serializeMap(jsBuiltinsPolyfills, ::serializeString, ::serializeString)
             serializeList(exports, ::serializeWasmExport)
-            serializeNullable(stringPoolSize) { serializeWasmSymbolReadOnly(it, ::serializeInt) }
-            serializeNullable(throwableTagIndex) { serializeWasmSymbolReadOnly(it, ::serializeInt) }
-            serializeNullable(jsExceptionTagIndex) { serializeWasmSymbolReadOnly(it, ::serializeInt) }
-            serializeList(fieldInitializers, ::serializeFieldInitializer)
+            serializeNullable(wasmStringsElements, ::serializeWasmStringsElements)
             serializeList(mainFunctionWrappers, ::serializeIdSignature)
             serializeList(testFunctionDeclarators, ::serializeIdSignature)
             serializeList(equivalentFunctions) { serializePair(it, ::serializeString, ::serializeIdSignature) }
@@ -634,7 +636,17 @@ class WasmSerializer(outputStream: OutputStream) {
             serializeNullable(builtinIdSignatures, ::serializeBuiltinIdSignatures)
             serializeNullable(specialITableTypes, ::serializeInterfaceTableTypes)
             serializeNullable(rttiElements, ::serializeRttiElements)
+            serializeList(objectInstanceFieldInitializers, ::serializeIdSignature)
+            serializeList(nonConstantFieldInitializers, ::serializeIdSignature)
         }
+
+    private fun serializeWasmStringsElements(wasmStringsElements: WasmStringsElements) {
+        serializeWasmSymbolReadOnly(wasmStringsElements.createStringLiteralUtf16, ::serializeWasmFunction)
+        serializeWasmSymbolReadOnly(wasmStringsElements.createStringLiteralLatin1, ::serializeWasmFunction)
+        serializeWasmSymbolReadOnly(wasmStringsElements.createStringLiteralType, ::serializeWasmFunctionType)
+        serializeWasmSymbolReadOnly(wasmStringsElements.stringPoolSize, ::serializeInt)
+        serializeNullable(wasmStringsElements.stringPoolFieldInitializer, ::serializeIdSignature)
+    }
 
     private fun serializeRttiElements(rttiElements: RttiElements) {
         serializeList(rttiElements.globals) { rttiGlobal ->
@@ -659,17 +671,13 @@ class WasmSerializer(outputStream: OutputStream) {
 
     private fun serializeBuiltinIdSignatures(builtinIdSignatures: BuiltinIdSignatures) {
         serializeNullable(builtinIdSignatures.throwable, ::serializeIdSignature)
+        serializeNullable(builtinIdSignatures.kotlinAny, ::serializeIdSignature)
         serializeNullable(builtinIdSignatures.tryGetAssociatedObject, ::serializeIdSignature)
         serializeNullable(builtinIdSignatures.jsToKotlinAnyAdapter, ::serializeIdSignature)
         serializeNullable(builtinIdSignatures.unitGetInstance, ::serializeIdSignature)
         serializeNullable(builtinIdSignatures.runRootSuites, ::serializeIdSignature)
-    }
-
-    private fun serializeFieldInitializer(fieldInitializer: FieldInitializer) {
-        withFlags(fieldInitializer.isObjectInstanceField) {
-            serializeIdSignature(fieldInitializer.field)
-            serializeList(fieldInitializer.instructions, ::serializeWasmInstr)
-        }
+        serializeNullable(builtinIdSignatures.createString, ::serializeIdSignature)
+        serializeNullable(builtinIdSignatures.registerModuleDescriptor, ::serializeIdSignature)
     }
 
     private fun serializeClassAssociatedObjects(classAssociatedObjects: ClassAssociatedObjects) {

@@ -1,5 +1,5 @@
 A.class:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[Annotation]]
@@ -13,7 +13,7 @@ A.class:
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=annotation]
                 REFERENCE_EXPRESSION[referencedName=Target]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=A]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=A]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
       SUPER_TYPE_LIST
@@ -27,12 +27,12 @@ A.class:
 
 
 AnnotationsOnNullableTypes.class:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/AnnotationsOnNullableTypes, fqName=AnnotationsOnNullableTypes, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnotationsOnNullableTypes, superNames=[]]
       MODIFIER_LIST[public final]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=AnnotationsOnNullableTypes]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=AnnotationsOnNullableTypes]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
       CLASS_BODY
@@ -123,7 +123,7 @@ AnnotationsOnNullableTypes.class:
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=C]
-        FUN[fqName=AnnotationsOnNullableTypes.receiverArgument, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=receiverArgument]
+        FUN[fqName=AnnotationsOnNullableTypes.receiverArgument, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=receiverArgument]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             USER_TYPE
@@ -146,7 +146,7 @@ AnnotationsOnNullableTypes.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Unit]
-        FUN[fqName=AnnotationsOnNullableTypes.parameter, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=parameter]
+        FUN[fqName=AnnotationsOnNullableTypes.parameter, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=parameter]
           MODIFIER_LIST[public final]
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
@@ -165,7 +165,7 @@ AnnotationsOnNullableTypes.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Unit]
-        FUN[fqName=AnnotationsOnNullableTypes.parameterArgument, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=parameterArgument]
+        FUN[fqName=AnnotationsOnNullableTypes.parameterArgument, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=parameterArgument]
           MODIFIER_LIST[public final]
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
@@ -189,7 +189,7 @@ AnnotationsOnNullableTypes.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Unit]
-        FUN[fqName=AnnotationsOnNullableTypes.returnValue, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=returnValue]
+        FUN[fqName=AnnotationsOnNullableTypes.returnValue, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=returnValue]
           MODIFIER_LIST[public final]
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
@@ -202,10 +202,10 @@ AnnotationsOnNullableTypes.class:
             NULLABLE_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=C]
-        FUN[fqName=AnnotationsOnNullableTypes.returnTypeParameterValue, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=returnTypeParameterValue]
+        FUN[fqName=AnnotationsOnNullableTypes.returnTypeParameterValue, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=returnTypeParameterValue]
           MODIFIER_LIST[public final]
           TYPE_PARAMETER_LIST
-            TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+            TYPE_PARAMETER[fqName=null, name=T]
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
             MODIFIER_LIST[]
@@ -217,7 +217,7 @@ AnnotationsOnNullableTypes.class:
             NULLABLE_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=T]
-        FUN[fqName=AnnotationsOnNullableTypes.returnArgument, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=returnArgument]
+        FUN[fqName=AnnotationsOnNullableTypes.returnArgument, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=returnArgument]
           MODIFIER_LIST[public final]
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
@@ -235,7 +235,7 @@ AnnotationsOnNullableTypes.class:
                     NULLABLE_TYPE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=C]
-        FUN[fqName=AnnotationsOnNullableTypes.functionWithAnnotatedReceiver, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=functionWithAnnotatedReceiver]
+        FUN[fqName=AnnotationsOnNullableTypes.functionWithAnnotatedReceiver, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=functionWithAnnotatedReceiver]
           MODIFIER_LIST[public final]
           TYPE_REFERENCE
             MODIFIER_LIST[]
@@ -254,21 +254,89 @@ AnnotationsOnNullableTypes.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Unit]
+        FUN[fqName=AnnotationsOnNullableTypes.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=foo]
+          MODIFIER_LIST[public final]
+          TYPE_REFERENCE
+            MODIFIER_LIST[]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=A]
+            NULLABLE_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=String]
+          VALUE_PARAMETER_LIST
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Unit]
+        FUN[fqName=AnnotationsOnNullableTypes.functionWithAnnotatedReceiver2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=functionWithAnnotatedReceiver2]
+          MODIFIER_LIST[public final]
+          TYPE_REFERENCE
+            MODIFIER_LIST[]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+                ANNOTATION_TARGET[useSiteTarget=RECEIVER]
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=A]
+            FUNCTION_TYPE
+              VALUE_PARAMETER_LIST
+              TYPE_REFERENCE
+                NULLABLE_TYPE
+                  USER_TYPE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                    REFERENCE_EXPRESSION[referencedName=Unit]
+          VALUE_PARAMETER_LIST
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Unit]
+        FUN[fqName=AnnotationsOnNullableTypes.functionWithAnnotatedReceiver3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=functionWithAnnotatedReceiver3]
+          MODIFIER_LIST[public final]
+          TYPE_REFERENCE
+            MODIFIER_LIST[]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+                ANNOTATION_TARGET[useSiteTarget=RECEIVER]
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=A]
+            NULLABLE_TYPE
+              FUNCTION_TYPE
+                VALUE_PARAMETER_LIST
+                TYPE_REFERENCE
+                  USER_TYPE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                    REFERENCE_EXPRESSION[referencedName=Unit]
+          VALUE_PARAMETER_LIST
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Unit]
 
 
 B.class:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/B, fqName=B, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=B, superNames=[]]
       MODIFIER_LIST[public]
       TYPE_PARAMETER_LIST
-        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+        TYPE_PARAMETER[fqName=null, name=T]
       CLASS_BODY
 
 
 C.class:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/C, fqName=C, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=C, superNames=[]]

@@ -29,7 +29,6 @@ inline fun FakeBox(content: @Composable () -> Unit) {
 
 @Composable
 @NonRestartableComposable
-@FunctionKeyMeta(key = -112980289, startOffset = 227, endOffset = 365)
 fun CustomTextBroken(condition: Boolean, %composer: Composer?, %changed: Int) {
   sourceInformationMarkerStart(%composer, <>, "C(CustomTextBroken)N(condition)<FakeBo...>:Test.kt")
   if (isTraceInProgress()) {
@@ -52,7 +51,6 @@ fun CustomTextBroken(condition: Boolean, %composer: Composer?, %changed: Int) {
 }
 @Composable
 @ComposableInferredTarget(scheme = "[0[0]]")
-@FunctionKeyMeta(key = 535476725, startOffset = 385, endOffset = 447)
 fun FakeBox(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   sourceInformationMarkerStart(%composer, <>, "CC(FakeBox)N(content)<conten...>:Test.kt")
   content(%composer, 0b1110 and %changed)

@@ -1,4 +1,4 @@
-PsiJetFileStubImpl[package=some]
+FILE[kind=Facade[packageFqName=some, facadeFqName=some.PackageRecoveryKt]]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=some]
   IMPORT_LIST

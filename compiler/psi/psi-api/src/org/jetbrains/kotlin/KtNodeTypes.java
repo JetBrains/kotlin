@@ -26,7 +26,7 @@ public interface KtNodeTypes {
 
     IElementType ENUM_ENTRY             = KtStubBasedElementTypes.ENUM_ENTRY;
     IElementType CLASS_INITIALIZER      = KtStubBasedElementTypes.CLASS_INITIALIZER;
-    IElementType SCRIPT_INITIALIZER     = new KtNodeType("SCRIPT_INITIALIZER", KtScriptInitializer.class);
+    IElementType SCRIPT_INITIALIZER     = KtStubBasedElementTypes.SCRIPT_INITIALIZER;
     IElementType SECONDARY_CONSTRUCTOR  = KtStubBasedElementTypes.SECONDARY_CONSTRUCTOR;
     IElementType PRIMARY_CONSTRUCTOR    = KtStubBasedElementTypes.PRIMARY_CONSTRUCTOR;
     IElementType CONTEXT_RECEIVER       = KtStubBasedElementTypes.CONTEXT_RECEIVER;
@@ -132,7 +132,7 @@ public interface KtNodeTypes {
     IElementType PREFIX_EXPRESSION         = new KtNodeType("PREFIX_EXPRESSION", KtPrefixExpression.class);
     IElementType POSTFIX_EXPRESSION        = new KtNodeType("POSTFIX_EXPRESSION", KtPostfixExpression.class);
     IElementType LABELED_EXPRESSION        = new KtNodeType("LABELED_EXPRESSION", KtLabeledExpression.class);
-    IElementType CALL_EXPRESSION           = new KtNodeType("CALL_EXPRESSION", KtCallExpression.class);
+    IElementType CALL_EXPRESSION           = KtStubBasedElementTypes.CALL_EXPRESSION;
     IElementType ARRAY_ACCESS_EXPRESSION   = new KtNodeType("ARRAY_ACCESS_EXPRESSION", KtArrayAccessExpression.class);
     IElementType INDICES                   = new KtNodeType("INDICES", KtContainerNode.class);
     IElementType DOT_QUALIFIED_EXPRESSION  = KtStubBasedElementTypes.DOT_QUALIFIED_EXPRESSION;

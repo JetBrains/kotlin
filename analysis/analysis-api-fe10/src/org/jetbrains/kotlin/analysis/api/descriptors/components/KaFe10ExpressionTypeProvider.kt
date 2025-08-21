@@ -69,10 +69,10 @@ internal class KaFe10ExpressionTypeProvider(
             return kotlinType.toKtType(analysisContext)
         }
 
-    override val KtDeclaration.returnType: KaType
-        get() = withPsiValidityAssertion { getReturnTypeForKtDeclaration(this) }
+    override val KtDeclarationWithReturnType.returnType: KaType
+        get() = withPsiValidityAssertion { getReturnTypeForDeclaration(this) }
 
-    private fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): KaType {
+    private fun getReturnTypeForDeclaration(declaration: KtDeclarationWithReturnType): KaType {
         // Handle callable declarations with explicit return type first
         if (declaration is KtCallableDeclaration) {
             val typeReference = declaration.typeReference

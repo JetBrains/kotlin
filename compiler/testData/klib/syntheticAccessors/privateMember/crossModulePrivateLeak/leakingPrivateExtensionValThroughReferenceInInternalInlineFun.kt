@@ -1,4 +1,4 @@
-// IGNORE_INLINER: BYTECODE
+// IGNORE_BACKEND: JVM_IR
 // The test should be unmuted for JVM when KT-77870 issue is fixed.
 
 // MODULE: lib

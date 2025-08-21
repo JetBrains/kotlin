@@ -19,14 +19,15 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.impl.createKonanLibrary
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
-import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.PerformanceManager
+import org.jetbrains.kotlin.util.PhaseType
 import java.util.*
 
 private val softDeprecatedTargets = setOf(
@@ -115,6 +116,16 @@ class KonanDriver(
 
         ensureModuleName(konanConfig)
 
+        val sourcesFiles = environment.getSourceFiles()
+        performanceManager?.apply {
+            targetDescription = konanConfig.moduleId
+            this.outputKind = konanConfig.produce.name
+            addSourcesStats(sourcesFiles.size, environment.countLinesOfCode(sourcesFiles))
+            // Finishing initialization phase before cache setup. Otherwise, cache building time will be counted as initialization phase.
+            // Since cache builders use PerformanceManager to report precise phases, the only timing we lose is "calculating what to cache".
+            notifyPhaseFinished(PhaseType.Initialization)
+        }
+
         val cacheBuilder = CacheBuilder(konanConfig, compilationSpawner)
         if (cacheBuilder.needToBuild()) {
             cacheBuilder.build()
@@ -123,13 +134,6 @@ class KonanDriver(
 
         if (!konanConfig.produce.isHeaderCache) {
             konanConfig.cacheSupport.checkConsistency()
-        }
-
-        val sourcesFiles = environment.getSourceFiles()
-        performanceManager?.apply {
-            targetDescription = "${konanConfig.moduleId}-${konanConfig.produce}"
-            addSourcesStats(sourcesFiles.size, environment.countLinesOfCode(sourcesFiles))
-            notifyPhaseFinished(PhaseType.Initialization)
         }
 
         NativeCompilerDriver(performanceManager).run(konanConfig, environment)
@@ -170,6 +174,10 @@ class KonanDriver(
             require(!it.exists) { "Collision writing intermediate KLib $it" }
             it.deleteOnExit()
         }
+
+        // We will now spawn and wait for 2 separate compilers. Therefore, the initialization phase of this compiler is done.
+        performanceManager?.notifyPhaseFinished(PhaseType.Initialization)
+
         compilationSpawner.spawn(emptyList()) {
             fun <T> copy(key: CompilerConfigurationKey<T>) = putIfNotNull(key, configuration.get(key))
             fun <T> copyNotNull(key: CompilerConfigurationKey<T>) = put(key, configuration.getNotNull(key))

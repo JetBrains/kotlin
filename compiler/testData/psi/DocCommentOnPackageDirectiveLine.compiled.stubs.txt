@@ -1,10 +1,10 @@
-PsiJetFileStubImpl[package=p1.p2]
+FILE[kind=Facade[packageFqName=p1.p2, facadeFqName=p1.p2.DocCommentOnPackageDirectiveLineKt]]
   PACKAGE_DIRECTIVE
     DOT_QUALIFIED_EXPRESSION
       REFERENCE_EXPRESSION[referencedName=p1]
       REFERENCE_EXPRESSION[referencedName=p2]
   IMPORT_LIST
-  FUN[fqName=p1.p2.foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+  FUN[fqName=p1.p2.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE

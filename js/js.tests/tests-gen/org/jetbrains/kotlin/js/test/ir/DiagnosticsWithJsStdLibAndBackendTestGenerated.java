@@ -133,41 +133,6 @@ public class DiagnosticsWithJsStdLibAndBackendTestGenerated extends AbstractDiag
   }
 
   @Nested
-  @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/inline")
-  @TestDataPath("$PROJECT_ROOT")
-  @Tag("legacy-frontend")
-  public class Inline {
-    @Test
-    public void testAllFilesPresentInInline() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/inline"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
-    }
-
-    @Test
-    @TestMetadata("recursionCycle.kt")
-    public void testRecursionCycle() {
-      runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/inline/recursionCycle.kt");
-    }
-
-    @Test
-    @TestMetadata("recursionCycleLambda.kt")
-    public void testRecursionCycleLambda() {
-      runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/inline/recursionCycleLambda.kt");
-    }
-
-    @Test
-    @TestMetadata("recursionCycleWithPublicFun.kt")
-    public void testRecursionCycleWithPublicFun() {
-      runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/inline/recursionCycleWithPublicFun.kt");
-    }
-
-    @Test
-    @TestMetadata("recursionCycleWithStdlibCall.kt")
-    public void testRecursionCycleWithStdlibCall() {
-      runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/inline/recursionCycleWithStdlibCall.kt");
-    }
-  }
-
-  @Nested
   @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode")
   @TestDataPath("$PROJECT_ROOT")
   @Tag("legacy-frontend")
@@ -290,6 +255,12 @@ public class DiagnosticsWithJsStdLibAndBackendTestGenerated extends AbstractDiag
       }
 
       @Test
+      @TestMetadata("defaultValue.kt")
+      public void testDefaultValue() {
+        runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/inlinedReturnBreakContinue/defaultValue.kt");
+      }
+
+      @Test
       @TestMetadata("inlineFunctionWithMultipleParameters.kt")
       public void testInlineFunctionWithMultipleParameters() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/inlinedReturnBreakContinue/inlineFunctionWithMultipleParameters.kt");
@@ -305,6 +276,12 @@ public class DiagnosticsWithJsStdLibAndBackendTestGenerated extends AbstractDiag
       @TestMetadata("loopWithinInlineFunction.kt")
       public void testLoopWithinInlineFunction() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/inlinedReturnBreakContinue/loopWithinInlineFunction.kt");
+      }
+
+      @Test
+      @TestMetadata("noinlineParameter.kt")
+      public void testNoinlineParameter() {
+        runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/inlinedReturnBreakContinue/noinlineParameter.kt");
       }
 
       @Test

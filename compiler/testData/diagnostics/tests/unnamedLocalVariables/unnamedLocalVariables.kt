@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-74809
 // WITH_STDLIB
-// LANGUAGE: +UnnamedLocalVariables
+// LANGUAGE: +UnnamedLocalVariables, +NameBasedDestructuring
 
 fun writeTo(): Boolean = false
 
@@ -11,7 +11,7 @@ fun foo() {
     var (b, _) = 1 to 2
     val (_) = 'a' to 'b'
 
-    (<!SYNTAX!><!>val f = <!UNRESOLVED_REFERENCE!>first<!><!SYNTAX!>, val _ = second) = "first" to "second"<!>
+    <!UNSUPPORTED!>(val f = first, val _ = second) = "first" to "second"<!>
 
     when(val <!UNDERSCORE_IS_RESERVED!>_<!> = writeTo()) {
         true -> {}

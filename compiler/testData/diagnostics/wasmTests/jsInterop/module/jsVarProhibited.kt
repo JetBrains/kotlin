@@ -1,3 +1,4 @@
+// OPT_IN: kotlin.js.ExperimentalWasmJsInterop
 // FIR_IDENTICAL
 package foo
 

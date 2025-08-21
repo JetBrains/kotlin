@@ -1446,7 +1446,7 @@ class ControlFlowProcessor(
                 if (declaration is KtAnonymousInitializer) {
                     generateInstructions(declaration)
                     if (hasResultField && declaration == lastInitializer) {
-                        resultExpression?.recordUsedAsExpression(trace, true)
+                        resultExpression.recordUsedAsExpression(trace, true)
                     }
                 } else if (declaration is KtProperty || declaration is KtDestructuringDeclaration) {
                     generateInstructions(declaration)

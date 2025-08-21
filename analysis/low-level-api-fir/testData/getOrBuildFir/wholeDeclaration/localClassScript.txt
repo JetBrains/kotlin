@@ -18,7 +18,7 @@ FILE: [ResolvedTo(IMPORTS)] localClassScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun y(): R|kotlin/Unit| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun y(): R|kotlin/Unit| {
             local final [ResolvedTo(BODY_RESOLVE)] class X : R|kotlin/Any| {
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] constructor(): R|<local>/X| {
                     super<R|kotlin/Any|>()

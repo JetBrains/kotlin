@@ -164,7 +164,7 @@ private fun modifyAndExecProtoc(protoPath: ProtoPath) {
         debugProtoFile.writeText(modifyForDebug(protoPath))
         debugProtoFile.deleteOnExit()
 
-        val outPath = "build-common/test"
+        val outPath = "build-common/testFixtures"
         execProtoc(debugProtoFile.path, outPath)
         renamePackages(debugProtoFile.path, outPath)
     }

@@ -12,9 +12,6 @@ dependencies {
 }
 
 optInToUnsafeDuringIrConstructionAPI()
-kotlin {
-    compilerOptions.optIn.add("org.jetbrains.kotlin.ir.util.JvmIrInlineExperimental")
-}
 
 sourceSets {
     "main" {

@@ -73,7 +73,7 @@ private fun ConeKotlinType.withParameterNameAnnotation(name: Name, element: KtSo
                 buildLiteralExpression(fakeSource, ConstantValueKind.String, name.asString(), setType = true)
         }
     }
-    return withAttributes(attributes.add(ParameterNameTypeAttribute(parameterNameAnnotationCall)))
+    return withAttributes(attributes.add(ParameterNameTypeAttribute(name, listOf(parameterNameAnnotationCall))))
 }
 
 fun ConeKotlinType.withCombinedAttributesFrom(other: ConeKotlinType): ConeKotlinType =

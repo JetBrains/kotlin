@@ -269,6 +269,12 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByPsiTestGenerated extends A
   }
 
   @Test
+  @TestMetadata("interfaceMemberWithRedundantOpen.kt")
+  public void testInterfaceMemberWithRedundantOpen() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByPsi/interfaceMemberWithRedundantOpen.kt");
+  }
+
+  @Test
   @TestMetadata("jvmField.kt")
   public void testJvmField() {
     runTest("analysis/analysis-api/testData/symbols/symbolByPsi/jvmField.kt");

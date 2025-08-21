@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN -DontMakeExplicitJavaTypeArgumentsFlexible
+// LANGUAGE: -DontMakeExplicitJavaTypeArgumentsFlexible -PreciseSimplificationToFlexibleLowerConstraint
 
 // FILE: JavaWithGenericFun.java
 public class JavaWithGenericFun {

@@ -1,5 +1,6 @@
 import NullType
 import Testing
+import KotlinRuntime
 
 @Test
 func null_type() throws {
@@ -21,7 +22,7 @@ func null_type() throws {
 
     try #require(nullableAny == nil)
     nullableAny = nonoptional
-    try #require(nullableAny == nonoptional)
+    try #require(nullableAny as! KotlinBase == nonoptional)
     nullableAny = nil
     try #require(nullableAny == nil)
 

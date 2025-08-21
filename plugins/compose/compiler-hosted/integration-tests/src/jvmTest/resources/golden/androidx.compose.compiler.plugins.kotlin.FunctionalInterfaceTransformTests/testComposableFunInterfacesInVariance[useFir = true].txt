@@ -24,7 +24,6 @@ fun test() {
 
 interface Consumer<T>  {
   @Composable
-  @FunctionKeyMeta(key = -747777478, startOffset = 116, endOffset = 133)
   abstract fun consume(t: T, %composer: Composer?, %changed: Int)
 }
 @StabilityInferred(parameters = 2)
@@ -36,7 +35,6 @@ fun test() {
   Repro().test(<block>{
     class <no name provided> : Consumer<Any?> {
       @Composable
-      @FunctionKeyMeta(key = 2097238722, startOffset = 315, endOffset = 380)
       override fun consume(string: String, %composer: Composer?, %changed: Int) {
         %composer = %composer.startRestartGroup(<>)
         sourceInformation(%composer, "C(consume)N(string):Test.kt")

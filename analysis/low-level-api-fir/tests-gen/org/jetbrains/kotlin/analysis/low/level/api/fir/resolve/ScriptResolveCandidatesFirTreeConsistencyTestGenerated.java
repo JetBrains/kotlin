@@ -293,16 +293,6 @@ public class ScriptResolveCandidatesFirTreeConsistencyTestGenerated extends Abst
   }
 
   @Nested
-  @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/invokeOnObjects")
-  @TestDataPath("$PROJECT_ROOT")
-  public class InvokeOnObjects {
-    @Test
-    public void testAllFilesPresentInInvokeOnObjects() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/invokeOnObjects"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
-    }
-  }
-
-  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/java")
   @TestDataPath("$PROJECT_ROOT")
   public class Java {

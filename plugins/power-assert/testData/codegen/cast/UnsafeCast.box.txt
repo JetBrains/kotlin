@@ -52,7 +52,7 @@ assert(a as Base + 1)
 ---
 test9: ---
 assert((::foo as () -> Boolean)())
-       ||
-       |fun foo(): kotlin.Boolean
-       false
+        |                      |
+        |                      false
+        fun foo(): kotlin.Boolean
 ---

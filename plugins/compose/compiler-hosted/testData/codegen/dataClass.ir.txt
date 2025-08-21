@@ -7,7 +7,6 @@ MODULE_FRAGMENT
       annotations:
         Composable
         ComposableTarget(applier = "androidx.compose.ui.UiComposable")
-        FunctionKeyMeta(key = 2108813407, startOffset = 216, endOffset = 324)
       BLOCK_BODY
         BLOCK type=kotlin.Unit origin=null
           SET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.PostImage' type=kotlin.Unit origin=null

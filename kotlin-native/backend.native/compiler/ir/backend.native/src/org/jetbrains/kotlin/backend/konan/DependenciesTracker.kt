@@ -42,6 +42,7 @@ interface DependenciesTracker {
         }
     }
 
+    fun add(library: KotlinLibrary, onlyBitcode: Boolean = false)
     fun add(irFile: IrFile, onlyBitcode: Boolean = false)
     fun add(declaration: IrDeclaration, onlyBitcode: Boolean = false)
     fun addNativeRuntime(onlyBitcode: Boolean = false)
@@ -96,6 +97,10 @@ internal class DependenciesTrackerImpl(
     private val stdlibKFunctionImpl by lazy { findStdlibFile(KonanFqNames.internalPackageName, "KFunctionImpl.kt") }
 
     private var sealed = false
+
+    override fun add(library: KotlinLibrary, onlyBitcode: Boolean) {
+        add(FileOrigin.EntireModule(library), onlyBitcode)
+    }
 
     override fun add(functionOrigin: FunctionOrigin, onlyBitcode: Boolean) = when (functionOrigin) {
         FunctionOrigin.FromNativeRuntime -> addNativeRuntime(onlyBitcode)

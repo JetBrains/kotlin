@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.backend.jvm.mapping.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.*
-import org.jetbrains.kotlin.codegen.DescriptorAsmUtil.getNameForReceiverParameter
 import org.jetbrains.kotlin.codegen.coroutines.SuspensionPointKind
 import org.jetbrains.kotlin.codegen.coroutines.generateCoroutineSuspendedCheck
 import org.jetbrains.kotlin.codegen.inline.*
@@ -27,7 +26,10 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.VariableAccessorDescriptor
 import org.jetbrains.kotlin.diagnostics.BackendErrors
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -402,6 +404,22 @@ class ExpressionCodegen(
         )
     }
 
+    private fun getNameForReceiverParameter(descriptor: CallableDescriptor, languageVersionSettings: LanguageVersionSettings): String {
+        if (!languageVersionSettings.supportsFeature(LanguageFeature.NewCapturedReceiverFieldNamingConvention)) {
+            return RECEIVER_PARAMETER_NAME
+        }
+
+        val callableName =
+            if (descriptor is VariableAccessorDescriptor) descriptor.correspondingVariable.getName()
+            else descriptor.name
+
+        if (callableName.isSpecial) {
+            return RECEIVER_PARAMETER_NAME
+        }
+
+        return getLabeledThisName(callableName.asString(), LABELED_THIS_PARAMETER, RECEIVER_PARAMETER_NAME)
+    }
+
     override fun visitBlock(expression: IrBlock, data: BlockInfo): PromisedValue {
         assert(expression !is IrReturnableBlock) { "unlowered returnable block: ${expression.dump()}" }
         val isSynthesizedInitBlock = expression.origin == IrStatementOrigin.SYNTHESIZED_INIT_BLOCK
@@ -468,58 +486,6 @@ class ExpressionCodegen(
                         variable.gaps.add(Gap(gapStart, restartLabel))
                     }
                 }
-            }
-        }
-    }
-
-    override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: BlockInfo): PromisedValue {
-        val info = BlockInfo(data)
-
-        val inlineCall = inlinedBlock.inlineCall!!
-        val callee = inlinedBlock.inlineDeclaration as? IrFunction
-
-        lineNumberMapper.beforeIrInline(inlinedBlock)
-
-        lineNumberMapper.noLineNumberScopeWithCondition(inlinedBlock.inlineDeclaration.isInlineOnly()) {
-            inlineCall.markLineNumber(startOffset = true)
-            mv.nop()
-
-            lineNumberMapper.buildSmapFor(inlinedBlock)
-
-            if (inlineCall.usesDefaultArguments()) {
-                // $default function has first LN pointing to original callee
-                callee?.markLineNumber(startOffset = true)
-                mv.nop()
-            }
-
-            val result = inlinedBlock.statements.fold(unitValue) { prev, exp ->
-                prev.discard()
-                exp.accept(this, info)
-            }
-
-            if (callee != null && (inlinedBlock.inlinedElement !is IrCallableReference<*> || callee.isInline)) {
-                setExtraLineNumberForVoidReturningFunction(callee)
-            }
-
-            // After `ReturnableBlockLowering` last return could transform, but we still need to place new LN there
-            val lastStatement = callee?.body?.statements?.lastOrNull()
-            if (lastStatement is IrReturn) {
-                val returnTarget = lastStatement.returnTargetSymbol.owner
-                if (returnTarget.attributeOwnerId == inlinedBlock.inlineDeclaration) {
-                    // if return is implicit we must put new LN at the end of expression
-                    inlinedBlock.statements.last().markLineNumber(startOffset = lastStatement.startOffset != lastStatement.endOffset)
-                    mv.nop()
-                }
-            }
-
-            lineNumberMapper.dropCurrentSmap()
-
-            return result.materialized().also {
-                if (info.variables.isNotEmpty()) {
-                    writeLocalVariablesInTable(info, markNewLabel())
-                }
-                // This block must be executed after `writeLocalVariablesInTable`
-                lineNumberMapper.afterIrInline(inlinedBlock)
             }
         }
     }
@@ -711,15 +677,6 @@ class ExpressionCodegen(
     override fun visitVariable(declaration: IrVariable, data: BlockInfo): PromisedValue {
         val varType = typeMapper.mapType(declaration)
         val index = frameMap.enter(declaration.symbol, varType)
-        val name = declaration.name.asString()
-
-        if (state.configuration.getBoolean(JVMConfigurationKeys.USE_INLINE_SCOPES_NUMBERS) &&
-            state.configuration.getBoolean(JVMConfigurationKeys.ENABLE_IR_INLINER) &&
-            JvmAbi.isFakeLocalVariableForInline(name) &&
-            name.contains(INLINE_SCOPE_NUMBER_SEPARATOR)
-        ) {
-            declaration.name = Name.identifier(updateCallSiteLineNumber(name, lineNumberMapper.getLineNumber()))
-        }
 
         val initializer = declaration.initializer
         if (initializer != null) {
@@ -764,10 +721,10 @@ class ExpressionCodegen(
         val irValueDeclaration = expression.symbol.owner
         val realType = irValueDeclaration.realType
         val kotlinType = if (eraseType) realType.upperBound.withNullability(realType.isNullable()) else realType
-        StackValue.Local(variableIndex, asmType, kotlinType.toIrBasedKotlinType())
+        StackValue.Local(variableIndex, asmType, kotlinType)
     } else {
         gen(expression, type, parameterType, data)
-        StackValue.OnStack(type, parameterType.toIrBasedKotlinType())
+        StackValue.OnStack(type, parameterType)
     }
 
     // We do not mangle functions if Result is the only parameter of the function. This means that if a function
@@ -1263,10 +1220,6 @@ class ExpressionCodegen(
         mv.nop()
         val endLabel = Label()
         val stackElement = unwindBlockStack(endLabel, data) { it.loop == jump.loop }
-        if ((jump.loop.body as? IrBlock)?.statements?.singleOrNull() is IrInlinedFunctionBlock) {
-            // There must be another line number because this jump is actually return from inlined function
-            jump.markLineNumber(startOffset = true)
-        }
         if (stackElement == null) {
             generateGlobalReturnFlagIfPossible(jump, jump.loop.nonLocalReturnLabel(jump is IrBreak))
             mv.areturn(Type.VOID_TYPE)
@@ -1464,7 +1417,7 @@ class ExpressionCodegen(
         assert(context.config.runtimeStringConcat.isDynamic) {
             "IrStringConcatenation expression should be presented only with dynamic concatenation: ${expression.dump()}"
         }
-        val generator = StringConcatGenerator(context.config.runtimeStringConcat, mv)
+        val generator = StringConcatGenerator(context.config.runtimeStringConcat, mv, typeMapper)
         expression.arguments.forEach { arg ->
             if (arg is IrConst) {
                 val type = when (arg.kind) {

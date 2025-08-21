@@ -51,7 +51,7 @@ fun test8() {
     a?.inc()
 }
 
-context(a: Object)
+context(a: <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Object<!>)
 fun test9() {
     a.wait()
 }
@@ -91,9 +91,9 @@ fun usage() {
     with(null) {
         test8()
     }
-    with(Object()) {
+    <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>with<!>(<!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Object<!>()) <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>{
         test9()
-    }
+    }<!>
     with(JavaClass<String>()){
         test10()
     }

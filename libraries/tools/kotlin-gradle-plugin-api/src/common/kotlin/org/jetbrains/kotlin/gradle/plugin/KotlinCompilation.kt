@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
+import java.util.Locale.getDefault
 
 /**
  * # Kotlin compilation
@@ -392,7 +393,7 @@ interface KotlinCompilation<UNUSED : KotlinAnyOptionsDeprecated> : Named,
      * This property provides a unique name for the compilation based on the target name, allowing for easy distinction among them throughout the project.
      */
     val disambiguatedName
-        get() = target.disambiguationClassifier + name
+        get() = target.disambiguationClassifier + name.replaceFirstChar { it.titlecase(getDefault()) }
 }
 
 /**

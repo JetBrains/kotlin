@@ -99,6 +99,18 @@ public class LLReversedNativeDiagnosticsTestGenerated extends AbstractLLReversed
   }
 
   @Test
+  @TestMetadata("localClassesInInlineFunctionsNative.kt")
+  public void testLocalClassesInInlineFunctionsNative() {
+    runTest("compiler/testData/diagnostics/nativeTests/localClassesInInlineFunctionsNative.kt");
+  }
+
+  @Test
+  @TestMetadata("localInsideInlineInsideLocal.kt")
+  public void testLocalInsideInlineInsideLocal() {
+    runTest("compiler/testData/diagnostics/nativeTests/localInsideInlineInsideLocal.kt");
+  }
+
+  @Test
   @TestMetadata("nativeProtectedFunCall.kt")
   public void testNativeProtectedFunCall() {
     runTest("compiler/testData/diagnostics/nativeTests/nativeProtectedFunCall.kt");
@@ -228,6 +240,35 @@ public class LLReversedNativeDiagnosticsTestGenerated extends AbstractLLReversed
   @TestMetadata("topLevelSingleton.kt")
   public void testTopLevelSingleton() {
     runTest("compiler/testData/diagnostics/nativeTests/topLevelSingleton.kt");
+  }
+
+  @Test
+  @TestMetadata("unsupportedInInlineNative.kt")
+  public void testUnsupportedInInlineNative() {
+    runTest("compiler/testData/diagnostics/nativeTests/unsupportedInInlineNative.kt");
+  }
+
+  @Nested
+  @TestMetadata("compiler/testData/diagnostics/nativeTests/defaultArguments")
+  @TestDataPath("$PROJECT_ROOT")
+  @Tag("llFirNative")
+  public class DefaultArguments {
+    @Test
+    public void testAllFilesPresentInDefaultArguments() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/nativeTests/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
+    }
+
+    @Test
+    @TestMetadata("inheritedDefaultValue.kt")
+    public void testInheritedDefaultValue() {
+      runTest("compiler/testData/diagnostics/nativeTests/defaultArguments/inheritedDefaultValue.kt");
+    }
+
+    @Test
+    @TestMetadata("inheritedDefaultValueWithIntersectionOverride.kt")
+    public void testInheritedDefaultValueWithIntersectionOverride() {
+      runTest("compiler/testData/diagnostics/nativeTests/defaultArguments/inheritedDefaultValueWithIntersectionOverride.kt");
+    }
   }
 
   @Nested

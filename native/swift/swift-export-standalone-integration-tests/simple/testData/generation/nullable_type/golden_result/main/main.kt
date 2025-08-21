@@ -85,14 +85,14 @@ public fun __root___foo__TypesOfArguments__Swift_Optional_main_Bar___(a: kotlin.
     foo(__a)
 }
 
-@ExportedBridge("__root___foo_any__TypesOfArguments__KotlinRuntime_KotlinBase__")
-public fun __root___foo_any__TypesOfArguments__KotlinRuntime_KotlinBase__(a: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("__root___foo_any__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__")
+public fun __root___foo_any__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(a: kotlin.native.internal.NativePtr): Unit {
     val __a = kotlin.native.internal.ref.dereferenceExternalRCRef(a) as kotlin.Any
     foo_any(__a)
 }
 
-@ExportedBridge("__root___foo_any__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___")
-public fun __root___foo_any__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(a: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("__root___foo_any__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+public fun __root___foo_any__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(a: kotlin.native.internal.NativePtr): Unit {
     val __a = if (a == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(a) as kotlin.Any
     foo_any(__a)
 }

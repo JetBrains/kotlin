@@ -20,13 +20,13 @@ internal fun <T : Any> getKClassFromExpression(e: T): KClass<T> =
 internal fun createKType(classifier: KClassifier, arguments: Array<KTypeProjection>, isMarkedNullable: Boolean): KType =
     KTypeImpl(classifier, arguments.asList(), isMarkedNullable)
 
-internal fun createKTypeParameter(name: String, upperBounds: Array<KType>, variance: String, isReified: Boolean): KTypeParameter {
+internal fun createKTypeParameter(name: String, upperBounds: Array<KType>, variance: String, isReified: Boolean, container: String): KTypeParameter {
     val kVariance = when (variance) {
         "in" -> KVariance.IN
         "out" -> KVariance.OUT
         else -> KVariance.INVARIANT
     }
-    return KTypeParameterImpl(name, upperBounds.asList(), kVariance, isReified)
+    return KTypeParameterImpl(name, upperBounds.asList(), kVariance, isReified, container)
 }
 
 internal fun getStarKTypeProjection(): KTypeProjection =

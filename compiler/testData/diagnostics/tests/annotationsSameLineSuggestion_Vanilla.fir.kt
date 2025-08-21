@@ -1,5 +1,4 @@
-// LATEST_LV_DIFFERENCE
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-72941
 
 @Target(AnnotationTarget.EXPRESSION)
@@ -8,7 +7,7 @@ annotation class Ann
 
 fun foo(y: Int) {
     var x = 1
-    <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>@Ann x<!> += 2
+    <!ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE!>@Ann x <!UNRESOLVED_REFERENCE!>+=<!> 2<!>
 
     @Ann
     x += 2

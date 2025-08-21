@@ -15,9 +15,25 @@ import org.jetbrains.kotlin.mpp.CallableSymbolMarker
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import kotlin.RequiresOptIn.Level.ERROR
 
 abstract class FirCallableSymbol<out D : FirCallableDeclaration> : FirBasedSymbol<D>(), CallableSymbolMarker {
-    abstract val callableId: CallableId
+    /**
+     * Combination of a package name, a container class name (if any) and a callable name.
+     *
+     * Under some circumstances can be used as an unique id (however, not recommended generally).
+     * Equals null for local variables and parameters.
+     */
+    abstract val callableId: CallableId?
+
+    /**
+     * [callableId] having non-null value of [CallableId.PACKAGE_FQ_NAME_FOR_LOCAL].[name] for local variables/properties.
+     *
+     * Introduced specifically for rendering purposes. Please never use to identify something etc.
+     */
+    @RenderingInternals
+    val callableIdForRendering: CallableId
+        get() = callableId ?: CallableId(name)
 
     val resolvedReturnTypeRef: FirResolvedTypeRef
         get() {
@@ -63,8 +79,7 @@ abstract class FirCallableSymbol<out D : FirCallableDeclaration> : FirBasedSymbo
     val dispatchReceiverType: ConeSimpleKotlinType?
         get() = fir.dispatchReceiverType
 
-    val name: Name
-        get() = callableId.callableName
+    abstract val name: Name
 
     val containerSource: DeserializedContainerSource?
         // This is ok, because containerSource should be set during fir creation
@@ -123,8 +138,22 @@ abstract class FirCallableSymbol<out D : FirCallableDeclaration> : FirBasedSymbo
         }
     }
 
-    override fun toString(): String = "${this::class.simpleName} $callableId"
+    override fun toString(): String {
+        val description = when (isBound) {
+            true -> callableIdAsString()
+            false -> "(unbound)"
+        }
+        return "${this::class.simpleName} $description"
+    }
+
+    fun callableIdAsString(): String = callableId?.toString() ?: "<local>/$name"
 }
 
 val FirCallableSymbol<*>.hasContextParameters: Boolean
     get() = fir.contextParameters.isNotEmpty()
+
+@RequiresOptIn(
+    level = ERROR,
+    message = "This API is intended to be used specifically for diagnostics/dumps rendering. Please don't use in other places."
+)
+annotation class RenderingInternals

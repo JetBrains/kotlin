@@ -2,12 +2,37 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.ByteArray::class, "22ExportedKotlinPackages6kotlinO12KotlinStdlibE9ByteArrayC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.CharArray::class, "22ExportedKotlinPackages6kotlinO12KotlinStdlibE9CharArrayC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.CharSequence::class, "_CharSequence")
+@file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.collections.ByteIterator::class, "22ExportedKotlinPackages6kotlinO11collectionsO12KotlinStdlibE12ByteIteratorC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.collections.CharIterator::class, "22ExportedKotlinPackages6kotlinO11collectionsO12KotlinStdlibE12CharIteratorC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.text.StringBuilder::class, "22ExportedKotlinPackages6kotlinO4textO12KotlinStdlibE13StringBuilderC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.text.Appendable::class, "_Appendable")
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
+
+@ExportedBridge("kotlin_ByteArray_get__TypesOfArguments__Swift_Int32__")
+public fun kotlin_ByteArray_get__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, index: Int): Byte {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ByteArray
+    val __index = index
+    val _result = __self.`get`(__index)
+    return _result
+}
+
+@ExportedBridge("kotlin_ByteArray_iterator")
+public fun kotlin_ByteArray_iterator(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ByteArray
+    val _result = __self.iterator()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("kotlin_ByteArray_set__TypesOfArguments__Swift_Int32_Swift_Int8__")
+public fun kotlin_ByteArray_set__TypesOfArguments__Swift_Int32_Swift_Int8__(self: kotlin.native.internal.NativePtr, index: Int, value: Byte): Unit {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ByteArray
+    val __index = index
+    val __value = value
+    __self.`set`(__index, __value)
+}
 
 @ExportedBridge("kotlin_ByteArray_size_get")
 public fun kotlin_ByteArray_size_get(self: kotlin.native.internal.NativePtr): Int {
@@ -16,10 +41,41 @@ public fun kotlin_ByteArray_size_get(self: kotlin.native.internal.NativePtr): In
     return _result
 }
 
+@ExportedBridge("kotlin_CharArray_get__TypesOfArguments__Swift_Int32__")
+public fun kotlin_CharArray_get__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, index: Int): Char {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.CharArray
+    val __index = index
+    val _result = __self.`get`(__index)
+    return _result
+}
+
+@ExportedBridge("kotlin_CharArray_iterator")
+public fun kotlin_CharArray_iterator(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.CharArray
+    val _result = __self.iterator()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("kotlin_CharArray_set__TypesOfArguments__Swift_Int32_Swift_Unicode_UTF16_CodeUnit__")
+public fun kotlin_CharArray_set__TypesOfArguments__Swift_Int32_Swift_Unicode_UTF16_CodeUnit__(self: kotlin.native.internal.NativePtr, index: Int, value: Char): Unit {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.CharArray
+    val __index = index
+    val __value = value
+    __self.`set`(__index, __value)
+}
+
 @ExportedBridge("kotlin_CharArray_size_get")
 public fun kotlin_CharArray_size_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.CharArray
     val _result = __self.size
+    return _result
+}
+
+@ExportedBridge("kotlin_CharSequence_get__TypesOfArguments__Swift_Int32__")
+public fun kotlin_CharSequence_get__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, index: Int): Char {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.CharSequence
+    val __index = index
+    val _result = __self.`get`(__index)
     return _result
 }
 
@@ -37,6 +93,34 @@ public fun kotlin_CharSequence_subSequence__TypesOfArguments__Swift_Int32_Swift_
     val __endIndex = endIndex
     val _result = __self.subSequence(__startIndex, __endIndex)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("kotlin_collections_ByteIterator_next")
+public fun kotlin_collections_ByteIterator_next(self: kotlin.native.internal.NativePtr): Byte {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.ByteIterator
+    val _result = __self.next()
+    return _result
+}
+
+@ExportedBridge("kotlin_collections_ByteIterator_nextByte")
+public fun kotlin_collections_ByteIterator_nextByte(self: kotlin.native.internal.NativePtr): Byte {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.ByteIterator
+    val _result = __self.nextByte()
+    return _result
+}
+
+@ExportedBridge("kotlin_collections_CharIterator_next")
+public fun kotlin_collections_CharIterator_next(self: kotlin.native.internal.NativePtr): Char {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.CharIterator
+    val _result = __self.next()
+    return _result
+}
+
+@ExportedBridge("kotlin_collections_CharIterator_nextChar")
+public fun kotlin_collections_CharIterator_nextChar(self: kotlin.native.internal.NativePtr): Char {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.CharIterator
+    val _result = __self.nextChar()
+    return _result
 }
 
 @ExportedBridge("kotlin_text_Appendable_append__TypesOfArguments__Swift_Unicode_UTF16_CodeUnit__")
@@ -91,8 +175,8 @@ public fun kotlin_text_StringBuilder_append__TypesOfArguments__Swift_Optional_an
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("kotlin_text_StringBuilder_append__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___")
-public fun kotlin_text_StringBuilder_append__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self: kotlin.native.internal.NativePtr, value: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+@ExportedBridge("kotlin_text_StringBuilder_append__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+public fun kotlin_text_StringBuilder_append__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, value: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.text.StringBuilder
     val __value = if (value == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(value) as kotlin.Any
     val _result = __self.append(__value)
@@ -220,6 +304,14 @@ public fun kotlin_text_StringBuilder_ensureCapacity__TypesOfArguments__Swift_Int
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.text.StringBuilder
     val __minimumCapacity = minimumCapacity
     __self.ensureCapacity(__minimumCapacity)
+}
+
+@ExportedBridge("kotlin_text_StringBuilder_get__TypesOfArguments__Swift_Int32__")
+public fun kotlin_text_StringBuilder_get__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, index: Int): Char {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.text.StringBuilder
+    val __index = index
+    val _result = __self.`get`(__index)
+    return _result
 }
 
 @ExportedBridge("kotlin_text_StringBuilder_indexOf__TypesOfArguments__Swift_String__")
@@ -362,8 +454,8 @@ public fun kotlin_text_StringBuilder_insert__TypesOfArguments__Swift_Int32_Swift
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("kotlin_text_StringBuilder_insert__TypesOfArguments__Swift_Int32_Swift_Optional_KotlinRuntime_KotlinBase___")
-public fun kotlin_text_StringBuilder_insert__TypesOfArguments__Swift_Int32_Swift_Optional_KotlinRuntime_KotlinBase___(self: kotlin.native.internal.NativePtr, index: Int, value: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+@ExportedBridge("kotlin_text_StringBuilder_insert__TypesOfArguments__Swift_Int32_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+public fun kotlin_text_StringBuilder_insert__TypesOfArguments__Swift_Int32_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, index: Int, value: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.text.StringBuilder
     val __index = index
     val __value = if (value == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(value) as kotlin.Any
@@ -431,6 +523,14 @@ public fun kotlin_text_StringBuilder_reverse(self: kotlin.native.internal.Native
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.text.StringBuilder
     val _result = __self.reverse()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("kotlin_text_StringBuilder_set__TypesOfArguments__Swift_Int32_Swift_Unicode_UTF16_CodeUnit__")
+public fun kotlin_text_StringBuilder_set__TypesOfArguments__Swift_Int32_Swift_Unicode_UTF16_CodeUnit__(self: kotlin.native.internal.NativePtr, index: Int, value: Char): Unit {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.text.StringBuilder
+    val __index = index
+    val __value = value
+    __self.`set`(__index, __value)
 }
 
 @ExportedBridge("kotlin_text_StringBuilder_setLength__TypesOfArguments__Swift_Int32__")

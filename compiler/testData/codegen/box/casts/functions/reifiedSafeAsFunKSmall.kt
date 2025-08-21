@@ -2,6 +2,8 @@
 // IGNORE_BACKEND: JS_IR_ES6
 // TODO: muted automatically, investigate should it be ran for JS or not
 
+// NO_CHECK_LAMBDA_INLINING
+// FILE: lib.kt
 fun fn0() {}
 fun fn1(x: Any) {}
 
@@ -29,6 +31,7 @@ inline fun <reified T> reifiedSafeAsReturnsNull(x: Any?, operation: String) {
     }
 }
 
+// FILE: main.kt
 fun box(): String {
     val f0 = ::fn0 as Any
     val f1 = ::fn1 as Any

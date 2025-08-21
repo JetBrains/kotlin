@@ -64,6 +64,8 @@ plugins {
     `jvm-toolchains`
     alias(libs.plugins.gradle.node) apply false
     id("nodejs-cache-redirector-configuration")
+    id("gradle-plugins-documentation") apply false
+    id("com.autonomousapps.dependency-analysis") version "2.19.0"
 }
 
 val isTeamcityBuild = project.kotlinBuildProperties.isTeamcityBuild
@@ -115,7 +117,7 @@ if (!project.hasProperty("versions.kotlin-native")) {
     extra["versions.kotlin-native"] = if (kotlinBuildProperties.isKotlinNativeEnabled) {
         kotlinBuildProperties.defaultSnapshotVersion
     } else {
-        "2.2.20-dev-5253"
+        "2.2.20-dev-8371"
     }
 }
 
@@ -131,6 +133,7 @@ val irCompilerModules = arrayOf(
     ":compiler:ir.actualization",
     ":compiler:ir.interpreter",
     ":compiler:ir.inline",
+    ":compiler:ir.validation",
     ":wasm:wasm.ir"
 ).also { extra["irCompilerModules"] = it }
 
@@ -145,6 +148,7 @@ val irCompilerModulesForIDE = arrayOf(
     ":compiler:ir.actualization",
     ":compiler:ir.interpreter",
     ":compiler:ir.inline",
+    ":compiler:ir.validation",
 ).also { extra["irCompilerModulesForIDE"] = it }
 
 val commonCompilerModules = arrayOf(
@@ -177,6 +181,7 @@ val commonCompilerModules = arrayOf(
     ":core:util.runtime",
     ":compiler:frontend.common.jvm",
     ":compiler:frontend.java", // TODO this is fe10 module but some utils used in fir ide now
+    ":analysis:analysis-internal-utils",
     ":analysis:light-classes-base",
     ":analysis:decompiled:decompiler-to-stubs",
     ":analysis:decompiled:decompiler-to-file-stubs",
@@ -190,6 +195,7 @@ val commonCompilerModules = arrayOf(
     ":kotlin-util-klib",
     ":kotlin-util-klib-abi",
     ":native:base",
+    ":native:binary-options",
     ":native:kotlin-native-utils",
     ":compiler:build-tools:kotlin-build-statistics",
     ":compiler:build-tools:kotlin-build-tools-api",
@@ -296,7 +302,6 @@ val projectsUsedInIntelliJKotlinPlugin =
                 ":analysis:analysis-api-standalone:analysis-api-standalone-base",
                 ":analysis:analysis-api-standalone:analysis-api-fir-standalone-base",
                 ":analysis:analysis-api-standalone",
-                ":analysis:analysis-internal-utils",
                 ":analysis:analysis-test-framework",
                 ":analysis:decompiled",
                 ":analysis:kt-references",
@@ -545,7 +550,6 @@ val gradlePluginProjects = listOf(
     ":kotlin-gradle-plugin-annotations",
     ":kotlin-gradle-plugin-idea",
     ":kotlin-gradle-plugin-idea-proto",
-    ":kotlin-gradle-plugin-model",
     ":kotlin-gradle-plugin-tcs-android",
     ":compose-compiler-gradle-plugin",
     ":kotlin-allopen",
@@ -571,7 +575,9 @@ allprojects {
     if (!project.path.startsWith(":kotlin-ide.")) {
         pluginManager.apply("common-configuration")
     }
-
+    if (!project.path.startsWith(":compiler:build-tools")) {
+        pluginManager.apply("com.autonomousapps.dependency-analysis")
+    }
     if (kotlinBuildProperties.isInIdeaSync) {
         afterEvaluate {
             configurations.all {
@@ -659,6 +665,7 @@ allprojects {
                 includeVersion("com.google.protobuf", "protobuf-parent", "3.24.4-jb.2")
                 includeVersion("com.google.protobuf", "protobuf-java", "3.24.4-jb.2")
                 includeVersion("com.google.protobuf", "protobuf-bom", "3.24.4-jb.2")
+                includeModuleByRegex("org\\.jetbrains", "(syntax\\-api|lang\\-syntax).*")
             }
         }
 
@@ -849,12 +856,17 @@ tasks {
         dependsOn(":native:native.tests:gc-fuzzing-tests:check")
         dependsOn(":native:native.tests:stress:check")
         dependsOn(":native:native.tests:klib-compatibility:check")
+        dependsOn(":native:native.tests:litmus-tests:check")
+    }
+
+    // Similar to nativeCompilerTest, but should be executed only on macOS host as these tests
+    // technically or semantically depend on Xcode SDK.
+    register("nativeAppleSpecificTests") {
         dependsOn(":native:objcexport-header-generator:check")
-        dependsOn(":native:swift:swift-export-standalone:check")
         dependsOn(":native:swift:swift-export-embeddable:testExternalITWithEmbeddable")
         dependsOn(":native:swift:swift-export-embeddable:testSimpleITWithEmbeddable")
+        dependsOn(":native:swift:swift-export-standalone:check")
         dependsOn(":native:swift:swift-export-ide:test")
-        dependsOn(":native:native.tests:litmus-tests:check")
         dependsOn(":native:swift:sir-light-classes:check")
     }
 
@@ -940,7 +952,6 @@ tasks {
 
     register("miscTest") {
         dependsOn("coreLibsTest")
-        dependsOn("gradlePluginTest")
         dependsOn("toolsTest")
         dependsOn("examplesTest")
         dependsOn(":kotlin-build-common:test")
@@ -979,7 +990,7 @@ tasks {
     register("toolsTest") {
         dependsOn(":tools:kotlinp-jvm:test")
         dependsOn(":native:kotlin-klib-commonizer:test")
-        dependsOn(":native:kotlin-klib-commonizer-api:test")
+//        dependsOn(":native:kotlin-klib-commonizer-api:test")
         dependsOn(":kotlin-tooling-core:check")
         dependsOn(":kotlin-tooling-metadata:check")
         dependsOn(":compiler:build-tools:kotlin-build-tools-api:check")
@@ -1096,10 +1107,11 @@ tasks {
         group = "publishing"
         workingDir = rootProject.projectDir.resolve("libraries")
         commandLine = getMvnwCmd() + listOf(
-            "clean", "deploy", "--activate-profiles=noTest",
+            "clean", "deploy", "--activate-profiles=noTest,local-bootstrap",
             "-Dinvoker.skip=true", "-DskipTests",
             "-Ddeploy-snapshot-repo=local",
-            "-Ddeploy-snapshot-url=file://${rootProject.projectDir.resolve("build/repo")}"
+            "-Ddeploy-snapshot-url=file://${rootProject.projectDir.resolve("build/repo")}",
+            "-Dlocal-bootstrap-url=file://${rootProject.projectDir.resolve("build/repo")}",
         )
 
         val jdkToolchain1_8 = getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8)
@@ -1110,9 +1122,17 @@ tasks {
 
     // 'mvnPublish' is required for local bootstrap
     if (!kotlinBuildProperties.isTeamcityBuild) {
-        register("publish") {
+        val localPublishTask = register("publish") {
             group = "publishing"
-            dependsOn(mvnPublishTask)
+            finalizedBy(mvnPublishTask)
+        }
+
+        subprojects {
+            tasks.configureEach {
+                if (name == "publish") {
+                    localPublishTask.get().dependsOn(this)
+                }
+            }
         }
     }
 

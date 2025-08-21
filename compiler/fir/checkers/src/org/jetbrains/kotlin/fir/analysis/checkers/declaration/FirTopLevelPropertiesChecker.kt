@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.NormalPath
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeLocalVariableNoTypeOrInitializer
@@ -69,7 +70,9 @@ private fun checkFileLikeDeclaration(
 ) {
     val info = declaration.collectionInitializationInfo(topLevelPropertySymbols)
     for (topLevelPropertySymbol in topLevelPropertySymbols) {
-        val isDefinitelyAssigned = info?.get(topLevelPropertySymbol)?.isDefinitelyVisited() == true
+        val rangeInfo = info?.get(topLevelPropertySymbol)
+        val isDefinitelyAssigned = rangeInfo?.range?.isDefinitelyVisited() == true
+                && (!topLevelPropertySymbol.isLateInit || !rangeInfo.mustBeLateinit)
         checkProperty(containingDeclaration = null, topLevelPropertySymbol, isDefinitelyAssigned, reachable = true)
     }
 }
@@ -164,7 +167,9 @@ internal fun checkPropertyInitializer(
                         !propertySymbol.hasExplicitBackingField &&
                         (propertySymbol.getterSymbol?.isDefault == true || (propertySymbol.getterSymbol?.hasBody == true && propertySymbol.getterSymbol?.resolvedReturnTypeRef?.noExplicitType() == true))
             val isCorrectlyInitialized =
-                propertySymbol.hasInitializer || isDefinitelyAssigned && !propertySymbol.hasSetterAccessorImplementation &&
+                propertySymbol.hasInitializer
+                        || propertySymbol.hasExplicitBackingField && propertySymbol.backingFieldSymbol?.resolvedInitializer != null
+                        || isDefinitelyAssigned && !propertySymbol.hasSetterAccessorImplementation &&
                         (propertySymbol.getEffectiveModality(containingClass, context.languageVersionSettings) != Modality.OPEN ||
                                 // Drop this workaround after KT-64980 is fixed
                                 propertySymbol.effectiveVisibility == org.jetbrains.kotlin.descriptors.EffectiveVisibility.PrivateInClass)
@@ -174,16 +179,20 @@ internal fun checkPropertyInitializer(
                 backingFieldRequired &&
                 !inInterface &&
                 !propertySymbol.isLateInit &&
+                propertySymbol.backingFieldSymbol?.isLateInit != true &&
                 !isExpect &&
-                !isExternal &&
-                !propertySymbol.hasExplicitBackingField
+                !isExternal
             ) {
-                if (propertySymbol.receiverParameterSymbol != null && !propertySymbol.hasAllAccessorImplementation) {
+                if (
+                    propertySymbol.receiverParameterSymbol != null &&
+                    !propertySymbol.hasAllAccessorImplementation &&
+                    !propertySymbol.hasExplicitBackingField
+                ) {
                     reporter.reportOn(propertySource, FirErrors.EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT)
                     initializationError = true
                 } else if (!isCorrectlyInitialized && reachable) {
                     val isOpenValDeferredInitDeprecationWarning =
-                        !context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitOpenValDeferredInitialization) &&
+                        !LanguageFeature.ProhibitOpenValDeferredInitialization.isEnabled() &&
                                 propertySymbol.getEffectiveModality(containingClass, context.languageVersionSettings) == Modality.OPEN &&
                                 propertySymbol.isVal &&
                                 isDefinitelyAssigned
@@ -191,11 +200,13 @@ internal fun checkPropertyInitializer(
                     val isFalsePositiveDeferredInitDeprecationWarning = isOpenValDeferredInitDeprecationWarning &&
                             propertySymbol.getEffectiveModality(containingClass) == Modality.FINAL
                     if (!isFalsePositiveDeferredInitDeprecationWarning) {
+                        val source = propertySymbol.backingFieldSymbol.takeIf { propertySymbol.hasExplicitBackingField }?.source
+                            ?: propertySource
                         reportMustBeInitialized(
                             propertySymbol,
                             isDefinitelyAssigned,
                             containingClass,
-                            propertySource,
+                            source,
                             isOpenValDeferredInitDeprecationWarning
                         )
                         initializationError = true
@@ -215,9 +226,10 @@ internal fun checkPropertyInitializer(
                     reporter.reportOn(propertySource, FirErrors.EXPECTED_LATEINIT_PROPERTY)
                 }
                 // TODO, KT-59807: like [BindingContext.MUST_BE_LATEINIT], we should consider variable with uninitialized error.
-                if (context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2)) {
+                if (LanguageFeature.EnableDfaWarningsInK2.isEnabled()) {
                     if (
                         backingFieldRequired &&
+                        !propertySymbol.hasExplicitBackingField &&
                         !inInterface &&
                         isCorrectlyInitialized &&
                         propertySymbol.backingFieldSymbol?.hasAnnotation(StandardClassIds.Annotations.Transient, context.session) != true &&
@@ -249,15 +261,17 @@ private fun reportMustBeInitialized(
             propertySymbol.getEffectiveModality(containingClass, context.languageVersionSettings) != Modality.FINAL &&
             isDefinitelyAssigned
     val suggestMakingItAbstract = containingClass != null && !propertySymbol.hasAnyAccessorImplementation
+            && !propertySymbol.hasExplicitBackingField
     if (isOpenValDeferredInitDeprecationWarning && !suggestMakingItFinal && suggestMakingItAbstract) {
         error("Not reachable case. Every \"open val + deferred init\" case that could be made `abstract`, also could be made `final`")
     }
     val isMissedMustBeInitializedDeprecationWarning =
-        !context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor) &&
+        !LanguageFeature.ProhibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor.isEnabled() &&
                 containingClass != null &&
                 containingClass.primaryConstructorIfAny(context.session) == null &&
                 isDefinitelyAssigned
     val factory = when {
+        propertySymbol.hasExplicitBackingField -> FirErrors.EXPLICIT_FIELD_MUST_BE_INITIALIZED
         suggestMakingItFinal && suggestMakingItAbstract -> FirErrors.MUST_BE_INITIALIZED_OR_FINAL_OR_ABSTRACT
         suggestMakingItFinal -> FirErrors.MUST_BE_INITIALIZED_OR_BE_FINAL
         suggestMakingItAbstract -> FirErrors.MUST_BE_INITIALIZED_OR_BE_ABSTRACT

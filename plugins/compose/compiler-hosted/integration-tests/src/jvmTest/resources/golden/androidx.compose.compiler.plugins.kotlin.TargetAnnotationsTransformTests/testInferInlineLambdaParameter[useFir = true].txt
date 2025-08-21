@@ -17,7 +17,6 @@ fun Test(content: @Composable () -> Unit) {
 
 @Composable
 @ComposableInferredTarget(scheme = "[UI[_]]")
-@FunctionKeyMeta(key = 306004093, startOffset = 81, endOffset = 193)
 fun Test(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)N(content)<Inline...>:Test.kt")

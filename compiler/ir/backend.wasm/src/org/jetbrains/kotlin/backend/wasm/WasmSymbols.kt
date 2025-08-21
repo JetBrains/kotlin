@@ -74,6 +74,9 @@ class WasmSymbols(
     )
 
     internal val tryGetAssociatedObject = getInternalFunction("tryGetAssociatedObject")
+    internal val callAssociatedObjectGetter = getInternalFunction("callAssociatedObjectGetter")
+    val registerModuleDescriptor = getInternalFunction("registerModuleDescriptor")
+
     internal val wasmLongImmutableArray = getInternalClass("WasmLongImmutableArray")
 
     override val throwNullPointerException = getInternalFunction("THROW_NPE")
@@ -212,6 +215,8 @@ class WasmSymbols(
     val refCastNull = getInternalFunction("wasm_ref_cast_null")
     val wasmArrayCopy = getInternalFunction("wasm_array_copy")
     val wasmArrayNewData0 = getInternalFunction("array_new_data0")
+    val wasmArrayNewData = getInternalFunction("array_new_data")
+    val wasmArrayNewData0CharArray = maybeGetFunction("array_new_data0_char_array", wasmInternalFqName)
 
     val intToLong = getInternalFunction("wasm_i64_extend_i32_s")
 
@@ -222,8 +227,11 @@ class WasmSymbols(
     val boxIntrinsic: IrSimpleFunctionSymbol = getInternalFunction("boxIntrinsic")
     val unboxIntrinsic: IrSimpleFunctionSymbol = getInternalFunction("unboxIntrinsic")
 
-    val stringGetLiteral = getFunction("stringLiteral", StandardNames.BUILT_INS_PACKAGE_FQ_NAME)
+    val createString = getFunction("createString", StandardNames.BUILT_INS_PACKAGE_FQ_NAME)
+
     val stringGetPoolSize = getInternalFunction("stringGetPoolSize")
+
+    val getWasmAbiVersion = getInternalFunction("getWasmAbiVersion")
 
     val testFun = maybeGetFunction("test", kotlinTestPackageFqName)
     val suiteFun = maybeGetFunction("suite", kotlinTestPackageFqName)
@@ -237,6 +245,8 @@ class WasmSymbols(
     val wasmGetRttiLongField = getInternalFunction("wasmGetRttiLongField")
     val wasmGetRttiSuperClass = getInternalFunction("wasmGetRttiSuperClass")
     val wasmGetObjectRtti = getInternalFunction("wasmGetObjectRtti")
+    val wasmGetQualifierImpl = getInternalFunction("wasmGetQualifierImpl")
+    val wasmGetSimpleNameImpl = getInternalFunction("wasmGetSimpleNameImpl")
     val wasmArrayAnyIndexOfValue = getInternalFunction("wasmArrayAnyIndexOfValue")
 
     val wasmIsInterface = getInternalFunction("wasmIsInterface")
@@ -380,16 +390,15 @@ class WasmSymbols(
 
         val jsPromise = getIrClass(FqName("kotlin.js.Promise"))
 
-        internal val throwAsJsException: IrSimpleFunctionSymbol =
-            getInternalFunction("throwAsJsException")
-
         val kExternalClassImpl: IrClassSymbol = getInternalClass("KExternalClassImpl")
 
         val jsException = getIrClass(FqName("kotlin.js.JsException"))
-        val jsExceptionThrownValue
-            get() = jsException.fields.single { it.owner.name == Name.identifier("thrownValue") }.owner
 
-        val createJsException = getInternalFunction("createJsException")
+        val getKotlinException = getInternalFunction("getKotlinException")
+
+        val throwValue = getInternalFunction("throwValue")
+
+        val throw0 = getInternalFunction("throw0")
     }
 
     private val wasmExportClass = getIrClass(FqName("kotlin.wasm.WasmExport"))

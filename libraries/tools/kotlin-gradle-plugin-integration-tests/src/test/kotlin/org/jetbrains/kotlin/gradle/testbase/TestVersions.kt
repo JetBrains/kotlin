@@ -32,6 +32,7 @@ interface TestVersions {
         const val G_8_12 = "8.12.1"
         const val G_8_13 = "8.13"
         const val G_8_14 = "8.14"
+        const val G_9_0 = "9.0.0-rc-2"
 
         /**
          * Check [org.jetbrains.kotlin.gradle.GradleCompatibilityIT.testIncompatibleGradleVersion]
@@ -63,13 +64,13 @@ interface TestVersions {
         const val AGP_86 = "8.6.1"
         const val AGP_87 = "8.7.2"
         const val AGP_88 = "8.8.2"
-        const val AGP_89 = "8.9.2"
-        const val AGP_810 = "8.10.0-rc03"
-        const val AGP_811 = "8.11.0-alpha07" // Remove 'BuildOptions.suppressWarningFromAgpWithGradle813' once default
+        const val AGP_89 = "8.9.3"
+        const val AGP_810 = "8.10.1"
+        const val AGP_811 = "8.11.1" //  Remove suppressAgpWarningSinceGradle814 once AGP 8.12 is default
 
         // Should be in sync with KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck
         const val MIN_SUPPORTED = AGP_73 // AgpCompatibilityCheck.minimalSupportedAgpVersion
-        const val MAX_SUPPORTED = AGP_810 // Update once the Gradle MAX_SUPPORTED version is bumped
+        const val MAX_SUPPORTED = AGP_811 // Update once the Gradle MAX_SUPPORTED version is bumped
     }
 
     enum class AgpCompatibilityMatrix(
@@ -120,6 +121,8 @@ interface TestVersions {
         const val DOKKA = "1.8.10"
         // TODO KT-70336 update Dokka version to a stable version when 2.0.0 is released
         const val DOKKA_V2 = "2.0.20-dev-360"
+
+        const val KSP = "1.9.22-1.0.16"
     }
 
     object Compose {

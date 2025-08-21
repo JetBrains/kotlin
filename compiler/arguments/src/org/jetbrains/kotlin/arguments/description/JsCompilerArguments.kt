@@ -5,43 +5,37 @@
 
 package org.jetbrains.kotlin.arguments.description
 
-import org.jetbrains.kotlin.arguments.dsl.TemporaryCompilerArgumentLifecycle
 import org.jetbrains.kotlin.arguments.dsl.base.*
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
-import org.jetbrains.kotlin.arguments.dsl.stubLifecycle
 import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
 import org.jetbrains.kotlin.arguments.dsl.types.StringType
 import org.jetbrains.kotlin.cli.common.arguments.DefaultValue
+import org.jetbrains.kotlin.cli.common.arguments.Enables
 import org.jetbrains.kotlin.cli.common.arguments.GradleDeprecatedOption
 import org.jetbrains.kotlin.cli.common.arguments.GradleInputTypes
 import org.jetbrains.kotlin.cli.common.arguments.GradleOption
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 
 val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsArguments) {
     compilerArgument {
-        // This option should have been removed in Kotlin 2.2, but it was left here because removing it breaks importing some ancient
-        // Gradle projects in IDEA.
-        // IDEA uses this class to parse the arguments passed by KGP to build its project model.
-        // If it encounters unknown arguments, it just ignores them, which is fine,
-        // but this one is special: it expects a value as the next argument.
-        // So, even though IDEA ignores it, its value is not ignored and is treated as a free positional argument,
-        // which is wrong.
-        // For the import of old Kotlin/JS projects to continue working (and ignore this flag _correctly_),
-        // we have to keep this option around, even though its formal deprecation cycle allows use to drop it completely right now.
         name = "output"
         compilerName = "outputFile"
         valueType = StringType.defaultNull
         description = "".asReleaseDependent()
         valueDescription = "<filepath>".asReleaseDependent()
-        isObsolete = true
 
         additionalAnnotations(
             Deprecated("It is senseless to use with IR compiler. Only for compatibility."),
         )
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_0_0,
+            stabilizedVersion = KotlinReleaseVersion.v1_0_0,
+            deprecatedVersion = KotlinReleaseVersion.v2_1_0,
+            removedVersion = KotlinReleaseVersion.v2_2_0,
+        )
     }
 
     compilerArgument {
@@ -51,8 +45,10 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         valueType = StringType.defaultNull
         valueDescription = "<directory>".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_8_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_8_20
+        )
     }
 
     compilerArgument {
@@ -61,7 +57,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         description = "Base name of generated files.".asReleaseDependent()
         valueType = StringType.defaultNull
 
-        additionalAnnotations(
+        additionalMetadata(
             GradleOption(
                 value = DefaultValue.STRING_NULL_DEFAULT,
                 gradleInputType = GradleInputTypes.INPUT,
@@ -69,8 +65,10 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
             )
         )
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_8_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_8_20,
+        )
     }
 
     compilerArgument {
@@ -79,8 +77,10 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_1_0,
+            stabilizedVersion = KotlinReleaseVersion.v1_1_0,
+        )
     }
 
     compilerArgument {
@@ -88,7 +88,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         description = "Generate a source map.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        additionalAnnotations(
+        additionalMetadata(
             GradleOption(
                 value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
                 gradleInputType = GradleInputTypes.INPUT,
@@ -96,8 +96,10 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
             )
         )
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_0_0,
+            stabilizedVersion = KotlinReleaseVersion.v1_0_0,
+        )
     }
 
     compilerArgument {
@@ -105,7 +107,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         description = "Add the specified prefix to the paths in the source map.".asReleaseDependent()
         valueType = StringType.defaultNull
 
-        additionalAnnotations(
+        additionalMetadata(
             GradleOption(
                 value = DefaultValue.STRING_NULL_DEFAULT,
                 gradleInputType = GradleInputTypes.INPUT,
@@ -113,8 +115,10 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
             )
         )
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_1_4,
+            stabilizedVersion = KotlinReleaseVersion.v1_1_4,
+        )
     }
 
     compilerArgument {
@@ -124,8 +128,10 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_1_60,
+            stabilizedVersion = KotlinReleaseVersion.v1_1_60,
+        )
     }
 
     compilerArgument {
@@ -138,7 +144,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         valueType = StringType.defaultNull
         valueDescription = "{always|never|inlining}".asReleaseDependent()
 
-        additionalAnnotations(
+        additionalMetadata(
             GradleOption(
                 value = DefaultValue.JS_SOURCE_MAP_CONTENT_MODES,
                 gradleInputType = GradleInputTypes.INPUT,
@@ -146,8 +152,10 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
             )
         )
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_1_4,
+            stabilizedVersion = KotlinReleaseVersion.v1_1_4,
+        )
     }
 
     compilerArgument {
@@ -156,7 +164,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         valueType = StringType.defaultNull
         valueDescription = "{no|simple-names|fully-qualified-names}".asReleaseDependent()
 
-        additionalAnnotations(
+        additionalMetadata(
             GradleOption(
                 value = DefaultValue.JS_SOURCE_MAP_NAMES_POLICY,
                 gradleInputType = GradleInputTypes.INPUT,
@@ -164,8 +172,10 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
             )
         )
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_8_20,
+            stabilizedVersion = KotlinReleaseVersion.v1_8_20,
+        )
     }
 
     compilerArgument {
@@ -174,7 +184,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         valueType = StringType.defaultNull
         valueDescription = "{ es5, es2015 }".asReleaseDependent()
 
-        additionalAnnotations(
+        additionalMetadata(
             GradleOption(
                 value = DefaultValue.JS_ECMA_VERSIONS,
                 gradleInputType = GradleInputTypes.INPUT,
@@ -182,8 +192,10 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
             )
         )
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_0_0,
+            stabilizedVersion = KotlinReleaseVersion.v1_0_0,
+        )
     }
 
     compilerArgument {
@@ -191,8 +203,9 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         description = "Comma-separated list of fully qualified names not to be eliminated by DCE (if it can be reached), and for which to keep non-minified names.".asReleaseDependent()
         valueType = StringType.defaultNull
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_8_20,
+        )
     }
 
     compilerArgument {
@@ -201,7 +214,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         valueType = StringType.defaultNull
         valueDescription = "{plain|amd|commonjs|umd|es}".asReleaseDependent()
 
-        additionalAnnotations(
+        additionalMetadata(
             GradleOption(
                 value = DefaultValue.JS_MODULE_KINDS,
                 gradleInputType = GradleInputTypes.INPUT,
@@ -209,8 +222,10 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
             )
         )
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_0_4,
+            stabilizedVersion = KotlinReleaseVersion.v1_0_4,
+        )
     }
 
     compilerArgument {
@@ -219,7 +234,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         valueType = StringType.defaultNull
         valueDescription = "{call|noCall}".asReleaseDependent()
 
-        additionalAnnotations(
+        additionalMetadata(
             GradleOption(
                 value = DefaultValue.JS_MAIN,
                 gradleInputType = GradleInputTypes.INPUT,
@@ -227,8 +242,10 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
             )
         )
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_0_0,
+            stabilizedVersion = KotlinReleaseVersion.v1_0_0,
+        )
     }
 
     // Advanced options
@@ -237,8 +254,9 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         description = "Generate an unpacked klib into the parent directory of the output JS file.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_3_70,
+        )
     }
 
     compilerArgument {
@@ -246,8 +264,9 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         description = "Generate a packed klib into the directory specified by '-ir-output-dir'.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_3_70,
+        )
     }
 
     compilerArgument {
@@ -255,8 +274,9 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         description = "Generate a JS file using the IR backend.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_3_70,
+        )
     }
 
     compilerArgument {
@@ -264,8 +284,9 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         description = "Perform experimental dead code elimination.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_3_70,
+        )
     }
 
     compilerArgument {
@@ -274,8 +295,9 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         valueType = StringType.defaultNull
         valueDescription = "{log|exception}".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_0,
+        )
     }
 
     compilerArgument {
@@ -283,8 +305,9 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         description = "Print reachability information about declarations to 'stdout' while performing DCE.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_4_0,
+        )
     }
 
     compilerArgument {
@@ -295,8 +318,9 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
             defaultValue = true.asReleaseDependent()
         )
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_4_30,
+        )
     }
 
     compilerArgument {
@@ -304,8 +328,9 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         description = "Minimize the names of members.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_7_0,
+        )
     }
 
     compilerArgument {
@@ -314,8 +339,9 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         valueType = StringType.defaultNull
         valueDescription = "<name>".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_4_0,
+        )
     }
 
     compilerArgument {
@@ -323,8 +349,9 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         description = "Wrap access to external 'Boolean' properties with an explicit conversion to 'Boolean'.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_30
+        )
     }
 
     compilerArgument {
@@ -333,8 +360,9 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         valueType = StringType.defaultNull
         valueDescription = "{log|exception}".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_30,
+        )
     }
 
     compilerArgument {
@@ -342,8 +370,9 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         description = "Generate one .js file per module.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_4_20,
+        )
     }
 
     compilerArgument {
@@ -351,8 +380,9 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         description = "Add a custom output name to the split .js files.".asReleaseDependent()
         valueType = StringType.defaultNull
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_30,
+        )
     }
 
     compilerArgument {
@@ -360,8 +390,9 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         description = "Generate one .js file per source file.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_6_20,
+        )
     }
 
     compilerArgument {
@@ -369,8 +400,9 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         description = "Lambda expressions that capture values are translated into in-line anonymous JavaScript functions.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_7_20,
+        )
     }
 
     compilerArgument {
@@ -380,8 +412,9 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_4_0,
+        )
     }
 
     compilerArgument {
@@ -390,8 +423,9 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_8_20,
+        )
     }
 
     compilerArgument {
@@ -399,8 +433,9 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         description = "Use the compiler to build the cache.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_30,
+        )
     }
 
     compilerArgument {
@@ -408,8 +443,9 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         description = "Generate a TypeScript declaration .d.ts file alongside the JS file.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_3_70,
+        )
     }
 
     compilerArgument {
@@ -420,8 +456,9 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
             defaultValue = true.asReleaseDependent()
         )
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_8_20,
+        )
     }
 
     compilerArgument {
@@ -430,8 +467,9 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         description = "Generate strict types for implicitly exported entities inside d.ts files.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_8_0,
+        )
     }
 
     compilerArgument {
@@ -440,7 +478,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         description = "Let generated JavaScript code use ES2015 classes. Enabled by default in case of ES2015 target usage".asReleaseDependent()
         valueType = BooleanType.defaultNull
 
-        additionalAnnotations(
+        additionalMetadata(
             GradleOption(
                 value = DefaultValue.BOOLEAN_NULL_DEFAULT,
                 gradleInputType = GradleInputTypes.INPUT,
@@ -448,8 +486,9 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
             )
         )
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_8_20,
+        )
     }
 
     compilerArgument {
@@ -458,8 +497,9 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         description = "JS expression that will be executed in runtime and be put as an Array<String> parameter of the main function".asReleaseDependent()
         valueType = StringType.defaultNull
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_0_0,
+        )
     }
 
     compilerArgument {
@@ -468,8 +508,9 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         description = "Enable ES2015 generator functions usage inside the compiled code. Enabled by default in case of ES2015 target usage".asReleaseDependent()
         valueType = BooleanType.defaultNull
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_0_0,
+        )
     }
 
     compilerArgument {
@@ -478,8 +519,20 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         description = "Use ES2015 arrow functions in the JavaScript code generated for Kotlin lambdas. Enabled by default in case of ES2015 target usage".asReleaseDependent()
         valueType = BooleanType.defaultNull
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_1_0,
+        )
+    }
+
+    compilerArgument {
+        name = "Xes-long-as-bigint"
+        compilerName = "compileLongAsBigInt"
+        description = "Compile Long values as ES2020 bigint instead of object.".asReleaseDependent()
+        valueType = BooleanType.defaultNull
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_2_20,
+        )
     }
 
     compilerArgument {
@@ -488,8 +541,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
 It is deprecated and will be removed in a future release.""".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        additionalAnnotations(
-            Deprecated("It is senseless to use with IR compiler. Only for compatibility."),
+        additionalMetadata(
             GradleOption(
                 value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
                 gradleInputType = GradleInputTypes.INPUT,
@@ -502,8 +554,11 @@ It is deprecated and will be removed in a future release.""".asReleaseDependent(
             ),
         )
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_1_3,
+            deprecatedVersion = KotlinReleaseVersion.v2_1_0,
+            removedVersion = KotlinReleaseVersion.v2_3_0,
+        )
     }
 
     compilerArgument {
@@ -511,7 +566,7 @@ It is deprecated and will be removed in a future release.""".asReleaseDependent(
         description = "Disable internal declaration export.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        additionalAnnotations(
+        additionalMetadata(
             GradleOption(
                 value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
                 gradleInputType = GradleInputTypes.INPUT,
@@ -519,8 +574,9 @@ It is deprecated and will be removed in a future release.""".asReleaseDependent(
             )
         )
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_1_3,
+        )
     }
 
     compilerArgument {
@@ -529,8 +585,9 @@ It is deprecated and will be removed in a future release.""".asReleaseDependent(
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_1_3,
+        )
     }
 
     compilerArgument {
@@ -538,9 +595,11 @@ It is deprecated and will be removed in a future release.""".asReleaseDependent(
         compilerName = "extensionFunctionsInExternals"
         description = "Enable extension function members in external interfaces.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
+        additionalAnnotations(Enables(LanguageFeature.JsEnableExtensionFunctionInExternals))
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_5_32,
+        )
     }
 
     compilerArgument {
@@ -548,8 +607,9 @@ It is deprecated and will be removed in a future release.""".asReleaseDependent(
         description = "Enable the IR fake override validator.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_4_30,
+        )
     }
 
     compilerArgument {
@@ -560,7 +620,8 @@ It is deprecated and will be removed in a future release.""".asReleaseDependent(
             defaultValue = true.asReleaseDependent()
         )
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_9_0,
+        )
     }
 }

@@ -6,7 +6,7 @@ class A {
         private field = 1
 
     val b: Number
-        internal field = 2
+        <!WRONG_MODIFIER_TARGET!>internal<!> field = 2
 
     val c: Number
         <!WRONG_MODIFIER_TARGET!>protected<!> field = 3

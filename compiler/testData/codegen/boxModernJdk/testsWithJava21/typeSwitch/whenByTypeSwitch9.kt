@@ -1,8 +1,10 @@
 // TARGET_BACKEND: JVM
+// WITH_STDLIB
 // WHEN_EXPRESSIONS: INDY
 // IGNORE_BACKEND_K1: ANY
 
 // CHECK_BYTECODE_TEXT
+// 1 INSTANCEOF
 // 1 INVOKEDYNAMIC typeSwitch
 // 1 java.lang.Float.class
 // 1 java.lang.Double.class
@@ -13,6 +15,7 @@
 // 2 InlineClass.class
 // 2 EnumClass.class
 // 1 java.lang.Object.class
+// 1 kotlin.UInt.class
 
 
 import kotlin.collections.listOf
@@ -37,6 +40,7 @@ fun foo(x: Any): Int {
         is Array<*> -> 7
         is InlineClass -> 8
         is EnumClass -> 9
+        is UInt -> 10
         is Any -> 100
     }
 }
@@ -51,6 +55,7 @@ fun box(): String {
     if (foo(arrayOf(2, 3)) != 7) return "7"
     if (foo(InlineClass("aa")) != 8) return "8"
     if (foo(EnumClass.A) != 9) return "9"
+    if (foo(25u) != 10) return "10"
     if (foo(1) != 100) return "100"
 
     return "OK"

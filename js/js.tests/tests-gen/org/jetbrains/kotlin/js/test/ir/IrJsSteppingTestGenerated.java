@@ -105,6 +105,18 @@ public class IrJsSteppingTestGenerated extends AbstractIrJsSteppingTest {
   }
 
   @Test
+  @TestMetadata("chainCallOfInlineFunctions.kt")
+  public void testChainCallOfInlineFunctions() {
+    runTest("compiler/testData/debug/stepping/chainCallOfInlineFunctions.kt");
+  }
+
+  @Test
+  @TestMetadata("chainCallOfPrivateInlineFunctions.kt")
+  public void testChainCallOfPrivateInlineFunctions() {
+    runTest("compiler/testData/debug/stepping/chainCallOfPrivateInlineFunctions.kt");
+  }
+
+  @Test
   @TestMetadata("class.kt")
   public void testClass() {
     runTest("compiler/testData/debug/stepping/class.kt");
@@ -237,9 +249,15 @@ public class IrJsSteppingTestGenerated extends AbstractIrJsSteppingTest {
   }
 
   @Test
-  @TestMetadata("functionCallWithDefault.kt")
-  public void testFunctionCallWithDefault() {
-    runTest("compiler/testData/debug/stepping/functionCallWithDefault.kt");
+  @TestMetadata("funCallsInsideInlineableLambda.kt")
+  public void testFunCallsInsideInlineableLambda() {
+    runTest("compiler/testData/debug/stepping/funCallsInsideInlineableLambda.kt");
+  }
+
+  @Test
+  @TestMetadata("funCallsInsideNonInlineableLambda.kt")
+  public void testFunCallsInsideNonInlineableLambda() {
+    runTest("compiler/testData/debug/stepping/funCallsInsideNonInlineableLambda.kt");
   }
 
   @Test
@@ -345,6 +363,36 @@ public class IrJsSteppingTestGenerated extends AbstractIrJsSteppingTest {
   }
 
   @Test
+  @TestMetadata("inlineFunAsDefaultArgument.kt")
+  public void testInlineFunAsDefaultArgument() {
+    runTest("compiler/testData/debug/stepping/inlineFunAsDefaultArgument.kt");
+  }
+
+  @Test
+  @TestMetadata("inlineFunAsMemberOfAnonymousObjectInsideInlineFun.kt")
+  public void testInlineFunAsMemberOfAnonymousObjectInsideInlineFun() {
+    runTest("compiler/testData/debug/stepping/inlineFunAsMemberOfAnonymousObjectInsideInlineFun.kt");
+  }
+
+  @Test
+  @TestMetadata("inlineFunAsMemberOfAnonymousObjectInsideInlineableLambda.kt")
+  public void testInlineFunAsMemberOfAnonymousObjectInsideInlineableLambda() {
+    runTest("compiler/testData/debug/stepping/inlineFunAsMemberOfAnonymousObjectInsideInlineableLambda.kt");
+  }
+
+  @Test
+  @TestMetadata("inlineFunAsMemberOfClassInsideFun.kt")
+  public void testInlineFunAsMemberOfClassInsideFun() {
+    runTest("compiler/testData/debug/stepping/inlineFunAsMemberOfClassInsideFun.kt");
+  }
+
+  @Test
+  @TestMetadata("inlineFunReference.kt")
+  public void testInlineFunReference() {
+    runTest("compiler/testData/debug/stepping/inlineFunReference.kt");
+  }
+
+  @Test
   @TestMetadata("inlineNamedCallableReference.kt")
   public void testInlineNamedCallableReference() {
     runTest("compiler/testData/debug/stepping/inlineNamedCallableReference.kt");
@@ -408,6 +456,30 @@ public class IrJsSteppingTestGenerated extends AbstractIrJsSteppingTest {
   @TestMetadata("lambdaStepInlineWithDefaults.kt")
   public void testLambdaStepInlineWithDefaults() {
     runTest("compiler/testData/debug/stepping/lambdaStepInlineWithDefaults.kt");
+  }
+
+  @Test
+  @TestMetadata("leakingPrivateFunThroughDefaultArgument.kt")
+  public void testLeakingPrivateFunThroughDefaultArgument() {
+    runTest("compiler/testData/debug/stepping/leakingPrivateFunThroughDefaultArgument.kt");
+  }
+
+  @Test
+  @TestMetadata("leakingPrivateFunThroughInternalInlineVal.kt")
+  public void testLeakingPrivateFunThroughInternalInlineVal() {
+    runTest("compiler/testData/debug/stepping/leakingPrivateFunThroughInternalInlineVal.kt");
+  }
+
+  @Test
+  @TestMetadata("leakingPrivateFunThroughReferenceInInternalInlineFun.kt")
+  public void testLeakingPrivateFunThroughReferenceInInternalInlineFun() {
+    runTest("compiler/testData/debug/stepping/leakingPrivateFunThroughReferenceInInternalInlineFun.kt");
+  }
+
+  @Test
+  @TestMetadata("leakingPrivateValThroughInternalInlineFun.kt")
+  public void testLeakingPrivateValThroughInternalInlineFun() {
+    runTest("compiler/testData/debug/stepping/leakingPrivateValThroughInternalInlineFun.kt");
   }
 
   @Test
@@ -483,6 +555,12 @@ public class IrJsSteppingTestGenerated extends AbstractIrJsSteppingTest {
   }
 
   @Test
+  @TestMetadata("noinlineParameter.kt")
+  public void testNoinlineParameter() {
+    runTest("compiler/testData/debug/stepping/noinlineParameter.kt");
+  }
+
+  @Test
   @TestMetadata("nullcheck.kt")
   public void testNullcheck() {
     runTest("compiler/testData/debug/stepping/nullcheck.kt");
@@ -543,12 +621,6 @@ public class IrJsSteppingTestGenerated extends AbstractIrJsSteppingTest {
   }
 
   @Test
-  @TestMetadata("simpleSmap.kt")
-  public void testSimpleSmap() {
-    runTest("compiler/testData/debug/stepping/simpleSmap.kt");
-  }
-
-  @Test
   @TestMetadata("smapInlineAsArgument.kt")
   public void testSmapInlineAsArgument() {
     runTest("compiler/testData/debug/stepping/smapInlineAsArgument.kt");
@@ -582,6 +654,12 @@ public class IrJsSteppingTestGenerated extends AbstractIrJsSteppingTest {
   @TestMetadata("stringSwitchesSmall.kt")
   public void testStringSwitchesSmall() {
     runTest("compiler/testData/debug/stepping/stringSwitchesSmall.kt");
+  }
+
+  @Test
+  @TestMetadata("supercall.kt")
+  public void testSupercall() {
+    runTest("compiler/testData/debug/stepping/supercall.kt");
   }
 
   @Test

@@ -3,12 +3,14 @@
 // Reason: break/continue in inline lambdas unsupported
 // WITH_STDLIB
 
-import kotlin.test.assertEquals
-
+// FILE: lib.kt
 inline fun <T> Iterable<T>.myForEach(action: (T) -> Unit): Unit {
     for (element in this) action(element)
 }
 
+
+// FILE: main.kt
+import kotlin.test.assertEquals
 
 fun box(): String {
     while (true) {

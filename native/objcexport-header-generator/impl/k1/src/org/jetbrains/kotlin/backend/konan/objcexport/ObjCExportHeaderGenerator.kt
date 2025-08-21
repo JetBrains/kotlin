@@ -20,6 +20,7 @@ abstract class ObjCExportHeaderGenerator @InternalKotlinNativeApi constructor(
     internal val mapper: ObjCExportMapper,
     val namer: ObjCExportNamer,
     val objcGenerics: Boolean,
+    val objcExportBlockExplicitParameterNames: Boolean,
     problemCollector: ObjCExportProblemCollector,
 ) {
     private val stubs = mutableListOf<ObjCExportStub>()
@@ -28,7 +29,8 @@ abstract class ObjCExportHeaderGenerator @InternalKotlinNativeApi constructor(
     private val protocolForwardDeclarations = linkedSetOf<String>()
     private val extraClassesToTranslate = mutableSetOf<ClassDescriptor>()
 
-    private val translator = ObjCExportTranslatorImpl(this, mapper, namer, problemCollector, objcGenerics)
+    private val translator =
+        ObjCExportTranslatorImpl(this, mapper, namer, problemCollector, objcGenerics, objcExportBlockExplicitParameterNames)
 
     private val generatedClasses = mutableSetOf<ClassDescriptor>()
     private val extensions = mutableMapOf<ClassDescriptor, MutableList<CallableMemberDescriptor>>()
@@ -242,10 +244,18 @@ abstract class ObjCExportHeaderGenerator @InternalKotlinNativeApi constructor(
             namer: ObjCExportNamer,
             problemCollector: ObjCExportProblemCollector,
             objcGenerics: Boolean,
+            objcExportBlockExplicitParameterNames: Boolean,
             shouldExportKDoc: Boolean,
             additionalImports: List<String>,
         ): ObjCExportHeaderGenerator = ObjCExportHeaderGeneratorImpl(
-            moduleDescriptors, mapper, namer, problemCollector, objcGenerics, shouldExportKDoc, additionalImports
+            moduleDescriptors,
+            mapper,
+            namer,
+            problemCollector,
+            objcGenerics,
+            objcExportBlockExplicitParameterNames,
+            shouldExportKDoc,
+            additionalImports
         )
     }
 }

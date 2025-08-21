@@ -165,7 +165,7 @@ FILE: [ResolvedTo(IMPORTS)] mappedTypeResolution.kt
 
     }
     public abstract [ResolvedTo(STATUS)] interface MutableIterable<[ResolvedTo(STATUS)] out T> : R|kotlin/collections/Iterable<T>| {
-        public abstract override operator [ResolvedTo(STATUS)] fun iterator(): R|kotlin/collections/MutableIterator<T>|
+        public abstract operator [ResolvedTo(STATUS)] fun iterator(): R|kotlin/collections/MutableIterator<T>|
 
     }
     public abstract [ResolvedTo(STATUS)] interface Collection<[ResolvedTo(STATUS)] out E> : R|kotlin/collections/Iterable<E>| {
@@ -190,7 +190,7 @@ FILE: [ResolvedTo(IMPORTS)] mappedTypeResolution.kt
 
     }
     public abstract [ResolvedTo(STATUS)] interface MutableIterable<[ResolvedTo(STATUS)] out T> : R|kotlin/collections/Iterable<T>| {
-        public abstract override operator [ResolvedTo(STATUS)] fun iterator(): R|kotlin/collections/MutableIterator<T>|
+        public abstract operator [ResolvedTo(STATUS)] fun iterator(): R|kotlin/collections/MutableIterator<T>|
 
     }
     public abstract [ResolvedTo(STATUS)] interface Collection<[ResolvedTo(STATUS)] out E> : R|kotlin/collections/Iterable<E>| {
@@ -215,7 +215,7 @@ FILE: [ResolvedTo(IMPORTS)] mappedTypeResolution.kt
 
     }
     public abstract [ResolvedTo(STATUS)] interface MutableIterable<[ResolvedTo(STATUS)] out T> : R|kotlin/collections/Iterable<T>| {
-        public abstract override operator [ResolvedTo(STATUS)] fun iterator(): R|kotlin/collections/MutableIterator<T>|
+        public abstract operator [ResolvedTo(STATUS)] fun iterator(): R|kotlin/collections/MutableIterator<T>|
 
     }
     public abstract [ResolvedTo(STATUS)] interface Collection<[ResolvedTo(STATUS)] out E> : R|kotlin/collections/Iterable<E>| {
@@ -240,7 +240,7 @@ FILE: [ResolvedTo(IMPORTS)] mappedTypeResolution.kt
 
     }
     public abstract [ResolvedTo(STATUS)] interface MutableIterable<[ResolvedTo(STATUS)] out T> : R|kotlin/collections/Iterable<T>| {
-        public abstract override operator [ResolvedTo(STATUS)] fun iterator(): R|kotlin/collections/MutableIterator<T>|
+        public abstract operator [ResolvedTo(STATUS)] fun iterator(): R|kotlin/collections/MutableIterator<T>|
 
     }
     public abstract [ResolvedTo(STATUS)] interface Collection<[ResolvedTo(STATUS)] out E> : R|kotlin/collections/Iterable<E>| {
@@ -265,7 +265,7 @@ FILE: [ResolvedTo(IMPORTS)] mappedTypeResolution.kt
 
     }
     public abstract [ResolvedTo(STATUS)] interface MutableIterable<[ResolvedTo(STATUS)] out T> : R|kotlin/collections/Iterable<T>| {
-        public abstract override operator [ResolvedTo(STATUS)] fun iterator(): R|kotlin/collections/MutableIterator<T>|
+        public abstract operator [ResolvedTo(STATUS)] fun iterator(): R|kotlin/collections/MutableIterator<T>|
 
     }
     public abstract [ResolvedTo(STATUS)] interface Collection<[ResolvedTo(STATUS)] out E> : R|kotlin/collections/Iterable<E>| {
@@ -290,7 +290,7 @@ FILE: [ResolvedTo(IMPORTS)] mappedTypeResolution.kt
 
     }
     public abstract [ResolvedTo(STATUS)] interface MutableIterable<[ResolvedTo(STATUS)] out T> : R|kotlin/collections/Iterable<T>| {
-        public abstract override operator [ResolvedTo(STATUS)] fun iterator(): R|kotlin/collections/MutableIterator<T>|
+        public abstract operator [ResolvedTo(STATUS)] fun iterator(): R|kotlin/collections/MutableIterator<T>|
 
     }
     public abstract [ResolvedTo(STATUS)] interface Collection<[ResolvedTo(STATUS)] out E> : R|kotlin/collections/Iterable<E>| {
@@ -315,7 +315,7 @@ FILE: [ResolvedTo(IMPORTS)] mappedTypeResolution.kt
 
     }
     public abstract [ResolvedTo(STATUS)] interface MutableIterable<[ResolvedTo(STATUS)] out T> : R|kotlin/collections/Iterable<T>| {
-        public abstract override operator [ResolvedTo(STATUS)] fun iterator(): R|kotlin/collections/MutableIterator<T>|
+        public abstract operator [ResolvedTo(STATUS)] fun iterator(): R|kotlin/collections/MutableIterator<T>|
 
     }
     public abstract [ResolvedTo(STATUS)] interface Collection<[ResolvedTo(STATUS)] out E> : R|kotlin/collections/Iterable<E>| {
@@ -332,7 +332,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] mappedTypeResolution.kt
 
     }
     public abstract [ResolvedTo(BODY_RESOLVE)] interface MutableIterator<[ResolvedTo(BODY_RESOLVE)] out T> : R|kotlin/collections/Iterator<T>| {
-        public abstract override [ResolvedTo(BODY_RESOLVE)] fun remove(): <ERROR TYPE REF: Symbol not found for Unit>
+        public abstract [ResolvedTo(BODY_RESOLVE)] fun remove(): <ERROR TYPE REF: Symbol not found for Unit>
 
     }
     public abstract [ResolvedTo(BODY_RESOLVE)] interface Iterable<[ResolvedTo(BODY_RESOLVE)] out T> : R|kotlin/Any| {
@@ -340,7 +340,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] mappedTypeResolution.kt
 
     }
     public abstract [ResolvedTo(BODY_RESOLVE)] interface MutableIterable<[ResolvedTo(BODY_RESOLVE)] out T> : R|kotlin/collections/Iterable<T>| {
-        public abstract override operator [ResolvedTo(BODY_RESOLVE)] fun iterator(): R|kotlin/collections/MutableIterator<T>|
+        public abstract operator [ResolvedTo(BODY_RESOLVE)] fun iterator(): R|kotlin/collections/MutableIterator<T>|
 
     }
     public abstract [ResolvedTo(BODY_RESOLVE)] interface Collection<[ResolvedTo(BODY_RESOLVE)] out E> : R|kotlin/collections/Iterable<E>| {

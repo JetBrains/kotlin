@@ -6,26 +6,30 @@ declare namespace JS_TESTS {
             protected constructor(name: string);
             get name(): string;
         }
-        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-        namespace TestSealed.$metadata$ {
-            const constructor: abstract new () => TestSealed;
-        }
         namespace TestSealed {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => TestSealed;
+            }
             class AA extends foo.TestSealed.$metadata$.constructor {
                 constructor();
                 bar(): string;
             }
-            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-            namespace AA.$metadata$ {
-                const constructor: abstract new () => AA;
+            namespace AA {
+                /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+                namespace $metadata$ {
+                    const constructor: abstract new () => AA;
+                }
             }
             class BB extends foo.TestSealed.$metadata$.constructor {
                 constructor();
                 baz(): string;
             }
-            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
-            namespace BB.$metadata$ {
-                const constructor: abstract new () => BB;
+            namespace BB {
+                /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+                namespace $metadata$ {
+                    const constructor: abstract new () => BB;
+                }
             }
         }
     }

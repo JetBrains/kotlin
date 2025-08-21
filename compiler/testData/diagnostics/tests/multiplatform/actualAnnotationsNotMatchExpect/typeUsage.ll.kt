@@ -99,7 +99,7 @@ actual fun qualifierPartsMatching(arg: WithNested<String>.Nested<@Ann String>) {
 
 actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>qualifierPartsNonMatching<!>(arg: WithNested<@Ann String>.Nested<String>) {}
 
-actual fun <!ACTUAL_WITHOUT_EXPECT!>funTypeVsUserType<!>(arg: kotlin.jvm.functions.Function0<String>) {}
+actual fun <!ACTUAL_WITHOUT_EXPECT!>funTypeVsUserType<!>(arg: <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>kotlin.jvm.functions.Function0<String><!>) {}
 
 actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>funcTypeReturnType<!>(arg: () -> Any) {}
 

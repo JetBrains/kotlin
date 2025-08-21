@@ -4,6 +4,7 @@
  */
 
 @file:Suppress("UNUSED_PARAMETER") // TODO: Remove after bootstrap update
+@file:OptIn(ExperimentalWasmJsInterop::class)
 
 package kotlin.io
 
@@ -33,8 +34,14 @@ public actual fun print(message: Any?) {
     printImpl(message?.toString())
 }
 
+/**
+ * This function is not supported in Kotlin/Wasm and throws [UnsupportedOperationException].
+ */
 @SinceKotlin("1.6")
-public actual fun readln(): String = throw UnsupportedOperationException("readln is not supported in Kotlin/WASM")
+public actual fun readln(): String = throw UnsupportedOperationException("readln is not supported in Kotlin/Wasm")
 
+/**
+ * This function is not supported in Kotlin/Wasm and throws [UnsupportedOperationException].
+ */
 @SinceKotlin("1.6")
-public actual fun readlnOrNull(): String? = throw UnsupportedOperationException("readlnOrNull is not supported in Kotlin/WASM")
+public actual fun readlnOrNull(): String? = throw UnsupportedOperationException("readlnOrNull is not supported in Kotlin/Wasm")

@@ -9,7 +9,7 @@ FILE: inlineLambdasAreInplace.kt
         ^noinline R|<local>/x|
     }
     public final inline fun crossinline(crossinline x: R|() -> kotlin/Unit|): R|() -> kotlin/Unit| {
-        ^crossinline fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        ^crossinline fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
         }
 

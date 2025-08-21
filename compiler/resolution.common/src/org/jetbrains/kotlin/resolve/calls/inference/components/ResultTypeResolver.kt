@@ -34,9 +34,10 @@ class ResultTypeResolver(
     context(c: Context)
     private fun TypeVariableMarker.getDefaultTypeForSelfType(constraints: List<Constraint>): KotlinTypeMarker? {
         val typeVariableConstructor = freshTypeConstructor()
+        val typeParameter = typeVariableConstructor.typeParameter ?: return null
+
         val typesForRecursiveTypeParameters = constraints.mapNotNull { constraint ->
             if (constraint.position.from !is DeclaredUpperBoundConstraintPosition<*>) return@mapNotNull null
-            val typeParameter = typeVariableConstructor.typeParameter ?: return@mapNotNull null
             constraint.type.extractTypeForGivenRecursiveTypeParameter(typeParameter)
         }.takeIf { it.isNotEmpty() } ?: return null
 
@@ -456,12 +457,23 @@ class ResultTypeResolver(
 
     context(c: Context)
     private fun VariableWithConstraints.findSuperType(): KotlinTypeMarker? {
+        var hasNotNull = false
         val upperConstraints = constraints.filter {
-            it.kind == ConstraintKind.UPPER && it.isProperConstraint()
+            if (it.kind != ConstraintKind.UPPER) return@filter false
+            if (it.isProperConstraint()) return@filter true
+            // Non-proper constraints like recursive upper bounds can still contribute nullability information
+            if (!it.type.isNullableType()) hasNotNull = true
+            false
         }
 
         if (upperConstraints.isNotEmpty()) {
-            return computeUpperType(upperConstraints)
+            return computeUpperType(upperConstraints).let {
+                if (hasNotNull && it.isNullableType() && languageVersionSettings.supportsFeature(LanguageFeature.InferenceEnhancementsIn23)) {
+                    it.makeDefinitelyNotNullOrNotNull()
+                } else {
+                    it
+                }
+            }
         }
 
         return null

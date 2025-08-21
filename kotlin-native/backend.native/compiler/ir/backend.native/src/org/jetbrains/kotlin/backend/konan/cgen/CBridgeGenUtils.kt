@@ -77,7 +77,7 @@ internal class KotlinBridgeBuilder(
         origin: IrDeclarationOrigin
 ) {
     private var counter = 0
-    private val bridge: IrFunction = createKotlinBridge(startOffset, endOffset, cName, stubs, isExternal, foreignExceptionMode, origin)
+    private val bridge: IrSimpleFunction = createKotlinBridge(startOffset, endOffset, cName, stubs, isExternal, foreignExceptionMode, origin)
     val irBuilder: IrBuilderWithScope = stubs.irBuiltIns.createIrBuilder(bridge.symbol).at(startOffset, endOffset)
 
     fun addParameter(type: IrType): IrValueParameter {
@@ -106,7 +106,7 @@ internal class KotlinBridgeBuilder(
         bridge.returnType = type
     }
 
-    fun build(): IrFunction = bridge
+    fun getBridge(): IrSimpleFunction = bridge
 }
 
 private fun createKotlinBridge(
@@ -117,7 +117,7 @@ private fun createKotlinBridge(
         isExternal: Boolean,
         foreignExceptionMode: ForeignExceptionMode.Mode,
         origin: IrDeclarationOrigin
-): IrFunction {
+): IrSimpleFunction {
     val bridge = stubs.irBuiltIns.irFactory.createSimpleFunction(
             startOffset,
             endOffset,
@@ -138,13 +138,8 @@ private fun createKotlinBridge(
     )
     if (isExternal) {
         bridge.annotations += buildSimpleAnnotation(stubs.irBuiltIns, startOffset, endOffset,
-                stubs.symbols.symbolName.owner, cBridgeName)
-        bridge.annotations += buildSimpleAnnotation(stubs.irBuiltIns, startOffset, endOffset,
                 stubs.symbols.filterExceptions.owner,
                 foreignExceptionMode.value)
-    } else {
-        bridge.annotations += buildSimpleAnnotation(stubs.irBuiltIns, startOffset, endOffset,
-                stubs.symbols.exportForCppRuntime.owner, cBridgeName)
     }
     return bridge
 }
@@ -175,7 +170,7 @@ internal class KotlinCBridgeBuilder(
 
     fun buildCSignature(name: String): String = cBridgeBuilder.buildSignature(name, stubs.language)
 
-    fun buildKotlinBridge() = kotlinBridgeBuilder.build()
+    fun getKotlinBridge() = kotlinBridgeBuilder.getBridge()
 }
 
 internal class KotlinCallBuilder(private val irBuilder: IrBuilderWithScope, private val symbols: KonanSymbols) {
