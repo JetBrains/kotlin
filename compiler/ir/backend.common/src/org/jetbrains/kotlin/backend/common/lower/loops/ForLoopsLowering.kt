@@ -214,7 +214,7 @@ private class RangeLoopTransformer(
     private fun lowerWhileLoop(loop: IrWhileLoop, loopHeader: ForLoopHeader): LoopReplacement? {
         val loopBodyStatements = (loop.body as? IrContainerExpression)?.statements ?: return null
         val (mainLoopVariable, mainLoopVariableIndex, loopVariableComponents, loopVariableComponentIndices) =
-            gatherLoopVariableInfo(loopBodyStatements)
+            gatherLoopVariableInfo(loopBodyStatements) ?: return null
 
         if (loopHeader.consumesLoopVariableComponents && mainLoopVariable.origin != IrDeclarationOrigin.IR_TEMPORARY_VARIABLE) {
             // We determine if there is a destructuring declaration by checking if the main loop variable is temporary.
@@ -363,6 +363,12 @@ private class RangeLoopTransformer(
                     } else {
                         null
                     }
+                IrStatementOrigin.GET_PROPERTY ->
+                    if (mainLoopVariable != null && (expression.arguments.firstOrNull() as? IrGetValue)?.symbol == mainLoopVariable.symbol) {
+                        expression
+                    } else {
+                        null
+                    }
                 else -> null
             }
 
@@ -376,7 +382,7 @@ private class RangeLoopTransformer(
         }
     }
 
-    private fun gatherLoopVariableInfo(statements: MutableList<IrStatement>): LoopVariableInfo {
+    private fun gatherLoopVariableInfo(statements: MutableList<IrStatement>): LoopVariableInfo? {
         // The "next" statement (at the top of the loop) looks something like:
         //
         //   val i = it.next()
@@ -447,6 +453,13 @@ private class RangeLoopTransformer(
                 is IrStatementOrigin.COMPONENT_N -> {
                     loopVariableComponents[origin.index] = stmt
                     loopVariableComponentIndices.add(i)
+                }
+                IrStatementOrigin.GET_PROPERTY -> {
+                    // KT-80243: This lowering does not support name-based destructuring,
+                    // since it's designed to reuse component indices, provided as indices in COMPONENT_N
+                    // Possible way to support name-based destructuring here would be to calculate the index for loopVariableComponents,
+                    // and fill in `loopVariableComponents` and `loopVariableComponentIndices`, instead of returning null
+                    return null
                 }
             }
         }

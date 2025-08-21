@@ -2,8 +2,6 @@
 // IGNORE_BACKEND_K1: ANY
 // LANGUAGE: +NameBasedDestructuring, +EnableNameBasedDestructuringShortForm
 // WITH_STDLIB
-// IGNORE_BACKEND_K2: ANY
-// ^^^ KT-80243: Non-mapped local declaration: VAR IR_TEMPORARY_VARIABLE name:<destruct> type:kotlin.collections.IndexedValue<kotlin.String> [val]
 
 import kotlin.test.assertEquals
 
