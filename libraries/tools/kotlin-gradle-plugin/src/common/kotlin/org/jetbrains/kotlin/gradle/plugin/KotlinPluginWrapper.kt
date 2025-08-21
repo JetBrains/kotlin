@@ -22,7 +22,6 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.ExternalDependency
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
-import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.compilerRunner.maybeCreateCommonizerClasspathConfiguration
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.fus.BuildUidService
@@ -31,6 +30,7 @@ import org.jetbrains.kotlin.gradle.internal.KOTLIN_COMPILER_EMBEDDABLE
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.internal.attributes.setupAttributesMatchingStrategy
 import org.jetbrains.kotlin.gradle.internal.diagnostics.AgpCompatibilityCheck.runAgpCompatibilityCheckIfAgpIsApplied
+import org.jetbrains.kotlin.gradle.internal.diagnostics.AgpWithBuiltInKotlinAppliedCheck.runAgpWithBuiltInKotlinIfAppliedCheck
 import org.jetbrains.kotlin.gradle.internal.diagnostics.GradleCompatibilityCheck.runGradleCompatibilityCheck
 import org.jetbrains.kotlin.gradle.internal.diagnostics.KotlinCompilerEmbeddableCheck.checkCompilerEmbeddableInClasspath
 import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService
@@ -225,6 +225,7 @@ abstract class KotlinBasePluginWrapper : DefaultKotlinBasePlugin() {
         project.addPgpSignatureHelpers()
         project.addPomValidationHelpers()
         project.addSigningValidationHelpers()
+        if (projectExtensionClass == KotlinAndroidProjectExtension::class) project.runAgpWithBuiltInKotlinIfAppliedCheck()
 
         project.createKotlinExtension(projectExtensionClass).apply {
             coreLibrariesVersion = pluginVersion

@@ -1802,6 +1802,18 @@ internal object KotlinToolingDiagnostics {
                 .documentationLink(URI("https://kotl.in/9l92c3"))
         }
     }
+
+    internal object AgpWithBuiltInKotlinIsAlreadyApplied : ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(
+            buildFile: File,
+            trace: Throwable,
+        ) = build(throwable = trace) {
+            title("Failed to apply plugin 'com.jetbrains.kotlin.android'")
+                .description("The 'org.jetbrains.kotlin.android' plugin is no longer required for Kotlin support since AGP 9.0.")
+                .solution("Remove the 'org.jetbrains.kotlin.android' plugin from this project's build file: ${buildFile}.")
+                .documentationLink(URI("https://issuetracker.google.com/438678642"))
+        }
+    }
 }
 
 private fun String.indentLines(nSpaces: Int = 4, skipFirstLine: Boolean = true): String {
