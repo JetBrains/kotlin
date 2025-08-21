@@ -51,6 +51,9 @@ internal val Dependency.moduleVersionIdentifier
 
 internal val SwiftExportedDependency.inheritedName
     get() = when (this) {
-        is SwiftExportedDependency.External -> coordinates.let { "${it.group.replace('.', ':')}:${it.name}" }
+        is SwiftExportedDependency.External -> coordinates.inheritedName
         is SwiftExportedDependency.Project -> projectPath
     }
+
+internal val ModuleVersionIdentifier.inheritedName
+    get() = this.let { "${it.group.replace('.', ':')}:${it.name}" }

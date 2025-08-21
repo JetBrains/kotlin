@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.toIdSuffix
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleTarget
@@ -262,9 +261,27 @@ class SwiftExportUnitTests {
         val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
 
         val expectedModules = SmartSet.create<SwiftExportModuleForAssertion>().apply {
-            add(SwiftExportModuleForAssertion("KotlinxCoroutinesCore", "kotlinx-coroutines-core.klib", true))
-            add(SwiftExportModuleForAssertion("Subproject", "subproject", true))
-            add(SwiftExportModuleForAssertion("Atomicfu", "atomicfu.klib", false))
+            add(
+                SwiftExportModuleForAssertion(
+                    "OrgJetbrainsKotlinxKotlinxCoroutinesCore",
+                    "kotlinx-coroutines-core.klib",
+                    true
+                )
+            )
+            add(
+                SwiftExportModuleForAssertion(
+                    "Subproject",
+                    "subproject",
+                    true
+                )
+            )
+            add(
+                SwiftExportModuleForAssertion(
+                    "OrgJetbrainsKotlinxAtomicfu",
+                    "atomicfu.klib",
+                    false
+                )
+            )
         }
 
         assertEquals(
@@ -295,7 +312,13 @@ class SwiftExportUnitTests {
         val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
 
         val expectedModules = SmartSet.create<SwiftExportModuleForAssertion>().apply {
-            add(SwiftExportModuleForAssertion("KotlinxDatetime", "kotlinx-datetime.klib", true))
+            add(
+                SwiftExportModuleForAssertion(
+                    "OrgJetbrainsKotlinxKotlinxDatetime",
+                    "kotlinx-datetime.klib",
+                    true
+                )
+            )
         }
 
         assertEquals(
@@ -303,7 +326,7 @@ class SwiftExportUnitTests {
             actualModules.filter { it.shouldBeFullyExported }.toModulesForAssertion(),
         )
 
-        val KotlinxIoCore = actualModules.single { it.moduleName == "KotlinxIoCore" }
+        val KotlinxIoCore = actualModules.single { it.moduleName == "OrgJetbrainsKotlinxKotlinxIoCore" }
         assertFalse(KotlinxIoCore.shouldBeFullyExported, "Compilation dependency kotlinx-io-core should not be exported")
     }
 
@@ -321,7 +344,7 @@ class SwiftExportUnitTests {
         val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList()).filter { it.shouldBeFullyExported }
 
         val expectedModules = SmartSet.create<SwiftExportModuleForAssertion>().apply {
-            add(SwiftExportModuleForAssertion("KotlinxDatetime", "kotlinx-datetime.klib", true))
+            add(SwiftExportModuleForAssertion("OrgJetbrainsKotlinxKotlinxDatetime", "kotlinx-datetime.klib", true))
         }
 
         assertEquals(
@@ -329,7 +352,7 @@ class SwiftExportUnitTests {
             actualModules.toModulesForAssertion(),
         )
 
-        val kotlinXCoroutines = actualModules.singleOrNull { it.moduleName == "KotlinxCoroutinesCore" }
+        val kotlinXCoroutines = actualModules.singleOrNull { it.moduleName == "OrgJetbrainsKotlinxKotlinxCoroutinesCore" }
         assertNull(kotlinXCoroutines, "Transitive dependency kotlinx-coroutines-core should not be exported")
     }
 
@@ -354,7 +377,13 @@ class SwiftExportUnitTests {
         val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList()).filter { it.shouldBeFullyExported }
 
         val expectedModules = SmartSet.create<SwiftExportModuleForAssertion>().apply {
-            add(SwiftExportModuleForAssertion("KotlinxCoroutinesCore", "kotlinx-coroutines-core.klib", true))
+            add(
+                SwiftExportModuleForAssertion(
+                    "OrgJetbrainsKotlinxKotlinxCoroutinesCore",
+                    "kotlinx-coroutines-core.klib",
+                    true
+                )
+            )
         }
 
         assertEquals(
@@ -388,7 +417,13 @@ class SwiftExportUnitTests {
         val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList()).filter { it.shouldBeFullyExported }
 
         val expectedModules = SmartSet.create<SwiftExportModuleForAssertion>().apply {
-            add(SwiftExportModuleForAssertion("KotlinxCoroutinesCore", "kotlinx-coroutines-core.klib", true))
+            add(
+                SwiftExportModuleForAssertion(
+                    "OrgJetbrainsKotlinxKotlinxCoroutinesCore",
+                    "kotlinx-coroutines-core.klib",
+                    true
+                )
+            )
         }
 
         assertEquals(
@@ -422,7 +457,13 @@ class SwiftExportUnitTests {
         val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList()).filter { it.shouldBeFullyExported }
 
         val expectedModules = SmartSet.create<SwiftExportModuleForAssertion>().apply {
-            add(SwiftExportModuleForAssertion("KotlinxCoroutinesCore", "kotlinx-coroutines-core.klib", true))
+            add(
+                SwiftExportModuleForAssertion(
+                    "OrgJetbrainsKotlinxKotlinxCoroutinesCore",
+                    "kotlinx-coroutines-core.klib",
+                    true
+                )
+            )
         }
 
         assertEquals(
@@ -450,8 +491,20 @@ class SwiftExportUnitTests {
         val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
 
         val expectedModules = SmartSet.create<SwiftExportModuleForAssertion>().apply {
-            add(SwiftExportModuleForAssertion("CustomDateTime", "kotlinx-datetime.klib", true))
-            add(SwiftExportModuleForAssertion("KotlinxSerializationCore", "kotlinx-serialization-core.klib", false))
+            add(
+                SwiftExportModuleForAssertion(
+                    "CustomDateTime",
+                    "kotlinx-datetime.klib",
+                    true
+                )
+            )
+            add(
+                SwiftExportModuleForAssertion(
+                    "OrgJetbrainsKotlinxKotlinxSerializationCore",
+                    "kotlinx-serialization-core.klib",
+                    false
+                )
+            )
         }
 
         assertEquals(
@@ -579,8 +632,20 @@ class SwiftExportUnitTests {
         val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
 
         val expectedModules = SmartSet.create<SwiftExportModuleForAssertion>().apply {
-            add(SwiftExportModuleForAssertion("KotlinxCoroutinesCore", "kotlinx-coroutines-core.klib", false))
-            add(SwiftExportModuleForAssertion("Atomicfu", "atomicfu.klib", false))
+            add(
+                SwiftExportModuleForAssertion(
+                    "OrgJetbrainsKotlinxKotlinxCoroutinesCore",
+                    "kotlinx-coroutines-core.klib",
+                    false
+                )
+            )
+            add(
+                SwiftExportModuleForAssertion(
+                    "OrgJetbrainsKotlinxAtomicfu",
+                    "atomicfu.klib",
+                    false
+                )
+            )
         }
 
         assertEquals(
@@ -652,8 +717,20 @@ class SwiftExportUnitTests {
         val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
 
         val expectedModules = SmartSet.create<SwiftExportModuleForAssertion>().apply {
-            add(SwiftExportModuleForAssertion("KotlinxCoroutinesCore", "kotlinx-coroutines-core.klib", true))
-            add(SwiftExportModuleForAssertion("Atomicfu", "atomicfu.klib", false))
+            add(
+                SwiftExportModuleForAssertion(
+                    "OrgJetbrainsKotlinxKotlinxCoroutinesCore",
+                    "kotlinx-coroutines-core.klib",
+                    true
+                )
+            )
+            add(
+                SwiftExportModuleForAssertion(
+                    "OrgJetbrainsKotlinxAtomicfu",
+                    "atomicfu.klib",
+                    false
+                )
+            )
         }
 
         assertEquals(
@@ -685,17 +762,23 @@ class SwiftExportUnitTests {
         val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
 
         val expectedModules = SmartSet.create<SwiftExportModuleForAssertion>().apply {
-            add(SwiftExportModuleForAssertion("KotlinxDatetime", "kotlinx-datetime.klib", true))
             add(
                 SwiftExportModuleForAssertion(
-                    "KotlinxSerializationJson",
+                    "OrgJetbrainsKotlinxKotlinxDatetime",
+                    "kotlinx-datetime.klib",
+                    true
+                )
+            )
+            add(
+                SwiftExportModuleForAssertion(
+                    "OrgJetbrainsKotlinxKotlinxSerializationJson",
                     "kotlinx-serialization-json-iosSimulatorArm64Main-1.8.1.klib",
                     false
                 )
             )
             add(
                 SwiftExportModuleForAssertion(
-                    "KotlinxSerializationCore",
+                    "OrgJetbrainsKotlinxKotlinxSerializationCore",
                     "kotlinx-serialization-core-iosSimulatorArm64Main-1.8.1.klib",
                     false
                 )
@@ -740,9 +823,27 @@ class SwiftExportUnitTests {
         val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
 
         val expectedModules = SmartSet.create<SwiftExportModuleForAssertion>().apply {
-            add(SwiftExportModuleForAssertion("Subproject", "subproject", false))
-            add(SwiftExportModuleForAssertion("KotlinxCoroutinesCore", "kotlinx-coroutines-core.klib", false))
-            add(SwiftExportModuleForAssertion("Atomicfu", "atomicfu.klib", false))
+            add(
+                SwiftExportModuleForAssertion(
+                    "SharedSubproject",
+                    "subproject",
+                    false
+                )
+            )
+            add(
+                SwiftExportModuleForAssertion(
+                    "OrgJetbrainsKotlinxKotlinxCoroutinesCore",
+                    "kotlinx-coroutines-core.klib",
+                    false
+                )
+            )
+            add(
+                SwiftExportModuleForAssertion(
+                    "OrgJetbrainsKotlinxAtomicfu",
+                    "atomicfu.klib",
+                    false
+                )
+            )
         }
 
         assertEquals(
@@ -786,9 +887,27 @@ class SwiftExportUnitTests {
         val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
 
         val expectedModules = SmartSet.create<SwiftExportModuleForAssertion>().apply {
-            add(SwiftExportModuleForAssertion("Subproject", "subproject", true))
-            add(SwiftExportModuleForAssertion("KotlinxCoroutinesCore", "kotlinx-coroutines-core.klib", false))
-            add(SwiftExportModuleForAssertion("Atomicfu", "atomicfu.klib", false))
+            add(
+                SwiftExportModuleForAssertion(
+                    "Subproject",
+                    "subproject",
+                    true
+                )
+            )
+            add(
+                SwiftExportModuleForAssertion(
+                    "OrgJetbrainsKotlinxKotlinxCoroutinesCore",
+                    "kotlinx-coroutines-core.klib",
+                    false
+                )
+            )
+            add(
+                SwiftExportModuleForAssertion(
+                    "OrgJetbrainsKotlinxAtomicfu",
+                    "atomicfu.klib",
+                    false
+                )
+            )
         }
 
         assertEquals(
@@ -798,7 +917,7 @@ class SwiftExportUnitTests {
     }
 
     @Test
-    fun `test exporting transitive dependencies is with different versions (dependency in subproject has greater version)`() {
+    fun `test exporting transitive dependencies with different versions (dependency in subproject has greater version)`() {
         val project = buildProject(
             projectBuilder = {
                 withName("shared")
@@ -832,9 +951,27 @@ class SwiftExportUnitTests {
         val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
 
         val expectedModules = SmartSet.create<SwiftExportModuleForAssertion>().apply {
-            add(SwiftExportModuleForAssertion("KotlinxCoroutinesCore", "kotlinx-coroutines-core-iosSimulatorArm64Main-1.10.0.klib", true))
-            add(SwiftExportModuleForAssertion("Subproject", "subproject", false))
-            add(SwiftExportModuleForAssertion("Atomicfu", "atomicfu.klib", false))
+            add(
+                SwiftExportModuleForAssertion(
+                    "OrgJetbrainsKotlinxKotlinxCoroutinesCore",
+                    "kotlinx-coroutines-core-iosSimulatorArm64Main-1.10.0.klib",
+                    true
+                )
+            )
+            add(
+                SwiftExportModuleForAssertion(
+                    "SharedSubproject",
+                    "subproject",
+                    false
+                )
+            )
+            add(
+                SwiftExportModuleForAssertion(
+                    "OrgJetbrainsKotlinxAtomicfu",
+                    "atomicfu.klib",
+                    false
+                )
+            )
         }
 
         assertEquals(
@@ -844,7 +981,7 @@ class SwiftExportUnitTests {
     }
 
     @Test
-    fun `test exporting transitive dependencies is with different versions (dependency in subproject has lower version)`() {
+    fun `test exporting transitive dependencies with different versions (dependency in subproject has lower version)`() {
         val project = buildProject(
             projectBuilder = {
                 withName("shared")
@@ -878,9 +1015,27 @@ class SwiftExportUnitTests {
         val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
 
         val expectedModules = SmartSet.create<SwiftExportModuleForAssertion>().apply {
-            add(SwiftExportModuleForAssertion("KotlinxCoroutinesCore", "kotlinx-coroutines-core-iosSimulatorArm64Main-1.10.0.klib", true))
-            add(SwiftExportModuleForAssertion("Subproject", "subproject", false))
-            add(SwiftExportModuleForAssertion("Atomicfu", "atomicfu.klib", false))
+            add(
+                SwiftExportModuleForAssertion(
+                    "OrgJetbrainsKotlinxKotlinxCoroutinesCore",
+                    "kotlinx-coroutines-core-iosSimulatorArm64Main-1.10.0.klib",
+                    true
+                )
+            )
+            add(
+                SwiftExportModuleForAssertion(
+                    "SharedSubproject",
+                    "subproject",
+                    false
+                )
+            )
+            add(
+                SwiftExportModuleForAssertion(
+                    "OrgJetbrainsKotlinxAtomicfu",
+                    "atomicfu.klib",
+                    false
+                )
+            )
         }
 
         assertEquals(
@@ -926,10 +1081,34 @@ class SwiftExportUnitTests {
         val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
 
         val expectedModules = SmartSet.create<SwiftExportModuleForAssertion>().apply {
-            add(SwiftExportModuleForAssertion("KotlinxCoroutinesCore", "kotlinx-coroutines-core-iosSimulatorArm64Main-1.10.0.klib", true))
-            add(SwiftExportModuleForAssertion("Subproject1", "subproject1", true))
-            add(SwiftExportModuleForAssertion("Subproject2", "subproject2", true))
-            add(SwiftExportModuleForAssertion("Atomicfu", "atomicfu.klib", false))
+            add(
+                SwiftExportModuleForAssertion(
+                    "OrgJetbrainsKotlinxKotlinxCoroutinesCore",
+                    "kotlinx-coroutines-core-iosSimulatorArm64Main-1.10.0.klib",
+                    true
+                )
+            )
+            add(
+                SwiftExportModuleForAssertion(
+                    "Subproject1",
+                    "subproject1",
+                    true
+                )
+            )
+            add(
+                SwiftExportModuleForAssertion(
+                    "Subproject2",
+                    "subproject2",
+                    true
+                )
+            )
+            add(
+                SwiftExportModuleForAssertion(
+                    "OrgJetbrainsKotlinxAtomicfu",
+                    "atomicfu.klib",
+                    false
+                )
+            )
         }
 
         assertEquals(
@@ -965,10 +1144,34 @@ class SwiftExportUnitTests {
         val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList())
 
         val expectedModules = SmartSet.create<SwiftExportModuleForAssertion>().apply {
-            add(SwiftExportModuleForAssertion("AppCashSqldelightRuntime", "runtime.klib", true))
-            add(SwiftExportModuleForAssertion("OrgJetbrainsComposeRuntimeRuntime", "runtime-uikitSimArm64Main-1.8.2.klib", true))
-            add(SwiftExportModuleForAssertion("Atomicfu", "atomicfu.klib", false))
-            add(SwiftExportModuleForAssertion("KotlinxCoroutinesCore", "kotlinx-coroutines-core.klib", false))
+            add(
+                SwiftExportModuleForAssertion(
+                    "AppCashSqldelightRuntime",
+                    "runtime.klib",
+                    true
+                )
+            )
+            add(
+                SwiftExportModuleForAssertion(
+                    "OrgJetbrainsComposeRuntimeRuntime",
+                    "runtime-uikitSimArm64Main-1.8.2.klib",
+                    true
+                )
+            )
+            add(
+                SwiftExportModuleForAssertion(
+                    "OrgJetbrainsKotlinxAtomicfu",
+                    "atomicfu.klib",
+                    false
+                )
+            )
+            add(
+                SwiftExportModuleForAssertion(
+                    "OrgJetbrainsKotlinxKotlinxCoroutinesCore",
+                    "kotlinx-coroutines-core.klib",
+                    false
+                )
+            )
         }
 
         assertEquals(

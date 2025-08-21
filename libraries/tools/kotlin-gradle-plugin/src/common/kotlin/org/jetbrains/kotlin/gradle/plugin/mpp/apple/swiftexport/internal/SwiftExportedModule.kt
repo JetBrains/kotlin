@@ -169,7 +169,7 @@ private fun Project.findAndCreateSwiftExportedModules(
         .forEach { artifact ->
             result.add(
                 createTransitiveSwiftExportedModule(
-                    artifact.moduleVersion.name.normalizedSwiftExportModuleName,
+                    artifact.moduleVersion.inheritedName.normalizedSwiftExportModuleName,
                     artifact.artifact.file
                 )
             )

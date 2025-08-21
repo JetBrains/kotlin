@@ -450,8 +450,8 @@ class SwiftExportIT : KGPBaseTest() {
                 assertTasksExecuted(":compileKotlinIosArm64")
 
                 val sharedPath = projectPath.resolve("build/SwiftExport/iosArm64/Debug/files/Shared")
-                val depOnePath = projectPath.resolve("build/SwiftExport/iosArm64/Debug/files/DepOne")
-                val depTwoPath = projectPath.resolve("build/SwiftExport/iosArm64/Debug/files/DepTwo")
+                val depOnePath = projectPath.resolve("build/SwiftExport/iosArm64/Debug/files/SharedDepOne")
+                val depTwoPath = projectPath.resolve("build/SwiftExport/iosArm64/Debug/files/SharedDepTwo")
 
                 assertDirectoryExists(sharedPath)
                 assertDirectoryExists(depOnePath)
@@ -466,7 +466,7 @@ class SwiftExportIT : KGPBaseTest() {
                 val actualModules = modules.map { it["name"] as String }.toSet()
 
                 assertEquals(
-                    setOf("Shared", "DepOne", "ExportedKotlinPackages", "KotlinRuntimeSupport"),
+                    setOf("Shared", "SharedDepOne", "ExportedKotlinPackages", "KotlinRuntimeSupport"),
                     actualModules
                 )
             }
