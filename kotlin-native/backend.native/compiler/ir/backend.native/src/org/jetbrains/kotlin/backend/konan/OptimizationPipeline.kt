@@ -190,6 +190,7 @@ abstract class LlvmOptimizationPipeline(
 
     abstract val pipelineName: String
     abstract val passes: List<String>
+    open val threads: Int = 1
     val optimizationFlag = when (config.sizeLevel) {
         LlvmSizeLevel.NONE -> "O${config.optimizationLevel.value}"
         LlvmSizeLevel.DEFAULT -> "Os"
@@ -197,21 +198,18 @@ abstract class LlvmOptimizationPipeline(
     }
 
     private val arena = Arena()
-    private val targetMachineDelegate = lazy {
-        val target = arena.alloc<LLVMTargetRefVar>()
-        val foundLlvmTarget = LLVMGetTargetFromTriple(config.targetTriple, target.ptr, null) == 0
-        check(foundLlvmTarget) { "Cannot get target from triple ${config.targetTriple}." }
-        LLVMCreateTargetMachine(
-                target.value,
-                config.targetTriple,
-                config.cpuModel,
-                config.cpuFeatures,
-                config.codegenOptimizationLevel,
-                config.relocMode,
-                config.codeModel)!!
+
+    private val targetMachineOptionsDelegate = lazy {
+        val options = LLVMCreateTargetMachineOptions()!!
+        LLVMTargetMachineOptionsSetCPU(options, config.cpuModel)
+        LLVMTargetMachineOptionsSetFeatures(options, config.cpuFeatures)
+        LLVMTargetMachineOptionsSetCodeModel(options, config.codeModel)
+        LLVMTargetMachineOptionsSetRelocMode(options, config.relocMode)
+        LLVMTargetMachineOptionsSetCodeGenOptLevel(options, config.codegenOptimizationLevel)
+        options
     }
 
-    private val targetMachine: LLVMTargetMachineRef by targetMachineDelegate
+    private val targetMachineOptions: LLVMTargetMachineOptionsRef by targetMachineOptionsDelegate
 
     fun execute(llvmModule: LLVMModuleRef) {
         initLLVMOnce()
@@ -234,9 +232,10 @@ abstract class LlvmOptimizationPipeline(
             LLVMKotlinRunPasses(
                     llvmModule,
                     passDescription,
-                    targetMachine,
+                    config.targetTriple, targetMachineOptions,
                     InlinerThreshold = config.inlineThreshold ?: -1,
                     Profile = it,
+                    SubModuleCount = threads,
             )
         }
         require(errorCode == null) {
@@ -251,8 +250,8 @@ abstract class LlvmOptimizationPipeline(
     }
 
     override fun close() {
-        if (targetMachineDelegate.isInitialized()) {
-            LLVMDisposeTargetMachine(targetMachine)
+        if (targetMachineOptionsDelegate.isInitialized()) {
+            LLVMDisposeTargetMachineOptions(targetMachineOptions)
         }
         arena.clear()
     }
@@ -289,18 +288,13 @@ class MandatoryOptimizationPipeline(config: LlvmPipelineConfig, performanceManag
         }
 
     }
-
-    override fun executeCustomPreprocessing(config: LlvmPipelineConfig, module: LLVMModuleRef) {
-        if (config.makeDeclarationsHidden) {
-            makeVisibilityHiddenLikeLlvmInternalizePass(module)
-        }
-    }
 }
 
 class ModuleOptimizationPipeline(config: LlvmPipelineConfig, performanceManager: PerformanceManager?, logger: LoggingContext? = null) :
         LlvmOptimizationPipeline(config, performanceManager, logger) {
     override val pipelineName = "llvm-default"
     override val passes = listOf(config.modulePasses ?: "default<$optimizationFlag>")
+    override val threads = 4
 }
 
 class LTOOptimizationPipeline(config: LlvmPipelineConfig, performanceManager: PerformanceManager?, logger: LoggingContext? = null) :
@@ -320,6 +314,12 @@ class LTOOptimizationPipeline(config: LlvmPipelineConfig, performanceManager: Pe
                 // Pipeline that is similar to `llvm-lto`.
                 add("lto<$optimizationFlag>")
             }
+
+    override fun executeCustomPreprocessing(config: LlvmPipelineConfig, module: LLVMModuleRef) {
+        if (config.makeDeclarationsHidden) {
+            makeVisibilityHiddenLikeLlvmInternalizePass(module)
+        }
+    }
 }
 
 class ThreadSanitizerPipeline(config: LlvmPipelineConfig, performanceManager: PerformanceManager?, logger: LoggingContext? = null) :

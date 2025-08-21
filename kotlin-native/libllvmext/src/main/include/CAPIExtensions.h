@@ -27,9 +27,11 @@ int LLVMInlineCall(LLVMValueRef call);
 LLVMErrorRef LLVMKotlinRunPasses(
         LLVMModuleRef M,
         const char *Passes,
-        LLVMTargetMachineRef TM,
+        const char *Triple,
+        const LLVMTargetMachineOptionsRef TMOptions,
         int InlinerThreshold,
-        LLVMKotlinPassesProfileRef* Profile
+        LLVMKotlinPassesProfileRef* Profile,
+        unsigned SubModuleCount
 );
 
 # ifdef __cplusplus
