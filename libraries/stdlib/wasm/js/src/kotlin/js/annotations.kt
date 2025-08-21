@@ -5,6 +5,8 @@
 
 package kotlin.js
 
+import kotlin.annotation.AnnotationTarget.FUNCTION
+
 /**
  * Exports top-level declaration on JS platform.
  *
@@ -132,3 +134,6 @@ public actual annotation class JsModule(actual val import: String)
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.FILE)
 public actual annotation class JsQualifier(actual val value: String)
+
+@Target(FUNCTION)
+public actual annotation class nativeInvoke
