@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -30,11 +30,173 @@ class SetOperationsTest {
         assertTrue(listOf<Int>().subtract(listOf(1)).none())
     }
 
+    @Test fun subtractFromIntArray() {
+        assertEquals(listOf(1, 3), intArrayOf(1, 3).subtract(listOf(5)).toList())
+        assertEquals(listOf(1, 3), intArrayOf(1, 3, 5).subtract(listOf(5)).toList())
+        assertTrue(intArrayOf(1, 3, 5).subtract(listOf(1, 3, 5)).none())
+        assertTrue(intArrayOf().subtract(listOf(1)).none())
+    }
+
+    @Test fun subtractFromLongArray() {
+        assertEquals(listOf(1L, 3L), longArrayOf(1L, 3L).subtract(listOf(5L)).toList())
+        assertEquals(listOf(1L, 3L), longArrayOf(1L, 3L, 5L).subtract(listOf(5L)).toList())
+        assertTrue(longArrayOf(1L, 3L, 5L).subtract(listOf(1L, 3L, 5L)).none())
+        assertTrue(longArrayOf().subtract(listOf(1L)).none())
+    }
+
+    @Test fun subtractFromShortArray() {
+        assertEquals(listOf(1.toShort(), 3.toShort()), shortArrayOf(1, 3).subtract(listOf(5.toShort())).toList())
+        assertEquals(listOf(1.toShort(), 3.toShort()), shortArrayOf(1, 3, 5).subtract(listOf(5.toShort())).toList())
+        assertTrue(shortArrayOf(1, 3, 5).subtract(listOf(1.toShort(), 3.toShort(), 5.toShort())).none())
+        assertTrue(shortArrayOf().subtract(listOf(1)).none())
+    }
+
+    @Test fun subtractFromByteArray() {
+        assertEquals(listOf(1.toByte(), 3.toByte()), byteArrayOf(1, 3).subtract(listOf(5.toByte())).toList())
+        assertEquals(listOf(1.toByte(), 3.toByte()), byteArrayOf(1, 3, 5).subtract(listOf(5.toByte())).toList())
+        assertTrue(byteArrayOf(1, 3, 5).subtract(listOf(1.toByte(), 3.toByte(), 5.toByte())).none())
+        assertTrue(byteArrayOf().subtract(listOf(1)).none())
+    }
+
+    @Test fun subtractFromCharArray() {
+        assertEquals(listOf('a', 'c'), charArrayOf('a', 'c').subtract(listOf('e')).toList())
+        assertEquals(listOf('a', 'c'), charArrayOf('a', 'c', 'e').subtract(listOf('e')).toList())
+        assertTrue(charArrayOf('a', 'c', 'e').subtract(listOf('a', 'c', 'e')).none())
+        assertTrue(charArrayOf().subtract(listOf('a')).none())
+    }
+
+    @Test fun subtractFromFloatArray() {
+        assertEquals(listOf(1f, 3f), floatArrayOf(1f, 3f).subtract(listOf(5f)).toList())
+        assertEquals(listOf(1f, 3f), floatArrayOf(1f, 3f, 5f).subtract(listOf(5f)).toList())
+        assertTrue(floatArrayOf(1f, 3f, 5f).subtract(listOf(1f, 3f, 5f)).none())
+        assertTrue(floatArrayOf().subtract(listOf(1f)).none())
+    }
+
+    @Test fun subtractFromDoubleArray() {
+        assertEquals(listOf(1.0, 3.0), doubleArrayOf(1.0, 3.0).subtract(listOf(5.0)).toList())
+        assertEquals(listOf(1.0, 3.0), doubleArrayOf(1.0, 3.0, 5.0).subtract(listOf(5.0)).toList())
+        assertTrue(doubleArrayOf(1.0, 3.0, 5.0).subtract(listOf(1.0, 3.0, 5.0)).none())
+        assertTrue(doubleArrayOf().subtract(listOf(1.0)).none())
+    }
+
+    @Test fun subtractFromArray() {
+        data class O(val x: Int)
+        assertEquals(listOf(O(1), O(3)), arrayOf(O(1), O(3)).subtract(listOf(O(5))).toList())
+        assertEquals(listOf(O(1), O(3)), arrayOf(O(1), O(3), O(5)).subtract(listOf(O(5))).toList())
+        assertTrue(arrayOf(O(1), O(3), O(5)).subtract(listOf(O(1), O(3), O(5))).none())
+        assertTrue(arrayOf<O>().subtract(listOf(O(1))).none())
+    }
+
+    @Test
+    fun subtractIdentitySetFromArray() {
+        data class Obj(val x: Int)
+
+        val a = Obj(1)
+        val b = Obj(2)
+        val c = Obj(1)
+
+        assertEquals(setOf(c), arrayOf(a, b, c).subtract(IdentitySet(a, b)))
+        assertEquals(setOf(c), arrayOf(c, b, a).subtract(IdentitySet(a, b)))
+    }
+
+    @Test fun subtractFromIdentitySet() {
+        data class Obj(val x: Int)
+
+        val a = Obj(1)
+        val b = Obj(2)
+        val c = Obj(1)
+
+        assertEquals(setOf(c), IdentitySet(c, b, a).subtract(IdentitySet(a, b)))
+        assertEquals(setOf(c), IdentitySet(a, b, c).subtract(IdentitySet(a, b)))
+    }
+
     @Test fun intersect() {
         assertTrue(listOf(1, 3).intersect(listOf(5)).none())
         assertEquals(listOf(5), listOf(1, 3, 5).intersect(listOf(5)).toList())
-        assertEquals(listOf(1, 3, 5), listOf(1, 3, 5).intersect(listOf(1, 3, 5)).toList())
+        assertEquals(listOf(1, 3, 5), listOf(1, 3, 5).intersect(listOf(5, 3, 1)).toList())
         assertTrue(listOf<Int>().intersect(listOf(1)).none())
+    }
+
+    @Test fun intersectIntArray() {
+        assertTrue(intArrayOf(1, 3).intersect(listOf(5)).none())
+        assertEquals(setOf(5), intArrayOf(1, 3, 5).intersect(listOf(5)))
+        assertEquals(listOf(1, 3, 5), intArrayOf(1, 3, 5).intersect(listOf(5, 3, 1)).toList())
+        assertTrue(intArrayOf().intersect(listOf(1)).none())
+    }
+
+    @Test fun intersectLongArray() {
+        assertTrue(longArrayOf(1L, 3L).intersect(listOf(5L)).none())
+        assertEquals(setOf(5L), longArrayOf(1L, 3L, 5L).intersect(listOf(5L)))
+        assertEquals(listOf(1L, 3L, 5L), longArrayOf(1L, 3L, 5L).intersect(listOf(5L, 3L, 1L)).toList())
+        assertTrue(longArrayOf().intersect(listOf(1L)).none())
+    }
+
+    @Test fun intersectShortArray() {
+        assertTrue(shortArrayOf(1, 3).intersect(listOf(5)).none())
+        assertEquals(setOf(5.toShort()), shortArrayOf(1, 3, 5).intersect(listOf(5)))
+        assertEquals(listOf(1, 3, 5).map(Int::toShort), shortArrayOf(1, 3, 5).intersect(listOf(5, 3, 1)).toList())
+        assertTrue(shortArrayOf().intersect(listOf(1)).none())
+    }
+
+    @Test fun intersectByteArray() {
+        assertTrue(byteArrayOf(1, 3).intersect(listOf(5)).none())
+        assertEquals(setOf(5.toByte()), byteArrayOf(1, 3, 5).intersect(listOf(5)))
+        assertEquals(listOf(1, 3, 5).map(Int::toByte), byteArrayOf(1, 3, 5).intersect(listOf(5, 3, 1)).toList())
+        assertTrue(byteArrayOf().intersect(listOf(1)).none())
+    }
+
+    @Test fun intersectCharArray() {
+        assertTrue(charArrayOf('a', 'c').intersect(listOf('b')).none())
+        assertEquals(setOf('e'), charArrayOf('a', 'c', 'e').intersect(listOf('e')))
+        assertEquals(listOf('a', 'c', 'e'), charArrayOf('a', 'c', 'e').intersect(listOf('e', 'c', 'a')).toList())
+        assertTrue(charArrayOf().intersect(listOf('x')).none())
+    }
+
+    @Test fun intersectFloatArray() {
+        assertTrue(floatArrayOf(1f, 3f).intersect(listOf(5f)).none())
+        assertEquals(setOf(5f), floatArrayOf(1f, 3f, 5f).intersect(listOf(5f)))
+        assertEquals(listOf(1f, 3f, 5f), floatArrayOf(1f, 3f, 5f).intersect(listOf(5f, 3f, 1f)).toList())
+        assertTrue(floatArrayOf().intersect(listOf(1f)).none())
+    }
+
+    @Test fun intersectDoubleArray() {
+        assertTrue(doubleArrayOf(1.0, 3.0).intersect(listOf(5.0)).none())
+        assertEquals(setOf(5.0), doubleArrayOf(1.0, 3.0, 5.0).intersect(listOf(5.0)))
+        assertEquals(listOf(1.0, 3.0, 5.0), doubleArrayOf(1.0, 3.0, 5.0).intersect(listOf(5.0, 3.0, 1.0)).toList())
+        assertTrue(doubleArrayOf().intersect(listOf(1.0)).none())
+    }
+
+    @Test fun intersectArray() {
+        data class O(val x: Int)
+
+        assertTrue(arrayOf(O(1), O(3)).intersect(listOf(O(5))).none())
+        assertEquals(setOf(O(5)), arrayOf(O(1), O(3), O(5)).intersect(listOf(O(5))))
+        assertEquals(listOf(O(1), O(3), O(5)), arrayOf(O(1), O(3), O(5)).intersect(listOf(O(5), O(3), O(1))).toList())
+        assertTrue(arrayOf<O>().intersect(listOf(1)).none())
+    }
+
+    @Test fun intersectWithIdentitySet() {
+        data class Obj(val x: Int)
+
+        val a = Obj(1)
+        val b = Obj(2)
+        val c = Obj(1)
+
+        assertEquals(setOf(b, c), listOf(a, b, c).intersect(IdentitySet(b, c)))
+        assertEquals(setOf(b, c), listOf(c, b, a).intersect(IdentitySet(b, c)))
+        assertEquals(setOf(b), listOf(b, c).intersect(IdentitySet(b, a)))
+    }
+
+    @Test fun intersectArrayWithIdentitySet() {
+        data class Obj(val x: Int)
+
+        val a = Obj(1)
+        val b = Obj(2)
+        val c = Obj(1)
+
+        assertEquals(setOf(b, c), arrayOf(a, b, c).intersect(IdentitySet(b, c)))
+        assertEquals(setOf(b, c), arrayOf(c, b, a).intersect(IdentitySet(b, c)))
+        assertEquals(setOf(b), arrayOf(b, c).intersect(IdentitySet(b, a)))
     }
 
     fun testPlus(doPlus: (Set<String>) -> Set<String>) {
@@ -78,5 +240,21 @@ class SetOperationsTest {
     @Test fun minusCollection() = testMinus { it - listOf("bar", "zoo") }
     @Test fun minusArray() = testMinus { it - arrayOf("bar", "zoo") }
     @Test fun minusSequence() = testMinus { it - sequenceOf("bar", "zoo") }
+}
 
+private class IdentitySet<T : Any>(vararg val elements: T) : AbstractSet<T>() {
+    init {
+        for (idx1 in elements.indices) {
+            for (idx2 in elements.indices) {
+                require(idx1 == idx2 || elements[idx1] !== elements[idx2])
+            }
+        }
+    }
+
+    override val size: Int
+        get() = elements.size
+
+    override fun iterator(): Iterator<T> = elements.iterator()
+
+    override fun contains(element: T): Boolean = elements.any { it === element }
 }
