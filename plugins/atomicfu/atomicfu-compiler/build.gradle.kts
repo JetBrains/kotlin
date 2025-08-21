@@ -12,7 +12,7 @@ plugins {
     id("d8-configuration")
 }
 
-// WARNING: Native target is host-dependent. Re-running the same build on another host OS may bring to a different result.
+// WARNING: Native target is host-dependent. Re-running the same build on another host OS may give a different result.
 val nativeTargetName = HostManager.host.name
 
 val antLauncherJar by configurations.creating
@@ -35,7 +35,7 @@ val atomicfuJvmClasspath by configurations.creating
 val atomicfuNativeKlib by configurations.creating {
     attributes {
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
-        // WARNING: Native target is host-dependent. Re-running the same build on another host OS may bring to a different result.
+        // WARNING: Native target is host-dependent. Re-running the same build on another host OS may give a different result.
         attribute(KotlinNativeTarget.konanTargetAttribute, nativeTargetName)
         attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)

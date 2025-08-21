@@ -30,13 +30,13 @@ val coreJsIrRuntimeForTests: Configuration by configurations.creating {
     }
 }
 
-// WARNING: Native target is host-dependent. Re-running the same build on another host OS may bring to a different result.
+// WARNING: Native target is host-dependent. Re-running the same build on another host OS may give a different result.
 val nativeTargetName = HostManager.host.name
 
 val coreNativeRuntimeForTests by configurations.creating {
     attributes {
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
-        // WARNING: Native target is host-dependent. Re-running the same build on another host OS may bring to a different result.
+        // WARNING: Native target is host-dependent. Re-running the same build on another host OS may give a different result.
         attribute(KotlinNativeTarget.konanTargetAttribute, nativeTargetName)
         attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
@@ -46,7 +46,7 @@ val coreNativeRuntimeForTests by configurations.creating {
 val jsonNativeRuntimeForTests by configurations.creating {
     attributes {
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
-        // WARNING: Native target is host-dependent. Re-running the same build on another host OS may bring to a different result.
+        // WARNING: Native target is host-dependent. Re-running the same build on another host OS may give a different result.
         attribute(KotlinNativeTarget.konanTargetAttribute, nativeTargetName)
         attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
