@@ -864,7 +864,7 @@ internal object DevirtualizationAnalysis {
                         val stack = mutableListOf<Node>()
                         list.forEach { call ->
                             val returnsNode = call.returnsNode.root()
-                            if (call.receiverNode.types[VIRTUAL_TYPE_ID] // Called from external world.
+                            if (call.receiverNode.root().types[VIRTUAL_TYPE_ID] // Called from external world.
                                     && !returnsNode.types[type.index] && !visited[returnsNode.id]
                             ) {
                                 returnsNode.types.set(type.index)
