@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.konan.util
 /**
  * Provides some bulk operations needed for devirtualization
  */
-class CustomBitSet private constructor(size: Int, data: LongArray) {
+internal class CustomBitSet private constructor(size: Int, data: LongArray) {
     private var size = size
     private var data = data
 
@@ -59,7 +59,7 @@ class CustomBitSet private constructor(size: Int, data: LongArray) {
         return cardinality
     }
 
-    fun forEachBit(block: (Int) -> Unit) {
+    inline fun forEachBit(block: (Int) -> Unit) {
         for (index in 0 until size) {
             var d = data[index]
             val idx = index shl 6
