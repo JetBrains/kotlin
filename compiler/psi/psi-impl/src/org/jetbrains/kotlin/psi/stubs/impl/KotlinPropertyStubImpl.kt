@@ -5,17 +5,18 @@
 
 package org.jetbrains.kotlin.psi.stubs.impl
 
-import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.constant.ConstantValue
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.stubs.KotlinPropertyStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
+@OptIn(KtImplementationDetail::class)
 class KotlinPropertyStubImpl(
-    parent: StubElement<out PsiElement>?,
+    parent: StubElement<*>?,
     private val name: StringRef?,
     override val isVar: Boolean,
     override val isTopLevel: Boolean,
@@ -39,5 +40,22 @@ class KotlinPropertyStubImpl(
         }
     }
 
-    override fun getName() = StringRef.toString(name)
+    override fun getName(): String? = StringRef.toString(name)
+
+    @KtImplementationDetail
+    override fun copyInto(newParent: StubElement<*>?): KotlinPropertyStubImpl = KotlinPropertyStubImpl(
+        parent = newParent,
+        name = name,
+        isVar = isVar,
+        isTopLevel = isTopLevel,
+        hasDelegate = hasDelegate,
+        hasDelegateExpression = hasDelegateExpression,
+        hasInitializer = hasInitializer,
+        isExtension = isExtension,
+        hasReturnTypeRef = hasReturnTypeRef,
+        fqName = fqName,
+        constantInitializer = constantInitializer,
+        origin = origin,
+        hasBackingField = hasBackingField,
+    )
 }

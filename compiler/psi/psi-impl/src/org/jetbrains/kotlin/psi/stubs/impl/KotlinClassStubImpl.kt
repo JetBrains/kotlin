@@ -5,19 +5,19 @@
 
 package org.jetbrains.kotlin.psi.stubs.impl
 
-import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.KotlinClassStub
 import org.jetbrains.kotlin.psi.stubs.elements.KotlinValueClassRepresentation
-import org.jetbrains.kotlin.psi.stubs.elements.KtClassElementType
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
+@OptIn(KtImplementationDetail::class)
 class KotlinClassStubImpl(
-    type: KtClassElementType,
-    parent: StubElement<out PsiElement>?,
+    parent: StubElement<*>?,
     private val qualifiedName: StringRef?,
     override val classId: ClassId?,
     private val name: StringRef?,
@@ -28,8 +28,10 @@ class KotlinClassStubImpl(
     override val isLocal: Boolean,
     override val isTopLevel: Boolean,
     val valueClassRepresentation: KotlinValueClassRepresentation?,
-) : KotlinStubBaseImpl<KtClass>(parent, type), KotlinClassStub {
-
+) : KotlinStubBaseImpl<KtClass>(
+    parent = parent,
+    elementType = if (isEnumEntry) KtStubElementTypes.ENUM_ENTRY else KtStubElementTypes.CLASS,
+), KotlinClassStub {
     override val fqName: FqName?
         get() {
             val stringRef = StringRef.toString(qualifiedName) ?: return null
@@ -40,4 +42,19 @@ class KotlinClassStubImpl(
 
     override val superNames: List<String>
         get() = superNameRefs.map(StringRef::toString)
+
+    @KtImplementationDetail
+    override fun copyInto(newParent: StubElement<*>?): KotlinClassStubImpl = KotlinClassStubImpl(
+        parent = newParent,
+        qualifiedName = qualifiedName,
+        classId = classId,
+        name = name,
+        superNameRefs = superNameRefs,
+        isInterface = isInterface,
+        isEnumEntry = isEnumEntry,
+        isClsStubCompiledToJvmDefaultImplementation = isClsStubCompiledToJvmDefaultImplementation,
+        isLocal = isLocal,
+        isTopLevel = isTopLevel,
+        valueClassRepresentation = valueClassRepresentation,
+    )
 }

@@ -144,14 +144,23 @@ fun createStubForPackageName(packageDirectiveStub: KotlinPlaceHolderStubImpl<KtP
         when (iterator.previousIndex()) {
             -1 -> return
             0 -> {
-                KotlinNameReferenceExpressionStubImpl(current, iterator.previous().ref())
+                KotlinNameReferenceExpressionStubImpl(
+                    /* parent = */ current,
+                    /* referencedName = */ iterator.previous().ref(),
+                    /* myClassRef = */ false,
+                )
+
                 return
             }
             else -> {
                 val lastSegment = iterator.previous()
                 val receiver = KotlinPlaceHolderStubImpl<KtDotQualifiedExpression>(current, KtStubElementTypes.DOT_QUALIFIED_EXPRESSION)
                 recCreateStubForPackageName(receiver)
-                KotlinNameReferenceExpressionStubImpl(receiver, lastSegment.ref())
+                KotlinNameReferenceExpressionStubImpl(
+                    /* parent = */ receiver,
+                    /* referencedName = */ lastSegment.ref(),
+                    /* myClassRef = */ false,
+                )
             }
         }
     }
@@ -176,23 +185,38 @@ fun createStubForTypeName(
 ): KotlinUserTypeStub {
     val substituteWithAny = typeClassId.isLocal
 
-    val fqName = if (substituteWithAny) StandardNames.FqNames.any
-    else typeClassId.asSingleFqName().toUnsafe()
+    val fqName = if (substituteWithAny) {
+        StandardNames.FqNames.any
+    } else {
+        typeClassId.asSingleFqName().toUnsafe()
+    }
 
     val segments = fqName.pathSegments().asReversed()
     assert(segments.isNotEmpty())
     val classesNestedLevel = segments.size - if (substituteWithAny) 1 else typeClassId.packageFqName.pathSegments().size
 
-    fun recCreateStubForType(current: StubElement<out PsiElement>, level: Int): KotlinUserTypeStub {
+    fun recCreateStubForType(current: StubElement<*>, level: Int): KotlinUserTypeStub {
         val lastSegment = segments[level]
-        val userTypeStub = KotlinUserTypeStubImpl(current, upperBoundFun?.invoke(level), abbreviatedType.takeIf { level == 0 })
+        val userTypeStub = KotlinUserTypeStubImpl(
+            parent = current,
+            upperBound = upperBoundFun?.invoke(level),
+            abbreviatedType = abbreviatedType.takeIf { level == 0 },
+        )
+
         if (level + 1 < segments.size) {
             recCreateStubForType(userTypeStub, level + 1)
         }
-        KotlinNameReferenceExpressionStubImpl(userTypeStub, lastSegment.ref(), level < classesNestedLevel)
+
+        KotlinNameReferenceExpressionStubImpl(
+            /* parent = */ userTypeStub,
+            /* referencedName = */ lastSegment.ref(),
+            /* myClassRef = */ level < classesNestedLevel,
+        )
+
         if (!substituteWithAny) {
             bindTypeArguments(userTypeStub, level)
         }
+
         return userTypeStub
     }
 
@@ -237,16 +261,14 @@ fun createModifierListStub(
 
     return KotlinModifierListStubImpl(
         parent,
-        regularMask or specialMask,
-        KtStubElementTypes.MODIFIER_LIST
+        regularMask or specialMask
     )
 }
 
 fun createEmptyModifierListStub(parent: KotlinStubBaseImpl<*>): KotlinModifierListStubImpl {
     return KotlinModifierListStubImpl(
         parent,
-        ModifierMaskUtils.computeMask { false },
-        KtStubElementTypes.MODIFIER_LIST
+        ModifierMaskUtils.computeMask { false }
     )
 }
 

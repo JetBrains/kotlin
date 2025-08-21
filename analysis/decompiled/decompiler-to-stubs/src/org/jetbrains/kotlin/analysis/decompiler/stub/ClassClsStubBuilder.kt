@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtSuperTypeEntry
 import org.jetbrains.kotlin.psi.KtSuperTypeList
 import org.jetbrains.kotlin.psi.stubs.elements.KotlinValueClassRepresentation
-import org.jetbrains.kotlin.psi.stubs.elements.KtClassElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinClassStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinModifierListStubImpl
@@ -148,7 +147,6 @@ private class ClassClsStubBuilder(
             }
             else -> {
                 KotlinClassStubImpl(
-                    KtClassElementType.getStubType(classKind == ProtoBuf.Class.Kind.ENUM_ENTRY),
                     parentStub,
                     fqName.ref(),
                     classId = classId,
@@ -217,7 +215,6 @@ private class ClassClsStubBuilder(
             val name = c.nameResolver.getName(entry.name)
             val annotations = c.components.annotationLoader.loadEnumEntryAnnotations(thisAsProtoContainer, entry)
             val enumEntryStub = KotlinClassStubImpl(
-                KtStubElementTypes.ENUM_ENTRY,
                 classBody,
                 qualifiedName = c.containerFqName.child(name).ref(),
                 classId = null, // enum entry do not have class id

@@ -27,7 +27,7 @@ public class KtModifierListElementType<T extends KtModifierList> extends KtStubE
     @NotNull
     @Override
     public KotlinModifierListStubImpl createStub(@NotNull T psi, StubElement<?> parentStub) {
-        return new KotlinModifierListStubImpl(parentStub, computeMaskFromModifierList(psi), this);
+        return new KotlinModifierListStubImpl(parentStub, computeMaskFromModifierList(psi));
     }
 
     @Override
@@ -39,6 +39,6 @@ public class KtModifierListElementType<T extends KtModifierList> extends KtStubE
     @Override
     public KotlinModifierListStubImpl deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
         long mask = DataInputOutputUtil.readLONG(dataStream);
-        return new KotlinModifierListStubImpl(parentStub, mask, this);
+        return new KotlinModifierListStubImpl(parentStub, mask);
     }
 }

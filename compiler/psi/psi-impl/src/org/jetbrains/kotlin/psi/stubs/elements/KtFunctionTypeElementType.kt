@@ -19,7 +19,10 @@ class KtFunctionTypeElementType(@NonNls debugName: String) : KtStubElementType<K
     KotlinFunctionTypeStub::class.java,
 ) {
     override fun createStub(psi: KtFunctionType, parentStub: StubElement<*>?): KotlinFunctionTypeStubImpl =
-        KotlinFunctionTypeStubImpl(parentStub)
+        KotlinFunctionTypeStubImpl(
+            parent = parentStub,
+            abbreviatedType = null,
+        )
 
     override fun serialize(stub: KotlinFunctionTypeStubImpl, dataStream: StubOutputStream) {
         serializeTypeBean(dataStream, stub.abbreviatedType)
@@ -27,6 +30,9 @@ class KtFunctionTypeElementType(@NonNls debugName: String) : KtStubElementType<K
 
     override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): KotlinFunctionTypeStubImpl {
         val abbreviatedType = deserializeClassTypeBean(dataStream)
-        return KotlinFunctionTypeStubImpl(parentStub, abbreviatedType)
+        return KotlinFunctionTypeStubImpl(
+            parent = parentStub,
+            abbreviatedType = abbreviatedType,
+        )
     }
 }

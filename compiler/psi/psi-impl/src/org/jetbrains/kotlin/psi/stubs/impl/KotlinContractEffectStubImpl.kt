@@ -5,21 +5,27 @@
 
 package org.jetbrains.kotlin.psi.stubs.impl
 
-import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
 import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.psi.KtContractEffect
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.KotlinContractEffectStub
-import org.jetbrains.kotlin.psi.stubs.elements.KtContractEffectElementType
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.elements.deserializeTypeBean
 import org.jetbrains.kotlin.psi.stubs.elements.serializeTypeBean
 
-class KotlinContractEffectStubImpl(
-    parent: StubElement<out PsiElement>?,
-    elementType: KtContractEffectElementType
-) : KotlinPlaceHolderStubImpl<KtContractEffect>(parent, elementType), KotlinContractEffectStub
+@OptIn(KtImplementationDetail::class)
+class KotlinContractEffectStubImpl(parent: StubElement<*>?) : KotlinPlaceHolderStubImpl<KtContractEffect>(
+    /* parent = */ parent,
+    /* elementType = */ KtStubElementTypes.CONTRACT_EFFECT,
+), KotlinContractEffectStub {
+    @KtImplementationDetail
+    override fun copyInto(newParent: StubElement<*>?): KotlinContractEffectStubImpl = KotlinContractEffectStubImpl(
+        parent = newParent,
+    )
+}
 
 enum class KotlinContractEffectType {
     CALLS {
@@ -108,7 +114,7 @@ class KotlinContractSerializationVisitor(val dataStream: StubOutputStream) :
     KtContractDescriptionVisitor<Unit, Nothing?, KotlinTypeBean, Nothing?>() {
     override fun visitConditionalEffectDeclaration(
         conditionalEffect: KtConditionalEffectDeclaration<KotlinTypeBean, Nothing?>,
-        data: Nothing?
+        data: Nothing?,
     ) {
         dataStream.writeVarInt(KotlinContractEffectType.CONDITIONAL.ordinal)
         conditionalEffect.effect.accept(this, data)
@@ -128,7 +134,7 @@ class KotlinContractSerializationVisitor(val dataStream: StubOutputStream) :
 
     override fun visitLogicalBinaryOperationContractExpression(
         binaryLogicExpression: KtBinaryLogicExpression<KotlinTypeBean, Nothing?>,
-        data: Nothing?
+        data: Nothing?,
     ) {
         dataStream.writeVarInt(KotlinContractEffectType.BOOLEAN_LOGIC.ordinal)
         dataStream.writeBoolean(binaryLogicExpression.kind == LogicOperationKind.AND)
@@ -160,14 +166,17 @@ class KotlinContractSerializationVisitor(val dataStream: StubOutputStream) :
         dataStream.writeName(constantReference.name)
     }
 
-    override fun visitValueParameterReference(valueParameterReference: KtValueParameterReference<KotlinTypeBean, Nothing?>, data: Nothing?) {
+    override fun visitValueParameterReference(
+        valueParameterReference: KtValueParameterReference<KotlinTypeBean, Nothing?>,
+        data: Nothing?,
+    ) {
         dataStream.writeVarInt(KotlinContractEffectType.PARAMETER_REFERENCE.ordinal)
         dataStream.writeVarInt(valueParameterReference.parameterIndex)
     }
 
     override fun visitBooleanValueParameterReference(
         booleanValueParameterReference: KtBooleanValueParameterReference<KotlinTypeBean, Nothing?>,
-        data: Nothing?
+        data: Nothing?,
     ) {
         dataStream.writeVarInt(KotlinContractEffectType.BOOLEAN_PARAMETER_REFERENCE.ordinal)
         dataStream.writeVarInt(booleanValueParameterReference.parameterIndex)

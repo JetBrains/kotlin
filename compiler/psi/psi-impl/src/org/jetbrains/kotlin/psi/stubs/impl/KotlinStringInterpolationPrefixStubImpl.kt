@@ -5,14 +5,21 @@
 
 package org.jetbrains.kotlin.psi.stubs.impl
 
-import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtStringInterpolationPrefix
 import org.jetbrains.kotlin.psi.stubs.KotlinStringInterpolationPrefixStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
+@OptIn(KtImplementationDetail::class)
 class KotlinStringInterpolationPrefixStubImpl(
-    parent: StubElement<out PsiElement>?,
+    parent: StubElement<*>?,
     override val dollarSignCount: Int,
 ) : KotlinStubBaseImpl<KtStringInterpolationPrefix>(parent, KtStubElementTypes.STRING_INTERPOLATION_PREFIX),
-    KotlinStringInterpolationPrefixStub
+    KotlinStringInterpolationPrefixStub {
+    @KtImplementationDetail
+    override fun copyInto(newParent: StubElement<*>?): KotlinStringInterpolationPrefixStubImpl = KotlinStringInterpolationPrefixStubImpl(
+        parent = newParent,
+        dollarSignCount = dollarSignCount,
+    )
+}

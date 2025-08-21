@@ -5,19 +5,27 @@
 
 package org.jetbrains.kotlin.psi.stubs.impl
 
-import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.psi.stubs.KotlinTypeParameterStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
+@OptIn(KtImplementationDetail::class)
 class KotlinTypeParameterStubImpl(
-    parent: StubElement<out PsiElement>?,
+    parent: StubElement<*>?,
     private val name: StringRef?,
 ) : KotlinStubBaseImpl<KtTypeParameter>(parent, KtStubElementTypes.TYPE_PARAMETER), KotlinTypeParameterStub {
-    override fun getName() = StringRef.toString(name)
+    override fun getName(): String? = StringRef.toString(name)
+
     // type parameters don't have FqNames
     override val fqName: FqName? get() = null
+
+    @KtImplementationDetail
+    override fun copyInto(newParent: StubElement<*>?): KotlinTypeParameterStubImpl = KotlinTypeParameterStubImpl(
+        parent = newParent,
+        name = name,
+    )
 }

@@ -39,7 +39,7 @@ object KtFileElementType : IStubFileElementType<KotlinFileStubImpl>(KtFileElemen
 
     override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): KotlinFileStubImpl {
         val kind = KotlinFileStubKindImpl.deserialize(dataStream)
-        return KotlinFileStubImpl(ktFile = null, kind = kind)
+        return KotlinFileStubImpl(file = null, kind = kind)
     }
 
     override fun doParseContents(chameleon: ASTNode, psi: PsiElement): ASTNode? {

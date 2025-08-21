@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInFileType
-import org.jetbrains.kotlin.analysis.decompiler.psi.file.cloneRecursively
+import org.jetbrains.kotlin.analysis.decompiler.psi.file.deepCopy
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsClassFinder
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.name.*
@@ -526,7 +526,7 @@ private fun computeIndex(
 
             if (stub.psi != ktFile) {
                 @OptIn(KtImplementationDetail::class)
-                val clonedStub = stub.cloneRecursively()
+                val clonedStub = stub.deepCopy()
 
                 // A hack to avoid costly stub builder execution
                 setStubTreeMethod.invoke(ktFile, clonedStub)

@@ -17,7 +17,8 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinNameReferenceExpressionStubImpl
 
 import java.io.IOException;
 
-public class KtNameReferenceExpressionElementType extends KtStubElementType<KotlinNameReferenceExpressionStubImpl, KtNameReferenceExpression> {
+public class KtNameReferenceExpressionElementType
+        extends KtStubElementType<KotlinNameReferenceExpressionStubImpl, KtNameReferenceExpression> {
     public KtNameReferenceExpressionElementType(@NotNull @NonNls String debugName) {
         super(debugName, KtNameReferenceExpression.class, KotlinNameReferenceExpressionStub.class);
     }
@@ -25,7 +26,11 @@ public class KtNameReferenceExpressionElementType extends KtStubElementType<Kotl
     @NotNull
     @Override
     public KotlinNameReferenceExpressionStubImpl createStub(@NotNull KtNameReferenceExpression psi, StubElement parentStub) {
-        return new KotlinNameReferenceExpressionStubImpl(parentStub, StringRef.fromString(psi.getReferencedName()));
+        return new KotlinNameReferenceExpressionStubImpl(
+                parentStub,
+                StringRef.fromString(psi.getReferencedName()),
+                false
+        );
     }
 
     @Override
@@ -36,7 +41,8 @@ public class KtNameReferenceExpressionElementType extends KtStubElementType<Kotl
 
     @NotNull
     @Override
-    public KotlinNameReferenceExpressionStubImpl deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
+    public KotlinNameReferenceExpressionStubImpl deserialize(@NotNull StubInputStream dataStream, StubElement parentStub)
+            throws IOException {
         StringRef referencedName = dataStream.readName();
         boolean isClassRef = dataStream.readBoolean();
         return new KotlinNameReferenceExpressionStubImpl(parentStub, referencedName, isClassRef);

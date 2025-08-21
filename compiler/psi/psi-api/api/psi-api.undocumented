@@ -2280,21 +2280,20 @@ org.jetbrains.kotlin.psi.stubs.impl.KotlinFunctionStubImpl.serializeContract(Stu
 org.jetbrains.kotlin.psi.stubs.impl.KotlinImportAliasStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinImportDirectiveStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinModifierListStubImpl
-org.jetbrains.kotlin.psi.stubs.impl.KotlinModifierListStubImpl:constructor(StubElement, long, KtModifierListElementType<?>)
+org.jetbrains.kotlin.psi.stubs.impl.KotlinModifierListStubImpl:constructor(StubElement<?>, long)
 org.jetbrains.kotlin.psi.stubs.impl.KotlinModifierListStubImpl:getMask()
 org.jetbrains.kotlin.psi.stubs.impl.KotlinModifierListStubImpl:hasAnyModifier()
 org.jetbrains.kotlin.psi.stubs.impl.KotlinNameReferenceExpressionStubImpl
-org.jetbrains.kotlin.psi.stubs.impl.KotlinNameReferenceExpressionStubImpl:constructor(StubElement, StringRef)
 org.jetbrains.kotlin.psi.stubs.impl.KotlinNameReferenceExpressionStubImpl:constructor(StubElement<?>, StringRef, boolean)
 org.jetbrains.kotlin.psi.stubs.impl.KotlinNameReferenceExpressionStubImpl:isClassRef()
 org.jetbrains.kotlin.psi.stubs.impl.KotlinObjectStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinParameterStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderStubImpl
-org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderStubImpl:constructor(StubElement, IStubElementType)
+org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderStubImpl:constructor(StubElement<?>, IStubElementType<?, ?>)
 org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderWithTextStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinPrimaryConstructorStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyAccessorStubImpl
-org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyAccessorStubImpl:constructor(StubElement, boolean, boolean, boolean, boolean)
+org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyAccessorStubImpl:constructor(StubElement<?>, boolean, boolean, boolean, boolean)
 org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinScriptStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinSecondaryConstructorStubImpl
@@ -2312,7 +2311,7 @@ org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeBean.nullable
 org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeParameterStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeParameterTypeBean
 org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeProjectionStubImpl
-org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeProjectionStubImpl:constructor(StubElement, int)
+org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeProjectionStubImpl:constructor(StubElement<?>, int)
 org.jetbrains.kotlin.psi.stubs.impl.KotlinValueArgumentStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.ModifierMaskUtils
 org.jetbrains.kotlin.psi.stubs.impl.ModifierMaskUtils.computeMask((KtModifierKeywordToken) -> Boolean)

@@ -11,13 +11,18 @@ import com.intellij.psi.stubs.NamedStub
 import com.intellij.psi.stubs.StubBase
 import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.psi.KtElementImplStub
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.*
 import java.lang.reflect.Method
 
 val STUB_TO_STRING_PREFIX = "KotlinStub$"
 
-open class KotlinStubBaseImpl<T : KtElementImplStub<*>>(parent: StubElement<*>?, elementType: IStubElementType<*, *>) :
-    StubBase<T>(parent, elementType) {
+@OptIn(KtImplementationDetail::class)
+abstract class KotlinStubBaseImpl<T : KtElementImplStub<*>>(parent: StubElement<*>?, elementType: IStubElementType<*, *>) :
+    StubBase<T>(parent, elementType), KotlinStubElement<T> {
+
+    @KtImplementationDetail
+    abstract override fun copyInto(newParent: StubElement<*>?): KotlinStubBaseImpl<T>
 
     override fun getStubType(): IStubElementType<out StubElement<*>, *> =
         super.getStubType() as IStubElementType<out StubElement<*>, *>

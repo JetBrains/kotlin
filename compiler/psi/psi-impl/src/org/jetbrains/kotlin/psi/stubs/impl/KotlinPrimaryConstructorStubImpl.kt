@@ -5,16 +5,17 @@
 
 package org.jetbrains.kotlin.psi.stubs.impl
 
-import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
+@OptIn(KtImplementationDetail::class)
 class KotlinPrimaryConstructorStubImpl(
-    parent: StubElement<out PsiElement>?,
+    parent: StubElement<*>?,
     private val containingClassName: StringRef?,
 ) : KotlinStubBaseImpl<KtPrimaryConstructor>(parent, KtStubElementTypes.PRIMARY_CONSTRUCTOR),
     KotlinConstructorStub<KtPrimaryConstructor> {
@@ -27,4 +28,10 @@ class KotlinPrimaryConstructorStubImpl(
     override val hasBody: Boolean get() = false
     override val isDelegatedCallToThis: Boolean get() = false
     override val isExplicitDelegationCall: Boolean get() = false
+
+    @KtImplementationDetail
+    override fun copyInto(newParent: StubElement<*>?): KotlinPrimaryConstructorStubImpl = KotlinPrimaryConstructorStubImpl(
+        parent = newParent,
+        containingClassName = containingClassName,
+    )
 }

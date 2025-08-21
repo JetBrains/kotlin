@@ -11,10 +11,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.StubBuilder
-import com.intellij.psi.stubs.*
-import com.intellij.util.io.AbstractStringEnumerator
-import com.intellij.util.io.StringRef
-import com.intellij.util.io.UnsyncByteArrayOutputStream
+import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.stubs.StubTreeLoader
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinDecompiledFileViewProvider
 import org.jetbrains.kotlin.analysis.decompiler.psi.text.DecompiledText
 import org.jetbrains.kotlin.analysis.decompiler.psi.text.buildDecompiledText
@@ -23,11 +21,10 @@ import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImplementationDetail
+import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinNameReferenceExpressionStubImpl
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinUserTypeStubImpl
-import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.utils.concurrent.block.LockedClearableLazyValue
+import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 
 open class KtDecompiledFile(
     private val provider: KotlinDecompiledFileViewProvider,
@@ -69,7 +66,7 @@ private object CompiledStubBuilder : StubBuilder {
 
         // A copy is required because stubs are stateful and mutable, so they cannot be shared as they are
         @OptIn(KtImplementationDetail::class)
-        val clonedStub = stub.cloneRecursively()
+        val clonedStub = stub.deepCopy()
         clonedStub.psi = file
         return clonedStub
     }
@@ -116,83 +113,31 @@ private val stubBasedDecompilerEnabled: Boolean by lazyPub {
     Registry.`is`("kotlin.analysis.stub.based.decompiler", true)
 }
 
-// TODO: KT-80276 Implement native coping for stubs
-/** Creates a deep copy of the given [this]. */
+/** Creates a deep copy of the given [this] */
 @KtImplementationDetail
-fun KotlinFileStubImpl.cloneRecursively(): KotlinFileStubImpl {
-    val clonedStub = cloneStubRecursively(
-        originalStub = this,
-        copyParentStub = null,
-        buffer = UnsyncByteArrayOutputStream(),
-        storage = StringEnumerator(),
-    ) as KotlinFileStubImpl
-
-    return clonedStub
-}
+fun KotlinFileStubImpl.deepCopy(): KotlinFileStubImpl = copyStubRecursively(
+    originalStub = this,
+    newParentStub = null,
+) as KotlinFileStubImpl
 
 /**
  * Returns a copy of [originalStub].
  */
-private fun <T : PsiElement> cloneStubRecursively(
+@OptIn(KtImplementationDetail::class)
+private fun <T : PsiElement> copyStubRecursively(
     originalStub: StubElement<T>,
-    copyParentStub: StubElement<*>?,
-    buffer: UnsyncByteArrayOutputStream,
-    storage: AbstractStringEnumerator,
+    newParentStub: StubElement<*>?,
 ): StubElement<*> {
-    buffer.reset()
-
-    // Some specific elements are covered here as they widely used and has additional logic inside `serialize`,
-    // to it is an optimization
-    val copyStub = when (originalStub) {
-        is KotlinUserTypeStubImpl -> KotlinUserTypeStubImpl(
-            copyParentStub,
-            originalStub.upperBound,
-            originalStub.abbreviatedType,
-        )
-
-        is KotlinNameReferenceExpressionStubImpl -> KotlinNameReferenceExpressionStubImpl(
-            copyParentStub,
-            StringRef.fromString(originalStub.referencedName),
-            originalStub.isClassRef,
-        )
-
-        is PsiFileStub -> {
-            val serializer = originalStub.type
-            serializer.serialize(originalStub, StubOutputStream(buffer, storage))
-            serializer.deserialize(StubInputStream(buffer.toInputStream(), storage), copyParentStub)
-        }
-
-        else -> {
-            val serializer = originalStub.stubType
-            serializer.serialize(originalStub, StubOutputStream(buffer, storage))
-            serializer.deserialize(StubInputStream(buffer.toInputStream(), storage), copyParentStub)
-        }
-    }
+    requireIsInstance<KotlinStubElement<*>>(originalStub)
+    val stubCopy = originalStub.copyInto(newParentStub)
+    checkWithAttachment(
+        originalStub::class == stubCopy::class,
+        { "${originalStub::class.simpleName} is expected, but ${stubCopy::class.simpleName} is found" },
+    )
 
     for (originalChild in originalStub.childrenStubs) {
-        cloneStubRecursively(originalStub = originalChild, copyParentStub = copyStub, buffer = buffer, storage = storage)
+        copyStubRecursively(originalStub = originalChild, newParentStub = stubCopy)
     }
 
-    return copyStub
-}
-
-private class StringEnumerator : AbstractStringEnumerator {
-    private val values = HashMap<String, Int>()
-    private val strings = mutableListOf<String>()
-
-    override fun enumerate(value: String?): Int {
-        if (value == null) return 0
-
-        return values.getOrPut(value) {
-            strings += value
-            values.size + 1
-        }
-    }
-
-    override fun valueOf(idx: Int): String? = if (idx == 0) null else strings[idx - 1]
-
-    override fun markCorrupted(): Unit = shouldNotBeCalled()
-    override fun close(): Unit = shouldNotBeCalled()
-    override fun isDirty(): Boolean = shouldNotBeCalled()
-    override fun force(): Unit = shouldNotBeCalled()
+    return stubCopy
 }

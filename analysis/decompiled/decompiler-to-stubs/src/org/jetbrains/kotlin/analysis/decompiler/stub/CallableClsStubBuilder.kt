@@ -318,7 +318,11 @@ private class PropertyClsStubBuilder(
     override fun createCallableSpecialParts() {
         val propertyStub = callableStub as KotlinPropertyStub
         if (propertyStub.hasInitializer && !propertyStub.hasDelegate) {
-            KotlinNameReferenceExpressionStubImpl(callableStub, StringRef.fromString(COMPILED_DEFAULT_INITIALIZER))
+            KotlinNameReferenceExpressionStubImpl(
+                callableStub,
+                StringRef.fromString(COMPILED_DEFAULT_INITIALIZER),
+                false,
+            )
         }
 
         createGetterStubsIfNeeded(callableStub)

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.psi.KtElementImplStub
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderWithTextStub
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderWithTextStubImpl
 
-class KtPlaceHolderWithTextStubElementType<T : KtElementImplStub<out StubElement<*>>>(@NonNls debugName: String, psiClass: Class<T>) :
+class KtPlaceHolderWithTextStubElementType<T : KtElementImplStub<*>>(@NonNls debugName: String, psiClass: Class<T>) :
     KtStubElementType<KotlinPlaceHolderWithTextStubImpl<T>, T>(
         debugName,
         psiClass,

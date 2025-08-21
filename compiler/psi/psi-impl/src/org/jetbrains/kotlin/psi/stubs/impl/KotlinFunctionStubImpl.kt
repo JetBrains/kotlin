@@ -5,20 +5,21 @@
 
 package org.jetbrains.kotlin.psi.stubs.impl
 
-import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.contracts.description.KtContractDescriptionElement
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.stubs.KotlinFunctionStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import java.io.IOException
 
+@OptIn(KtImplementationDetail::class)
 class KotlinFunctionStubImpl(
-    parent: StubElement<out PsiElement>?,
+    parent: StubElement<*>?,
     private val nameRef: StringRef?,
     override val isTopLevel: Boolean,
     override val fqName: FqName?,
@@ -28,7 +29,7 @@ class KotlinFunctionStubImpl(
     override val hasTypeParameterListBeforeFunctionName: Boolean,
     override val mayHaveContract: Boolean,
     val contract: List<KtContractDescriptionElement<KotlinTypeBean, Nothing?>>?,
-    val origin: KotlinStubOrigin?
+    val origin: KotlinStubOrigin?,
 ) : KotlinStubBaseImpl<KtNamedFunction>(parent, KtStubElementTypes.FUNCTION), KotlinFunctionStub {
     init {
         if (isTopLevel && fqName == null) {
@@ -36,7 +37,7 @@ class KotlinFunctionStubImpl(
         }
     }
 
-    override fun getName() = StringRef.toString(nameRef)
+    override fun getName(): String? = StringRef.toString(nameRef)
 
     @Throws(IOException::class)
     fun serializeContract(dataStream: StubOutputStream) {
@@ -45,6 +46,21 @@ class KotlinFunctionStubImpl(
         val visitor = KotlinContractSerializationVisitor(dataStream)
         effects?.forEach { it.accept(visitor, null) }
     }
+
+    @KtImplementationDetail
+    override fun copyInto(newParent: StubElement<*>?): KotlinFunctionStubImpl = KotlinFunctionStubImpl(
+        parent = newParent,
+        nameRef = nameRef,
+        isTopLevel = isTopLevel,
+        fqName = fqName,
+        isExtension = isExtension,
+        hasNoExpressionBody = hasNoExpressionBody,
+        hasBody = hasBody,
+        hasTypeParameterListBeforeFunctionName = hasTypeParameterListBeforeFunctionName,
+        mayHaveContract = mayHaveContract,
+        contract = contract,
+        origin = origin,
+    )
 
     companion object {
         fun deserializeContract(dataStream: StubInputStream): List<KtContractDescriptionElement<KotlinTypeBean, Nothing?>> {

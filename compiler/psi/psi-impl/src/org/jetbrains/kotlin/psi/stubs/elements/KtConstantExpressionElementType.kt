@@ -42,7 +42,6 @@ class KtConstantExpressionElementType(@NonNls debugName: String) :
 
         return KotlinConstantExpressionStubImpl(
             parentStub,
-            elementType,
             elementType.toConstantValueKind(),
             StringRef.fromString(value)
         )
@@ -61,7 +60,6 @@ class KtConstantExpressionElementType(@NonNls debugName: String) :
 
         return KotlinConstantExpressionStubImpl(
             parentStub,
-            valueKind.toConstantExpressionElementType() as KtConstantExpressionElementType,
             valueKind,
             value
         )

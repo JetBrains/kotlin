@@ -5,16 +5,17 @@
 
 package org.jetbrains.kotlin.psi.stubs.impl
 
-import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtSecondaryConstructor
 import org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
+@OptIn(KtImplementationDetail::class)
 class KotlinSecondaryConstructorStubImpl(
-    parent: StubElement<out PsiElement>?,
+    parent: StubElement<*>?,
     private val containingClassName: StringRef?,
     override val hasBody: Boolean,
     override val isDelegatedCallToThis: Boolean,
@@ -30,4 +31,14 @@ class KotlinSecondaryConstructorStubImpl(
     // It cannot have expression body
     override val hasNoExpressionBody: Boolean
         get() = true
+
+    @KtImplementationDetail
+    override fun copyInto(newParent: StubElement<*>?): KotlinSecondaryConstructorStubImpl = KotlinSecondaryConstructorStubImpl(
+        parent = newParent,
+        containingClassName = containingClassName,
+        hasBody = hasBody,
+        isDelegatedCallToThis = isDelegatedCallToThis,
+        isExplicitDelegationCall = isExplicitDelegationCall,
+        mayHaveContract = mayHaveContract,
+    )
 }

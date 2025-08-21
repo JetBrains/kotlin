@@ -23,7 +23,7 @@ class KtEnumEntrySuperClassReferenceExpressionElementType(@NonNls debugName: Str
 
     override fun createStub(
         psi: KtEnumEntrySuperclassReferenceExpression,
-        parentStub: StubElement<*>,
+        parentStub: StubElement<*>?,
     ): KotlinEnumEntrySuperclassReferenceExpressionStubImpl = KotlinEnumEntrySuperclassReferenceExpressionStubImpl(
         parent = parentStub,
         referencedNameRef = StringRef.fromString(psi.getReferencedName()),
@@ -35,8 +35,9 @@ class KtEnumEntrySuperClassReferenceExpressionElementType(@NonNls debugName: Str
 
     override fun deserialize(
         dataStream: StubInputStream,
-        parentStub: StubElement<*>,
-    ): KotlinEnumEntrySuperclassReferenceExpressionStubImpl {
-        return KotlinEnumEntrySuperclassReferenceExpressionStubImpl(parentStub, dataStream.readName()!!)
-    }
+        parentStub: StubElement<*>?,
+    ): KotlinEnumEntrySuperclassReferenceExpressionStubImpl = KotlinEnumEntrySuperclassReferenceExpressionStubImpl(
+        parent = parentStub,
+        referencedNameRef = dataStream.readName()!!
+    )
 }

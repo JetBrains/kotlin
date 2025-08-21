@@ -5,17 +5,26 @@
 
 package org.jetbrains.kotlin.psi.stubs.impl
 
-import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.psi.KtContextReceiver
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.KotlinContextReceiverStub
-import org.jetbrains.kotlin.psi.stubs.elements.KtContextReceiverElementType
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
+@OptIn(KtImplementationDetail::class)
 class KotlinContextReceiverStubImpl(
-    parent: StubElement<out PsiElement>?,
-    elementType: KtContextReceiverElementType,
+    parent: StubElement<*>?,
     private val labelRef: StringRef?,
-) : KotlinStubBaseImpl<KtContextReceiver>(parent, elementType), KotlinContextReceiverStub {
+) : KotlinStubBaseImpl<KtContextReceiver>(
+    parent = parent,
+    elementType = KtStubElementTypes.CONTEXT_RECEIVER,
+), KotlinContextReceiverStub {
     override val label: String? get() = labelRef?.string
+
+    @KtImplementationDetail
+    override fun copyInto(newParent: StubElement<*>?): KotlinContextReceiverStubImpl = KotlinContextReceiverStubImpl(
+        parent = newParent,
+        labelRef = labelRef,
+    )
 }

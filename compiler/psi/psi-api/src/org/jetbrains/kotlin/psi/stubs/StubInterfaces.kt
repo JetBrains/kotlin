@@ -3,9 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(KtImplementationDetail::class)
+
 package org.jetbrains.kotlin.psi.stubs
 
-import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.stubs.NamedStub
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.psi.stubs.StubElement
@@ -14,7 +15,16 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 
-interface KotlinFileStub : PsiFileStub<KtFile> {
+/** Base interface for all Kotlin stubs */
+@KtImplementationDetail
+interface KotlinStubElement<T : KtElement> : StubElement<T> {
+    /** Returns a copy of this stub with the parent set to [newParent] */
+    @KtImplementationDetail
+    fun copyInto(newParent: StubElement<*>?): KotlinStubElement<T>
+}
+
+@SubclassOptInRequired(KtImplementationDetail::class)
+interface KotlinFileStub : PsiFileStub<KtFile>, KotlinStubElement<KtFile> {
     fun getPackageFqName(): FqName = (kind as? KotlinFileStubKind.WithPackage)?.packageFqName ?: FqName.ROOT
     fun isScript(): Boolean = kind is KotlinFileStubKind.WithPackage.Script
 
@@ -24,30 +34,37 @@ interface KotlinFileStub : PsiFileStub<KtFile> {
     val kind: KotlinFileStubKind
 }
 
-interface KotlinPlaceHolderStub<T : KtElement> : StubElement<T>
+@SubclassOptInRequired(KtImplementationDetail::class)
+interface KotlinPlaceHolderStub<T : KtElement> : KotlinStubElement<T>
 
+@SubclassOptInRequired(KtImplementationDetail::class)
 interface KotlinPlaceHolderWithTextStub<T : KtElement> : KotlinPlaceHolderStub<T> {
     val text: String
 }
 
-interface KotlinStubWithFqName<T : PsiNamedElement> : NamedStub<T> {
+@SubclassOptInRequired(KtImplementationDetail::class)
+interface KotlinStubWithFqName<T : KtNamedDeclaration> : NamedStub<T>, KotlinStubElement<T> {
     val fqName: FqName?
 }
 
-interface KotlinClassifierStub {
+@SubclassOptInRequired(KtImplementationDetail::class)
+interface KotlinClassifierStub<T : KtClassLikeDeclaration> : KotlinStubElement<T> {
     val classId: ClassId?
 }
 
-interface KotlinTypeAliasStub : KotlinClassifierStub, KotlinStubWithFqName<KtTypeAlias> {
+@SubclassOptInRequired(KtImplementationDetail::class)
+interface KotlinTypeAliasStub : KotlinClassifierStub<KtTypeAlias>, KotlinStubWithFqName<KtTypeAlias> {
     val isTopLevel: Boolean
 }
 
-interface KotlinClassOrObjectStub<T : KtClassOrObject> : KotlinClassifierStub, KotlinStubWithFqName<T> {
+@SubclassOptInRequired(KtImplementationDetail::class)
+interface KotlinClassOrObjectStub<T : KtClassOrObject> : KotlinClassifierStub<T>, KotlinStubWithFqName<T> {
     val isLocal: Boolean
     val superNames: List<String>
     val isTopLevel: Boolean
 }
 
+@SubclassOptInRequired(KtImplementationDetail::class)
 interface KotlinClassStub : KotlinClassOrObjectStub<KtClass> {
     val isInterface: Boolean
     val isEnumEntry: Boolean
@@ -59,29 +76,35 @@ interface KotlinClassStub : KotlinClassOrObjectStub<KtClass> {
     val isClsStubCompiledToJvmDefaultImplementation: Boolean
 }
 
+@SubclassOptInRequired(KtImplementationDetail::class)
 interface KotlinObjectStub : KotlinClassOrObjectStub<KtObjectDeclaration> {
     val isObjectLiteral: Boolean
 }
 
+@SubclassOptInRequired(KtImplementationDetail::class)
 interface KotlinValueArgumentStub<T : KtValueArgument> : KotlinPlaceHolderStub<T> {
     val isSpread: Boolean
 }
 
-interface KotlinContractEffectStub : KotlinPlaceHolderStub<KtContractEffect> {}
+@SubclassOptInRequired(KtImplementationDetail::class)
+interface KotlinContractEffectStub : KotlinPlaceHolderStub<KtContractEffect>
 
-interface KotlinAnnotationEntryStub : StubElement<KtAnnotationEntry> {
+@SubclassOptInRequired(KtImplementationDetail::class)
+interface KotlinAnnotationEntryStub : KotlinStubElement<KtAnnotationEntry> {
     val shortName: String?
     val hasValueArguments: Boolean
 }
 
-interface KotlinAnnotationUseSiteTargetStub : StubElement<KtAnnotationUseSiteTarget> {
+@SubclassOptInRequired(KtImplementationDetail::class)
+interface KotlinAnnotationUseSiteTargetStub : KotlinStubElement<KtAnnotationUseSiteTarget> {
     val useSiteTarget: String
 }
 
 /**
  * A marker interface for declarations with bodies.
  */
-interface KotlinDeclarationWithBodyStub<T : KtDeclarationWithBody> : StubElement<T> {
+@SubclassOptInRequired(KtImplementationDetail::class)
+interface KotlinDeclarationWithBodyStub<T : KtDeclarationWithBody> : KotlinStubElement<T> {
     /**
      * Whether the declaration may have a contract.
      * **false** means that the declaration is definitely having no contract,
@@ -100,24 +123,29 @@ interface KotlinDeclarationWithBodyStub<T : KtDeclarationWithBody> : StubElement
     val hasBody: Boolean
 }
 
+@SubclassOptInRequired(KtImplementationDetail::class)
 interface KotlinFunctionStub : KotlinCallableStubBase<KtNamedFunction>, KotlinDeclarationWithBodyStub<KtNamedFunction> {
     val hasTypeParameterListBeforeFunctionName: Boolean
 }
 
+@SubclassOptInRequired(KtImplementationDetail::class)
 interface KotlinConstructorStub<T : KtConstructor<T>> : KotlinCallableStubBase<T>, KotlinDeclarationWithBodyStub<T> {
     val isDelegatedCallToThis: Boolean
     val isExplicitDelegationCall: Boolean
 }
 
-interface KotlinImportAliasStub : NamedStub<KtImportAlias>
+@SubclassOptInRequired(KtImplementationDetail::class)
+interface KotlinImportAliasStub : NamedStub<KtImportAlias>, KotlinStubElement<KtImportAlias>
 
-interface KotlinImportDirectiveStub : StubElement<KtImportDirective> {
+@SubclassOptInRequired(KtImplementationDetail::class)
+interface KotlinImportDirectiveStub : KotlinStubElement<KtImportDirective> {
     val isAllUnder: Boolean
     val importedFqName: FqName?
     val isValid: Boolean
 }
 
-interface KotlinModifierListStub : StubElement<KtDeclarationModifierList> {
+@SubclassOptInRequired(KtImplementationDetail::class)
+interface KotlinModifierListStub : KotlinStubElement<KtDeclarationModifierList> {
     fun hasModifier(modifierToken: KtModifierKeywordToken): Boolean
 
     /**
@@ -149,28 +177,34 @@ interface KotlinModifierListStub : StubElement<KtDeclarationModifierList> {
     }
 }
 
-interface KotlinNameReferenceExpressionStub : StubElement<KtNameReferenceExpression> {
+@SubclassOptInRequired(KtImplementationDetail::class)
+interface KotlinNameReferenceExpressionStub : KotlinStubElement<KtNameReferenceExpression> {
     val referencedName: String
 }
 
-interface KotlinEnumEntrySuperclassReferenceExpressionStub : StubElement<KtEnumEntrySuperclassReferenceExpression> {
+@SubclassOptInRequired(KtImplementationDetail::class)
+interface KotlinEnumEntrySuperclassReferenceExpressionStub : KotlinStubElement<KtEnumEntrySuperclassReferenceExpression> {
     val referencedName: String
 }
 
+@SubclassOptInRequired(KtImplementationDetail::class)
 interface KotlinParameterStub : KotlinStubWithFqName<KtParameter> {
     val isMutable: Boolean
     val hasValOrVar: Boolean
     val hasDefaultValue: Boolean
 }
 
+@SubclassOptInRequired(KtImplementationDetail::class)
 interface KotlinPropertyAccessorStub : KotlinDeclarationWithBodyStub<KtPropertyAccessor> {
     val isGetter: Boolean
 }
 
-interface KotlinBackingFieldStub : StubElement<KtBackingField> {
+@SubclassOptInRequired(KtImplementationDetail::class)
+interface KotlinBackingFieldStub : KotlinStubElement<KtBackingField> {
     val hasInitializer: Boolean
 }
 
+@SubclassOptInRequired(KtImplementationDetail::class)
 interface KotlinPropertyStub : KotlinCallableStubBase<KtProperty> {
     val isVar: Boolean
     val hasDelegate: Boolean
@@ -187,11 +221,13 @@ interface KotlinPropertyStub : KotlinCallableStubBase<KtProperty> {
     val hasBackingField: Boolean?
 }
 
+@SubclassOptInRequired(KtImplementationDetail::class)
 interface KotlinCallableStubBase<TDeclaration : KtCallableDeclaration> : KotlinStubWithFqName<TDeclaration> {
     val isTopLevel: Boolean
     val isExtension: Boolean
 }
 
+@SubclassOptInRequired(KtImplementationDetail::class)
 interface KotlinTypeParameterStub : KotlinStubWithFqName<KtTypeParameter>
 
 enum class ConstantValueKind {
@@ -202,13 +238,17 @@ enum class ConstantValueKind {
     INTEGER_CONSTANT
 }
 
-interface KotlinConstantExpressionStub : StubElement<KtConstantExpression> {
+@SubclassOptInRequired(KtImplementationDetail::class)
+interface KotlinConstantExpressionStub : KotlinStubElement<KtConstantExpression> {
     val kind: ConstantValueKind
     val value: String
 }
 
-interface KotlinClassLiteralExpressionStub : StubElement<KtClassLiteralExpression>
-interface KotlinCollectionLiteralExpressionStub : StubElement<KtCollectionLiteralExpression> {
+@SubclassOptInRequired(KtImplementationDetail::class)
+interface KotlinClassLiteralExpressionStub : KotlinStubElement<KtClassLiteralExpression>
+
+@SubclassOptInRequired(KtImplementationDetail::class)
+interface KotlinCollectionLiteralExpressionStub : KotlinStubElement<KtCollectionLiteralExpression> {
     /**
      * The number of collection literals in the collection literal expression.
      *
@@ -219,23 +259,29 @@ interface KotlinCollectionLiteralExpressionStub : StubElement<KtCollectionLitera
     val innerExpressionCount: Int
 }
 
-interface KotlinTypeProjectionStub : StubElement<KtTypeProjection> {
+@SubclassOptInRequired(KtImplementationDetail::class)
+interface KotlinTypeProjectionStub : KotlinStubElement<KtTypeProjection> {
     val projectionKind: KtProjectionKind
 }
 
-interface KotlinUserTypeStub : StubElement<KtUserType>
+@SubclassOptInRequired(KtImplementationDetail::class)
+interface KotlinUserTypeStub : KotlinStubElement<KtUserType>
 
-interface KotlinFunctionTypeStub : StubElement<KtFunctionType>
+@SubclassOptInRequired(KtImplementationDetail::class)
+interface KotlinFunctionTypeStub : KotlinStubElement<KtFunctionType>
 
+@SubclassOptInRequired(KtImplementationDetail::class)
 interface KotlinScriptStub : KotlinStubWithFqName<KtScript> {
     override val fqName: FqName
 }
 
-interface KotlinContextReceiverStub : StubElement<KtContextReceiver> {
+@SubclassOptInRequired(KtImplementationDetail::class)
+interface KotlinContextReceiverStub : KotlinStubElement<KtContextReceiver> {
     val label: String?
 }
 
-interface KotlinStringInterpolationPrefixStub : StubElement<KtStringInterpolationPrefix> {
+@SubclassOptInRequired(KtImplementationDetail::class)
+interface KotlinStringInterpolationPrefixStub : KotlinStubElement<KtStringInterpolationPrefix> {
     /**
      * The count of `$` characters in the string interpolation prefix.
      *
@@ -245,6 +291,7 @@ interface KotlinStringInterpolationPrefixStub : StubElement<KtStringInterpolatio
     val dollarSignCount: Int
 }
 
+@SubclassOptInRequired(KtImplementationDetail::class)
 interface KotlinBlockStringTemplateEntryStub : KotlinPlaceHolderWithTextStub<KtBlockStringTemplateEntry> {
     /**
      * Whether the entry has more than one expression which is illegal code.

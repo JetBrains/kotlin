@@ -7,17 +7,19 @@ package org.jetbrains.kotlin.psi.stubs.impl;
 
 import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken;
 import org.jetbrains.kotlin.psi.KtDeclarationModifierList;
+import org.jetbrains.kotlin.psi.KtImplementationDetail;
 import org.jetbrains.kotlin.psi.stubs.KotlinModifierListStub;
-import org.jetbrains.kotlin.psi.stubs.elements.KtModifierListElementType;
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 public class KotlinModifierListStubImpl extends KotlinStubBaseImpl<KtDeclarationModifierList> implements KotlinModifierListStub {
 
     private final long mask;
 
-    public KotlinModifierListStubImpl(StubElement parent, long mask, @NotNull KtModifierListElementType<?> elementType) {
-        super(parent, elementType);
+    public KotlinModifierListStubImpl(@Nullable StubElement<?> parent, long mask) {
+        super(parent, KtStubElementTypes.MODIFIER_LIST);
         this.mask = mask;
     }
 
@@ -43,5 +45,14 @@ public class KotlinModifierListStubImpl extends KotlinStubBaseImpl<KtDeclaration
 
     public boolean hasAnyModifier() {
         return mask != 0;
+    }
+
+    @Override
+    @KtImplementationDetail
+    public @NotNull KotlinModifierListStubImpl copyInto(@Nullable StubElement<?> newParent) {
+        return new KotlinModifierListStubImpl(
+                newParent,
+                mask
+        );
     }
 }

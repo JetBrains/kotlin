@@ -23,10 +23,10 @@ class KtContractEffectElementType(debugName: String, psiClass: Class<KtContractE
     }
 
     override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<PsiElement>?): KotlinContractEffectStubImpl {
-        return KotlinContractEffectStubImpl(parentStub, this)
+        return KotlinContractEffectStubImpl(parentStub)
     }
 
     override fun createStub(psi: KtContractEffect, parentStub: StubElement<*>?): KotlinContractEffectStubImpl {
-        return KotlinContractEffectStubImpl(parentStub, this)
+        return KotlinContractEffectStubImpl(parentStub)
     }
 }

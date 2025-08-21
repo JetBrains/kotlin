@@ -25,10 +25,10 @@ public class KtImportDirectiveElementType extends KtStubElementType<KotlinImport
 
     @NotNull
     @Override
-    public KotlinImportDirectiveStubImpl createStub(@NotNull KtImportDirective psi, StubElement parentStub) {
+    public KotlinImportDirectiveStubImpl createStub(@NotNull KtImportDirective psi, StubElement<?> parentStub) {
         FqName importedFqName = psi.getImportedFqName();
         StringRef fqName = StringRef.fromString(importedFqName == null ? null : importedFqName.asString());
-        return new KotlinImportDirectiveStubImpl((StubElement<?>) parentStub, psi.isAllUnder(), fqName, psi.isValidImport());
+        return new KotlinImportDirectiveStubImpl(parentStub, psi.isAllUnder(), fqName, psi.isValidImport());
     }
 
     @Override
@@ -45,6 +45,6 @@ public class KtImportDirectiveElementType extends KtStubElementType<KotlinImport
         boolean isAllUnder = dataStream.readBoolean();
         StringRef importedName = dataStream.readName();
         boolean isValid = dataStream.readBoolean();
-        return new KotlinImportDirectiveStubImpl((StubElement<?>) parentStub, isAllUnder, importedName, isValid);
+        return new KotlinImportDirectiveStubImpl(parentStub, isAllUnder, importedName, isValid);
     }
 }

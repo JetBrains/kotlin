@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.psi.stubs.impl;
 
 import com.intellij.psi.stubs.StubElement;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.psi.KtImplementationDetail;
 import org.jetbrains.kotlin.psi.KtPropertyAccessor;
 import org.jetbrains.kotlin.psi.stubs.KotlinPropertyAccessorStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
@@ -17,7 +20,7 @@ public class KotlinPropertyAccessorStubImpl extends KotlinStubBaseImpl<KtPropert
     private final boolean mayHaveContract;
 
     public KotlinPropertyAccessorStubImpl(
-            StubElement parent,
+            @Nullable StubElement<?> parent,
             boolean isGetter,
             boolean hasBody,
             boolean hasNoExpressionBody,
@@ -48,5 +51,17 @@ public class KotlinPropertyAccessorStubImpl extends KotlinStubBaseImpl<KtPropert
     @Override
     public boolean getMayHaveContract() {
         return mayHaveContract;
+    }
+
+    @Override
+    @KtImplementationDetail
+    public @NotNull KotlinPropertyAccessorStubImpl copyInto(@Nullable StubElement<?> newParent) {
+        return new KotlinPropertyAccessorStubImpl(
+                newParent,
+                isGetter,
+                hasBody,
+                hasNoExpressionBody,
+                mayHaveContract
+        );
     }
 }

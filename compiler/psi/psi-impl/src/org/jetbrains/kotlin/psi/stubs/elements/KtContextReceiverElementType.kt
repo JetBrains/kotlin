@@ -23,7 +23,6 @@ class KtContextReceiverElementType(debugName: String) : KtStubElementType<Kotlin
         parentStub: StubElement<*>?,
     ): KotlinContextReceiverStubImpl = KotlinContextReceiverStubImpl(
         parent = parentStub,
-        elementType = this,
         labelRef = StringRef.fromString(element.labelName()),
     )
 
@@ -31,5 +30,5 @@ class KtContextReceiverElementType(debugName: String) : KtStubElementType<Kotlin
         dataStream.writeName(stub.label)
 
     override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?) =
-        KotlinContextReceiverStubImpl(parentStub, this, dataStream.readName())
+        KotlinContextReceiverStubImpl(parentStub, dataStream.readName())
 }
