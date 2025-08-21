@@ -20,7 +20,6 @@ import org.jetbrains.kotlinx.dataframe.DataColumn
 import org.jetbrains.kotlinx.dataframe.DataFrame
 import org.jetbrains.kotlinx.dataframe.api.*
 import org.jetbrains.kotlinx.dataframe.io.DisplayConfiguration
-import org.jetbrains.kotlinx.dataframe.io.read
 import org.jetbrains.kotlinx.dataframe.io.readCsv
 import org.jetbrains.kotlinx.dataframe.io.toStandaloneHtml
 import org.jetbrains.kotlinx.dataframe.io.writeCsv
@@ -30,7 +29,6 @@ import java.io.File
 import java.io.InputStream
 import java.nio.file.Files
 import java.nio.file.Paths
-import java.util.zip.GZIPInputStream
 import java.util.zip.ZipInputStream
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.api.*
@@ -314,7 +312,7 @@ abstract class BenchmarkTemplate(
             }
             .flipColumnsWithRows()
             .add("median build time") { // squashing build times into median build time
-                rowMedianOf<Int>()
+                rowMedianOf<Double>()
             }
             .remove { nameContains("measured build") } // removing iterations results
             .groupBy("scenario").aggregate { // merging configuration and build times into one row
@@ -349,15 +347,15 @@ abstract class BenchmarkTemplate(
                 if (it.name() == "Scenario") "0000Scenario" else it.name()
             }
             .insert("Configuration diff from stable release") {
-                val stableReleaseConfiguration = column<Int>("Configuration: $stableKotlinVersions").getValue(this)
-                val currentReleaseConfiguration = column<Int>("Configuration: $currentKotlinVersion").getValue(this)
+                val stableReleaseConfiguration = column<Double>("Configuration: $stableKotlinVersions").getValue(this)
+                val currentReleaseConfiguration = column<Double>("Configuration: $currentKotlinVersion").getValue(this)
                 val percent = currentReleaseConfiguration * 100 / stableReleaseConfiguration
                 "${percent}%"
             }
             .after("Configuration: $currentKotlinVersion")
             .insert("Execution diff from stable release") {
-                val stableReleaseConfiguration = column<Int>("Execution: $stableKotlinVersions").getValue(this)
-                val currentReleaseConfiguration = column<Int>("Execution: $currentKotlinVersion").getValue(this)
+                val stableReleaseConfiguration = column<Double>("Execution: $stableKotlinVersions").getValue(this)
+                val currentReleaseConfiguration = column<Double>("Execution: $currentKotlinVersion").getValue(this)
                 val percent = currentReleaseConfiguration * 100 / stableReleaseConfiguration
                 "${percent}%"
             }
@@ -376,7 +374,7 @@ abstract class BenchmarkTemplate(
                     cellContentLimit = 120,
                     cellFormatter = { dataRow, dataColumn ->
                         if (dataColumn.name.contains("diff from stable release")) {
-                            val percent = dataRow.getValue<String>(dataColumn.name).removeSuffix("%").toInt()
+                            val percent = dataRow.getValue<String>(dataColumn.name).removeSuffix("%").toDouble().toInt()
                             when {
                                 percent <= 100 -> background(184, 255, 184) // Green
                                 percent in 101..105 -> this.background(255, 255, 184) // Yellow
@@ -589,11 +587,11 @@ abstract class BenchmarkTemplate(
                 )
                 columnName.startsWith("warm-up build") -> DataColumn.createValueColumn(
                     columnName,
-                    rowToColumn(columnName) { it.toString().toInt() }
+                    rowToColumn(columnName) { it.toString().toDouble() }
                 )
                 columnName.startsWith("measured build") -> DataColumn.createValueColumn(
                     columnName,
-                    rowToColumn(columnName) { it.toString().toIntOrNull() }
+                    rowToColumn(columnName) { it.toString().toDoubleOrNull() }
                 )
                 else -> throw IllegalArgumentException("Unknown column name: $columnName")
             }
@@ -648,7 +646,7 @@ abstract class BenchmarkTemplate(
 
     companion object {
         private const val STEP_SEPARATOR = "###############"
-        private const val GRADLE_PROFILER_VERSION = "0.19.0"
+        private const val GRADLE_PROFILER_VERSION = "0.22.0"
         private const val GRADLE_PROFILER_URL: String =
             "https://repo1.maven.org/maven2/org/gradle/profiler/gradle-profiler/$GRADLE_PROFILER_VERSION/gradle-profiler-$GRADLE_PROFILER_VERSION.zip"
         private const val ASYNC_PROFILER_VERSION = "4.1"
