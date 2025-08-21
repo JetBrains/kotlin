@@ -634,6 +634,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
     }
 
     @Test
+    @TestMetadata("extensionShadowedByHiddenMember.kt")
+    public void testExtensionShadowedByHiddenMember() {
+      runTest("compiler/testData/diagnostics/tests/extensionShadowedByHiddenMember.kt");
+    }
+
+    @Test
     @TestMetadata("extensionShadowedByMember.kt")
     public void testExtensionShadowedByMember() {
       runTest("compiler/testData/diagnostics/tests/extensionShadowedByMember.kt");
