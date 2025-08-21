@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,27 +8,27 @@ package org.jetbrains.kotlin.ir.backend.js.tsexport
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 
-sealed class ExportedDeclaration {
-    val attributes = mutableListOf<ExportedAttribute>()
+public sealed class ExportedDeclaration {
+    public val attributes: MutableList<ExportedAttribute> = mutableListOf()
 }
 
-sealed class ExportedAttribute {
-    class DeprecatedAttribute(val message: String): ExportedAttribute()
+public sealed class ExportedAttribute {
+    public class DeprecatedAttribute(public val message: String) : ExportedAttribute()
 }
 
-data class ExportedModule(
+public data class ExportedModule(
     val name: String,
     val moduleKind: ModuleKind,
     val declarations: List<ExportedDeclaration>
 )
 
-class ExportedNamespace(
-    val name: String,
-    val declarations: List<ExportedDeclaration>,
-    val isPrivate: Boolean = false
+public class ExportedNamespace(
+    public val name: String,
+    public val declarations: List<ExportedDeclaration>,
+    public val isPrivate: Boolean = false
 ) : ExportedDeclaration()
 
-data class ExportedFunction(
+public data class ExportedFunction(
     val name: String,
     val returnType: ExportedType,
     val parameters: List<ExportedParameter>,
@@ -39,7 +39,7 @@ data class ExportedFunction(
     val isProtected: Boolean,
 ) : ExportedDeclaration()
 
-data class ExportedConstructor(
+public data class ExportedConstructor(
     val parameters: List<ExportedParameter>,
     val visibility: ExportedVisibility
 ) : ExportedDeclaration() {
@@ -47,12 +47,12 @@ data class ExportedConstructor(
         get() = visibility == ExportedVisibility.PROTECTED
 }
 
-data class ExportedConstructSignature(
+public data class ExportedConstructSignature(
     val parameters: List<ExportedParameter>,
     val returnType: ExportedType,
 ) : ExportedDeclaration()
 
-data class ExportedProperty(
+public data class ExportedProperty(
     val name: String,
     val type: ExportedType,
     val mutable: Boolean = true,
@@ -67,21 +67,21 @@ data class ExportedProperty(
 ) : ExportedDeclaration()
 
 // TODO: Cover all cases with frontend and disable error declarations
-class ErrorDeclaration(val message: String) : ExportedDeclaration()
+public class ErrorDeclaration(public val message: String) : ExportedDeclaration()
 
 
-sealed class ExportedClass : ExportedDeclaration() {
-    abstract val name: String
-    abstract val members: List<ExportedDeclaration>
-    abstract val superClasses: List<ExportedType>
-    abstract val superInterfaces: List<ExportedType>
-    abstract val nestedClasses: List<ExportedClass>
-    abstract val originalClassId: ClassId?
-    abstract val isCompanion: Boolean
-    abstract val isExternal: Boolean
+public sealed class ExportedClass : ExportedDeclaration() {
+    public abstract val name: String
+    public abstract val members: List<ExportedDeclaration>
+    public abstract val superClasses: List<ExportedType>
+    public abstract val superInterfaces: List<ExportedType>
+    public abstract val nestedClasses: List<ExportedClass>
+    public abstract val originalClassId: ClassId?
+    public abstract val isCompanion: Boolean
+    public abstract val isExternal: Boolean
 }
 
-data class ExportedRegularClass(
+public data class ExportedRegularClass(
     override val name: String,
     val isInterface: Boolean = false,
     val isAbstract: Boolean = false,
@@ -99,7 +99,7 @@ data class ExportedRegularClass(
         get() = false
 }
 
-data class ExportedObject(
+public data class ExportedObject(
     override val name: String,
     override val superClasses: List<ExportedType> = emptyList(),
     override val superInterfaces: List<ExportedType> = emptyList(),
@@ -112,103 +112,103 @@ data class ExportedObject(
     val isTopLevel: Boolean,
 ) : ExportedClass()
 
-class ExportedParameter(
-    val name: String,
-    val type: ExportedType,
-    val hasDefaultValue: Boolean = false
+public class ExportedParameter(
+    public val name: String,
+    public val type: ExportedType,
+    public val hasDefaultValue: Boolean = false
 )
 
-sealed class ExportedType {
-    open fun replaceTypes(substitution: Map<ExportedType, ExportedType>): ExportedType =
+public sealed class ExportedType {
+    public open fun replaceTypes(substitution: Map<ExportedType, ExportedType>): ExportedType =
         substitution[this] ?: this
 
-    sealed class Primitive(val typescript: kotlin.String) : ExportedType() {
-        object Boolean : Primitive("boolean")
-        object Number : Primitive("number")
-        object BigInt : Primitive("bigint")
-        object ByteArray : Primitive("Int8Array")
-        object ShortArray : Primitive("Int16Array")
-        object IntArray : Primitive("Int32Array")
-        object FloatArray : Primitive("Float32Array")
-        object DoubleArray : Primitive("Float64Array")
-        object LongArray : Primitive("BigInt64Array")
-        object String : Primitive("string")
-        object Throwable : Primitive("Error")
-        object Any : Primitive("any")
-        object Undefined : Primitive("undefined")
-        object Unit : Primitive("void")
-        object Nothing : Primitive("never")
-        object UniqueSymbol : Primitive("unique symbol")
-        object Unknown : Primitive("unknown") {
-            override fun withNullability(nullable: kotlin.Boolean) =
+    public sealed class Primitive(public val typescript: kotlin.String) : ExportedType() {
+        public object Boolean : Primitive("boolean")
+        public object Number : Primitive("number")
+        public object BigInt : Primitive("bigint")
+        public object ByteArray : Primitive("Int8Array")
+        public object ShortArray : Primitive("Int16Array")
+        public object IntArray : Primitive("Int32Array")
+        public object FloatArray : Primitive("Float32Array")
+        public object DoubleArray : Primitive("Float64Array")
+        public object LongArray : Primitive("BigInt64Array")
+        public object String : Primitive("string")
+        public object Throwable : Primitive("Error")
+        public object Any : Primitive("any")
+        public object Undefined : Primitive("undefined")
+        public object Unit : Primitive("void")
+        public object Nothing : Primitive("never")
+        public object UniqueSymbol : Primitive("unique symbol")
+        public object Unknown : Primitive("unknown") {
+            override fun withNullability(nullable: kotlin.Boolean): ExportedType =
                 if (nullable) this else NonNullable(this)
         }
     }
 
-    sealed class LiteralType<T : Any>(val value: T) : ExportedType() {
-        class StringLiteralType(value: String) : LiteralType<String>(value)
-        class NumberLiteralType(value: Number) : LiteralType<Number>(value)
+    public sealed class LiteralType<T : Any>(public val value: T) : ExportedType() {
+        public class StringLiteralType(value: String) : LiteralType<String>(value)
+        public class NumberLiteralType(value: Number) : LiteralType<Number>(value)
     }
 
-    data class Array(val elementType: ExportedType) : ExportedType() {
+    public data class Array(val elementType: ExportedType) : ExportedType() {
         override fun replaceTypes(substitution: Map<ExportedType, ExportedType>): ExportedType =
             substitution[this] ?: Array(elementType.replaceTypes(substitution))
     }
 
-    class Function(
-        val parameterTypes: List<ExportedType>,
-        val returnType: ExportedType
+    public class Function(
+        public val parameterTypes: List<ExportedType>,
+        public val returnType: ExportedType
     ) : ExportedType()
 
-    class ConstructorType(
-        val typeParameters: List<TypeParameter>,
-        val returnType: ExportedType
+    public class ConstructorType(
+        public val typeParameters: List<TypeParameter>,
+        public val returnType: ExportedType
     ) : ExportedType()
 
-    data class ClassType(
+    public data class ClassType(
         val name: String,
         val arguments: List<ExportedType>,
         val isObject: Boolean = false,
         val isExternal: Boolean = false,
         val classId: ClassId? = null,
     ) : ExportedType() {
-        override fun equals(other: Any?) = this === other || other is ClassType && classId == other.classId
-        override fun hashCode() = classId.hashCode()
+        override fun equals(other: Any?): Boolean = this === other || other is ClassType && classId == other.classId
+        override fun hashCode(): Int = classId.hashCode()
 
-        override fun replaceTypes(substitution: Map<ExportedType, ExportedType>) =
+        override fun replaceTypes(substitution: Map<ExportedType, ExportedType>): ExportedType =
             substitution[this] ?: copy(arguments = arguments.map { it.replaceTypes(substitution) })
     }
 
-    data class TypeParameter(val name: String, val constraint: ExportedType? = null) : ExportedType()
-    class Nullable(val baseType: ExportedType) : ExportedType()
-    class NonNullable(val baseType: ExportedType) : ExportedType()
-    class ErrorType(val comment: String) : ExportedType()
-    data class TypeOf(val classType: ClassType) : ExportedType()
-    class ObjectsParentType(val constructor: ExportedType) : ExportedType()
+    public data class TypeParameter(val name: String, val constraint: ExportedType? = null) : ExportedType()
+    public class Nullable(public val baseType: ExportedType) : ExportedType()
+    public class NonNullable(public val baseType: ExportedType) : ExportedType()
+    public class ErrorType(public val comment: String) : ExportedType()
+    public data class TypeOf(val classType: ClassType) : ExportedType()
+    public class ObjectsParentType(public val constructor: ExportedType) : ExportedType()
 
-    class InlineInterfaceType(
-        val members: List<ExportedDeclaration>
+    public class InlineInterfaceType(
+        public val members: List<ExportedDeclaration>
     ) : ExportedType()
 
-    class UnionType(val lhs: ExportedType, val rhs: ExportedType) : ExportedType()
+    public class UnionType(public val lhs: ExportedType, public val rhs: ExportedType) : ExportedType()
 
-    class IntersectionType(val lhs: ExportedType, val rhs: ExportedType) : ExportedType()
+    public class IntersectionType(public val lhs: ExportedType, public val rhs: ExportedType) : ExportedType()
 
-    class PropertyType(val container: ExportedType, val propertyName: ExportedType) : ExportedType()
+    public class PropertyType(public val container: ExportedType, public val propertyName: ExportedType) : ExportedType()
 
-    data class ImplicitlyExportedType(val type: ExportedType, val exportedSupertype: ExportedType) : ExportedType() {
-        override fun withNullability(nullable: Boolean) =
+    public data class ImplicitlyExportedType(val type: ExportedType, val exportedSupertype: ExportedType) : ExportedType() {
+        override fun withNullability(nullable: Boolean): ImplicitlyExportedType =
             ImplicitlyExportedType(type.withNullability(nullable), exportedSupertype.withNullability(nullable))
     }
 
-    open fun withNullability(nullable: Boolean) =
+    public open fun withNullability(nullable: Boolean): ExportedType =
         if (nullable) Nullable(this) else this
 
-    fun withImplicitlyExported(implicitlyExportedType: Boolean, exportedSupertype: ExportedType) =
+    public fun withImplicitlyExported(implicitlyExportedType: Boolean, exportedSupertype: ExportedType): ExportedType =
         if (implicitlyExportedType) ImplicitlyExportedType(this, exportedSupertype) else this
 }
 
-enum class ExportedVisibility(val keyword: String) {
+public enum class ExportedVisibility(public val keyword: String) {
     DEFAULT(""),
     PRIVATE("private "),
     PROTECTED("protected ")
