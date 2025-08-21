@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 // Skip test for K1 in case it explicitly enables any language feature which either has `sinceVersion` equal to 2.*, or is unstable without sinceVersion.
 class ClassicUnstableAndK2LanguageFeaturesSkipConfigurator(testServices: TestServices) : MetaTestConfigurator(testServices) {
     companion object {
-        private val unscheduledK2OnlyFeatures = setOf(
+        val unscheduledK2OnlyFeatures = setOf(
             LanguageFeature.IrInlinerBeforeKlibSerialization,
             LanguageFeature.ContextParameters,
             LanguageFeature.ContractSyntaxV2,
