@@ -154,28 +154,16 @@ internal object DevirtualizationAnalysis {
             abstract fun toString(allTypes: Array<DataFlowIR.Type>): String
 
             private var parent = this
-            private var rank = 0
+
+            val isRoot get() = parent == this
 
             fun root(): Node {
-                if (parent == this) return this
-                parent = parent.root()
+                require(parent.isRoot)
                 return parent
             }
 
             fun join(other: Node) {
-                val r = root()
-                val otherR = other.root()
-
-                if (r === otherR) return
-
-                if (r.rank >= otherR.rank) {
-                    otherR.parent = r
-                } else {
-                    r.parent = otherR
-                }
-                if (r.rank == otherR.rank) {
-                    r.rank++
-                }
+                parent = other.root()
             }
 
             class Source(id: Int, val typeId: Int, nameBuilder: () -> String) : Node(id) {
@@ -351,14 +339,12 @@ internal object DevirtualizationAnalysis {
                 require(index == nodesCount)
             }
 
-            private fun mergeMultiNodes(): IntArray {
+            private fun mergeMultiNodes() {
                 visited.clear()
                 var index = 0
-                val multiNodesInOrder = mutableListOf<Int>()
                 for (i in order.size - 1 downTo 0) {
                     val nodeIndex = order[i]
                     if (visited[nodeIndex]) continue
-                    multiNodesInOrder.add(nodeIndex)
                     val start = index
                     var cur = start
                     multiNodes[index++] = nodeIndex
@@ -372,14 +358,13 @@ internal object DevirtualizationAnalysis {
                         }
                     }
                     val end = index
-                    val startNode = nodes[multiNodes[start]]
+                    val startNode = nodes[nodeIndex]
                     for (multiNodeIndex in start until end) {
                         val node = nodes[multiNodes[multiNodeIndex]]
                         node.join(startNode)
                     }
                 }
                 require(index == nodesCount)
-                return multiNodesInOrder.toIntArray()
             }
 
             private fun mergeEdges() {
@@ -457,16 +442,22 @@ internal object DevirtualizationAnalysis {
                 }
             }
 
+            fun topologicalOrder(): IntArray {
+                val result = IntArrayList()
+                for (i in order.size - 1 downTo 0) {
+                    if (nodes[order[i]].isRoot) {
+                        result.add(order[i])
+                    }
+                }
+                return result.toIntArray()
+            }
+
             fun build(): Condensation {
                 calculateTopologicalSort()
-                val topologicalOrder = mergeMultiNodes()
+                mergeMultiNodes()
                 mergeEdges()
 
-                for (i in topologicalOrder.indices) {
-                    topologicalOrder[i] = nodes[topologicalOrder[i]].root().id
-                }
-
-                return Condensation(topologicalOrder)
+                return Condensation(topologicalOrder())
             }
         }
 
