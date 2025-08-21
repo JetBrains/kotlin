@@ -1257,13 +1257,18 @@ private fun parseDefaultStringFormat(
 
 /**
  * Checks if multiplying two Long values exceeds [MAX_MILLIS] bounds.
+ * 
+ * Uses a bit-counting technique to determine if the product of [a] and [b]
+ * would exceed the bounds of a 64-bit signed integer without actually
+ * performing the multiplication.
+ *
  * @return true if [a] * [b] would overflow [MAX_MILLIS] or -[MAX_MILLIS]
  */
 @kotlin.internal.InlineOnly
-private inline fun willMultiplyOverflow(a: Long, b: Long): Boolean = when {
-    a == 0L -> false
-    a > 0 -> a > MAX_MILLIS / b
-    else -> a < -MAX_MILLIS / b
+private inline fun willMultiplyOverflow(a: Long, b: Long): Boolean {
+    val leadingZerosA = abs(a).countLeadingZeroBits()
+    val leadingZerosB = abs(b).countLeadingZeroBits()
+    return (64 - leadingZerosA) + (64 - leadingZerosB) > 63
 }
 
 /**
