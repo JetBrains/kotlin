@@ -509,6 +509,8 @@ public fun String.substringAfterLast(delimiter: String, missingDelimiterValue: S
  * is replaced with the [replacement] char sequence.
  * @param startIndex the index of the first character to be replaced.
  * @param endIndex the index of the first character after the replacement to keep in the string.
+ *
+ * @sample samples.text.Strings.replaceRange
  */
 public fun CharSequence.replaceRange(startIndex: Int, endIndex: Int, replacement: CharSequence): CharSequence {
     if (endIndex < startIndex)
@@ -524,6 +526,8 @@ public fun CharSequence.replaceRange(startIndex: Int, endIndex: Int, replacement
  * Replaces the part of the string at the given range with the [replacement] char sequence.
  * @param startIndex the index of the first character to be replaced.
  * @param endIndex the index of the first character after the replacement to keep in the string.
+ *
+ * @sample samples.text.Strings.replaceRange
  */
 @kotlin.internal.InlineOnly
 public inline fun String.replaceRange(startIndex: Int, endIndex: Int, replacement: CharSequence): String =
@@ -534,6 +538,8 @@ public inline fun String.replaceRange(startIndex: Int, endIndex: Int, replacemen
  * is replaced with the [replacement] char sequence.
  *
  * The end index of the [range] is included in the part to be replaced.
+ *
+ * @sample samples.text.Strings.replaceRange
  */
 public fun CharSequence.replaceRange(range: IntRange, replacement: CharSequence): CharSequence =
     replaceRange(range.start, range.endInclusive + 1, replacement)
@@ -542,6 +548,8 @@ public fun CharSequence.replaceRange(range: IntRange, replacement: CharSequence)
  * Replace the part of string at the given [range] with the [replacement] string.
  *
  * The end index of the [range] is included in the part to be replaced.
+ *
+ * @sample samples.text.Strings.replaceRange
  */
 @kotlin.internal.InlineOnly
 public inline fun String.replaceRange(range: IntRange, replacement: CharSequence): String =

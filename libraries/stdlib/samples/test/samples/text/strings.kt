@@ -891,4 +891,31 @@ class Strings {
         // list is converted to a String first and then concatenated with the "Numbers: " string
         assertEquals("Numbers: [1, 2, 3]", "Numbers: " + listOf(1, 2, 3))
     }
+
+    @Sample
+    fun replaceRangeString() {
+        val text = "Hello, world!"
+
+        // Replacing the range that corresponds to the "world" substring with "Kotlin"
+        assertPrints(text.replaceRange(startIndex = 7, endIndex = 12, replacement = "Kotlin"), "Hello, Kotlin!")
+
+        // Also possible to replace using a Range
+        assertPrints(text.replaceRange(7..11, replacement = "Kotlin"), "Hello, Kotlin!")
+
+        // Empty replacement effectively removes the range
+        assertPrints(text.replaceRange(7..11, ""), "Hello, !")
+
+        // Replacing at the end of the string: endIndex is exclusive
+        assertPrints(text.replaceRange(0, 5, "Hey"), "Hey, world!")
+
+        // But for the overload accepting the range, range's end is inclusive (thus the comma is also replaced)
+        assertPrints(text.replaceRange(0..5, "Hey"), "Hey world!")
+
+        // Throws if startIndex is greater than endIndex
+        assertFails { text.replaceRange(startIndex = 7, endIndex = 4, replacement = "Kotlin") }
+        // Throws if startIndex or endIndex is out of the string indices range
+        assertFails { text.replaceRange(startIndex = 7, endIndex = 20, replacement = "Kotlin") }
+        // For ranges, the end is inclusive, so it has to be lower than the length of a char sequence
+        assertFails { text.replaceRange(7..text.length, replacement = "Kotlin") }
+    }
 }
