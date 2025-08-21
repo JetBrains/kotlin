@@ -126,12 +126,6 @@ abstract class BenchmarkTemplate(
 
         git.use { git ->
             git.cleanXffd()
-            val submodules = SubmoduleWalk.forIndex(git.repository)
-            while (submodules.next()) {
-                val repo = submodules.repository ?: continue
-                Git(repo).cleanXffd()
-            }
-
             git.fetch()
                 .setRefSpecs(gitCommitSha)
                 .setDepth(1)
@@ -147,6 +141,15 @@ abstract class BenchmarkTemplate(
             git.submoduleInit().call().forEach { println("Submodule init: ${it}") }
             git.submoduleSync().call().forEach { println("Submodule sync: ${it}") }
             git.submoduleUpdate().setProgressMonitor(gitOperationsPrinter).call().forEach { println("Submodule update: ${it}") }
+
+            val submodules = SubmoduleWalk.forIndex(git.repository)
+            while (submodules.next()) {
+                val repo = submodules.repository ?: continue
+                git.submoduleInit().call().forEach { println("Submodule init: ${it}") }
+                git.submoduleSync().call().forEach { println("Submodule sync: ${it}") }
+                Git(repo).cleanXffd()
+            }
+
             val status = git.status().setProgressMonitor(gitOperationsPrinter).call()
             println("Status isClean: ${status.isClean}")
             status.untracked.forEach {
