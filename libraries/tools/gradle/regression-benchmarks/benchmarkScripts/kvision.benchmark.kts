@@ -24,18 +24,18 @@ val repoPatch = {
     )
 }
 
-val defaultIterations = 20
+val defaultIterations = 100
 
 runBenchmarks(
     repoPatch,
     suite {
-        scenario {
-            title = "Build Js clean build"
-            iterations = defaultIterations
-
-            runTasks("jsJar")
-            runCleanupTasks("clean")
-        }
+//        scenario {
+//            title = "Build Js clean build"
+//            iterations = defaultIterations
+//
+//            runTasks("jsJar")
+//            runCleanupTasks("clean")
+//        }
 
         scenario {
             title = "Build Js IR with ABI change in ObservableList"
