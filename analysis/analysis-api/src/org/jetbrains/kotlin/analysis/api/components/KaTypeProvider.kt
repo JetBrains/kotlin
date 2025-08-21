@@ -166,7 +166,7 @@ public interface KaTypeProvider : KaSessionComponent {
      * @see enhancedType
      */
     @KaExperimentalApi
-    public val KaType.enhancedTypeOrSelf: KaType?
+    public val KaType.enhancedTypeOrSelf: KaType
         get() = withValidityAssertion { enhancedType ?: this }
 
     /**
@@ -509,7 +509,7 @@ public val KaType.enhancedType: KaType?
 @KaExperimentalApi
 @KaContextParameterApi
 context(context: KaTypeProvider)
-public val KaType.enhancedTypeOrSelf: KaType?
+public val KaType.enhancedTypeOrSelf: KaType
     get() = with(context) { enhancedTypeOrSelf }
 
 /**
