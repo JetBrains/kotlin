@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.backend.konan.util
 
+import java.util.BitSet
+
 /**
  * Provides some bulk operations needed for devirtualization
  */
@@ -151,5 +153,13 @@ class CustomBitSet private constructor(size: Int, data: LongArray) {
             }
             return true
         }
+
+    fun toBitSet(): BitSet {
+        val result = BitSet()
+        forEachBit {
+            result.set(it)
+        }
+        return result
+    }
 
 }

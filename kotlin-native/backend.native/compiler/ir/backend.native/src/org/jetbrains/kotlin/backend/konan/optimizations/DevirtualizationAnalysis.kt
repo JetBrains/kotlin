@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan.optimizations
 
-import org.jetbrains.kotlin.utils.copy
-import org.jetbrains.kotlin.utils.forEachBit
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
@@ -36,6 +34,7 @@ import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import java.io.PrintWriter
 import java.util.*
 
 internal var IrCall.devirtualizedCallSite: DevirtualizationAnalysis.DevirtualizedCallSite? by irAttribute(copyByDefault = true)
@@ -549,6 +548,84 @@ internal object DevirtualizationAnalysis {
                 node.priority = index
             }
 
+            var fromSmallToBig = 0L
+            var fromBigToSmall = 0L
+            for (node in topologicalOrder) {
+                directEdges.forEachEdge(node.id) { toId ->
+                    val toNode = constraintGraph.nodes[toId]
+                    if (toNode.priority < 0) error("Wrong node!")
+                    require(toNode.priority != node.priority)
+                    if (toNode.priority < node.priority) {
+                        fromBigToSmall++
+                    } else {
+                        fromSmallToBig++
+                    }
+                }
+            }
+            require(fromBigToSmall == 0L) {
+                "From small to big: $fromSmallToBig, from big to small: $fromBigToSmall"
+            }
+
+            val canonicalRoot = IntArray(constraintGraph.nodes.size) { Int.MAX_VALUE }
+
+            for (node in constraintGraph.nodes) {
+                val rootId = node.root().id
+                canonicalRoot[rootId] = Math.min(canonicalRoot[rootId], node.id)
+            }
+
+            fun Int.canonical() = canonicalRoot[this]
+
+            val dumpDebug = false
+
+
+            fun dumpGraphTo(file: String) {
+
+                if (!dumpDebug) return
+
+                PrintWriter(file).use { out ->
+                    for (node in constraintGraph.nodes) {
+                        val canonicalRootId = canonicalRoot[node.root().id]
+
+                        if (node.id != canonicalRootId) {
+                            continue
+                        }
+
+                        val rootNode = node.root()
+
+                        val allEdges = mutableSetOf<Int>()
+                        val allEdgesReversed = mutableSetOf<Int>()
+                        val allCastEdges = mutableMapOf<Int, BitSet>()
+                        val allCastEdgesReversed = mutableMapOf<Int, BitSet>()
+                        directEdges.forEachEdge(rootNode.id) { e ->
+                            allEdges.add(e.canonical())
+                        }
+                        reversedEdges.forEachEdge(rootNode.id) { e ->
+                            allEdgesReversed.add(e.canonical())
+                        }
+                        rootNode.directCastEdges?.forEach {
+                            val cid = it.node.id.canonical()
+                            if (cid in allCastEdges) error("Duplicate cast edges!")
+                            allCastEdges[cid] = it.suitableTypes.toBitSet()
+                        }
+                        rootNode.reversedCastEdges?.forEach {
+                            val cid = it.node.id.canonical()
+                            if (cid in allCastEdgesReversed) error("Duplicate cast edges!")
+                            allCastEdgesReversed[cid] = it.suitableTypes.toBitSet()
+                        }
+
+
+                        val typesHash = node.types.toBitSet().hashCode().toHexString()
+                        val edgesHash = allEdges.sorted().hashCode().toHexString()
+                        val castEdgesHash = allCastEdges.entries.map { (k, v) -> k to v }.sortedBy { it.first }.hashCode().toHexString()
+                        val edgesReversedHash = allEdgesReversed.sorted().hashCode().toHexString()
+                        val castEdgesReversedHash = allCastEdgesReversed.entries.map { (k, v) -> k to v }.sortedBy { it.first }.hashCode().toHexString()
+                        out.println("${canonicalRootId} ${allEdges.size} ${allCastEdges.size} $typesHash $edgesHash $castEdgesHash $edgesReversedHash $castEdgesReversedHash")
+                    }
+                }
+            }
+
+            dumpGraphTo("/Volumes/case_sensitive/vcs/kotlin/igdmp")
+
             val badEdges = mutableListOf<Pair<Node, Node.CastEdge>>()
             for (node in topologicalOrder) {
                 node.directCastEdges
@@ -565,17 +642,21 @@ internal object DevirtualizationAnalysis {
                 ++iterations
                 // Handle all 'right-directed' edges.
                 // TODO: this is pessimistic handling of [DataFlowIR.Type.Virtual], think how to do it better.
+                val visitedHere = mutableSetOf<Int>()
                 for (node in topologicalOrder) {
-                    if (node is Node.Source)
-                        continue // A source has no incoming edges.
+                    visitedHere.add(node.id)
+                    //if (node is Node.Source)
+                    //    continue // A source has no incoming edges.
                     val types = CustomBitSet()
 
                     reversedEdges.forEachEdge(node.id) {
+                        require(it in visitedHere) { "Edge #${it} to node #${node.id} not is visited here" }
                         types.or(constraintGraph.nodes[it].types)
                     }
                     node.reversedCastEdges
                             ?.filter { it.node.priority < node.priority } // Doesn't contradict topological order.
                             ?.forEach {
+                                require(it.node.id in visitedHere) { "Edge #${it} to node #${node.id} not is visited here" }
                                 val sourceTypes = it.node.types.copy()
                                 sourceTypes.and(it.suitableTypes)
                                 types.or(sourceTypes)
@@ -583,6 +664,9 @@ internal object DevirtualizationAnalysis {
 
                     node.types.or(types)
                 }
+
+                dumpGraphTo("/Volumes/case_sensitive/vcs/kotlin/igdmp-ff${iterations}")
+
                 if (iterations >= maxNumberOfIterations) break
 
                 var end = true
@@ -641,7 +725,33 @@ internal object DevirtualizationAnalysis {
                 }
             }
 
+            for (node in constraintGraph.nodes) {
+                if (node.root() !== node) {
+                    require(directEdges.edgeCount(node.id) == 0)
+                    require(reversedEdges.edgeCount(node.id) == 0)
+                    require(node.directCastEdges == null)
+                    require(node.reversedCastEdges == null)
+                } else {
+                    directEdges.forEachEdge(node.id) { j ->
+                        val jN = constraintGraph.nodes[j]
+
+                        val tbs = node.types.copy()
+                        tbs.andNot(jN.types)
+                        require(tbs.cardinality() == 0) { "Node #${node.id} has edge to node #${jN.id}, but types ${tbs.toBitSet().hashCode().toHexString()} don't match" }
+                    }
+
+                    node.directCastEdges?.forEach { edge ->
+                        val tbs = node.types.copy()
+                        tbs.and(edge.suitableTypes)
+                        tbs.andNot(edge.node.types)
+                        require(tbs.cardinality() == 0) { "Node #${node.id} has edge to node #${edge.node.id}, but types ${tbs.toBitSet().hashCode().toHexString()} don't match" }
+                    }
+                }
+            }
+
             println("Second phase took ${System.currentTimeMillis() - secondPhaseStartTime} ms")
+
+            dumpGraphTo("/Volumes/case_sensitive/vcs/kotlin/igdmp-end")
 
             if (entryPoint == null)
                 propagateFinalTypesFromExternalVirtualCalls(directEdges)
