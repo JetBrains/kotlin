@@ -6,6 +6,6 @@ class Foo {
     fun bar() {}
 }
 
-fun Foo.<!EXTENSION_SHADOWED_BY_MEMBER!>bar<!>() {}
+fun Foo.bar() {}
 
 /* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, stringLiteral */
