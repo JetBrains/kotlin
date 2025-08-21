@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.isActualDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.isExpectDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
@@ -115,7 +116,7 @@ internal sealed class KaFirKotlinPropertySymbol<P : KtCallableDeclaration>(
         }
 
     override val isActual: Boolean
-        get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.ACTUAL_KEYWORD) ?: firSymbol.isActual }
+        get() = withValidityAssertion { backingPsi?.isActualDeclaration() ?: firSymbol.isActual }
 
     override val isExpect: Boolean
         get() = withValidityAssertion { backingPsi?.isExpectDeclaration() ?: firSymbol.isExpect }

@@ -344,6 +344,21 @@ fun KtDeclaration.isExpectDeclaration(): Boolean = when {
     else -> containingClassOrObject?.isExpectDeclaration() == true
 }
 
+/**
+ * Checks if this declaration is an `actual`. This is the case if the declaration either has an explicit `actual` modifier, or if
+ * it is a constructor of an annotation, value, or inline class
+ */
+fun KtDeclaration.isActualDeclaration(): Boolean = hasActualModifier() || isImplicitlyActualDeclaration()
+
+internal fun KtDeclaration.isImplicitlyActualDeclaration(): Boolean = when (this) {
+    is KtConstructor<*> -> (containingClassOrObject as? KtClass)?.let { klass ->
+        klass.hasActualModifier() && klass.allowsImplicitlyActualConstructor()
+    } == true
+    else -> false
+}
+
+internal fun KtClass.allowsImplicitlyActualConstructor() = isAnnotation() || isValue() || isInline()
+
 fun KtElement.isContextualDeclaration(): Boolean {
     val contextReceivers = when (this) {
         is KtCallableDeclaration -> contextReceivers

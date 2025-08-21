@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.psiUtil.isActualDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.isExpectDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 
@@ -174,7 +175,7 @@ internal class KaFirNamedFunctionSymbol private constructor(
         get() = withValidityAssertion { backingPsi?.isExtensionDeclaration() ?: firSymbol.isExtension }
 
     override val isActual: Boolean
-        get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.ACTUAL_KEYWORD) ?: firSymbol.isActual }
+        get() = withValidityAssertion { backingPsi?.isActualDeclaration() ?: firSymbol.isActual }
 
     override val isExpect: Boolean
         get() = withValidityAssertion { backingPsi?.isExpectDeclaration() ?: firSymbol.isExpect }

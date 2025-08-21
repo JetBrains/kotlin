@@ -5,7 +5,7 @@ KaConstructorSymbol:
   containingClassId: A
   contextReceivers: []
   hasStableParameterNames: true
-  isActual: false
+  isActual: true
   isExpect: false
   isExtension: false
   isPrimary: true
@@ -196,7 +196,7 @@ KaConstructorSymbol:
   containingClassId: B
   contextReceivers: []
   hasStableParameterNames: true
-  isActual: false
+  isActual: true
   isExpect: false
   isExtension: false
   isPrimary: true

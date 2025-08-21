@@ -3820,6 +3820,7 @@ public final class org/jetbrains/kotlin/psi/psiUtil/KtPsiUtilKt {
 	public static final fun hasBody (Lorg/jetbrains/kotlin/psi/KtDeclaration;)Z
 	public static final fun inferClassIdByPsi (Lorg/jetbrains/kotlin/psi/KtConstantExpression;)Lorg/jetbrains/kotlin/name/ClassId;
 	public static final fun isAbstract (Lorg/jetbrains/kotlin/psi/KtClass;)Z
+	public static final fun isActualDeclaration (Lorg/jetbrains/kotlin/psi/KtDeclaration;)Z
 	public static final fun isCallee (Lorg/jetbrains/kotlin/psi/KtSimpleNameExpression;)Z
 	public static final fun isContextualDeclaration (Lorg/jetbrains/kotlin/psi/KtElement;)Z
 	public static final fun isContractDescriptionCallPsiCheck (Lorg/jetbrains/kotlin/psi/KtExpression;)Z

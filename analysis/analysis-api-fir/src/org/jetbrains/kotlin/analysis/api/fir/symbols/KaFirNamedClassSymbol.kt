@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
+import org.jetbrains.kotlin.psi.psiUtil.isActualDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.isExpectDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
@@ -113,7 +114,7 @@ internal class KaFirNamedClassSymbol private constructor(
         get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.EXTERNAL_KEYWORD) ?: firSymbol.isExternal }
 
     override val isActual: Boolean
-        get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.ACTUAL_KEYWORD) ?: firSymbol.isActual }
+        get() = withValidityAssertion { backingPsi?.isActualDeclaration() ?: firSymbol.isActual }
 
     override val isExpect: Boolean
         get() = withValidityAssertion { backingPsi?.isExpectDeclaration() ?: firSymbol.isExpect }

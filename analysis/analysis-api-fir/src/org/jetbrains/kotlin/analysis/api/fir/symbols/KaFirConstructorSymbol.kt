@@ -30,10 +30,10 @@ import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtConstructor
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
+import org.jetbrains.kotlin.psi.psiUtil.isActualDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.isExpectDeclaration
 
 internal class KaFirConstructorSymbol private constructor(
@@ -96,7 +96,7 @@ internal class KaFirConstructorSymbol private constructor(
         }
 
     override val isActual: Boolean
-        get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.ACTUAL_KEYWORD) ?: firSymbol.isActual }
+        get() = withValidityAssertion { backingPsi?.isActualDeclaration() ?: firSymbol.isActual }
 
     override val isExpect: Boolean
         get() = withValidityAssertion { backingPsi?.isExpectDeclaration() ?: firSymbol.isExpect }
