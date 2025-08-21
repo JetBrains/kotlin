@@ -11,9 +11,21 @@
 using namespace llvm;
 
 static constexpr const char* functionPrologueSafepointName = "Kotlin_mm_safePointFunctionPrologue";
+static constexpr const char* LookupInterfaceTableRecordName = "LookupInterfaceTableRecord";
+static constexpr const char* LookupInterfaceMethodName = "LookupInterfaceMethod";
+static constexpr const char* LookupVirtualMethodName = "LookupVirtualMethod";
+static constexpr const char* KotlinLoadTypeInfoName = "Kotlin_loadTypeInfo";
 
 static constexpr size_t functionPrologueSafepointNameLength =
   std::char_traits<char>::length(functionPrologueSafepointName);
+static constexpr size_t LookupInterfaceTableRecordNameLength =
+  std::char_traits<char>::length(LookupInterfaceTableRecordName);
+static constexpr size_t LookupInterfaceMethodNameLength =
+  std::char_traits<char>::length(LookupInterfaceMethodName);
+static constexpr size_t LookupVirtualMethodNameLength =
+  std::char_traits<char>::length(LookupVirtualMethodName);
+static constexpr size_t KotlinLoadTypeInfoNameLength =
+  std::char_traits<char>::length(KotlinLoadTypeInfoName);
 
 static bool InstructionIsPrologueSafepoint(LLVMValueRef instruction) {
   if (LLVMIsACallInst(instruction) || LLVMIsAInvokeInst(instruction)) {
@@ -21,6 +33,22 @@ static bool InstructionIsPrologueSafepoint(LLVMValueRef instruction) {
     const char* calledName = LLVMGetValueName2(LLVMGetCalledValue(instruction), &calledNameLength);
     return functionPrologueSafepointNameLength == calledNameLength &&
       strncmp(calledName, functionPrologueSafepointName, calledNameLength) == 0;
+  }
+  return false;
+}
+
+static bool IsKnownIntrinsicToInline(LLVMValueRef instruction) {
+  if (LLVMIsACallInst(instruction) || LLVMIsAInvokeInst(instruction)) {
+    size_t calledNameLength = 0;
+    const char* calledName = LLVMGetValueName2(LLVMGetCalledValue(instruction), &calledNameLength);
+    if (LookupInterfaceTableRecordNameLength == calledNameLength &&
+      strncmp(calledName, LookupInterfaceTableRecordName, calledNameLength) == 0) return true;
+    if (LookupInterfaceMethodNameLength == calledNameLength &&
+      strncmp(calledName, LookupInterfaceMethodName, calledNameLength) == 0) return true;
+    if (LookupVirtualMethodNameLength == calledNameLength &&
+      strncmp(calledName, LookupVirtualMethodName, calledNameLength) == 0) return true;
+    if (KotlinLoadTypeInfoNameLength == calledNameLength &&
+      strncmp(calledName, KotlinLoadTypeInfoName, calledNameLength) == 0) return true;
   }
   return false;
 }
@@ -41,10 +69,13 @@ static void RemoveOrInlinePrologueSafepointInstructions(
   // Collect safepoint calls to erase and inline.
   LLVMValueRef toInline = nullptr;
   std::vector<LLVMValueRef> toErase;
+  std::vector<LLVMValueRef> intrinsicsToInline;
   bool first = true;
   LLVMValueRef current = LLVMGetFirstInstruction(block);
   while (current) {
-    if (InstructionIsPrologueSafepoint(current)) {
+    if (isSafepointInliningAllowed && IsKnownIntrinsicToInline(current)) {
+      intrinsicsToInline.push_back(current);
+    } else if (InstructionIsPrologueSafepoint(current)) {
       if (!first || removeFirst) {
         toErase.push_back(current);
       } else if (isSafepointInliningAllowed && !LLVMIsDeclaration(LLVMGetCalledValue(current))) {
@@ -60,6 +91,9 @@ static void RemoveOrInlinePrologueSafepointInstructions(
   }
   if (toInline) {
     LLVMInlineCall(toInline);
+  }
+  for (auto x : intrinsicsToInline) {
+      LLVMInlineCall(x);
   }
 }
 

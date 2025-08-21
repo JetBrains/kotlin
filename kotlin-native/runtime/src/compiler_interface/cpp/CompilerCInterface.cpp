@@ -87,6 +87,8 @@ touchFunction(Kotlin_mm_releaseExternalRCRef)
 touchFunction(Kotlin_mm_disposeExternalRCRef)
 
 touchFunction(Kotlin_loadTypeInfo)
+touchFunction(LookupInterfaceMethod)
+touchFunction(LookupVirtualMethod)
 
 #ifdef __cplusplus
 } // extern "C"

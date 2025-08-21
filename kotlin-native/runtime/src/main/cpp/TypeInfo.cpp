@@ -27,7 +27,7 @@ extern "C" {
 
 // Seeks for the specified id. In case of failure returns a valid pointer to some record, never returns nullptr.
 // It is the caller's responsibility to check if the search has succeeded or not.
-NO_INLINE InterfaceTableRecord const* LookupInterfaceTableRecord(InterfaceTableRecord const* interfaceTable,
+NO_INLINE InterfaceTableRecord const* LookupInterfaceTableRecordSlowPath(InterfaceTableRecord const* interfaceTable,
                                                        int interfaceTableSize, ClassId interfaceId) {
   if (interfaceTableSize <= 8) {
     // Linear search.
@@ -43,6 +43,21 @@ NO_INLINE InterfaceTableRecord const* LookupInterfaceTableRecord(InterfaceTableR
     else r = m;
   }
   return interfaceTable + l;
+}
+
+RUNTIME_CONST NO_INLINE RUNTIME_NOTHROW InterfaceTableRecord const* LookupInterfaceTableRecord(TypeInfo const * typeInfo, ClassId interfaceId) {
+    if (typeInfo->interfaceTableSize_ >= 0) {
+       return &typeInfo->interfaceTable_[interfaceId & typeInfo->interfaceTableSize_];
+    }
+    return LookupInterfaceTableRecordSlowPath(typeInfo->interfaceTable_, -typeInfo->interfaceTableSize_, interfaceId);
+}
+
+RUNTIME_CONST NO_INLINE RUNTIME_NOTHROW void const* LookupInterfaceMethod(InterfaceTableRecord const* record, int index) {
+    return record->vtable[index];
+}
+
+RUNTIME_CONST NO_INLINE RUNTIME_NOTHROW void const* LookupVirtualMethod(TypeInfo* info, int index) {
+    return info->vtable()[index];
 }
 
 RUNTIME_NOTHROW int Kotlin_internal_reflect_getObjectReferenceFieldsCount(ObjHeader* object) {

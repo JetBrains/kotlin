@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.binaryTypeIsReference
 import org.jetbrains.kotlin.backend.konan.cgen.CBridgeOrigin
-import org.jetbrains.kotlin.backend.konan.ir.ClassGlobalHierarchyInfo
 import org.jetbrains.kotlin.backend.konan.ir.isAbstract
 import org.jetbrains.kotlin.backend.konan.ir.isAny
 import org.jetbrains.kotlin.backend.konan.llvm.ThreadState.Native
@@ -23,7 +22,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.objcinterop.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.konan.ForeignExceptionMode
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 
 
 internal class CodeGenerator(override val generationState: NativeGenerationState) : ContextUtils {
@@ -204,45 +202,7 @@ private inline fun <T : FunctionGenerationContext> generateFunctionBody(
 
 internal object VirtualTablesLookup {
     private fun FunctionGenerationContext.getInterfaceTableRecord(typeInfo: LLVMValueRef, interfaceId: Int): LLVMValueRef {
-        val interfaceTableRecordPtrType = pointerType(runtime.interfaceTableRecordType)
-        val interfaceTableSize = load(llvm.int32Type, structGep(runtime.typeInfoType, typeInfo, 9 /* interfaceTableSize_ */))
-        val interfaceTable = load(interfaceTableRecordPtrType, structGep(runtime.typeInfoType, typeInfo, 10 /* interfaceTable_ */))
-
-        fun fastPath(): LLVMValueRef {
-            // The fastest optimistic version.
-            val interfaceTableIndex = and(interfaceTableSize, llvm.int32(interfaceId))
-            return gep(runtime.interfaceTableRecordType, interfaceTable, interfaceTableIndex)
-        }
-
-        // See details in ClassLayoutBuilder.
-        return if (context.ghaEnabled()
-                && context.globalHierarchyAnalysisResult.bitsPerColor <= ClassGlobalHierarchyInfo.MAX_BITS_PER_COLOR
-                && context.config.produce != CompilerOutputKind.FRAMEWORK
-        ) {
-            // All interface tables are small and no unknown interface inheritance.
-            fastPath()
-        } else {
-            val startLocationInfo = position()?.start
-            val fastPathBB = basicBlock("fast_path", startLocationInfo)
-            val slowPathBB = basicBlock("slow_path", startLocationInfo)
-            val takeResBB = basicBlock("take_res", startLocationInfo)
-            condBr(icmpGe(interfaceTableSize, llvm.kImmInt32Zero), fastPathBB, slowPathBB)
-            positionAtEnd(takeResBB)
-            val resultPhi = phi(interfaceTableRecordPtrType)
-            appendingTo(fastPathBB) {
-                val fastValue = fastPath()
-                br(takeResBB)
-                addPhiIncoming(resultPhi, currentBlock to fastValue)
-            }
-            appendingTo(slowPathBB) {
-                val actualInterfaceTableSize = sub(llvm.kImmInt32Zero, interfaceTableSize) // -interfaceTableSize
-                val slowValue = call(llvm.lookupInterfaceTableRecord,
-                        listOf(interfaceTable, actualInterfaceTableSize, llvm.int32(interfaceId)))
-                br(takeResBB)
-                addPhiIncoming(resultPhi, currentBlock to slowValue)
-            }
-            resultPhi
-        }
+        return call(llvm.lookupInterfaceTableRecord, listOf(typeInfo, llvm.int32(interfaceId)))
     }
 
     fun FunctionGenerationContext.checkIsSubtype(objTypeInfo: LLVMValueRef, dstClass: IrClass) = if (!context.ghaEnabled()) {
@@ -281,19 +241,14 @@ internal object VirtualTablesLookup {
         val llvmMethod = when {
             canCallViaVtable -> {
                 val index = layoutBuilder.vtableIndex(irFunction)
-                val vtablePlace = gep(runtime.typeInfoType, typeInfoPtr, llvm.int32(1)) // typeInfoPtr + 1
-                val vtable = bitcast(llvm.int8PtrPtrType, vtablePlace)
-                val slot = gep(llvm.int8PtrType, vtable, llvm.int32(index))
-                load(functionPtrType, bitcast(functionPtrPtrType, slot))
+                call(llvm.lookupVirtualMethod, listOf(typeInfoPtr, llvm.int32(index)))
             }
 
             else -> {
                 // Essentially: typeInfo.itable[place(interfaceId)].vtable[method]
                 val itablePlace = layoutBuilder.itablePlace(irFunction)
                 val interfaceTableRecord = getInterfaceTableRecord(typeInfoPtr, itablePlace.interfaceId)
-                val vtable = load(llvm.int8PtrPtrType, structGep(runtime.interfaceTableRecordType, interfaceTableRecord, 2 /* vtable */))
-                val slot = gep(llvm.int8PtrType, vtable, llvm.int32(itablePlace.methodIndex))
-                load(functionPtrType, bitcast(functionPtrPtrType, slot))
+                call(llvm.lookupInterfaceMethod, listOf(interfaceTableRecord, llvm.int32(itablePlace.methodIndex)))
             }
         }
         return LlvmCallable(

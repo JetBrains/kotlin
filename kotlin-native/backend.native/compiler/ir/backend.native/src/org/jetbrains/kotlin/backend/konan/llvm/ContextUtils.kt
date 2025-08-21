@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.lower.originalConstructor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
 
@@ -457,6 +456,8 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     val Kotlin_mm_disposeExternalRCRef by lazy { importRtFunction("Kotlin_mm_disposeExternalRCRef", false) }
 
     val Kotlin_loadTypeInfo = importRtFunction("Kotlin_loadTypeInfo", false)
+    val lookupInterfaceMethod = importRtFunction("LookupInterfaceMethod", false)
+    val lookupVirtualMethod = importRtFunction("LookupVirtualMethod", false)
 
     val createKotlinObjCClass by lazy { importRtFunction("CreateKotlinObjCClass", false) }
     val getObjCKotlinTypeInfo by lazy { importRtFunction("GetObjCKotlinTypeInfo", false) }
