@@ -59,6 +59,7 @@ public final class BuildResult implements MessageHandler {
     myMappingsDump = dump.toString();
   }
 
+  @SuppressWarnings({"deprecation", "removal"})
   private static void dumpSourceToOutputMappings(ProjectDescriptor pd, PrintStream stream) throws IOException {
     List<BuildTarget<?>> targets = new ArrayList<>(pd.getBuildTargetIndex().getAllTargets());
     targets.sort((o1, o2) -> {

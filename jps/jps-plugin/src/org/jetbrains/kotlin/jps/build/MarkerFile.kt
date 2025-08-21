@@ -61,6 +61,7 @@ abstract class MarkerFile(private val fileName: String, private val paths: Build
 
     private val ModuleBuildTarget.markerFile: File
         get() {
+            @Suppress("DEPRECATION")
             val directory = File(paths.getTargetDataRoot(this), KOTLIN_CACHE_DIRECTORY_NAME)
             return File(directory, fileName)
         }
