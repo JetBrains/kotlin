@@ -352,12 +352,14 @@ internal object DevirtualizationAnalysis {
                 require(index == nodesCount)
             }
 
-            private fun mergeMultiNodes() {
+            private fun mergeMultiNodes(): IntArray {
                 visited.clear()
                 var index = 0
+                val multiNodesInOrder = mutableListOf<Int>()
                 for (i in order.size - 1 downTo 0) {
                     val nodeIndex = order[i]
                     if (visited[nodeIndex]) continue
+                    multiNodesInOrder.add(nodeIndex)
                     val start = index
                     var cur = start
                     multiNodes[index++] = nodeIndex
@@ -378,19 +380,7 @@ internal object DevirtualizationAnalysis {
                     }
                 }
                 require(index == nodesCount)
-            }
-
-            fun mergeSources() {
-                val singleSource = IntArray(moduleDFG.symbolTable.typeHierarchy.allTypes.size) { -1 }
-                for (node in nodes) {
-                    if (node !is Node.Source) continue
-
-                    if (singleSource[node.typeId] == -1) {
-                        singleSource[node.typeId] = node.id
-                    } else {
-                        node.join(nodes[singleSource[node.typeId]])
-                    }
-                }
+                return multiNodesInOrder.toIntArray()
             }
 
             private fun mergeEdges() {
@@ -468,24 +458,16 @@ internal object DevirtualizationAnalysis {
                 }
             }
 
-            fun topologicalOrder(): IntArray {
-                val rootOrder = IntArrayList()
-                for (i in order.size - 1 downTo 0) {
-                    val n = nodes[order[i]]
-                    if (n.root() == n) {
-                        rootOrder.add(n.id)
-                    }
-                }
-                return rootOrder.toIntArray()
-            }
-
             fun build(): Condensation {
                 calculateTopologicalSort()
-                mergeMultiNodes()
-                mergeSources()
+                val topologicalOrder = mergeMultiNodes()
                 mergeEdges()
 
-                return Condensation(topologicalOrder())
+                for (i in topologicalOrder.indices) {
+                    topologicalOrder[i] = nodes[topologicalOrder[i]].root().id
+                }
+
+                return Condensation(topologicalOrder)
             }
         }
 
