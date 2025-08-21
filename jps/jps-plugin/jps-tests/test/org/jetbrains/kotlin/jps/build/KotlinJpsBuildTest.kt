@@ -672,6 +672,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         initProject(JVM_MOCK_RUNTIME)
         buildAllModules().assertSuccessful()
 
+        @Suppress("DEPRECATION")
         val storageRoot = BuildDataPathsImpl(myDataStorageRoot).dataStorageRoot
         assertFalse(File(storageRoot, "targets/java-test/kotlinProject/kotlin").exists())
         assertFalse(File(storageRoot, "targets/java-production/kotlinProject/kotlin").exists())
@@ -689,6 +690,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
             checkWhen(createTouchAction("src/utils.kt"), null, allClasses.toTypedArray())
         }
 
+        @Suppress("DEPRECATION")
         val storageRoot = BuildDataPathsImpl(myDataStorageRoot).dataStorageRoot
         assertFalse(File(storageRoot, "targets/java-production/kotlinProject/kotlin").exists())
         assertFalse(File(storageRoot, "targets/java-production/module2/kotlin").exists())

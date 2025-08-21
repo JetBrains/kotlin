@@ -131,6 +131,7 @@ abstract class AbstractIncrementalLazyCachesTest : AbstractIncrementalJpsTest() 
         p.println(target)
         p.pushIndent()
 
+        @Suppress("DEPRECATION")
         val dataRoot = paths.getTargetDataRoot(target).let { if (subdirectory != null) File(it, subdirectory) else it }
         cacheVersionsFiles
             .filter(File::exists)

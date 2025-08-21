@@ -154,6 +154,9 @@ internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> prot
     override fun isValid(): Boolean = classOrObjectDeclaration?.isValid ?: classSymbolPointer.isValid(ktModule)
 
     override fun getUseScope(): SearchScope = classOrObjectDeclaration?.useScope ?: GlobalSearchScope.projectScope(project)
+
+    @Deprecated("Deprecated in Java")
+    @Suppress("DEPRECATION")
     override fun getElementType(): IStubElementType<out StubElement<*>, *>? = classOrObjectDeclaration?.elementType
     override fun getStub(): KotlinClassOrObjectStub<out KtClassOrObject>? = classOrObjectDeclaration?.stub
 
