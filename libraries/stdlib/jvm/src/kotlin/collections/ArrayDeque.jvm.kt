@@ -46,6 +46,7 @@ public actual class ArrayDeque<E> private actual constructor(
      * Constructs a deque that contains the same elements as the specified [elements] collection in the same order.
      */
     public actual constructor(elements: Collection<E>) : this(
+        @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
         if (elements.isEmpty()) EMPTY_ARRAY_OF_ANY else (elements as java.util.Collection<*>).toArray()
     ) {
         size = elementData.size
@@ -158,4 +159,6 @@ public actual class ArrayDeque<E> private actual constructor(
     internal actual fun registerModification() {
         ++modCount
     }
+
+    internal actual companion object
 }
