@@ -386,10 +386,8 @@ internal fun KtUserType.classId(): ClassId {
     val classFragments = mutableListOf<String>()
 
     fun collectFragments(type: KtUserType) {
-        val userType = type.getStubOrPsiChild(KtStubElementTypes.USER_TYPE)
-        if (userType != null) {
-            collectFragments(userType)
-        }
+        type.qualifier?.let(::collectFragments)
+
         val referenceExpression = type.referenceExpression as? KtNameReferenceExpression
         if (referenceExpression != null) {
             val referencedName = referenceExpression.getReferencedName()

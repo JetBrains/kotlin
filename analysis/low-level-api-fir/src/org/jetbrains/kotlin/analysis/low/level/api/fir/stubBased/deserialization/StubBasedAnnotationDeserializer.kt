@@ -21,21 +21,25 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.psi.KtAnnotated
-import org.jetbrains.kotlin.psi.KtAnnotationEntry
-import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinAnnotationEntryStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyStubImpl
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 internal class StubBasedAnnotationDeserializer(private val session: FirSession) {
     companion object {
         fun getAnnotationClassId(ktAnnotation: KtAnnotationEntry): ClassId {
-            val userType = ktAnnotation.getStubOrPsiChild(KtStubElementTypes.CONSTRUCTOR_CALLEE)
-                ?.getStubOrPsiChild(KtStubElementTypes.TYPE_REFERENCE)
-                ?.getStubOrPsiChild(KtStubElementTypes.USER_TYPE)!!
+            val userType = ktAnnotation.calleeExpression?.typeReference?.typeElement
+            requireWithAttachment(
+                userType is KtUserType,
+                { "${KtTypeElement::class.simpleName} should be ${KtUserType::class.simpleName}" },
+            ) {
+                withPsiEntry("annotationEntry", ktAnnotation)
+            }
+
             return userType.classId()
         }
 
