@@ -18,12 +18,10 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
     public val internalStr: JsString,
     @kotlin.internal.IntrinsicConstEvaluation
     private var _chars: WasmCharArray?,
+    @kotlin.internal.IntrinsicConstEvaluation
+    public actual override val length: Int,
 ) : Comparable<String>, CharSequence {
     public actual companion object {}
-
-    @kotlin.internal.IntrinsicConstEvaluation
-    public actual override val length: Int
-        get() = jsLength(internalStr)
 
     /**
      * Returns a string obtained by concatenating this string with the string representation of the given [other] object.
@@ -33,12 +31,12 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
     @kotlin.internal.IntrinsicConstEvaluation
     public actual operator fun plus(other: Any?): String {
         val right = other.toString()
-        return String(jsConcat(this.internalStr, right.internalStr).unsafeCast(), null)
+        return String(jsConcat(this.internalStr, right.internalStr).unsafeCast(), null, this.length + right.length)
     }
 
     @kotlin.internal.IntrinsicConstEvaluation
     public actual override fun get(index: Int): Char {
-        kotlin.wasm.internal.rangeCheck(index, this.length)
+        rangeCheck(index, this.length)
         return jsCharCodeAt(this.internalStr, index).reinterpretAsChar()
     }
 
@@ -55,7 +53,7 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
 
     public actual override fun subSequence(startIndex: Int, endIndex: Int): CharSequence {
         checkStringBounds(startIndex, endIndex, length)
-        return String(jsSubstring(this.internalStr, startIndex, endIndex).unsafeCast(), null)
+        return String(jsSubstring(this.internalStr, startIndex, endIndex).unsafeCast(), null, endIndex - startIndex)
     }
 
     private fun checkStringBounds(startIndex: Int, endIndex: Int, length: Int) {
@@ -113,6 +111,6 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
 
 @Suppress("NOTHING_TO_INLINE")
 internal actual fun WasmCharArray.createString(): String =
-    String(jsFromCharCodeArray(this, 0, this.len()).unsafeCast(), null)
+    String(jsFromCharCodeArray(this, 0, this.len()).unsafeCast(), this, this.len())
 
 internal actual fun String.getChars() = this.chars
