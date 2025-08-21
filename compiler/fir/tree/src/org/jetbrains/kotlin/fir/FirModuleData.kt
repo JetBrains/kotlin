@@ -149,5 +149,6 @@ val FirSession.moduleData: FirModuleData
 fun FirModuleData.canSeeInternalsOf(otherModule: FirModuleData): Boolean {
     return this == otherModule ||
             otherModule in this.friendDependencies ||
-            otherModule in this.allDependsOnDependencies
+            otherModule in this.allDependsOnDependencies ||
+            this in otherModule.allDependsOnDependencies
 }
