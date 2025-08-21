@@ -311,12 +311,30 @@ abstract class BenchmarkTemplate(
                         it["scenario"].toString().startsWith("warm-up build")
             }
             .flipColumnsWithRows()
+            .groupBy { it["scenario"] }.map {
+                val totalExecutionTime = it.group.single { it["value"] == "total execution time" }
+                val configurationTime = it.group.single { it["value"] == "task start" }
+                it.group.concat(
+                    dataFrameOf<String, Any>(it.group.columnNames()) { column ->
+                        listOf(
+                            when {
+                                column == "scenario" -> totalExecutionTime[column]
+                                column == "value" -> "execution only time"
+                                column.startsWith("measured") -> (totalExecutionTime[column] as Int) - (configurationTime[column] as Int)
+                                else -> error(column)
+                            }!!
+                        )
+                    }
+                )
+            }
+            .concat()
             .add("median build time") { // squashing build times into median build time
                 rowMedianOf<Double>()
             }
             .remove { nameContains("measured build") } // removing iterations results
             .groupBy("scenario").aggregate { // merging configuration and build times into one row
                 first { it.values().contains("task start") }["median build time"] into "tasks start median time"
+                first { it.values().contains("execution only time") }["median build time"] into "execution only median time"
                 first { it.values().contains("total execution time") }["median build time"] into "execution median time"
             }
             .groupBy {
@@ -337,6 +355,7 @@ abstract class BenchmarkTemplate(
                         currentKotlinVersion
                     }
                     row["tasks start median time"] into "Configuration: $version"
+                    row["execution only median time"] into "Execution only: $version"
                     row["execution median time"] into "Execution: $version"
                 }
             }
@@ -353,6 +372,13 @@ abstract class BenchmarkTemplate(
                 "${percent}%"
             }
             .after("Configuration: $currentKotlinVersion")
+            .insert("Execution only diff from stable release") {
+                val stableReleaseConfiguration = column<Int>("Execution only: $stableKotlinVersions").getValue(this)
+                val currentReleaseConfiguration = column<Int>("Execution only: $currentKotlinVersion").getValue(this)
+                val percent = currentReleaseConfiguration * 100 / stableReleaseConfiguration
+                "${percent}%"
+            }
+            .after("Execution only: $currentKotlinVersion")
             .insert("Execution diff from stable release") {
                 val stableReleaseConfiguration = column<Double>("Execution: $stableKotlinVersions").getValue(this)
                 val currentReleaseConfiguration = column<Double>("Execution: $currentKotlinVersion").getValue(this)
