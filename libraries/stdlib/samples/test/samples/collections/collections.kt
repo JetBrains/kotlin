@@ -1311,10 +1311,19 @@ class Collections {
             fridgeContent.sortBy { it.tasteRate }
             assertPrints(fridgeContent, "[Dish(🥦: 34 cal, taste 2.3/5), Dish(🍨: 207 cal, taste 4.7/5), Dish(🧃: 34 cal, taste 4.9/5)]")
 
+            val breadBoxContent = mutableListOf(
+                Dish("🥯", 245, 4.8f),
+                Dish("🥨", 100, 5.0f),
+                Dish("🥐", 245, 4.9f)
+            )
+
+            // original order
+            assertPrints(breadBoxContent, "[Dish(🥯: 245 cal, taste 4.8/5), Dish(🥨: 100 cal, taste 5.0/5), Dish(🥐: 245 cal, taste 4.9/5)]")
+
             // sort by calories (ascending)
-            fridgeContent.sortBy { it.calories }
-            // note that the sorting is stable, so the 🥦 is before the 🧃
-            assertPrints(fridgeContent, "[Dish(🥦: 34 cal, taste 2.3/5), Dish(🧃: 34 cal, taste 4.9/5), Dish(🍨: 207 cal, taste 4.7/5)]")
+            breadBoxContent.sortBy { it.calories }
+            // note that the sorting is stable, so the 🥯 is before the 🥐
+            assertPrints(breadBoxContent, "[Dish(🥨: 100 cal, taste 5.0/5), Dish(🥯: 245 cal, taste 4.8/5), Dish(🥐: 245 cal, taste 4.9/5)]")
         }
 
         @Sample
@@ -1336,10 +1345,19 @@ class Collections {
             fridgeContent.sortByDescending { it.tasteRate }
             assertPrints(fridgeContent, "[Dish(🧃: 34 cal, taste 4.9/5), Dish(🍨: 207 cal, taste 4.7/5), Dish(🥦: 34 cal, taste 2.3/5)]")
 
+            val breadBoxContent = mutableListOf(
+                Dish("🥯", 245, 4.8f),
+                Dish("🥨", 100, 5.0f),
+                Dish("🥐", 245, 4.9f)
+            )
+
+            // original order
+            assertPrints(breadBoxContent, "[Dish(🥯: 245 cal, taste 4.8/5), Dish(🥨: 100 cal, taste 5.0/5), Dish(🥐: 245 cal, taste 4.9/5)]")
+
             // sort by calories (descending)
-            fridgeContent.sortByDescending { it.calories }
-            // note that the sorting is stable, so the 🧃 is before the 🥦
-            assertPrints(fridgeContent, "[Dish(🍨: 207 cal, taste 4.7/5), Dish(🧃: 34 cal, taste 4.9/5), Dish(🥦: 34 cal, taste 2.3/5)]")
+            breadBoxContent.sortByDescending { it.calories }
+            // note that the sorting is stable, so the 🥯 is before the 🥐
+            assertPrints(breadBoxContent, "[Dish(🥯: 245 cal, taste 4.8/5), Dish(🥐: 245 cal, taste 4.9/5), Dish(🥨: 100 cal, taste 5.0/5)]")
         }
 
         @Sample
