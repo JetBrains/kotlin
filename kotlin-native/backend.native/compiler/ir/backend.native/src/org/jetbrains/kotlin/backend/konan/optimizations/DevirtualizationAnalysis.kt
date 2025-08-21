@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.konan.lower.loweredConstructorFunction
 import org.jetbrains.kotlin.backend.konan.util.IntArrayList
 import org.jetbrains.kotlin.backend.konan.lower.getObjectClassInstanceFunction
 import org.jetbrains.kotlin.backend.konan.util.CustomBitSet
+import org.jetbrains.kotlin.backend.konan.util.LongArrayList
 import org.jetbrains.kotlin.backend.konan.util.LongHashMap
 import org.jetbrains.kotlin.backend.konan.util.LongHashSet
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -534,14 +535,14 @@ internal object DevirtualizationAnalysis {
             val condensation = CondensationBuilder(directEdges, reversedEdges).build()
             val topologicalOrder = condensation.topologicalOrder.map { constraintGraph.nodes[it] }
 
-//            context.logMultiple {
-//                +"CONDENSATION"
-//                topologicalOrder.forEachIndexed { index, multiNode ->
-//                    +"    MULTI-NODE #$index"
-//                    condensation.forEachNode(multiNode) { +"        #${it.id}: ${it.toString(allTypes)}" }
-//                }
-//                +""
-//            }
+            context.logMultiple {
+                +"CONDENSATION"
+                topologicalOrder.forEachIndexed { index, multiNode ->
+                    +"    MULTI-NODE #$index"
+                    +"        #${multiNode.id}: ${multiNode.toString(allTypes)}"
+                }
+                +""
+            }
 
             topologicalOrder.forEachIndexed { index, node ->
                 node.priority = index
@@ -633,19 +634,17 @@ internal object DevirtualizationAnalysis {
             if (entryPoint == null)
                 propagateFinalTypesFromExternalVirtualCalls(directEdges)
 
-//            context.logMultiple {
-//                topologicalOrder.forEachIndexed { index, multiNode ->
-//                    +"Types of multi-node #$index"
-//                    condensation.forEachNode(multiNode) { node ->
-//                        +"    Node #${node.id}"
-//                        allTypes.asSequence()
-//                                .withIndex()
-//                                .filter { node.types[it.index] }.toList()
-//                                .forEach { +"        ${it.value}" }
-//                    }
-//                }
-//                +""
-//            }
+            context.logMultiple {
+                topologicalOrder.forEachIndexed { index, multiNode ->
+                    +"Types of multi-node #$index"
+                    +"    Node #${multiNode.id}"
+                    allTypes.asSequence()
+                            .withIndex()
+                            .filter { multiNode.types[it.index] }.toList()
+                            .forEach { +"        ${it.value}" }
+                }
+                +""
+            }
 
             val result = mutableMapOf<DataFlowIR.Node.VirtualCall, Pair<DevirtualizedCallSite, DataFlowIR.FunctionSymbol>>()
             val nothing = symbolTable.classMap[context.symbols.nothing.owner]
@@ -862,7 +861,9 @@ internal object DevirtualizationAnalysis {
             private val virtualTypeFilter = CustomBitSet().apply { set(VIRTUAL_TYPE_ID) }
             val instantiatingClasses = CustomBitSet()
 
-            val bagOfEdges = LongHashSet(10, 0.4f)
+            val bagOfEdges = LongArrayList()
+            // Only filter duplicate edges within a function scope. That covers up to 98% of duplicates in practice.
+            private var localBagOfEdges = LongHashSet(10, 0.4f)
             val directEdgesCount = IntArrayList()
             val reversedEdgesCount = IntArrayList()
 
@@ -871,7 +872,9 @@ internal object DevirtualizationAnalysis {
                 val toId = to.id
                 val value = fromId.toLong() or (toId.toLong() shl 32)
 
-                if (!bagOfEdges.add(value)) return
+                if (!localBagOfEdges.add(value)) return
+
+                bagOfEdges.add(value)
 
                 directEdgesCount.reserve(fromId + 1)
                 directEdgesCount[fromId]++
@@ -902,7 +905,7 @@ internal object DevirtualizationAnalysis {
 
             private fun const(type: DataFlowIR.Type) =
                     consts[type.index]
-                            ?: sourceNode(concreteType(type)) { "Const\$$type" }.also { consts[type.index] = it}
+                            ?: sourceNode(concreteType(type)) { "Const\$$type" }.also { consts[type.index] = it }
 
             private fun fieldNode(field: DataFlowIR.Field) =
                     constraintGraph.fields.getOrPut(field) {
@@ -951,6 +954,7 @@ internal object DevirtualizationAnalysis {
                     val function = functions[symbol] ?: continue
                     val body = function.body
                     val functionConstraintGraph = constraintGraph.functions[symbol]!!
+                    localBagOfEdges = LongHashSet()
 
                     body.forEachNonScopeNode {
                         val node = dfgNodeToConstraintNode(functionConstraintGraph, it)
