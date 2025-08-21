@@ -20,6 +20,9 @@ dependencies {
     implementation(project(":wasm:wasm.frontend"))
     implementation(project(":wasm:wasm.config"))
 
+    // TODO(KT-79631): Remove this dependency when we rewrite TS export to Analysis API
+    api(project(":js:typescript-export-model"))
+
     compileOnly(intellijCore())
 }
 

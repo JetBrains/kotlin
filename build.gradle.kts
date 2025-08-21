@@ -135,7 +135,8 @@ val irCompilerModules = arrayOf(
     ":compiler:ir.interpreter",
     ":compiler:ir.inline",
     ":compiler:ir.validation",
-    ":wasm:wasm.ir"
+    ":wasm:wasm.ir",
+    ":js:typescript-export-model",
 ).also { extra["irCompilerModules"] = it }
 
 val irCompilerModulesForIDE = arrayOf(

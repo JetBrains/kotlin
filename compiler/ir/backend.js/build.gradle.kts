@@ -17,6 +17,9 @@ dependencies {
     api(project(":js:js.sourcemap"))
     implementation(project(":js:js.translator"))
 
+    // TODO(KT-79631): Remove this dependency when we rewrite TS export to Analysis API
+    api(project(":js:typescript-export-model"))
+
     compileOnly(intellijCore())
 }
 
