@@ -53,7 +53,6 @@ internal external fun jsCharCodeAt(s: JsString, i: Int): Int
     """export function substring(s, start, end) {
     start >>>= 0;
     end >>>= 0;
-    if (start > end || start > s.length) return "";
     return s.substring(start, end);
 }
 """
@@ -114,26 +113,27 @@ internal external fun jsIntoCharCodeArray(string: JsAny, array: WasmCharArray, s
 @JsBuiltin(
     "js-string",
     "fromCharCodeArray",
-    """export function fromCharCodeArray(array, start, end) {
-    const module = new WebAssembly.Module(new Uint8Array([
-        0,   97,  115, 109, 1,   0,   0,   0,   1,   21,  4,   94,  119, 1,   96,
-        1,   111, 1,   127, 96,  2,   111, 127, 1,   127, 96,  3,   111, 127, 127,
-        0,   3,   4,   3,   1,   2,   3,   7,   33,  3,   9,   97,  114, 114, 97,
-        121, 95,  108, 101, 110, 0,   0,   7,   97,  49,  54,  95,  103, 101, 116,
-        0,   1,   7,   97,  49,  54,  95,  115, 101, 116, 0,   2,   10,  45,  3,
-        11,  0,   32,  0,   251, 26,  251, 22,  106, 251, 15,  11,  14,  0,   32,
-        0,   251, 26,  251, 22,  0,   32,  1,   251, 13,  0,   11,  16,  0,   32,
-        0,   251, 26,  251, 22,  0,   32,  1,   32,  2,   251, 14,  0,   11,  0,
-        37,  4,   110, 97,  109, 101, 1,   30,  3,   0,   9,   97,  114, 114, 97,
-        121, 95,  108, 101, 110, 1,   7,   97,  49,  54,  95,  103, 101, 116, 2,
-        7,   97,  49,  54,  95,  115, 101, 116
-    ]));
-    const StringPolyfillHelpers = new WebAssembly.Instance(module).exports;
+    """const moduleFromCharCodeArray = new WebAssembly.Module(new Uint8Array([
+    0,   97,  115, 109, 1,   0,   0,   0,   1,   21,  4,   94,  119, 1,   96,
+    1,   111, 1,   127, 96,  2,   111, 127, 1,   127, 96,  3,   111, 127, 127,
+    0,   3,   4,   3,   1,   2,   3,   7,   33,  3,   9,   97,  114, 114, 97,
+    121, 95,  108, 101, 110, 0,   0,   7,   97,  49,  54,  95,  103, 101, 116,
+    0,   1,   7,   97,  49,  54,  95,  115, 101, 116, 0,   2,   10,  45,  3,
+    11,  0,   32,  0,   251, 26,  251, 22,  106, 251, 15,  11,  14,  0,   32,
+    0,   251, 26,  251, 22,  0,   32,  1,   251, 13,  0,   11,  16,  0,   32,
+    0,   251, 26,  251, 22,  0,   32,  1,   32,  2,   251, 14,  0,   11,  0,
+    37,  4,   110, 97,  109, 101, 1,   30,  3,   0,   9,   97,  114, 114, 97,
+    121, 95,  108, 101, 110, 1,   7,   97,  49,  54,  95,  103, 101, 116, 2,
+    7,   97,  49,  54,  95,  115, 101, 116
+]));
+const helpersFromCharCodeArray = new WebAssembly.Instance(moduleFromCharCodeArray).exports;
+
+export function fromCharCodeArray(array, start, end) {
     start >>>= 0;
     end >>>= 0;
     let result = [];
     for (let i = start; i < end; i++) {
-        result.push(String.fromCharCode(StringPolyfillHelpers.a16_get(array, i)));
+        result.push(String.fromCharCode(helpersFromCharCodeArray.a16_get(array, i)));
     }
     return result.join("");
 }
