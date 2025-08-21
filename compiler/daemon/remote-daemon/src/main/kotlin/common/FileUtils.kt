@@ -98,6 +98,9 @@ fun createTarArchive(sourceDir: File, destFile: File): File {
         sourceDir.walkTopDown().forEach { file ->
             if (file == sourceDir) return@forEach
 
+            // enable file name size > 100 bytes
+            tarOut.setLongFileMode(TarArchiveOutputStream.LONGFILE_POSIX)
+
             val entryName = sourceDir.toPath().relativize(file.toPath()).toString()
             val entry = TarArchiveEntry(file, entryName)
 

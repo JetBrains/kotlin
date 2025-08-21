@@ -23,3 +23,4 @@ const val CLIENT_TMP_DIR = "src/main/kotlin/client/tmp"
 const val AUTH_FILE = "src/main/kotlin/server/auth/auth.json"
 const val UUID_FILE = "src/main/kotlin/server/auth/uuid.json"
 const val AUTH_KEY = "credential"
+const val FOUR_MB = 4 * 1024 * 1024

@@ -5,7 +5,7 @@
 
 package main.kotlin.server
 
-import common.OneFileOneChunkStrategy
+import common.FixedSizeChunkingStrategy
 import common.RemoteCompilationServiceImplType
 import io.grpc.Server
 import io.grpc.ServerBuilder
@@ -24,14 +24,13 @@ class RemoteCompilationServer(
     private val serverImplType: RemoteCompilationServiceImplType
 ) {
 
-    private val fileChunkingStrategy = OneFileOneChunkStrategy()
+    private val fileChunkingStrategy = FixedSizeChunkingStrategy()
     private val cacheHandler = CacheHandler()
     private val workspaceManager = WorkspaceManager()
 
     val server: Server =
         ServerBuilder
             .forPort(port)
-            .maxInboundMessageSize(10 * 1024 * 1024) // TODO double check, default is 4MB, need to be increased for big TAR files
             .addService(
                 ServerInterceptors
                     .intercept(
