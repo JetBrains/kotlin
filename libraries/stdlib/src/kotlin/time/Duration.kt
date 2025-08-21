@@ -1356,25 +1356,31 @@ private inline fun String.parseLong(startIndex: Int, parseRule: ParseRule): Nume
  * @param startIndex position to start parsing
  * @return [NumericParseData] with the fraction scaled to 15 decimal places and end index
  */
-@kotlin.internal.InlineOnly
-private inline fun String.parseFraction(startIndex: Int): NumericParseData {
-    var result = 0L
+private fun String.parseFraction(startIndex: Int): NumericParseData {
     var index = startIndex
-    var digitCount = 0
-    while (index < length && digitCount < FRACTION_LIMIT) {
-        val ch = this[index]
-        if (ch !in '0'..'9') break
-        val digit = ch - '0'
-        result = result * 10 + digit
-        digitCount++
-        index++
+
+    fun parseDigits(maxDigits: Int): Int {
+        var result = 0
+        var count = 0
+        while (index < length && count < maxDigits) {
+            val ch = this[index]
+            if (ch !in '0'..'9') break
+            result = result * 10 + (ch - '0')
+            count++
+            index++
+        }
+        repeat(maxDigits - count) {
+            result *= 10
+        }
+        return result
     }
-    while (digitCount < FRACTION_LIMIT) {
-        result *= 10
-        digitCount++
-    }
+
+    val r1 = parseDigits(9)
+    val r2 = parseDigits(FRACTION_LIMIT - 9)
+
     while (index < length && this[index] in '0'..'9') index++
-    return NumericParseData(result, index)
+
+    return NumericParseData(r1.toLong() * 1_000_000 + r2, index)
 }
 
 /**
