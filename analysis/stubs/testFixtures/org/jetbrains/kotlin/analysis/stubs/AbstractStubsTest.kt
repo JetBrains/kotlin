@@ -83,11 +83,15 @@ abstract class AbstractStubsTest : AbstractAnalysisApiBasedTest() {
     private fun checkPsiElementTypeConsistency(assertions: AssertionsService, stubElement: StubElement<*>) {
         val psi = stubElement.psi as? StubBasedPsiElement<*>
         if (psi != null) {
+            @Suppress("DEPRECATION")
+            val stubType = stubElement.stubType
+            @Suppress("DEPRECATION")
+            val elementType = psi.elementType
             assertions.assertEquals(
-                stubElement.stubType,
-                psi.elementType,
+                stubType,
+                elementType,
             ) {
-                "Expected the PSI of `$stubElement` to have the same element type. Instead got: `${psi.elementType}`."
+                "Expected the PSI of `$stubElement` to have the same element type. Instead got: `$elementType`."
             }
         }
 

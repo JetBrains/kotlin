@@ -41,6 +41,7 @@ class KotlinSourceRootProvider : AdditionalRootsProviderService<JavaSourceRootDe
         // So the only one way to support `KotlinSourceRootType` is to add a fake `JavaSourceRootDescriptor` for each source root with that type.
         val kotlinSourceRootType = if (target.isTests) TestSourceKotlinRootType else SourceKotlinRootType
         module.getSourceRoots(kotlinSourceRootType).forEach {
+            @Suppress("DEPRECATION")
             result.add(
                 JavaSourceRootDescriptor(
                     it.file,
@@ -104,6 +105,7 @@ private val JpsModuleSourceRootType<*>.isTestsRootType
         else -> null
     }
 
+@Suppress("DEPRECATION")
 class KotlinIncludedModuleSourceRoot(
     root: File,
     target: ModuleBuildTarget,
