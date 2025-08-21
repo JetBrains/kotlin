@@ -12,7 +12,5 @@ fun CompileRequest.toGrpc(): CompileRequestGrpc = when (this) {
     is CompilationMetadata -> CompileRequestGrpc.newBuilder().setMetadata(toGrpc()).build()
     is FileChunk -> CompileRequestGrpc.newBuilder().setSourceFileChunk(toGrpc()).build()
     is FileTransferRequest -> CompileRequestGrpc.newBuilder().setFileTransferRequest(toGrpc()).build()
-    is DirectoryTransferRequest -> CompileRequestGrpc.newBuilder().setDirectoryTransferRequest(toGrpc()).build()
-    is DirectoryEntryChunk -> CompileRequestGrpc.newBuilder().setDirectoryEntryChunk(toGrpc()).build()
     else -> error("Unknown CompileRequest type: ${javaClass.simpleName}")
 }

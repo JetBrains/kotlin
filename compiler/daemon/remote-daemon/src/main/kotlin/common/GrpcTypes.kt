@@ -32,8 +32,6 @@ fun CompileRequestGrpc.toDomain(): CompileRequest = when {
     hasMetadata() -> metadata.toDomain()
     hasSourceFileChunk() -> sourceFileChunk.toDomain()
     hasFileTransferRequest() -> fileTransferRequest.toDomain()
-    hasDirectoryTransferRequest() -> directoryTransferRequest.toDomain()
-    hasDirectoryEntryChunk() -> directoryEntryChunk.toDomain()
     else -> error("Unknown CompileRequestGrpc type") // TODO fix
 }
 
@@ -47,7 +45,7 @@ fun CompilerMode.toGrpc(): CompilerModeGrpc {
 }
 
 fun CompilerModeGrpc.toDomain(): CompilerMode {
-    return when (this){
+    return when (this) {
         CompilerModeGrpc.INCREMENTAL_COMPILER -> CompilerMode.INCREMENTAL_COMPILER
         CompilerModeGrpc.NON_INCREMENTAL_COMPILER -> CompilerMode.NON_INCREMENTAL_COMPILER
         CompilerModeGrpc.JPS_COMPILER -> CompilerMode.JPS_COMPILER

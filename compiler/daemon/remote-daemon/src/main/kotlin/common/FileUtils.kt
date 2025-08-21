@@ -5,7 +5,13 @@
 
 package common
 
+import model.FileChunk
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream
+import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream
 import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardCopyOption
@@ -22,19 +28,39 @@ fun buildAbsPath(pathSuffix: String): String {
     return "$projectRoot/$pathSuffix"
 }
 
+fun getRelativePath(filePath: String): String {
+    val file = File(filePath)
+    val cwd = File(System.getProperty("user.dir"))
+    return file.relativeTo(cwd).path
+}
+
 fun computeSha256(file: File): String {
+    // TODO: in a real world scenario we should use something more robust
+    // maybe we could use a special library for hashing
+    // double check the hashing of directories, there is not a single approach
+    // how to hash directories
+    // for example, in the current implementation, the same path with forward slashes and back slashes
+    // will be hashed differently and that's and issue
     val digest = MessageDigest.getInstance("SHA-256")
-    if (file.isDirectory){
-        file.walkTopDown().forEach { fileInDir->
-            fileInDir.inputStream().use { input ->
-                val buffer = ByteArray(8192)
-                var bytesRead: Int
-                while (input.read(buffer).also { bytesRead = it } != -1) {
-                    digest.update(buffer, 0, bytesRead)
+    if (file.isDirectory) {
+        digest.update(file.name.toByteArray(Charsets.UTF_8))
+        file.walkTopDown()
+            .filter { it.isFile }
+            .sortedBy { it.relativeTo(file).path }
+            .forEach { childFile ->
+
+                val relativePath = childFile.relativeTo(file).path
+                digest.update(relativePath.toByteArray(Charsets.UTF_8))
+
+                childFile.inputStream().use { input ->
+                    val buffer = ByteArray(8192)
+                    var bytesRead: Int
+                    while (input.read(buffer).also { bytesRead = it } != -1) {
+                        digest.update(buffer, 0, bytesRead)
+                    }
                 }
             }
-        }
-    }else{
+    } else {
         file.inputStream().use { input ->
             val buffer = ByteArray(8192)
             var bytesRead: Int
@@ -43,19 +69,10 @@ fun computeSha256(file: File): String {
             }
         }
     }
-
     return digest.digest().joinToString("") { "%02x".format(it) }
 }
 
-fun computeSha256(fileChunks: List<ByteArray>): String {
-    val digest = MessageDigest.getInstance("SHA-256")
-    fileChunks.forEach { chunk ->
-        digest.update(chunk)
-    }
-    return digest.digest().joinToString("") { "%02x".format(it) }
-}
-
-fun copyDirectoryRecursively(source: Path, target: Path, overwrite: Boolean = false) {
+fun copyDirectoryRecursively(source: Path, target: Path, overwrite: Boolean = false): File {
     val copyOptions = if (overwrite) {
         arrayOf(StandardCopyOption.REPLACE_EXISTING)
     } else {
@@ -71,6 +88,48 @@ fun copyDirectoryRecursively(source: Path, target: Path, overwrite: Boolean = fa
             } else {
                 Files.copy(path, destination, *copyOptions)
             }
+        }
+    }
+    return target.toFile()
+}
+
+fun createTarArchive(sourceDir: File, destFile: File): File {
+    TarArchiveOutputStream(FileOutputStream(destFile)).use { tarOut ->
+        sourceDir.walkTopDown().forEach { file ->
+            if (file == sourceDir) return@forEach
+
+            val entryName = sourceDir.toPath().relativize(file.toPath()).toString()
+            val entry = TarArchiveEntry(file, entryName)
+
+            tarOut.putArchiveEntry(entry)
+
+            if (file.isFile) {
+                file.inputStream().use { it.copyTo(tarOut) }
+            }
+            tarOut.closeArchiveEntry()
+        }
+    }
+    return destFile
+}
+
+
+fun extractTarArchive(sourceTar: File, destDir: File) {
+    destDir.mkdirs()
+    TarArchiveInputStream(FileInputStream(sourceTar)).use { tarIn ->
+        var entry = tarIn.nextEntry
+
+        while (entry != null) {
+            val destPath = File(destDir, entry.name)
+
+            if (entry.isDirectory) {
+                destPath.mkdirs()
+            } else {
+                destPath.parentFile.mkdirs()
+                destPath.outputStream().use {
+                    tarIn.copyTo(it)
+                }
+            }
+            entry = tarIn.nextEntry
         }
     }
 }

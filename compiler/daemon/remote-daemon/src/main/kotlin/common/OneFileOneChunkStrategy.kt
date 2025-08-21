@@ -13,9 +13,9 @@ import java.io.File
 
 class OneFileOneChunkStrategy : FileChunkingStrategy() {
 
-    override fun chunk(file: File, artifactType: ArtifactType): Flow<FileChunk> {
+    override fun chunk(file: File, isDirectory: Boolean, artifactType: ArtifactType, filePath: String?): Flow<FileChunk> {
         return flow {
-            emit(FileChunk(file.path, artifactType, file.readBytes(), isLast = true))
+            emit(FileChunk(filePath ?: file.path, artifactType, file.readBytes(), isDirectory, isLast = true))
         }
     }
 }

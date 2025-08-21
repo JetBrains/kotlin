@@ -18,8 +18,6 @@ message CompileRequestGrpc {
     CompilationMetadataGrpc metadata = 1;
     FileTransferRequestGrpc file_transfer_request = 2;
     FileChunkGrpc source_file_chunk = 3;
-    DirectoryTransferRequestGrpc directory_transfer_request = 4;
-    DirectoryEntryChunkGrpc directory_entry_chunk = 5;
   }
 }
 
@@ -28,7 +26,6 @@ message CompileResponseGrpc {
     CompilerMessageGrpc compiler_message = 1;
     FileChunkGrpc compiled_file_chunk = 2;
     FileTransferReplyGrpc file_transfer_reply = 3;
-    DirectoryTransferReplyGrpc directory_transfer_reply = 4;
     CompilationResultGrpc compilation_result = 5;
   }
 }
@@ -66,7 +63,8 @@ message FileChunkGrpc {
   string file_path = 1;
   ArtifactTypeGrpc file_type = 2;
   bytes content = 3;
-  bool is_last = 4;
+  bool is_directory = 4;
+  bool is_last = 5;
 }
 
 message CompilerMessageGrpc{
@@ -129,23 +127,9 @@ message FileTransferReplyGrpc{
   ArtifactTypeGrpc file_type = 3;
 }
 
-message DirectoryTransferReplyGrpc{
-  string directory_path = 1;
-  string directory_fingerprint = 2;
-  bool is_entire_directory_present = 3;
-  ArtifactTypeGrpc artifact_type = 4;
-  repeated FileIdentifierGrpc missing_files = 5;
-}
-
 message FileIdentifierGrpc {
   string file_path = 1;
   string file_fingerprint = 2;
-}
-
-message DirectoryEntryChunkGrpc{
-  string directory_path = 1;
-  bool is_last_directory_entry = 2;
-  FileChunkGrpc file_chunk = 3;
 }
 
 message CompilerMessageSourceLocationGrpc {

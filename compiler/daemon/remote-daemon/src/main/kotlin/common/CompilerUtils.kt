@@ -63,7 +63,7 @@ object CompilerUtils {
             }
         }
         map[SOURCE_FILE_KEY] = sourceFiles.reversed().joinToString(" ")
-        map.remove("-Xplugin=") //TODO temporary removal to make compilations work
+//        map.remove("-Xplugin=") //TODO temporary removal to make compilations work
         return map
     }
 
@@ -124,14 +124,24 @@ object CompilerUtils {
             args["-Xplugin="] = remotePlugins
         }
 
-        if ("-Xfragment-sources" in args) {
-            val clientSources = args["-Xfragment-sources"]?.split(",") ?: emptyList()
+        if ("-Xfragment-sources=" in args) {
+            val clientSources = args["-Xfragment-sources="]?.split(",") ?: emptyList()
             val remoteSources = clientSources.joinToString(",") {
                 val (fragmentName, clientPath) = it.split(":")
                 val remotePath = sourceFiles[clientPath]?.absolutePath.toString()
                 "$fragmentName:${remotePath}"
             }
-            args["-Xfragment-sources"] = remoteSources
+            args["-Xfragment-sources="] = remoteSources
+        }
+
+        if ("-Xfriend-paths=" in args) {
+            val clientPaths = args["-Xfriend-paths="]?.split(",") ?: emptyList()
+            val remotePaths = clientPaths.joinToString(",") { clientPath -> dependencyFiles[clientPath]?.absolutePath.toString() }
+            args["-Xfriend-paths="] = remotePaths
+        }
+
+        if (SOURCE_FILE_KEY in args) {
+            args[SOURCE_FILE_KEY] = sourceFiles.values.joinToString(" ") { it.absolutePath }
         }
         return args
     }

@@ -9,7 +9,7 @@ import common.CompilerUtils
 import common.FileChunkingStrategy
 import common.OneFileOneChunkStrategy
 import common.RemoteCompilationService
-import common.SERVER_ARTIFACTS_CACHE_DIR
+import common.SERVER_TMP_CACHE_DIR
 import common.computeSha256
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.Flow
@@ -21,14 +21,10 @@ import model.CompilationResultSource
 import model.CompileRequest
 import model.CompileResponse
 import model.CompilerMessage
-import model.DirectoryTransferRequest
 import model.FileChunk
 import model.FileTransferReply
 import model.FileTransferRequest
 import model.ArtifactType
-import model.DirectoryEntryChunk
-import model.DirectoryTransferReply
-import model.FileIdentifier
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.client.BasicCompilerServicesWithResultsFacadeServer
 import org.jetbrains.kotlin.daemon.common.JpsCompilerServicesFacade
@@ -36,13 +32,9 @@ import org.jetbrains.kotlin.daemon.report.DaemonMessageReporter
 import org.jetbrains.kotlin.daemon.report.getBuildReporter
 import server.interceptors.AuthInterceptor
 import java.io.File
-import java.nio.file.Paths
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.atomic.AtomicInteger
-import kotlin.io.path.Path
-import kotlin.io.path.pathString
-import kotlin.io.path.relativeTo
 
 enum class CompilationMode {
     REAL,
@@ -82,6 +74,7 @@ class RemoteCompilationServiceImpl(
             val fileChunks = mutableMapOf<String, MutableList<FileChunk>>()
 
             fun fileAvailable(clientPath: String, file: File, artifactType: ArtifactType) {
+                println("file available: $clientPath, ${file.absolutePath}, $artifactType")
                 when (artifactType) {
                     ArtifactType.SOURCE -> sourceFiles[clientPath] = file
                     ArtifactType.DEPENDENCY -> dependencyFiles[clientPath] = file
@@ -113,13 +106,13 @@ class RemoteCompilationServiceImpl(
                                         true -> {
                                             debug("file ${it.filePath} is available in cache")
                                             val cachedFile = cacheHandler.getFile(it.fileFingerprint)
-                                            val projectFilePath = workspaceManager.copyFileToProject(
+                                            val projectFile = workspaceManager.copyFileToProject(
                                                 cachedFilePath = cachedFile.absolutePath,
                                                 clientFilePath = it.filePath,
                                                 userId,
                                                 compilationMetadata.projectName
                                             )
-                                            fileAvailable(it.filePath, projectFilePath.toFile(), it.artifactType)
+                                            fileAvailable(it.filePath, projectFile, it.artifactType)
                                             FileTransferReply(
                                                 it.filePath,
                                                 isPresent = true,
@@ -139,75 +132,23 @@ class RemoteCompilationServiceImpl(
                                 }
                             }
                         }
-                        is DirectoryTransferRequest -> {
-                            if (cacheHandler.isFileCached(it.directoryFingerprint)) {
-                                debug("Directory ${it.directoryPath} is available in cache")
-                                val directory = cacheHandler.getFile(it.directoryFingerprint)
-                                fileAvailable(it.directoryPath, directory, it.artifactType)
-                                // TODO if it is dependency we do not need to copy the files and change their location
-                            } else {
-                                debug("Directory ${it.directoryPath} is not available in cache")
-                                val missingFiles = mutableListOf<FileIdentifier>()
-                                it.directoryFiles.forEach { directoryFile ->
-                                    if (cacheHandler.isFileCached(directoryFile.fileFingerprint)) {
-                                        debug("Directory file ${directoryFile.filePath} is available in cache")
-                                    } else {
-                                        missingFiles.add(
-                                            FileIdentifier(
-                                                directoryFile.filePath,
-                                                directoryFile.fileFingerprint,
-                                            )
-                                        )
-                                    }
-                                }
-                                send(
-                                    DirectoryTransferReply(
-                                        it.directoryPath,
-                                        it.directoryFingerprint,
-                                        false,
-                                        missingFiles,
-                                    )
-                                )
-                            }
-                        }
                         is FileChunk -> {
                             compilationMetadata?.let { metadata ->
                                 fileChunks.getOrPut(it.filePath) { mutableListOf() }.add(it)
                                 if (it.isLast) {
                                     launch {
-                                        val allFileChunks = fileChunks.getOrDefault(it.filePath,listOf())
-                                        val fileHash = computeSha256(allFileChunks)
-                                        val file = fileChunkingStrategy.reconstruct(allFileChunks, "$SERVER_ARTIFACTS_CACHE_DIR/$fileHash")
-                                        val (fingerprint, cachedFile) = cacheHandler.cacheFile(file, it.artifactType)
-                                        val projectFilePath = workspaceManager.copyFileToProject(
+                                        val allFileChunks = fileChunks.getOrDefault(it.filePath, listOf())
+                                        val reconstructedFile = fileChunkingStrategy.reconstruct(allFileChunks, SERVER_TMP_CACHE_DIR)
+                                        val cachedFile = cacheHandler.cacheFile(reconstructedFile, it.artifactType)
+                                        val projectFile = workspaceManager.copyFileToProject(
                                             cachedFile.absolutePath,
                                             it.filePath,
                                             userId,
                                             compilationMetadata.projectName
                                         )
-                                        debug("Reconstructed file, fileType=${it.artifactType}, clientPath=${it.filePath}")
-                                        fileAvailable(it.filePath, projectFilePath.toFile(), it.artifactType)
+                                        debug("Reconstructed ${if (reconstructedFile.isFile) "file" else "directory"}, artifactType=${it.artifactType}, clientPath=${it.filePath}")
+                                        fileAvailable(it.filePath, projectFile, it.artifactType)
                                     }
-                                }
-                            }
-                        }
-                        is DirectoryEntryChunk -> {
-                            val directoryEntryChunk = it.fileChunk
-                            fileChunks.getOrPut(directoryEntryChunk.filePath) { mutableListOf() }.add(directoryEntryChunk)
-                            if (directoryEntryChunk.isLast) {
-                                val allFileChunks = fileChunks.getOrDefault(directoryEntryChunk.filePath,listOf())
-                                val directoryEntryRelativePath =
-                                    Paths.get(directoryEntryChunk.filePath).relativeTo(Paths.get(it.directoryPath)).pathString
-                                val reconstructedFile = fileChunkingStrategy.reconstruct(
-                                    allFileChunks,
-                                    "$SERVER_ARTIFACTS_CACHE_DIR/${computeSha256(it.directoryPath)}/$directoryEntryRelativePath"
-                                )
-                                val (directoryEntryFingerprint, cachedFile) = cacheHandler.cacheFile(
-                                    reconstructedFile,
-                                    directoryEntryChunk.artifactType
-                                )
-                                if (directoryEntryChunk.artifactType == ArtifactType.RESULT) {
-
                                 }
                             }
                         }
@@ -242,11 +183,6 @@ class RemoteCompilationServiceImpl(
         }
     }
 
-    private fun reconstructCacheAndCopyFile(fileChunks: Collection<FileChunk>, newFilePath: String){
-
-    }
-
-
     private fun doFakeCompilation(
         remoteCompilerArguments: Map<String, String>,
         fileChunkStrategy: FileChunkingStrategy
@@ -258,12 +194,13 @@ class RemoteCompilationServiceImpl(
             File(outputDir).walkTopDown()
                 .filter { it.isFile }
                 .forEach { file ->
-                    fileChunkStrategy.chunk(file, ArtifactType.RESULT).collect { chunk ->
+                    fileChunkStrategy.chunk(file, isDirectory = false, ArtifactType.RESULT).collect { chunk ->
                         send(
                             FileChunk(
                                 chunk.filePath,
                                 ArtifactType.RESULT,
                                 chunk.content,
+                                chunk.isDirectory,
                                 chunk.isLast,
                             )
                         )
@@ -288,12 +225,13 @@ class RemoteCompilationServiceImpl(
                 compilationResultDirectory.walkTopDown()
                     .filter { it.isFile }
                     .forEach { file ->
-                        fileChunkStrategy.chunk(file, ArtifactType.RESULT).collect { chunk ->
+                        fileChunkStrategy.chunk(file, isDirectory = false, ArtifactType.RESULT).collect { chunk ->
                             send(
                                 FileChunk(
                                     chunk.filePath,
                                     ArtifactType.RESULT,
                                     chunk.content,
+                                    chunk.isDirectory,
                                     chunk.isLast,
                                 )
                             )
@@ -345,15 +283,16 @@ class RemoteCompilationServiceImpl(
                         remoteCompilerArguments
                     )
 
-                    cachedCompilationResult.file.walkTopDown()
+                    cachedCompilationResult.walkTopDown()
                         .filter { it.isFile }
                         .forEach { file ->
-                            fileChunkStrategy.chunk(file, ArtifactType.RESULT).collect { chunk ->
+                            fileChunkStrategy.chunk(file, isDirectory = false, ArtifactType.RESULT).collect { chunk ->
                                 send(
                                     FileChunk(
                                         chunk.filePath,
                                         ArtifactType.RESULT,
                                         chunk.content,
+                                        chunk.isDirectory,
                                         chunk.isLast,
                                     )
                                 )

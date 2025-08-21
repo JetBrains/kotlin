@@ -6,6 +6,7 @@
 package server.core
 
 import common.SERVER_COMPILATION_WORKSPACE_DIR
+import common.copyDirectoryRecursively
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
@@ -23,12 +24,18 @@ class WorkspaceManager {
         return Paths.get(SERVER_COMPILATION_WORKSPACE_DIR, userId, projectName, "output")
     }
 
-    fun copyFileToProject(cachedFilePath: String, clientFilePath: String, userId: String, projectName: String): Path {
+    fun copyFileToProject(cachedFilePath: String, clientFilePath: String, userId: String, projectName: String): File {
         val projectDir = getUserProjectFolder(userId, projectName)
         val targetPath = Paths.get(projectDir, clientFilePath)
         Files.createDirectories(targetPath.parent)
-        // TODO: .copy is not atomic operation, in case the same user will try to compile this file mutliple times
-        return Files.copy(Paths.get(cachedFilePath), targetPath, StandardCopyOption.REPLACE_EXISTING)
+
+        println("Copying $cachedFilePath to $targetPath")
+        return if (File(cachedFilePath).isDirectory) {
+            copyDirectoryRecursively(Paths.get(cachedFilePath), targetPath)
+        } else {
+            // TODO: .copy is not atomic operation, in case the same user will try to compile this file multiple times
+            Files.copy(Paths.get(cachedFilePath), targetPath, StandardCopyOption.REPLACE_EXISTING).toFile()
+        }
     }
 
     fun getUserProjectFolder(userId: String, projectName: String) =

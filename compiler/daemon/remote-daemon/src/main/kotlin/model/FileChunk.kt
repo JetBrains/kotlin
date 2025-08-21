@@ -12,6 +12,7 @@ class FileChunk(
     val filePath: String,
     val artifactType: ArtifactType,
     val content: ByteArray,
+    val isDirectory: Boolean,
     val isLast: Boolean
 ) : CompileRequest, CompileResponse
 
@@ -20,10 +21,11 @@ fun FileChunk.toGrpc(): FileChunkGrpc {
         .setFilePath(filePath)
         .setFileType(artifactType.toGrpc())
         .setContent(content.toByteString())
+        .setIsDirectory(isDirectory)
         .setIsLast(isLast)
         .build()
 }
 
 fun FileChunkGrpc.toDomain(): FileChunk {
-    return FileChunk(filePath, fileType.toDomain(), content.toByteArray(), isLast)
+    return FileChunk(filePath, fileType.toDomain(), content.toByteArray(), isDirectory, isLast)
 }

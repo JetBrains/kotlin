@@ -7,11 +7,14 @@ package org.jetbrains.kotlin.client
 
 import client.GrpcClientRemoteCompilationService
 import common.CLIENT_COMPILED_DIR
+import common.CLIENT_TMP_DIR
 import common.CompilerUtils
 import common.OneFileOneChunkStrategy
 import common.RemoteCompilationServiceImplType
 import common.buildAbsPath
 import common.computeSha256
+import common.createTarArchive
+import common.getRelativePath
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
@@ -23,8 +26,6 @@ import model.CompilationResult
 import model.CompileRequest
 import model.CompileResponse
 import model.CompilerMessage
-import model.DirectoryTransferReply
-import model.DirectoryTransferRequest
 import model.FileChunk
 import model.FileTransferReply
 import model.FileTransferRequest
@@ -33,6 +34,8 @@ import org.jetbrains.kotlin.daemon.common.CompilationOptions
 import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.CompilerMode
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.Paths
 
 class RemoteCompilationClient(
     val serverImplType: RemoteCompilationServiceImplType
@@ -76,7 +79,7 @@ class RemoteCompilationClient(
             // start consuming response
             val responseJob = launch(Dispatchers.IO) {
                 client.compile(requestChannel.receiveAsFlow()).collect { responseChannel.send(it) }
-                // when server stops closes connection, we can close our channels
+                // when the server stops closes connection, we can close our channels
                 responseChannel.close()
                 requestChannel.close()
             }
@@ -87,26 +90,37 @@ class RemoteCompilationClient(
                         is FileTransferReply -> {
                             if (!it.isPresent) {
                                 launch {
-                                    fileChunkStrategy.chunk(File(it.filePath), it.artifactType).collect { chunk ->
-                                        requestChannel.send(chunk)
+                                    val file = File(it.filePath)
+                                    if (file.isDirectory) {
+                                        Files.createDirectories(Paths.get(CLIENT_TMP_DIR, file.parent))
+                                        val tarFile = File(CLIENT_TMP_DIR, "${file.parent}/${file.nameWithoutExtension}.tar")
+                                        createTarArchive(file, tarFile)
+                                        fileChunkStrategy.chunk(tarFile, true, it.artifactType, it.filePath)
+                                            .collect { chunk ->
+                                                requestChannel.send(chunk)
+                                            }
+                                        tarFile.delete()
+                                    } else {
+                                        fileChunkStrategy.chunk(file, isDirectory = false, it.artifactType, it.filePath)
+                                            .collect { chunk ->
+                                                requestChannel.send(chunk)
+                                            }
                                     }
                                 }
                             }
                         }
-                        is DirectoryTransferReply -> {
-                            // TODO implement directory transfer
-                        }
                         is FileChunk -> {
-                            launch {
-                                val fileName = it.filePath.split("/").last()
-                                fileChunks.getOrPut(it.filePath) { mutableListOf() }.add(it)
-                                if (it.isLast) {
-                                    fileChunkStrategy.reconstruct(
-                                        fileChunks.getOrDefault(it.filePath, listOf()),
-                                        buildAbsPath("$CLIENT_COMPILED_DIR/$fileName")
-                                    )
-                                }
-                            }
+// TODO: client reconstruction turned off for this movement
+//                            launch {
+//                                val fileName = it.filePath.split("/").last()
+//                                fileChunks.getOrPut(it.filePath) { mutableListOf() }.add(it)
+//                                if (it.isLast) {
+//                                    fileChunkStrategy.reconstruct(
+//                                        fileChunks.getOrDefault(it.filePath, listOf()),
+//                                        buildAbsPath("$CLIENT_COMPILED_DIR/$fileName")
+//                                    )
+//                                }
+//                            }
                         }
                         is CompilationResult -> {
                             compilationResult = it
@@ -132,7 +146,7 @@ class RemoteCompilationClient(
                     )
                 )
 
-                // then we will ask server if source file is present in server cache
+                // then we will ask the server if a source file is present in the server cache
                 sourceFiles.forEach {
                     requestChannel.send(
                         FileTransferRequest(
@@ -144,31 +158,13 @@ class RemoteCompilationClient(
                 }
 
                 dependencyFiles.forEach {
-                    if (it.isDirectory) {
-                        requestChannel.send(
-                            DirectoryTransferRequest(
-                                it.path,
-                                computeSha256(it),
-                                ArtifactType.DEPENDENCY,
-                                it.walkTopDown().filter { file -> file.isFile }.map { file ->
-                                    FileTransferRequest(
-                                        file.path,
-                                        computeSha256(file),
-                                        ArtifactType.DEPENDENCY
-                                    )
-                                }.toList()
-                            )
+                    requestChannel.send(
+                        FileTransferRequest(
+                            it.path, // we need to preserve original path for dependency
+                            computeSha256(it),
+                            ArtifactType.DEPENDENCY
                         )
-                    } else {
-                        requestChannel.send(
-                            FileTransferRequest(
-                                it.path,
-                                computeSha256(it),
-                                ArtifactType.DEPENDENCY
-                            )
-                        )
-                    }
-
+                    )
                 }
 
                 compilerPluginFiles.forEach {

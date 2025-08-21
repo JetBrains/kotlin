@@ -25,20 +25,22 @@ class RemoteCompilationServer(
 ) {
 
     private val fileChunkingStrategy = OneFileOneChunkStrategy()
-    private val cacheHandler = CacheHandler(fileChunkingStrategy)
+    private val cacheHandler = CacheHandler()
     private val workspaceManager = WorkspaceManager()
 
     val server: Server =
         ServerBuilder
             .forPort(port)
+            .maxInboundMessageSize(10 * 1024 * 1024) // TODO double check, default is 4MB, need to be increased for big TAR files
             .addService(
                 ServerInterceptors
                     .intercept(
                         GrpcRemoteCompilationService(
                             RemoteCompilationServiceImpl(
                                 cacheHandler,
+                                workspaceManager,
+                                fileChunkingStrategy,
                                 InProcessCompilerService(),
-                                workspaceManager
                             )
                         ),
                         LoggingInterceptor(),

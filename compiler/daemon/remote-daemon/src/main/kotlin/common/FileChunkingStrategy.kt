@@ -9,31 +9,40 @@ import kotlinx.coroutines.flow.Flow
 import model.FileChunk
 import model.ArtifactType
 import java.io.File
+import java.util.UUID
 
 abstract class FileChunkingStrategy {
 
-    abstract fun chunk(file: File, artifactType: ArtifactType): Flow<FileChunk>
+    abstract fun chunk(file: File, isDirectory: Boolean, artifactType: ArtifactType, filePath: String? = null): Flow<FileChunk>
 
-    fun reconstruct(fileChunks: Collection<FileChunk>, newFilePath: String): File {
+    fun reconstruct(fileChunks: Collection<FileChunk>, folder: String): File{
         try {
             // TODO here we are basically return empty file, would it be better to return null?
-            val newFile = File(newFilePath)
-            if (fileChunks.isEmpty()) return newFile
+            val filePath = "${folder}/${UUID.randomUUID()}"
+            val file = File(filePath)
+            if (fileChunks.isEmpty()) return file
             // TODO consider sending filesize in metadata
             val totalSize = fileChunks.sumOf { it.content.size }
             val completeContent = ByteArray(totalSize)
 
             var offset = 0
             fileChunks.forEach { chunk ->
-                // chunk is already ByteArray, no need for conversion
                 chunk.content.copyInto(completeContent, offset)
                 offset += chunk.content.size
             }
 
-            newFile.writeBytes(completeContent)
-            // TODO maybe cleanup chunks from the hashmap
-            println("File $newFilePath has been successfully reconstructed")
-            return newFile
+            if (fileChunks.last().isDirectory) {
+                val temporaryTar = File("$filePath.tar")
+                temporaryTar.writeBytes(completeContent)
+                extractTarArchive(temporaryTar, file)
+                // TODO delete temporary tar
+                println("[RECONSTRUCTION] folder ${fileChunks.last().filePath} has been successfully reconstructed to ${file.absolutePath}")
+            } else {
+                file.writeBytes(completeContent)
+                println("[RECONSTRUCTION] file ${fileChunks.last().filePath} has been successfully reconstructed to ${file.absolutePath} ")
+            }
+            println("[RECONSTRUCTION] file exists: ${file.exists()}")
+            return file
         } catch (e: Exception) {
             println("Error while reconstructing file $fileChunks")
             throw e
