@@ -294,7 +294,7 @@ class ModuleOptimizationPipeline(config: LlvmPipelineConfig, performanceManager:
         LlvmOptimizationPipeline(config, performanceManager, logger) {
     override val pipelineName = "llvm-default"
     override val passes = listOf(config.modulePasses ?: "default<$optimizationFlag>")
-    override val threads = 4
+    override val threads = 12
 }
 
 class LTOOptimizationPipeline(config: LlvmPipelineConfig, performanceManager: PerformanceManager?, logger: LoggingContext? = null) :
