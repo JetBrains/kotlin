@@ -188,7 +188,7 @@ index 12f817a03..7877a17c8 100644
  plugin.android=8.5.1
 
 -plugin.com.squareup.anvil=2.5.0-beta11
-+plugin.com.squareup.anvil=2.5.0
++plugin.com.squareup.anvil=2.6.1
 
  plugin.org.jetbrains.dokka=1.8.20
 
