@@ -189,14 +189,14 @@ object StandardLibrariesPathProviderForKotlinProject : KotlinStandardLibrariesPa
 
     private inline fun extractFromPropertyFirst(prop: String, onMissingProperty: () -> String): File {
         val path = System.getProperty(prop, null) ?: onMissingProperty()
-        assert(File(path).exists()) { "$path not found" }
+        assert(File(path).exists()) { "$path not found; property: $prop" }
         return File(path)
     }
 
     private inline fun extractFromPropertyFirstFile(prop: String, onMissingProperty: () -> File): File {
         return System.getProperty(prop, null)?.let {
             val f = File(it)
-            assert(f.exists()) { "$it not found" }
+            assert(f.exists()) { "$it not found; property: $prop" }
             f
         } ?: onMissingProperty()
     }
@@ -204,7 +204,7 @@ object StandardLibrariesPathProviderForKotlinProject : KotlinStandardLibrariesPa
     private inline fun extractFromPropertyFirstFiles(prop: String, onMissingProperty: () -> Collection<File>): Collection<File> {
         return System.getProperty(prop, null)?.split(",")?.map {
             val f = File(it)
-            assert(f.exists()) { "$it not found" }
+            assert(f.exists()) { "$it not found; property: $prop" }
             f
         } ?: onMissingProperty()
     }

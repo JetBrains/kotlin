@@ -65,7 +65,7 @@ public class ForTestCompileRuntime {
     private static File propertyOrDist(String property, String distPath) {
         String path = getProperty(property, distPath);
         File file = new File(path);
-        assert (file.exists()) : path + " doesn't exist";
+        assert (file.exists()) : path + " doesn't exist; property: " + property + "; distPath: " + distPath;
         return file;
     }
 
