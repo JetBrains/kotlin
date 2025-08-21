@@ -281,7 +281,7 @@ open class FirKaptAnalysisHandlerExtension(
                     outputInfo.sourceFiles,
                     output
                 )
-                if (outputInfo.alwaysDirtyInIncrementalCompilation) {
+                if (outputInfo.generatedForCompilerPlugin) {
                     it.recordOutputFileGeneratedForPlugin(output)
                 }
             }

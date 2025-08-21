@@ -13,7 +13,7 @@ class SimpleOutputBinaryFile(
     override val relativePath: String,
     private val content: ByteArray,
 ) : OutputFile {
-    override val alwaysDirtyInIncrementalCompilation: Boolean
+    override val generatedForCompilerPlugin: Boolean
         get() = false
 
     override fun asByteArray(): ByteArray = content

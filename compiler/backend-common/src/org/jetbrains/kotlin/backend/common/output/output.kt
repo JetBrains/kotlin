@@ -26,7 +26,7 @@ interface OutputFileCollection {
 interface OutputFile {
     val relativePath: String
     val sourceFiles: List<File>
-    val alwaysDirtyInIncrementalCompilation: Boolean
+    val generatedForCompilerPlugin: Boolean
 
     fun asByteArray(): ByteArray
     fun asText(): String

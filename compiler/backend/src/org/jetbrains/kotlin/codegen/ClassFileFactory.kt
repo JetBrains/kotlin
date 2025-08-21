@@ -32,7 +32,7 @@ class ClassFileFactory(
     private val finalizers: List<ClassFileFactoryFinalizerExtension>
 ) : OutputFileCollection {
     private val generators: MutableMap<String, OutAndSourceFileList> = Collections.synchronizedMap(LinkedHashMap())
-    private val alwaysDirtyOutputs: MutableSet<String> = LinkedHashSet()
+    private val generatedForCompilerPluginOutputs: MutableSet<String> = LinkedHashSet()
 
     private var isDone = false
 
@@ -47,7 +47,7 @@ class ClassFileFactory(
             ClassBuilderAndSourceFileList(answer, sourceFiles)
         )
         if (origin.generatedForCompilerPlugin) {
-            alwaysDirtyOutputs.add(classFileName)
+            generatedForCompilerPluginOutputs.add(classFileName)
         }
         return answer
     }
@@ -123,11 +123,11 @@ class ClassFileFactory(
     }
 
     val currentOutput: List<OutputFile>
-        get() = generators.keys.map { OutputClassFile(relativePath = it, alwaysDirtyInIncrementalCompilation = it in alwaysDirtyOutputs) }
+        get() = generators.keys.map { OutputClassFile(relativePath = it, generatedForCompilerPlugin = it in generatedForCompilerPluginOutputs) }
 
     override fun get(relativePath: String): OutputFile? {
         return runIf(generators.containsKey(relativePath)) {
-            OutputClassFile(relativePath, alwaysDirtyInIncrementalCompilation = relativePath in alwaysDirtyOutputs)
+            OutputClassFile(relativePath, generatedForCompilerPlugin = relativePath in generatedForCompilerPluginOutputs)
         }
     }
 
@@ -193,7 +193,7 @@ class ClassFileFactory(
 
     private inner class OutputClassFile(
         override val relativePath: String,
-        override val alwaysDirtyInIncrementalCompilation: Boolean,
+        override val generatedForCompilerPlugin: Boolean,
     ) : OutputFile {
         override val sourceFiles: List<File>
             get() {
