@@ -70,6 +70,9 @@ public value class Duration internal constructor(private val rawValue: Long) : C
         internal const val INVALID_RAW_VALUE = 0x7FFFFFFFFFFFC0DE
         internal val INVALID: Duration = constructingInvalid { Duration(INVALID_RAW_VALUE) }
 
+        internal val isoParseRule = ParseRule(MAX_MILLIS, true)
+        internal val defaultParseRule = ParseRule(Long.MAX_VALUE, false)
+
         /** Converts the given time duration [value] expressed in the specified [sourceUnit] into the specified [targetUnit]. */
         @ExperimentalTime
         public fun convert(value: Double, sourceUnit: DurationUnit, targetUnit: DurationUnit): Double =
@@ -1095,7 +1098,7 @@ private fun parseIsoStringFormat(
         }
 
         val longStartIndex = index
-        val (longValue, longEndIndex, sign) = value.parseLong(index)
+        val (longValue, longEndIndex, sign) = value.parseLong(index, Duration.isoParseRule)
         index = longEndIndex
         if (index == value.length || index == longStartIndex + if (ch == '-' || ch == '+') 1 else 0) return handleError(throwException)
 
@@ -1179,7 +1182,7 @@ private fun parseDefaultStringFormat(
         isFirstComponent = false
 
         val longStartIndex = index
-        val (longValue, longEndIndex, _, hasOverflow) = value.parseLong(index, withSign = false, overflowLimit = Long.MAX_VALUE)
+        val (longValue, longEndIndex, _, hasOverflow) = value.parseLong(index, Duration.defaultParseRule)
         if (longEndIndex == longStartIndex || longEndIndex == length) {
             return handleError(throwException)
         }
@@ -1299,6 +1302,11 @@ private inline fun Long.addWithoutOverflow(other: Long): Long = when {
 
 private data class NumericParseData(val value: Long, val index: Int, val sign: Int = 1, val hasOverflow: Boolean = false)
 
+internal class ParseRule(val overflowLimit: Long, val withSign: Boolean) {
+    val overflowThreshold = overflowLimit / 10
+    val lastDigitMax = overflowLimit % 10
+}
+
 /**
  * Parses the Long from this string starting at the given index.
  * @param startIndex position to start parsing
@@ -1307,10 +1315,10 @@ private data class NumericParseData(val value: Long, val index: Int, val sign: I
  * @return [NumericParseData] containing parsed value, end index, sign, and overflow flag
  */
 @kotlin.internal.InlineOnly
-private inline fun String.parseLong(startIndex: Int, withSign: Boolean = true, overflowLimit: Long = MAX_MILLIS): NumericParseData {
+private inline fun String.parseLong(startIndex: Int, parseRule: ParseRule): NumericParseData {
     var sign = 1
     var index = startIndex
-    if (withSign) {
+    if (parseRule.withSign) {
         val firstChar = this[index]
         if (firstChar == '-') {
             sign = -1
@@ -1321,15 +1329,13 @@ private inline fun String.parseLong(startIndex: Int, withSign: Boolean = true, o
     }
     while (index < length && this[index] == '0') index++
     var result = 0L
-    val overflowThreshold = overflowLimit / 10
-    val lastDigitMax = overflowLimit % 10
     while (index < length) {
         val ch = this[index]
         if (ch !in '0'..'9') break
         val digit = ch - '0'
-        if (result > overflowThreshold || (result == overflowThreshold && digit > lastDigitMax)) {
+        if (result > parseRule.overflowThreshold || (result == parseRule.overflowThreshold && digit > parseRule.lastDigitMax)) {
             while (index < length && this[index] in '0'..'9') index++
-            return NumericParseData(overflowLimit * sign, index, sign, hasOverflow = true)
+            return NumericParseData(parseRule.overflowLimit * sign, index, sign, hasOverflow = true)
         }
         result = result * 10 + digit
         index++
