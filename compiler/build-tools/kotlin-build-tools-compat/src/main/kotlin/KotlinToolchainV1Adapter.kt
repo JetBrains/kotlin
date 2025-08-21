@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.buildtools.internal.compat.JvmCompilationOperationV1
 import org.jetbrains.kotlin.buildtools.internal.compat.JvmCompilationOperationV1Adapter.JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter.Companion.ROOT_PROJECT_DIR
 import org.jetbrains.kotlin.buildtools.internal.compat.JvmCompilationOperationV1Adapter.JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter.Companion.USE_FIR_RUNNER
 import org.jetbrains.kotlin.buildtools.internal.compat.arguments.JvmCompilerArgumentsImpl
+import org.jetbrains.kotlin.incremental.isJavaFile
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 import kotlin.time.Duration
@@ -185,7 +186,7 @@ private class JvmCompilationOperationV1Adapter(
             compilerArguments.toArgumentStrings().fixForFirCheck() + listOf(
                 "-d",
                 destinationDirectory.absolutePathString()
-            )
+            ) + kotlinSources.filter { it.toFile().isJavaFile() }.map { it.absolutePathString() }
         )
     }
 

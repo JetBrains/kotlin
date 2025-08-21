@@ -35,6 +35,19 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
         }
     }
 
+    @DisplayName("Non-incremental compilation produces only expected outputs with mixed java+kotlin setup")
+    @DefaultStrategyAgnosticCompilationTest
+    @TestMetadata("kotlin-java-mixed")
+    fun mixedJavaKotlin(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        project(strategyConfig) {
+            val module1 = module("kotlin-java-mixed")
+
+            module1.compile { module ->
+                assertOutputs(module, "bpkg/MainKt.class", "bpkg/BClass.class")
+            }
+        }
+    }
+
     @OptIn(ExperimentalCompilerArgument::class, RemovedCompilerArgument::class)
     @DisplayName("Using removed argument throws on unsupported compiler versions")
     @DefaultStrategyAgnosticCompilationTest
