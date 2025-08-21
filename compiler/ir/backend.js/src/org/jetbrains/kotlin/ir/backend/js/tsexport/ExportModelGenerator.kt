@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
+import org.jetbrains.kotlin.js.common.makeValidES5Identifier
 import org.jetbrains.kotlin.js.config.compileLongAsBigint
 import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -111,7 +112,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
 
     private fun exportParameter(parameter: IrValueParameter, hasDefaultValue: Boolean): ExportedParameter {
         // Parameter names do not matter in d.ts files. They can be renamed as we like
-        var parameterName = sanitizeName(parameter.name.asString(), withHash = false)
+        var parameterName = makeValidES5Identifier(parameter.name.asString(), withHash = false)
         if (parameterName in allReservedWords)
             parameterName = "_$parameterName"
 

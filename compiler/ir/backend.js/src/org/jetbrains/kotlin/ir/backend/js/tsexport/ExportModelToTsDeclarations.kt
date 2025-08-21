@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.tsexport
 
-import org.jetbrains.kotlin.ir.backend.js.utils.sanitizeName
+import org.jetbrains.kotlin.js.common.makeValidES5Identifier
 import org.jetbrains.kotlin.js.common.isValidES5Identifier
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -53,7 +53,7 @@ class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
 
         val declarationsDts = internalNamespace + declarations.joinTypeScriptFragments().raw
 
-        val namespaceName = sanitizeName(name, withHash = false)
+        val namespaceName = makeValidES5Identifier(name, withHash = false)
 
         return when (moduleKind) {
             ModuleKind.PLAIN -> "declare namespace $namespaceName {\n$declarationsDts\n}\n"
@@ -438,7 +438,7 @@ class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
     }
 
     private fun ExportedParameter.toTypeScript(indent: String, couldBeOptional: Boolean): String {
-        val name = sanitizeName(name, withHash = false)
+        val name = makeValidES5Identifier(name, withHash = false)
         val type = if (hasDefaultValue && !couldBeOptional) {
             ExportedType.UnionType(type, ExportedType.Primitive.Undefined)
         } else type

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.util.companionObject
 import org.jetbrains.kotlin.ir.util.irError
 import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.common.makeValidES5Identifier
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
 class ExportModelToJsStatements(
@@ -188,7 +189,7 @@ class ExportModelToJsStatements(
     }
 
     private fun ExportedProperty.generateTopLevelGetters(): JsVars.JsVar {
-        val sanitizedName = sanitizeName(name)
+        val sanitizedName = makeValidES5Identifier(name)
         val getter = irGetter?.let { staticContext.getNameForStaticDeclaration(it) }
         val setter = irSetter?.let { staticContext.getNameForStaticDeclaration(it) }
 
@@ -260,7 +261,7 @@ class ExportModelToJsStatements(
         return when (classRef) {
             is JsNameRef -> classRef.name!! to null
             else -> {
-                val stableName = JsName(sanitizeName(name), true)
+                val stableName = JsName(makeValidES5Identifier(name), true)
                 stableName to JsVars(JsVars.JsVar(stableName, classRef))
             }
         }
