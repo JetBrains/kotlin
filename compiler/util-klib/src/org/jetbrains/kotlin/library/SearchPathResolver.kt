@@ -8,7 +8,6 @@ import org.jetbrains.kotlin.util.Logger
 import org.jetbrains.kotlin.util.WithLogger
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import java.nio.file.InvalidPathException
-import java.nio.file.Path
 import java.nio.file.Paths
 
 const val KOTLIN_NATIVE_STDLIB_NAME: String = "stdlib"
@@ -53,21 +52,9 @@ interface SearchPathResolver<L : KotlinLibrary> : WithLogger {
         }
 
         companion object {
-            fun lookUpByAbsolutePath(absoluteLibraryPath: File): File? {
-                if (!absoluteLibraryPath.isFile && !absoluteLibraryPath.isDirectory) return null
-
-                val rawPath: String = absoluteLibraryPath.path
-                // The "official" way of `Paths.get(path).toRealPath()` does not work on Windows
-                //   if the path starts with `/C:` - `sun.nio.fs.WindowsPathParser.normalize`
-                //   throws `InvalidPathException: Illegal char <:>`.
-                val javaPath: Path = if (System.getProperty("os.name").contains("Windows") && rawPath.startsWith("/"))
-                    Paths.get(rawPath.removePrefix("/"))
-                else
-                    Paths.get(rawPath)
-
-                // Resolve the path to eliminate symlinks that might be in any path segment.
-                return File(javaPath.toRealPath().toString())
-            }
+            fun lookUpByAbsolutePath(absoluteLibraryPath: File): File? =
+                if (!absoluteLibraryPath.isFile && !absoluteLibraryPath.isDirectory) null
+                else absoluteLibraryPath
         }
     }
 
