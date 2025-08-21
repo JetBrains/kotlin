@@ -8,11 +8,13 @@ package org.jetbrains.kotlin.backend.konan.util
 /**
  * Provides some bulk operations needed for devirtualization
  */
-class CustomBitSet private constructor(size: Int, data: LongArray) {
+internal class CustomBitSet private constructor(size: Int, data: LongArray) {
     private var size = size
     private var data = data
 
-    constructor(nodesCount: Int = 10) : this(0, LongArray((nodesCount shr 6) + 1))
+    constructor() : this(0, EMPTY)
+
+    constructor(nodesCount: Int) : this(0, LongArray((nodesCount shr 6) + 1))
 
     private fun ensureCapacity(index: Int) {
         if (data.size <= index) {
@@ -59,7 +61,7 @@ class CustomBitSet private constructor(size: Int, data: LongArray) {
         return cardinality
     }
 
-    fun forEachBit(block: (Int) -> Unit) {
+    inline fun forEachBit(block: (Int) -> Unit) {
         for (index in 0 until size) {
             var d = data[index]
             val idx = index shl 6
@@ -85,7 +87,7 @@ class CustomBitSet private constructor(size: Int, data: LongArray) {
         }
     }
 
-    fun or2(another: CustomBitSet): Boolean {
+    fun orWithFilterHasChanged(another: CustomBitSet): Boolean {
         val adata = another.data
         val asize = another.size
         ensureCapacity(asize - 1)
@@ -100,7 +102,7 @@ class CustomBitSet private constructor(size: Int, data: LongArray) {
     }
 
 
-    fun or2(another: CustomBitSet, filter: CustomBitSet): Boolean {
+    fun orWithFilterHasChanged(another: CustomBitSet, filter: CustomBitSet): Boolean {
         val fdata = filter.data
         val fsize = filter.size
         val adata = another.data
@@ -152,4 +154,7 @@ class CustomBitSet private constructor(size: Int, data: LongArray) {
             return true
         }
 
+    companion object {
+        private val EMPTY = LongArray(0)
+    }
 }
