@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan.optimizations
 
-import org.jetbrains.kotlin.utils.copy
-import org.jetbrains.kotlin.utils.forEachBit
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
@@ -568,27 +566,22 @@ internal object DevirtualizationAnalysis {
                 for (node in topologicalOrder) {
                     if (node is Node.Source)
                         continue // A source has no incoming edges.
-                    val types = CustomBitSet()
 
                     reversedEdges.forEachEdge(node.id) {
-                        types.or(constraintGraph.nodes[it].types)
+                        node.types.or(constraintGraph.nodes[it].types)
                     }
                     node.reversedCastEdges
                             ?.filter { it.node.priority < node.priority } // Doesn't contradict topological order.
                             ?.forEach {
-                                val sourceTypes = it.node.types.copy()
-                                sourceTypes.and(it.suitableTypes)
-                                types.or(sourceTypes)
+                                node.types.orWithFilterHasChanged(it.node.types, it.suitableTypes)
                             }
-
-                    node.types.or(types)
                 }
                 if (iterations >= maxNumberOfIterations) break
 
                 var end = true
                 for ((sourceNode, edge) in badEdges) {
                     val distNode = edge.node
-                    if (distNode.types.or2(sourceNode.types, edge.suitableTypes)) {
+                    if (distNode.types.orWithFilterHasChanged(sourceNode.types, edge.suitableTypes)) {
                         end = false
                     }
                 }
@@ -605,7 +598,7 @@ internal object DevirtualizationAnalysis {
             var frontSize = 0
             for ((sourceNode, edge) in badEdges) {
                 val distNode = edge.node
-                if (distNode.types.or2(sourceNode.types, edge.suitableTypes) && !marked[distNode.id]) {
+                if (distNode.types.orWithFilterHasChanged(sourceNode.types, edge.suitableTypes) && !marked[distNode.id]) {
                     marked.set(distNode.id)
                     front[frontSize++] = distNode.id
                 }
@@ -625,7 +618,7 @@ internal object DevirtualizationAnalysis {
                         if (marked[distNode.id])
                             distNode.types.or(node.types)
                         else {
-                            if (distNode.types.or2(node.types) && !marked[distNode.id]) {
+                            if (distNode.types.orWithFilterHasChanged(node.types) && !marked[distNode.id]) {
                                 marked.set(distNode.id)
                                 front[frontSize++] = distNode.id
                             }
@@ -633,7 +626,7 @@ internal object DevirtualizationAnalysis {
                     }
                     node.directCastEdges?.forEach { edge ->
                         val distNode = edge.node
-                        if (distNode.types.or2(node.types, edge.suitableTypes) && !marked[distNode.id]) {
+                        if (distNode.types.orWithFilterHasChanged(node.types, edge.suitableTypes) && !marked[distNode.id]) {
                             marked.set(distNode.id)
                             front[frontSize++] = distNode.id
                         }
