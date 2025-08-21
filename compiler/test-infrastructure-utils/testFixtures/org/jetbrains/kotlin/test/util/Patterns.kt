@@ -7,4 +7,4 @@ package org.jetbrains.kotlin.test.util
 
 import java.util.regex.Pattern
 
-val LANGUAGE_FEATURE_PATTERN: Pattern = Pattern.compile("""(\+|-|warn:)(\w+)\s*""")
+val LANGUAGE_FEATURE_PATTERN: Pattern = Pattern.compile("""([+\-])(\w+)\s*""")

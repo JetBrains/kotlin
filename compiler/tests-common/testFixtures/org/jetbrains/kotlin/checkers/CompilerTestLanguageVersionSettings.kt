@@ -123,7 +123,7 @@ fun collectLanguageFeatureMap(directives: String): Map<LanguageFeature, Language
         Assert.fail(
                 "Wrong syntax in the '// $LANGUAGE_DIRECTIVE: ...' directive:\n" +
                 "found: '$directives'\n" +
-                "Must be '((+|-|warn:)LanguageFeatureName)+'\n" +
+                "Must be '((+|-)LanguageFeatureName)+'\n" +
                 "where '+' means 'enable', '-' means 'disable', 'warn:' means 'enable with warning'\n" +
                 "and language feature names are names of enum entries in LanguageFeature enum class"
         )
