@@ -24,28 +24,28 @@ private const val Nullable = "Nullable"
 private const val ObjectInheritanceIntrinsic = "KtSingleton"
 
 @JvmInline
-value class TypeScriptFragment(val raw: String)
+public value class TypeScriptFragment(public val raw: String)
 
-fun List<ExportedDeclaration>.toTypeScriptFragment(moduleKind: ModuleKind): TypeScriptFragment {
+public fun List<ExportedDeclaration>.toTypeScriptFragment(moduleKind: ModuleKind): TypeScriptFragment {
     return ExportModelToTsDeclarations(moduleKind).generateTypeScriptFragment(this)
 }
 
-fun List<TypeScriptFragment>.joinTypeScriptFragments(): TypeScriptFragment {
+public fun List<TypeScriptFragment>.joinTypeScriptFragments(): TypeScriptFragment {
     return TypeScriptFragment(joinToString("\n") { it.raw })
 }
 
-fun List<TypeScriptFragment>.toTypeScript(name: String, moduleKind: ModuleKind): String {
+public fun List<TypeScriptFragment>.toTypeScript(name: String, moduleKind: ModuleKind): String {
     return ExportModelToTsDeclarations(moduleKind).generateTypeScript(name, this)
 }
 
 // TODO: Support module kinds other than plain
-class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
+public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
     private val isEsModules = moduleKind == ModuleKind.ES
     private val intrinsicsPrefix = if (moduleKind == ModuleKind.PLAIN) "" else "declare "
     private val topLevelPrefix = if (moduleKind == ModuleKind.PLAIN) "" else declareExported
     private val indent: String = if (moduleKind == ModuleKind.PLAIN) "    " else ""
 
-    fun generateTypeScript(name: String, declarations: List<TypeScriptFragment>): String {
+    public fun generateTypeScript(name: String, declarations: List<TypeScriptFragment>): String {
         val internalNamespace = """
             type $Nullable<T> = T | null | undefined
             ${intrinsicsPrefix}function $ObjectInheritanceIntrinsic<T>(): T & (abstract new() => any);
@@ -62,7 +62,7 @@ class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
         }
     }
 
-    fun generateTypeScriptFragment(declarations: List<ExportedDeclaration>): TypeScriptFragment {
+    public fun generateTypeScriptFragment(declarations: List<ExportedDeclaration>): TypeScriptFragment {
         return TypeScriptFragment(declarations.toTypeScript())
     }
 

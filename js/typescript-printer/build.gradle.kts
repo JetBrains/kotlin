@@ -15,3 +15,7 @@ sourceSets {
     "main" { projectDefault() }
     "test" {}
 }
+
+kotlin {
+    explicitApi()
+}
